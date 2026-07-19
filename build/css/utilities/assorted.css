@@ -3,7 +3,7 @@
 }
 
 .no_outline {
-    /* noinspection Stylelint */
+    /* stylelint-disable-next-line declaration-no-important -- Need to override cases, when width results in relative position */
     outline: none !important;
 
     &:hover,
@@ -11,6 +11,11 @@
     &:active {
         border-color: transparent;
     }
+}
+
+.no_text_decoration {
+    /* stylelint-disable-next-line declaration-no-important -- Need to override cases, when width results in relative position */
+    text-decoration: none !important;
 }
 
 .about_section {
@@ -32,8 +37,7 @@
     border-radius: 25%;
     border-style: solid;
     border-width: var(--border_width);
-    /* Need to force pointer, otherwise it gets overridden by tooltip styling */
-    /* noinspection Stylelint */
+    /* stylelint-disable-next-line declaration-no-important -- Need to force pointer, otherwise it gets overridden by tooltip styling */
     cursor: pointer !important;
     inline-size: 1.5em;
     inset-block-start: -0.25rem;
@@ -83,7 +87,7 @@
 }
 
 .no_decor {
-    /* noinspection Stylelint */
+    /* stylelint-disable-next-line declaration-no-important -- Need to override cases, when width results in relative position */
     text-decoration: none !important;
 }
 
@@ -107,7 +111,7 @@
     cursor: zoom-in;
 
     & img {
-        /* noinspection Stylelint */
+        /* stylelint-disable-next-line declaration-no-important -- Need to override cases, when width results in relative position */
         cursor: zoom-in !important;
     }
 
@@ -119,6 +123,6 @@
 }
 
 .cursor_pointer {
-    /* noinspection Stylelint */
+    /* stylelint-disable-next-line declaration-no-important -- Valid case */
     cursor: pointer !important;
 }

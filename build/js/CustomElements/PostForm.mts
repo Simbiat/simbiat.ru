@@ -2,7 +2,7 @@
  * @file Custom logic for the `post-form` element.
  */
 import { empty } from '../Common/Helpers.mts';
-import { loadTinyMCE } from '../Common/TinyMCE.mts';
+import { TinyMCE as TinyMCEClass } from '../Common/TinyMCE.mts';
 import type { TinyMCE } from 'tinymce/tinymce.d.ts';
 
 declare const tinymce: TinyMCE;
@@ -23,7 +23,7 @@ export class PostForm extends HTMLElement {
     this.reply_to_input = this.querySelector<HTMLInputElement>('#replying_to');
     this.label = this.querySelector<HTMLLabelElement>('.label_for_tinymce');
     if (this.textarea && !empty(this.textarea.id)) {
-      void loadTinyMCE(this.textarea.id, false, true);
+      void TinyMCEClass.load(this.textarea.id, false, true);
     }
   }
 

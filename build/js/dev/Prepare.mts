@@ -20,4 +20,4 @@ await build({
 });
 // Used in console, so need some output
 // eslint-disable-next-line no-console
-console.log('✔ Build complete');
+console.log('✅ Build complete');

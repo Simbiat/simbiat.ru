@@ -89,6 +89,8 @@ final class Extension extends AbstractExtension implements GlobalsInterface
             'http_method' => HomePage::$method,
             #System users' IDs
             'system_users' => SystemUser::getSystemUsers(),
+            #Supported browsers for Teapot page:
+            'teapot_browsers' => Config::$shared_with_js['teapot_browsers'] ?? [],
         ]);
     }
 }

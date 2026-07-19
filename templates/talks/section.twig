@@ -1,14 +1,20 @@
 {% if created|date('Y/m/d H:i') != published|date('Y/m/d H:i') or closed or private %}
     <div class="section_icons margin_bottom_05rem">
-        {% if created|date('Y/m/d H:i') != published|date('Y/m/d H:i') %}<span data-tooltip="Scheduled section">⏲</span>{% endif %}
+        {% if created|date('Y/m/d H:i') != published|date('Y/m/d H:i') %}
+            <span data-tooltip="Scheduled section">⏲</span>
+        {% endif %}
         {% if created|date('Y/m/d H:i') > published|date('Y/m/d H:i') %}
             <span data-tooltip="Backlog section created on {{ created|date('d/m/Y H:i') }}">🕰️</span>
         {% endif %}
         {% if created|date('Y/m/d H:i') < published|date('Y/m/d H:i') %}
             <span data-tooltip="Scheduled section created on {{ created|date('d/m/Y H:i') }}">⏲️</span>
         {% endif %}
-        {% if closed %}<span data-tooltip="Closed section">🔒</span>{% endif %}
-        {% if private %}<span data-tooltip="Private section">🚷</span>{% endif %}
+        {% if closed %}
+            <span data-tooltip="Closed section">🔒</span>
+        {% endif %}
+        {% if private %}
+            <span data-tooltip="Private section">🚷</span>
+        {% endif %}
     </div>
 {% endif %}
 {% if session_data.user_id != 1 and session_data.username %}
@@ -19,8 +25,8 @@
 <article class="margin_05rem">
     {% if not children.entities and not threads.entities %}
         <article class="margin_05rem">
-            <p class="middle">Looks like we've got nothing in here</p>
-            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block">
+            <p class="middle">It looks like we've got nothing in here</p>
+            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block" width="490" height="476">
         </article>
     {% else %}
     {% endif %}

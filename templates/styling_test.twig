@@ -1,28 +1,63 @@
-<!-- Just a small template for testing of styling of elements. And to allow easier copy-paste of some elements. Not meant for PROD usage -->
+{# Just a small template for testing of styling of elements. And to allow easier copy-paste of some elements. Not meant for PROD usage #}
 <article>
     <a href="/#">test link</a> <span class="success">success</span> <span class="warning">warning</span>
     <a href="/#" target="_blank">new tab link</a>
-    <a href="/#" target="_blank">new tab link with icon<img crossorigin="anonymous" loading="lazy" decoding="async" class="new_tab_icon" src="/assets/images/newtab.svg" alt="Opens in new tab"></a>
+    <a href="/#" target="_blank">
+        <span>new tab link with icon</span>
+    </a>
     <span class="success">success</span>
     <span class="warning">warning</span>
     <span class="failure">failure</span>
     <span disabled>disabled</span>
     <kbd>ctrl</kbd>
-    Output test: 50+50=<output>100</output>
-    <span class="float_label"><input id="test_checkbox" type="checkbox"><label for="test_checkbox">test_checkbox</label></span>
-    <span class="float_label"><input id="test_radio" type="radio"><label for="test_radio">test_radio</label></span>
+    Output test: 50+50=
+    <output>100</output>
+    <span class="float_label">
+        <input id="test_checkbox" type="checkbox">
+        <label for="test_checkbox">
+            <span class="checkbox_checked_icon"></span>
+            <span class="checkbox_checked">test_checkbox</span>
+            <span class="checkbox_not_checked_icon"></span>
+            <span class="checkbox_not_checked">test_checkbox</span>
+        </label>
+    </span>
+    <span class="float_label">
+        <input id="test_radio" type="radio">
+        <label for="test_radio">test_radio</label>
+    </span>
     <br>
-    Button: <button type="button">button</button> Submit: <button type="submit">submit</button> Reset: <button type="reset">reset</button> Image: <button type="button"><img crossorigin="anonymous" loading="lazy" decoding="async" alt="test image" src="/assets/images/logo.svg"></button>
+    Button:
+    <button type="button">button</button>
+    Submit:
+    <button type="submit">submit</button>
+    Reset:
+    <button type="reset">reset</button>
+    Image:
+    <button type="button">
+        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="test image" src="/assets/images/logo.svg" width="397" height="397">
+    </button>
     <br>
-    <form>
-        <!--suppress PreferButtonInsteadInput -->
-        Input button: <input type="button" value="button">
-        <!--suppress PreferButtonInsteadInput -->
-        Submit: <input type="submit" value="submit">
-        <!--suppress PreferButtonInsteadInput -->
-        Reset: <input type="reset" value="reset">
-        <!--suppress PreferButtonInsteadInput -->
-        Image: <input id="test_image" alt="test image" type="image" src="/assets/images/logo.svg" crossorigin="anonymous">
+    <form method="post">
+        <span class="float_label">
+            <!--suppress PreferButtonInsteadInput -->
+            <input type="button" value="button" id="input_button">
+            <label for="input_button">Button input</label>
+        </span>
+        <span class="float_label">
+            <!--suppress PreferButtonInsteadInput -->
+            <input type="submit" value="submit" id="input_submit">
+            <label for="input_submit">Submit input</label>
+        </span>
+        <span class="float_label">
+            <!--suppress PreferButtonInsteadInput -->
+            <input type="reset" value="reset" id="input_reset">
+            <label for="input_reset">Reset input</label>
+        </span>
+        <span class="float_label">
+            <!--suppress PreferButtonInsteadInput, NoImgCrossoriginAttribute -->
+            <input alt="test image" type="image" src="/assets/images/logo.svg" id="input_image">
+            <label for="input_image">Image input</label>
+        </span>
     </form>
     <br>
     Link styled as button: <a href="#test_checkbox" class="button">button</a>
@@ -39,48 +74,131 @@
     <br>
     <details class="adult spoiler">
         <summary></summary>
-        <p>Pussy cat dies.</p>
+        <p>Pussycat dies.</p>
     </details>
     <br>
-    <div>inline <details class="spoiler inline_block">
+    <div>
+        inline
+        <details class="spoiler inline_block">
             <summary></summary>
             <p>John Snow dies.</p>
-        </details> spoiler
+        </details>
+        spoiler
     </div>
     <br>
-    <span class="float_label"><input id="test_email" type="email" autocomplete="email" inputmode="email" minlength="1" maxlength="254" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`\{\|\}~\-]+@[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?)*$" required><label for="test_email">test_email</label></span>
-    <span class="float_label"><input id="test_number" type="number" inputmode="decimal"><label for="test_number">test_number</label></span>
-    <span class="float_label"><input id="test_number_spinner" type="number" inputmode="decimal" class="number_spinner"><label for="test_number_spinner">with spinner</label></span>
+    <span class="float_label">
+        <input id="test_email" type="email" autocomplete="email" inputmode="email" minlength="1" maxlength="254" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`\{\|\}~\-]+@[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?)*$" required>
+        <label for="test_email">test_email</label>
+    </span>
+    <span class="float_label">
+        <input id="test_number" type="number" inputmode="decimal">
+        <label for="test_number">test_number</label>
+    </span>
+    <span class="float_label">
+        <input id="test_number_spinner" type="number" inputmode="decimal" class="number_spinner">
+        <label for="test_number_spinner">with spinner</label>
+    </span>
     {{ include('common/elements/password_field.twig', {'new_password': true, 'password_field_id': 'new_password', 'password_field_name': 'new_password', 'password_field_placeholder': 'New password'}) }}
-    <span class="float_label"><input id="test_search" type="search" inputmode="search" autocomplete="on"><label for="test_search">test_search</label></span>
-    <span class="float_label"><input id="test_tel" type="tel" inputmode="tel" autocomplete="tel"><label for="test_tel">test_tel</label></span>
-    <span class="float_label"><input id="test_text" type="text" inputmode="text" autocomplete="on"><label for="test_text">test_text</label></span>
-    <span class="float_label"><input id="test_url" type="url" inputmode="url" autocomplete="url"><label for="test_url">test_url</label></span>
+    <span class="float_label">
+        <input id="test_search" type="search" inputmode="search" autocomplete="on">
+        <label for="test_search">test_search</label>
+    </span>
+    <span class="float_label">
+        <input id="test_tel" type="tel" inputmode="tel" autocomplete="tel">
+        <label for="test_tel">test_tel</label>
+    </span>
+    <span class="float_label">
+        <input id="test_text" type="text" inputmode="text" autocomplete="on">
+        <label for="test_text">test_text</label>
+    </span>
+    <span class="float_label">
+        <input id="test_url" type="url" inputmode="url" autocomplete="url">
+        <label for="test_url">test_url</label>
+    </span>
     <br>
-    <span class="float_label"><input id="test_date" type="date" inputmode="numeric" autocomplete="bday"><label for="test_date">test_date</label></span>
-    <span class="float_label"><input id="test_time" type="time" inputmode="numeric"><label for="test_time">test_time</label></span>
-    <span class="float_label"><input id="test_datetime_local" type="datetime-local" inputmode="numeric"><label for="test_datetime_local">test_datetime_local</label></span>
-    <span class="float_label"><input id="test_month" type="month"><label for="test_month">test_month</label></span>
-    <span class="float_label"><input id="test_week" type="week"><label for="test_week">test_week</label></span>
-    <span class="float_label"><input id="test_color" type="color"><label for="test_color">test_color</label></span>
-    <span class="float_label"><input id="test_range" type="range" min="0" max="100" step="25" list="tick_marks"><label for="test_range">test_range</label></span>
+    <span class="float_label">
+        <input id="test_date" type="date" inputmode="numeric" autocomplete="bday">
+        <label for="test_date">test_date</label>
+    </span>
+    <span class="float_label">
+        <input id="test_time" type="time" inputmode="numeric">
+        <label for="test_time">test_time</label>
+    </span>
+    <span class="float_label">
+        <input id="test_datetime_local" type="datetime-local" inputmode="numeric">
+        <label for="test_datetime_local">test_datetime_local</label>
+    </span>
+    <span class="float_label">
+        <!-- eslint-disable-next-line html/use-baseline -->
+        <input id="test_month" type="month">
+        <label for="test_month">test_month</label>
+    </span>
+    <span class="float_label">
+        <!-- eslint-disable-next-line html/use-baseline -->
+        <input id="test_week" type="week">
+        <label for="test_week">test_week</label>
+    </span>
+    <span class="float_label">
+        <!-- eslint-disable-next-line html/use-baseline -->
+        <input id="test_color" type="color">
+        <label for="test_color">test_color</label>
+    </span>
+    <span class="float_label">
+        <input id="test_range" type="range" min="0" max="100" step="25" list="tick_marks">
+        <label for="test_range">test_range</label>
+    </span>
+    <!-- eslint-disable-next-line html/use-baseline -->
     <datalist id="tick_marks">
-        <option value="0" label="0">
-        <option value="25" label="25">
-        <option value="50" label="50">
-        <option value="75" label="75">
-        <option value="100" label="100">
+        <option value="0" label="0"></option>
+        <option value="25" label="25"></option>
+        <option value="50" label="50"></option>
+        <option value="75" label="75"></option>
+        <option value="100" label="100"></option>
     </datalist>
     <br>
-    <span class="float_label"><textarea id="test_textarea" maxlength="250">Textarea test</textarea><label for="test_textarea">test_textarea</label></span>
-    <span class="float_label"><input id="test_file" type="file"><label for="test_file">test_file</label></span>
+    <span class="float_label">
+        <textarea id="test_textarea" maxlength="250">Textarea test</textarea>
+        <label for="test_textarea">test_textarea</label>
+    </span>
+    <span class="float_label">
+        <input id="test_file" type="file">
+        <label for="test_file">test_file</label>
+    </span>
     <br>
-    <span class="float_label"><select id="test_select_multiple" multiple><option>1</option><option>2</option><option>3</option></select><label for="test_select_multiple">test_select_multiple</label></span>
-    <span class="float_label"><select id="test_select"><option>1</option><option>2</option><option>3</option></select><label for="test_select">test_select</label></span>
+    <span class="float_label">
+        <select id="test_select_multiple" multiple>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+        </select>
+        <label for="test_select_multiple">test_select_multiple</label>
+    </span>
+    <span class="float_label">
+        <select id="test_select">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+        </select>
+        <label for="test_select">test_select</label>
+    </span>
     <br>
-    <progress max="100"></progress> undetermined state <progress value="5" max="100"></progress> low progress <progress value="50" max="100"></progress> middle progress <progress value="100" max="100"></progress> full progress
+    <progress max="100"></progress>
+    undetermined state
+    <progress value="5" max="100"></progress>
+    low progress
+    <progress value="50" max="100"></progress>
+    middle progress
+    <progress value="100" max="100"></progress>
+    full progress
     <br>
-    <meter value="0"></meter> empty meter <meter low=".25" optimum=".5" high=".75" value=".5" data-unit="m"></meter> good meter <meter low=".25" optimum=".85" high=".75" value=".7"></meter> suboptimal meter <meter low=".25" optimum=".2" high=".75" value="1"></meter> bad meter
+    <meter value="0"></meter>
+    empty meter
+    <meter low=".25" optimum=".5" high=".75" value=".5" data-unit="m"></meter>
+    good meter
+    <meter low=".25" optimum=".85" high=".75" value=".7"></meter>
+    suboptimal meter
+    <meter low=".25" optimum=".2" high=".75" value="1"></meter>
+    bad meter
     <br>
     <samp class="success" data-description="Success">Hello, world!</samp>
     <samp class="failure" data-source="Server">Access denied</samp>
@@ -92,7 +210,7 @@
     <blockquote>Someone unknown said something someday. It was wise.</blockquote>
     <blockquote data-author="Someone wise" data-source="Some book">Someone said something someday. It was wise.</blockquote>
     <br>
-    As Frank Herbert wrote: <q>Fear is a mind killer.</q> - thus do not murder your mind.
+    As Frank Herbert wrote: <q>Fear is a mind killer.</q>, thus do not murder your mind.
     <br>
     <dialog id="test_dialog"></dialog>
     <br>

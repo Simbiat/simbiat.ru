@@ -7,23 +7,23 @@
 }
 
 .block {
-    /* noinspection Stylelint */
+    /* stylelint-disable-next-line declaration-no-important -- Valid case */
     display: block !important;
 }
 
 .flex {
-    /* noinspection Stylelint */
+    /* stylelint-disable-next-line declaration-no-important -- Valid case */
     display: flex !important;
 }
 
 /* Hide visually and from screen readers */
 .hidden,
 [hidden] {
-    /* noinspection Stylelint */
+    /* stylelint-disable-next-line declaration-no-important -- Valid case */
     display: none !important;
 }
 
-/* Hide visually and from screen readers, but maintain layout */
+/* Hide visually and from screen readers, but maintain layout -- Valid case */
 .invisible {
     visibility: hidden;
 }

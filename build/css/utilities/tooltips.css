@@ -13,7 +13,7 @@
     .post_banner a
 ) {
     cursor: help;
-    text-decoration: underline dotted 0.2rem;
+    text-decoration: var(--tooltip_decoration);
 }
 
 /* This is to prevent use of help cursor for links and images inside links, unless it's intentionally setup */

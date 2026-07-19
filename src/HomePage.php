@@ -28,7 +28,7 @@ class HomePage
     #Cache object
     private(set) static ?Caching $data_cache = null;
     #HTTP headers object
-    private(set) static ?Headers $headers = NULL;
+    private(set) static ?Headers $headers = null;
     #Flag indicating that cached view has been served already
     private(set) static bool $stale_return = false;
     #HTTP method being used
@@ -99,13 +99,10 @@ class HomePage
             #Exploding further processing
             /* @noinspection NotOptimalRegularExpressionsInspection False positive, since does not know what can be in the string */
             $uri = \explode('/', \preg_replace('/^(\/)([^?]*)(\?'.(\preg_quote($_SERVER['QUERY_STRING'] ?? '', '/')).')?/ui', '$2', $_SERVER['REQUEST_URI']));
-            #Check if there was an internal redirect to a custom error page
-            if (!empty($_SERVER['CADDY_HTTP_ERROR'])) {
-                if (\preg_match('/\d{3}/u', $_SERVER['CADDY_HTTP_ERROR']) === 1) {
-                    self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR'], 'reason' => $_SERVER['CADDY_HTTP_ERROR_MSG'] ?? ''];
-                } else {
-                    self::$http_error = ['http_error' => 500, 'reason' => 'Failed on Caddy level and could not retrieve the error message'];
-                }
+            #Check if there was an internal redirect to a custom error page.
+            #If there was no Caddy error, then the value of the variable will be `{http.error.status_code}`. Otherwise - it will be a numeric HTTP code.
+            if (!empty($_SERVER['CADDY_HTTP_ERROR']) && \is_numeric($_SERVER['CADDY_HTTP_ERROR'])) {
+                self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR'], 'reason' => $_SERVER['CADDY_HTTP_ERROR_MSG'] ?? ''];
             }
             #Suppress inspection, since we only need headers to be sent
             /** @noinspection UnusedFunctionResultInspection */
@@ -122,12 +119,12 @@ class HomePage
                 try {
                     #Connect to DB
                     Config::dbConnect();
-                    #Show an error page if DB is down
-                    if (!Config::$dbup) {
-                        self::$http_error = ['http_error' => 503, 'reason' => 'Failed to connect to database'];
-                    } elseif (Config::$db_update) {
+                    if (Config::$db_update) {
                         #Show an error page if maintenance is running
                         self::$http_error = ['http_error' => 503, 'reason' => 'Site is under maintenance and temporary unavailable'];
+                    } elseif (!Config::$dbup) {
+                        #Show an error page if DB is down
+                        self::$http_error = ['http_error' => 503, 'reason' => 'Failed to connect to database'];
                     }
                     #Get user agent details
                     self::$user_agent = Security::getUA();

@@ -3,7 +3,7 @@
  */
 
 /* Used in a console, so need some output. Used in dev only, so Node.js modules are fine. Paths are predetermined in this file and are technically static. */
-/* eslint-disable no-console, import/no-nodejs-modules, security/detect-non-literal-fs-filename */
+/* eslint-disable no-console, import/no-nodejs-modules */
 
 /* global process */
 

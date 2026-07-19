@@ -1,7 +1,7 @@
 /**
  * @file Customization of the native textarea elements.
  */
-import { loadTinyMCE } from '../Common/TinyMCE.mts';
+import { TinyMCE } from '../Common/TinyMCE.mts';
 
 /**
  * Customization of the native textarea elements.
@@ -32,7 +32,7 @@ export class Textarea {
       this.countInTextarea(textarea);
     }
     if (textarea.classList.contains('tinymce') && textarea.id) {
-      void loadTinyMCE(textarea.id);
+      void TinyMCE.load(textarea.id);
     }
   }
 

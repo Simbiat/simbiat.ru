@@ -2,15 +2,17 @@
     <div class="header_text">Simbiat</div>
     <div id="logo_nav">
         {{ include('CustomElements/NavShow.twig', with_context = false) }}
-        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="logo" id="logo_icon" class="cursor_pointer" data-tooltip="Simbiat Software" src="/assets/images/logo.svg">
+        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="logo" id="logo_icon" class="cursor_pointer" data-tooltip="Simbiat Software" src="/assets/images/logo.svg" width="397" height="397">
     </div>
     <div class="header_text">Software</div>
 </div>
 <div id="h1_div">
-    <h1 id="h1_title">{% if cache_reset %}
-        <a href="{{ cache_reset }}" target="_self" data-tooltip="Click to attempt to reset page's cache" rel="noopener noreferrer">
-            <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" src="/assets/images/refresh.svg" alt="Reset cache">
-            {% endif %}{{ h1|default(title)|default(site_name) }}{% if cache_reset %}
-        </a>{% endif %}
+    <h1 id="h1_title">
+        {% if cache_reset %}
+            <a href="{{ cache_reset }}" target="_self" data-tooltip="Click to attempt to reset page's cache">
+                <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" src="/assets/images/refresh.svg" alt="Reset cache" width="24" height="24">
+            </a>
+        {% endif %}
+        {{ h1|default(title)|default(site_name) }}
     </h1>
 </div>

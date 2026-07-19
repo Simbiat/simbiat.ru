@@ -31,6 +31,8 @@ metatags.twig (MS Tile and theme-color)
     --color_warning: oklch(79.9% 0.143 86.206deg);
     /* Color for disabled elements */
     --color_disabled: oklch(60% 0 89.876deg);
+    /* Color for logo text */
+    --color_logo: oklch(55% 0.067 218deg);
     /* Gold color */
     --color_gold: oklch(88.7% 0.182 95.33deg);
     /* Toxic green */
@@ -61,6 +63,8 @@ metatags.twig (MS Tile and theme-color)
     --color_dialog_backdrop: oklch(20% 0.022 296.868deg / 75%);
 
     --gradient_password_very_strong: linear-gradient(to bottom, oklch(81.2% 0.046 85.847deg) 22%, oklch(44% 0.057 80.386deg) 24%, oklch(81.2% 0.046 85.847deg) 26%, oklch(81.2% 0.046 85.847deg) 27%, oklch(94.5% 0.076 91.816deg) 40%, oklch(71.3% 0.128 81.095deg) 78%);
+
+    --tooltip_decoration: underline dotted 0.2rem;
 
     /* Borders styling */
     --border_dark: oklch(35% 0.067 218deg);

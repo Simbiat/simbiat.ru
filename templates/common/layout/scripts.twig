@@ -1,7 +1,7 @@
-<!-- Main JavaScript file -->
-<script src="/assets/app.{{ js_version }}.js" crossorigin="anonymous"></script>
+{# Main JavaScript file #}
+<script src="/assets/app.{{ js_version }}.js" crossorigin="anonymous" defer></script>
 
-<!-- Google rich cards -->
+{# Google rich cards #}
 <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -13,10 +13,11 @@
             "https://facebook.com/simbiat19",
             "https://twitter.com/simbiat199",
             "https://www.linkedin.com/in/simbiat19/",
-            "https://www.youtube.com/@simbiat"
+            "https://www.youtube.com/@simbiat",
+            "https://www.reddit.com/r/simbiat/"
         ]
     }
 </script>
 {% if gamemaker_js|default(null) %}
-    <script type="text/javascript" src="{{ gamemaker_js }}"></script>
+    <script src="{{ gamemaker_js }}"></script>
 {% endif %}

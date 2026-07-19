@@ -131,6 +131,8 @@ export class GalleryOverlay extends HTMLElement {
     if (this.gallery_loaded_image) {
       if (this.gallery_dimensions) {
         this.gallery_dimensions.textContent = `${this.gallery_loaded_image.naturalWidth}x${this.gallery_loaded_image.naturalHeight}px`;
+        this.gallery_loaded_image.width = this.gallery_loaded_image.naturalWidth;
+        this.gallery_loaded_image.height = this.gallery_loaded_image.naturalHeight;
       }
       if (this.gallery_size) {
         const performance_entry = performance.getEntriesByName(this.gallery_loaded_image.src)[0];

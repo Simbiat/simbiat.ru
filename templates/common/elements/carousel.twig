@@ -5,8 +5,8 @@
             {% if image.href %}
                 <li>
                     <figure>
-                        <a class="gallery_zoom no_new_tab_icon" href="{{ image.href }}" target="_blank" rel="noopener noreferrer">
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" src="{% if image.thumb %}{{ image.thumb }}{% else %}{{ image.href }}{% endif %}" alt="{% if image.alt %}{{ image.alt }}{% else %}{{ basename(image.href) }}{% endif %}">
+                        <a class="gallery_zoom no_new_tab_icon" href="{{ image.href }}" target="_blank">
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" src="{% if image.thumb %}{{ image.thumb }}{% else %}{{ image.href }}{% endif %}" alt="{% if image.alt %}{{ image.alt }}{% else %}{{ basename(image.href) }}{% endif %}" width="{{ image.width|default('') }}" height="{{ image.height|default('') }}">
                             <div>{{ loop.index }}/{{ images|length }}</div>
                         </a>
                         <figcaption>{% if image.caption %}{{ sanitize(image.caption) }}{% else %}{% if image.alt %}{{ image.alt }}{% else %}{{ basename(image.href) }}{% endif %}{% endif %}</figcaption>

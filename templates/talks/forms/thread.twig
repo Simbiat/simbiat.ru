@@ -1,4 +1,4 @@
-<form id="thread_form" name="thread_form" autocomplete="off" class="middle">
+<form id="thread_form" name="thread_form" autocomplete="off" class="middle" method="post">
     <input type="hidden" name="verb" value="{% if thread_edit %}edit{% else %}add{% endif %}" required>
     {% if thread_edit %}
         <input type="hidden" name="thread_data[thread_id]" value="{{ id }}" required>
@@ -8,7 +8,7 @@
     {% endif %}
     {% if contact_form %}
         {% if session_data.user_id == 1 %}
-            <p class="warning">If form submission without email succeeds, be sure to save provided URL to be able to view and update the ticket in future!</p>
+            <p class="warning">If form submission without email succeeds, be sure to save the provided URL to be able to view and update the ticket in the future!</p>
             <div class="float_label">
                 <input type="email" spellcheck="false" aria-required="false" name="thread_data[contact_form_email]" id="contact_form_email" placeholder="Email" autocomplete="email" inputmode="email" minlength="1" maxlength="254" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`\{\|\}~\-]+@[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?)*$">
                 <label for="contact_form_email" data-tooltip="Provide email in this field if you want to be notified about updates to it.">Email</label>
@@ -23,20 +23,35 @@
     {% if type == 'Support' or (not thread_edit and 'post_private' in session_data.permissions) %}
         <span class="float_label">
             <input id="thread_data_private" class="thread_private" name="thread_data[private]" type="checkbox"{% if type == 'Support' %} checked disabled{% endif %}>
-            <label for="thread_data_private" data-tooltip="{% if type == 'Support' %}Threads created by this form can only be viewed by people with special permission or using appropriate URL.{% else %}Public threads can be viewed by anyone. Private ones can be viewed only by creator and people with special permission. Click to change.{% endif %}"></label>
+            <label for="thread_data_private" data-tooltip="{% if type == 'Support' %}Threads created by this form can only be viewed by people with special permission or using appropriate URL.{% else %}Public threads can be viewed by anyone. Private ones can be viewed only by creator and people with special permission. Click to change.{% endif %}">
+                <span class="checkbox_checked_icon" aria-hidden="true">🚷</span>
+                <span class="checkbox_checked">Private</span>
+                <span class="checkbox_not_checked_icon" aria-hidden="true">🚶</span>
+                <span class="checkbox_not_checked">Public</span>
+            </label>
         </span>
     {% endif %}
     {% if not contact_form %}
         {% if not thread_edit and 'close_own_threads' in session_data.permissions %}
             <span class="float_label">
                 <input id="thread_data_closed" class="thread_closed" name="thread_data[closed]" type="checkbox">
-                <label for="thread_data_closed" data-tooltip="Open threads allow posting in them. Closed ones do not. Click to change."></label>
+                <label for="thread_data_closed" data-tooltip="Open threads allow posting in them. Closed ones do not. Click to change.">
+                    <span class="checkbox_checked_icon" aria-hidden="true">🔒</span>
+                    <span class="checkbox_checked">Closed</span>
+                    <span class="checkbox_not_checked_icon" aria-hidden="true">🔓</span>
+                    <span class="checkbox_not_checked">Open</span>
+                </label>
             </span>
         {% endif %}
         {% if not thread_edit and 'can_pin' in session_data.permissions %}
             <span class="float_label">
                 <input id="thread_data_pin" class="thread_pin" name="thread_data[pinned]" type="checkbox"{% if thread_edit and pinned %} checked{% endif %}>
-                <label for="thread_data_pin" data-tooltip="Pinned threads will appear at the top of the threads' list in respective section. Click to change."></label>
+                <label for="thread_data_pin" data-tooltip="Pinned threads will appear at the top of the threads' list in respective section. Click to change.">
+                    <span class="checkbox_checked_icon" aria-hidden="true">📌</span>
+                    <span class="checkbox_checked">Pinned</span>
+                    <span class="checkbox_not_checked_icon" aria-hidden="true">·</span>
+                    <span class="checkbox_not_checked">Not pinned</span>
+                </label>
             </span>
         {% endif %}
     {% endif %}
@@ -53,8 +68,13 @@
         {{ include('common/elements/imageupload.twig', {'form_name': 'thread_form', 'placeholder': 'Custom banner', 'input_name': 'thread_data[og_image]', 'preview_classes': 'middle', 'mime': 'image/jpeg, image/png, image/webp', 'required': false, 'image_url': thread_edit ? og_image : null, 'tooltip': 'Optional image to be shown as a banner and on social media, when you share the link. If not set no banner will be shown on page, and social media will show a general one. JPEG, PNG and WEBP files are accepted. Resolution ratio needs to be 1.9:1 with minimum being 1200x630 pixels.'}, with_context = false) }}
         {% if thread_edit %}
             <div class="float_label">
-                <input id="cur_thread_clear_icon" name="thread_data[clear_og_image]" type="checkbox">
-                <label for="cur_thread_clear_icon" data-tooltip="If checked will remove custom banner for the {% if type == 'Knowledgebase' %}article{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}, replacing it with the default one. Physical file will not be removed on update, it will only be unlinked from the {% if type == 'Knowledgebase' %}article{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}. Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">Remove banner</label>
+                <input id="cur_thread_clear_icon" type="checkbox" name="thread_data[clear_og_image]">
+                <label for="cur_thread_clear_icon" data-tooltip="If checked will remove custom banner for the {% if type == 'Knowledgebase' %}article{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}, replacing it with the default one. Physical file will not be removed on update, it will only be unlinked from the {% if type == 'Knowledgebase' %}article{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}. Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">
+                    <span class="checkbox_checked_icon" aria-hidden="true"></span>
+                    <span class="checkbox_checked">Remove banner</span>
+                    <span class="checkbox_not_checked_icon" aria-hidden="true"></span>
+                    <span class="checkbox_not_checked">Remove banner</span>
+                </label>
             </div>
         {% endif %}
         {% if not thread_edit and 'post_scheduled' in session_data.permissions %}

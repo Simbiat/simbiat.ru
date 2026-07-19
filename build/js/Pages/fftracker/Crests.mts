@@ -91,7 +91,7 @@ export class Crests {
          * @param response - Response from API endpoint.
          */
         onSuccess: (response) => {
-          void new Snackbar(`Crest merged successfully. Click <a href="${response.location}" rel="noopener noreferrer" download>here</a> to download.`, 'success', 0);
+          void new Snackbar(`Crest merged successfully. Click <a href="${response.location}" download target="_blank">here</a> to download.`, 'success', 0);
         },
       });
     }

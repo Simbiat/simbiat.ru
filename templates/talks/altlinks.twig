@@ -3,8 +3,8 @@
     <div class="alt_source middle">
         {% for link in external_links_list %}
             {% if link.url %}
-                <a href="{{ link.url }}" target="_blank" class="no_new_tab_icon no_outline no_decor" rel="noopener noreferrer">
-                    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ link.type }}" data-tooltip="{{ link.type }}" src="{{ link.icon }}" class="cursor_pointer no_margin margin_bottom_02rem link_icon{% if link.type == 'Steam' %} inverted_100{% endif %}">
+                <a href="{{ link.url }}" target="_blank" class="no_new_tab_icon no_outline no_decor">
+                    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ link.type }}" data-tooltip="{{ link.type }}" src="{{ link.icon }}" class="cursor_pointer no_margin margin_bottom_02rem link_icon{% if link.type == 'Steam' %} inverted_100{% endif %}" width="20" height="20">
                 </a>
             {% endif %}
         {% endfor %}

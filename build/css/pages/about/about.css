@@ -20,8 +20,7 @@
 .about_banner {
     border-color: var(--border_color_outset);
     border-radius: var(--border_radius);
-    /* Using `important` because in the past some browsers were applying styling to the banner if it was visited link */
-    /* noinspection Stylelint */
+    /* stylelint-disable-next-line declaration-no-important -- Using `important` because in the past some browsers were applying styling to the banner if it was visited link */
     border-style: solid !important;
     border-width: var(--border_width);
     display: block;

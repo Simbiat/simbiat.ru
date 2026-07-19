@@ -1,4 +1,5 @@
 {% if 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
+    {# This is link to an element from different template. #}
     <!--suppress HtmlUnknownAnchorTarget -->
     <a class="tab_name" href="#post_form">New {% if type == 'Forum' %}post{% else %}comment{% endif %}</a>
 {% endif %}
@@ -11,11 +12,11 @@
 {% if 'edit_others_threads' in session_data.permissions and 'mark_private' in session_data.permissions %}
     <a class="tab_name warning" id="tab_name_private" href="#tab_name_private">Mark {% if private %}public{% else %}private{% endif %}</a>
     <div class="tab_content" id="tab_content_private">
-        <form id="thread_private_form" name="thread_private_form" autocomplete="off" class="middle">
+        <form id="thread_private_form" name="thread_private_form" autocomplete="off" class="middle" method="post">
             {% if private %}
                 <p>Marking the thread public will make all posts inside it available for public view.</p>
             {% else %}
-                <p>Marking the thread private will hide it from almost everyone. Only the owner and users with <var>view_private</var> will be able to see it. Note, that while the thread will be removed from sitemaps and thus no longer advertised to search engines, this action has no control on <i>when</i> it will be removed from those engines.</p>
+                <p>Marking the thread private will hide it from almost everyone. Only the owner and users with <var>view_private</var> will be able to see it. Note that while the thread will be removed from sitemaps and thus no longer advertised to search engines, this action has no control on <i>when</i> it will be removed from those engines.</p>
             {% endif %}
             {% if author != session_data.user_id and author not in system_users %}
                 {{ include('common/elements/change_reason.twig', {'form_name': 'thread_private_form', 'array_name': 'thread_data'}, with_context = false) }}
@@ -31,9 +32,9 @@
 {% if 'edit_others_threads' in session_data.permissions and 'can_pin' in session_data.permissions %}
     <a class="tab_name warning" id="tab_name_pin" href="#tab_name_pin">{% if pinned %}Unpin{% else %}Pin{% endif %}</a>
     <div class="tab_content" id="tab_content_pin">
-        <form id="thread_pin_form" name="thread_pin_form" autocomplete="off" class="middle">
+        <form id="thread_pin_form" name="thread_pin_form" autocomplete="off" class="middle" method="post">
             {% if pinned %}
-                <p>Unpinning this thread will result in it being sorted normally, and potentially reducing its visibility.</p>
+                <p>Unpinning this thread will result in it being sorted normally and potentially reducing its visibility.</p>
             {% else %}
                 <p>Pinning this thread will result in it being listed as one of the first ones, thus increasing its visibility.</p>
             {% endif %}
@@ -51,10 +52,10 @@
 {% if 'edit_others_threads' in session_data.permissions and 'move_threads' in session_data.permissions %}
     <a class="tab_name warning" id="tab_name_move" href="#tab_name_move">Move</a>
     <div class="tab_content" id="tab_content_move">
-        <form id="thread_move_form" name="thread_move_form" autocomplete="off" class="middle">
-            <p>Input ID of parent section to which you want to move this thread.</p>
-            <p class="warning">Note, that moving this thread
-                <b>can</b> affect content availability, if new parent public and/or close status differ.</p>
+        <form id="thread_move_form" name="thread_move_form" autocomplete="off" class="middle" method="post">
+            <p>Input ID of the parent section to which you want to move this thread.</p>
+            <p class="warning">Note that moving this thread
+                <b>can</b> affect content availability if new parent public and/or close status differ.</p>
             <div class="float_label">
                 <input type="number" inputmode="decimal" min="1" value="{{ parent_id }}" step="1" aria-required="true" required name="thread_data[parent_id]" id="cur_thread_parent" placeholder="Parent ID">
                 <label for="cur_thread_parent">Parent ID</label>
@@ -73,9 +74,9 @@
     or (not owned and 'close_others_threads' in session_data.permissions))) %}
     <a class="tab_name danger" id="tab_name_close" href="#tab_name_close">{% if closed %}Open{% else %}Close{% endif %}</a>
     <div class="tab_content" id="tab_content_close">
-        <form id="thread_closed_form" name="thread_closed_form" autocomplete="off" class="middle">
+        <form id="thread_closed_form" name="thread_closed_form" autocomplete="off" class="middle" method="post">
             {% if closed %}
-                <p>Opening this thread will allow others to post in it, if they have appropriate permission.</p>
+                <p>Opening this thread will allow others to post in it if they have appropriate permission.</p>
             {% else %}
                 <p>Closing this thread will prevent others from posting in it, unless they have
                     <var>post_in_closed</var> permission.</p>
@@ -97,12 +98,12 @@
         {% if posts.entities|length > 0 %}
             <p>This thread has posts in it. Removal is not possible.</p>
         {% else %}
-            <form id="thread_delete_form" name="thread_delete_form" autocomplete="off" class="middle">
+            <form id="thread_delete_form" name="thread_delete_form" autocomplete="off" class="middle" method="post">
                 <p>Pressing the below button will delete the current thread completely.
-                    <b class="warning">It will not be possible to restore it</b>, so do it after a good and long thinking.
+                    <b class="warning">It will not be possible to restore it</b>, so do it after good and long thinking.
                 </p>
-                <p>If thread has a custom banner it will not be removed along with the thread. Instead, it will be removed during routine check for orphaned files, if the banner file is not linked to anything else.</p>
-                <p>If deletion is successful you will be redirected to respective parent section.</p>
+                <p>If the thread has a custom banner, it will not be removed along with the thread. Instead, it will be removed during the routine check for orphaned files if the banner file is not linked to anything else.</p>
+                <p>If deletion is successful, you will be redirected to the respective parent section.</p>
                 {% if author != session_data.user_id and author not in system_users %}
                     {{ include('common/elements/change_reason.twig', {'form_name': 'thread_delete_form', 'array_name': 'thread_data'}, with_context = false) }}
                 {% endif %}

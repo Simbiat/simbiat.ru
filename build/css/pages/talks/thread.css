@@ -99,60 +99,6 @@
     }
 }
 
-.thread_private + label,
-.thread_closed + label,
-.thread_pin + label {
-    text-decoration-color: var(--color_interactive);
-}
-
-.thread_pin:not(:checked) + label::after {
-    content: 'Not pinned';
-}
-
-.thread_pin:checked + label::after {
-    content: 'Pinned';
-}
-
-input[type='checkbox' i].thread_pin:checked + label::before {
-    content: '📌';
-}
-
-input[type='checkbox' i].thread_pin:not(:checked) + label::before {
-    content: '·';
-}
-
-.thread_private:not(:checked) + label::after {
-    content: 'Public';
-}
-
-.thread_private:checked + label::after {
-    content: 'Private';
-}
-
-input[type='checkbox' i].thread_private:not(:checked) + label::before {
-    content: '🚶';
-}
-
-input[type='checkbox' i].thread_private:checked + label::before {
-    content: '🚷';
-}
-
-.thread_closed:not(:checked) + label::after {
-    content: 'Open';
-}
-
-.thread_closed:checked + label::after {
-    content: 'Closed';
-}
-
-input[type='checkbox' i].thread_closed:not(:checked) + label::before {
-    content: '🔓';
-}
-
-input[type='checkbox' i].thread_closed:checked + label::before {
-    content: '🔒';
-}
-
 form#thread_form .link_icon {
     margin-block-end: 0.1rem;
 }

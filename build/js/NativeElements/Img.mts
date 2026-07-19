@@ -13,7 +13,7 @@ export class Image {
    */
   public static init(img: HTMLImageElement): void {
     //Add alt, if empty
-    if (empty(img.alt)) {
+    if (!img.hasAttribute('alt')) {
       img.alt = basename(String(img.src));
     }
     if (empty(img.loading)) {

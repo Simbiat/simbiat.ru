@@ -1,9 +1,12 @@
 {% apply inline_css(source('@styles/email.css')) %}
+    <!doctype html>
     <html lang="en" style="height: 100% !important;">
         <head>
+            <meta charset="UTF-8">
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>{{ subject }}</title>
+            <meta name="description" content="{{ og_desc|default('Official Simbiat Software website') }}">
         </head>
         <body style="height: 100% !important;">
             <div id="content" style="height: 100% !important;">
@@ -11,7 +14,7 @@
                     <div id="header_mail">
                         <div class="header_text">Simbiat</div>
                         <div id="logo_nav">
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="logo" id="logo_icon" class="cursor_pointer" data-tooltip="Simbiat Software" src="{{ email.image('@images/favicons/favicon-32x32.png') }}">
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="logo" id="logo_icon" class="cursor_pointer" data-tooltip="Simbiat Software" src="{{ email.image('@images/favicons/favicon-32x32.png') }}" width="32" height="32">
                         </div>
                         <div class="header_text">Software</div>
                     </div>
@@ -28,14 +31,17 @@
                 </div>
                 <div id="footer">
                     <div>
-                        <a href="{{ domain }}/about/contacts" rel="noopener noreferrer">Contact us</a>
+                        <a href="{{ domain }}/about/contacts">Contact us</a>
                         {% if unsubscribe_all %} or
-                            <a href="{{ domain }}/uc/unsubscribe?unsubscribe_all={{ unsubscribe_all|url_encode }}" rel="noopener noreferrer">unsubscribe from all emails</a>
+                            <a href="{{ domain }}/uc/unsubscribe?unsubscribe_all={{ unsubscribe_all|url_encode }}">unsubscribe from all emails</a>
                         {% endif %}
                     </div>
                     <div class="xx_small">
-                        Email generated at {{ timeTag(created, 'Y-m-d H:i:s') }} UTC and sent at {{ timeTag(sent, 'Y-m-d H:i:s') }} UTC{% if tracker %}
-                        <img crossorigin="anonymous" loading="lazy" decoding="async" class="read_status" src="{{ domain }}/api/uc/notifications?uuid={{ tracker }}" alt="Read status" title="Read status">{% endif %}
+                        Email generated at {{ timeTag(created, 'Y-m-d H:i:s') }} UTC and sent at {{ timeTag(sent, 'Y-m-d H:i:s') }} UTC
+                        {% if tracker %}
+                            <!--suppress HtmlUnknownTarget -- This is a dynamic PHP path -->
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" class="read_status" src="{{ domain }}/api/uc/notifications?uuid={{ tracker }}" alt="Read status" title="Read status" width="32" height="32">
+                        {% endif %}
                     </div>
                 </div>
             </div>

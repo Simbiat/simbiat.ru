@@ -52,7 +52,6 @@ class Sanitization
         } else {
             $string = $sanitizer->sanitize($string);
         }
-        #TODO add rel="noopener noreferrer" to all external links, that do not have it
         #TODO add loading="lazy" decoding="async" to all images
         return $string;
     }

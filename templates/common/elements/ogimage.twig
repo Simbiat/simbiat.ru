@@ -1,4 +1,5 @@
 <og-image>
-    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Banner" src="{{ og_image }}" id="og_image" class="gallery_zoom">
+    {# This is essentially a hero image, so needs to be loaded and rendered with high priority. #}
+    <img crossorigin="anonymous" loading="lazy" decoding="async" fetchpriority="high" alt="Banner" src="{{ og_image }}" id="og_image" class="gallery_zoom" width="1200" height="630">
     <div class="hide_banner">Hide banner</div>
 </og-image>

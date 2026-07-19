@@ -56,18 +56,23 @@ class Sessions extends Page
         #Expand user_agent
         foreach (['sessions', 'cookies', 'logs'] as $type) {
             foreach ($output_array[$type] as $key => $item) {
-                if (!\array_key_exists($item['ip'], $ips)) {
-                    try {
-                        $ips[$item['ip']] = [];
-                        $geoip = new Reader(Config::$geoip.'GeoLite2-City.mmdb')->city($item['ip']);
-                    } catch (\Throwable) {
-                        #Do nothing, not critical
-                    } finally {
-                        $ips[$item['ip']] = ['country' => $geoip->country->name ?? null, 'city' => $geoip->city->name ?? null];
+                if (!empty($item['ip'])) {
+                    if (!\array_key_exists($item['ip'], $ips)) {
+                        try {
+                            $ips[$item['ip']] = [];
+                            $geoip = new Reader(Config::$geoip.'GeoLite2-City.mmdb')->city($item['ip']);
+                        } catch (\Throwable) {
+                            #Do nothing, not critical
+                        } finally {
+                            $ips[$item['ip']] = ['country' => $geoip->country->name ?? null, 'city' => $geoip->city->name ?? null];
+                        }
                     }
+                    $output_array[$type][$key]['country'] = $ips[$item['ip']]['country'];
+                    $output_array[$type][$key]['city'] = $ips[$item['ip']]['city'];
+                } else {
+                    $output_array[$type][$key]['country'] = '';
+                    $output_array[$type][$key]['city'] = '';
                 }
-                $output_array[$type][$key]['country'] = $ips[$item['ip']]['country'];
-                $output_array[$type][$key]['city'] = $ips[$item['ip']]['city'];
                 Config::$device_detector->setUserAgent((string)$item['user_agent']);
                 Config::$device_detector->setClientHints();
                 Config::$device_detector->parse();

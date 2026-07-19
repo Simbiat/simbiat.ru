@@ -80,14 +80,12 @@ since they show em as most consistent */
         & img {
             display: inline-block;
             inset-inline-start: 1rem;
-            /* Need to override cases, when width results in relative position */
-            /* noinspection Stylelint */
+            /* stylelint-disable-next-line declaration-no-important -- Need to override cases, when width results in relative position */
             position: absolute !important;
         }
 
         & .header_text {
-            /* Need to override cases, when width results in relative displaying the text */
-            /* noinspection Stylelint */
+            /* stylelint-disable-next-line declaration-no-important -- Need to override cases, when width results in relative position */
             display: none !important;
         }
     }
@@ -157,19 +155,19 @@ since they show em as most consistent */
     *,
     ::before,
     ::after {
-        /* noinspection Stylelint */
+        /* stylelint-disable-next-line declaration-no-important -- Need to override cases, when width results in relative position */
         animation-delay: -1ms !important; /* 1 */
-        /* noinspection Stylelint */
+        /* stylelint-disable-next-line declaration-no-important -- Need to override cases, when width results in relative position */
         animation-duration: 1ms !important; /* 1 */
-        /* noinspection Stylelint */
+        /* stylelint-disable-next-line declaration-no-important -- Need to override cases, when width results in relative position */
         animation-iteration-count: 1 !important; /* 1 */
-        /* noinspection Stylelint */
+        /* stylelint-disable-next-line declaration-no-important -- Need to override cases, when width results in relative position */
         background-attachment: initial !important; /* 2 */
-        /* noinspection Stylelint */
+        /* stylelint-disable-next-line declaration-no-important -- Need to override cases, when width results in relative position */
         scroll-behavior: auto !important; /* 3 */
-        /* noinspection Stylelint */
+        /* stylelint-disable-next-line declaration-no-important -- Need to override cases, when width results in relative position */
         transition-delay: 0s !important; /* 4 */
-        /* noinspection Stylelint */
+        /* stylelint-disable-next-line declaration-no-important -- Need to override cases, when width results in relative position */
         transition-duration: 0s !important; /* 4 */
     }
 }

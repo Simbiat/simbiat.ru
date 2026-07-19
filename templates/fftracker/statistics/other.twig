@@ -1,11 +1,15 @@
 <p>All data below is for {{ timeTag(ffstats.data.time, 'd/m/Y') }}.</p>
 <table>
-    <caption><h2>Use of communities statistics</h2></caption>
-    <thead><tr>
-        <th>Group type</th>
-        <th>Community</th>
-        <th>Count</th>
-    </tr></thead>
+    <caption>
+        <h2>Use of the communities feature statistics</h2>
+    </caption>
+    <thead>
+        <tr>
+            <th>Group type</th>
+            <th>Community</th>
+            <th>Count</th>
+        </tr>
+    </thead>
     {% for datapoint in ffstats.data.other.communities %}
         <tr>
             <td>{{ datapoint.type }}</td>
@@ -15,11 +19,15 @@
     {% endfor %}
 </table>
 <table>
-    <caption><h2>Entities status</h2></caption>
-    <thead><tr>
-        <th>Entity</th>
-        <th>Count</th>
-    </tr></thead>
+    <caption>
+        <h2>Entities' status</h2>
+    </caption>
+    <thead>
+        <tr>
+            <th>Entity</th>
+            <th>Count</th>
+        </tr>
+    </thead>
     {% for datapoint in ffstats.data.other.entities %}
         <tr>
             <td>{{ datapoint.value }}</td>
@@ -28,15 +36,17 @@
     {% endfor %}
 </table>
 <table>
-    <caption><h2>Entities updated in last 30 days</h2></caption>
+    <caption>
+        <h2>Entities updated in the last 30 days</h2>
+    </caption>
     <thead>
-    <tr>
-        <th>Date</th>
-        <th>Characters</th>
-        <th>Free Companies</th>
-        <th>PvP Teams</th>
-        <th>Linkshells</th>
-    </tr>
+        <tr>
+            <th>Date</th>
+            <th>Characters</th>
+            <th>Free Companies</th>
+            <th>PvP Teams</th>
+            <th>Linkshells</th>
+        </tr>
     </thead>
     {% for datekey, datapoint in ffstats.data.updates_stats %}
         <tr>

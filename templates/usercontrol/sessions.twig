@@ -16,18 +16,24 @@
                 <tr>
                     <td>{% if cookie.cookie_id and session_data.cookie_id and cookie.cookie_id == session_data.cookie_id %}✅ Current{% else %}{{ timeTag(cookie.time, 'd/m/Y H:i') }}{% endif %}</td>
                     <td>{{ cookie.ip }}</td>
-                    <td>{% if cookie.country_icon %}
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="{{ cookie.country }}" src="{{ cookie.country_icon }}">{% endif %}{{ cookie.city }}
+                    <td>
+                        {% if cookie.country_icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="{{ cookie.country }}" src="{{ cookie.country_icon }}" width="20" height="20">
+                        {% endif %}{{ cookie.city }}
                     </td>
-                    <td>{% if cookie.os.icon %}
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ cookie.os.name }}" src="{{ cookie.os.icon }}" class="link_icon">{% endif %}{{ cookie.os.name }} {{ cookie.os.version }}
+                    <td>
+                        {% if cookie.os.icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ cookie.os.name }}" src="{{ cookie.os.icon }}" class="link_icon" width="20" height="20">
+                        {% endif %}{{ cookie.os.name }} {{ cookie.os.version }}
                     </td>
-                    <td>{% if cookie.client.icon %}
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ cookie.client.name }}" src="{{ cookie.client.icon }}" class="link_icon">{% endif %}{{ cookie.client.name }} {{ cookie.client.version }}
+                    <td>
+                        {% if cookie.client.icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ cookie.client.name }}" src="{{ cookie.client.icon }}" class="link_icon" width="20" height="20">
+                        {% endif %}{{ cookie.client.name }} {{ cookie.client.version }}
                     </td>
                     <td class="middle">
                         <button type="button" class="cookie_deletion" data-cookie="{{ cookie.cookie_id }}" {% if cookie.cookie_id and session_data.cookie_id and cookie.cookie_id == session_data.cookie_id %} disabled{% endif %} data-alt-attribute="Removing cookie...">
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{% if cookie.cookie_id and session_data.cookie_id and cookie.cookie_id == session_data.cookie_id %}Logout to remove{% else %}Delete cookie{% endif %}" src="/assets/images/close.svg">
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{% if cookie.cookie_id and session_data.cookie_id and cookie.cookie_id == session_data.cookie_id %}Logout to remove{% else %}Delete cookie{% endif %}" src="/assets/images/close.svg" width="33" height="33">
                         </button>
                     </td>
                 </tr>
@@ -35,7 +41,8 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="6">Normally removed after 1 month of inactivity.
+                <td colspan="6">
+                    Normally removed after 1 month of inactivity.
                     {% if cookies|length  > 1 %}
                         <button type="button" value="Delete all" id="delete_cookies">
                             Delete all
@@ -66,18 +73,24 @@
                 <tr>
                     <td>{% if session.session_id and current_session and session.session_id == current_session %}✅ Current{% else %}{{ timeTag(session.time, 'd/m/Y H:i') }}{% endif %}</td>
                     <td>{{ session.ip }}</td>
-                    <td>{% if session.country_icon %}
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="{{ session.country }}" src="{{ session.country_icon }}">{% endif %}{{ session.city }}
+                    <td>
+                        {% if session.country_icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="{{ session.country }}" src="{{ session.country_icon }}" width="20" height="20">
+                        {% endif %}{{ session.city }}
                     </td>
-                    <td>{% if session.os.icon %}
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ session.os.name }}" src="{{ session.os.icon }}" class="link_icon">{% endif %}{{ session.os.name }} {{ session.os.version }}
+                    <td>
+                        {% if session.os.icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ session.os.name }}" src="{{ session.os.icon }}" class="link_icon" width="20" height="20">
+                        {% endif %}{{ session.os.name }} {{ session.os.version }}
                     </td>
-                    <td>{% if session.client.icon %}
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ session.client.name }}" src="{{ session.client.icon }}" class="link_icon">{% endif %}{{ session.client.name }} {{ session.client.version }}
+                    <td>
+                        {% if session.client.icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ session.client.name }}" src="{{ session.client.icon }}" class="link_icon" width="20" height="20">
+                        {% endif %}{{ session.client.name }} {{ session.client.version }}
                     </td>
                     <td class="middle">
                         <button type="button" class="session_deletion" data-session="{{ session.session_id }}" {% if session.session_id and current_session and session.session_id == current_session %}disabled{% endif %} data-alt-attribute="Removing session...">
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{% if session.session_id and current_session and session.session_id == current_session %}Logout to remove{% else %}Delete session{% endif %}" src="/assets/images/close.svg">
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{% if session.session_id and current_session and session.session_id == current_session %}Logout to remove{% else %}Delete session{% endif %}" src="/assets/images/close.svg" width="33" height="33">
                         </button>
                     </td>
                 </tr>
@@ -118,14 +131,23 @@
                     <td>{{ log.action }}</td>
                     <td>{{ timeTag(log.time, 'd/m/Y H:i') }}</td>
                     <td>{{ log.ip }}</td>
-                    <td>{% if log.country_icon %}
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="{{ log.country }}" src="{{ log.country_icon }}">{% endif %}{{ log.city }}
+                    <td>
+                        {% if log.country_icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="{{ log.country }}" src="{{ log.country_icon }}" width="20" height="20">
+                        {% endif %}
+                        {{ log.city }}
                     </td>
-                    <td>{% if log.os.icon %}
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ log.os.name }}" src="{{ log.os.icon }}" class="link_icon">{% endif %}{{ log.os.name }} {{ log.os.version }}
+                    <td>
+                        {% if log.os.icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="" src="{{ log.os.icon }}" class="link_icon" width="20" height="20">
+                        {% endif %}
+                        {{ log.os.name|default('') }} {{ log.os.version|default('') }}
                     </td>
-                    <td>{% if log.client.icon %}
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ log.client.name }}" src="{{ log.client.icon }}" class="link_icon">{% endif %}{{ log.client.name }} {{ log.client.version }}
+                    <td>
+                        {% if log.client.icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="" src="{{ log.client.icon }}" class="link_icon" width="20" height="20">
+                        {% endif %}
+                        {{ log.client.name|default('') }} {{ log.client.version|default('') }}
                     </td>
                 </tr>
             {% endfor %}

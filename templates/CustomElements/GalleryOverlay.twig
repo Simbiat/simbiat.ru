@@ -14,24 +14,25 @@
         <kbd>Space</kbd> - toggle zoom
         <br>
         <kbd>Esc</kbd>, <kbd>BckSpace</kbd> - exit overlay
-" src="/assets/images/tooltip.svg">
+" src="/assets/images/tooltip.svg" width="496" height="496">
     </button>
     <button type="button" id="gallery_close">
-        <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="Close gallery" data-tooltip="Close gallery" src="/assets/images/close.svg">
+        <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="Close gallery" data-tooltip="Close gallery" src="/assets/images/close.svg" width="33" height="33">
     </button>
     <div id="gallery_grid">
         <div id="gallery_name_block">
-            <a id="gallery_name_down" href="" data-tooltip="Download image" rel="noopener noreferrer" download>
-                <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="Download image" src="/assets/images/download.svg">
+            <a id="gallery_name_down" href="" data-tooltip="Download image" download>
+                <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="Download image" src="/assets/images/download.svg" width="800" height="800">
             </a>
             <span id="gallery_name">Name</span>
-            <a id="gallery_name_link" href="" target="_blank" data-tooltip="Open image in new tab" rel="noopener noreferrer">
-                <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="Open in new tab" src="/assets/images/newtab.svg">
+            <a id="gallery_name_link" class="no_new_tab_icon" href="" target="_blank" data-tooltip="Open image in new tab">
+                <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="Open in new tab" src="/assets/images/newtab.svg" width="735" height="736">
             </a>
         </div>
         <div id="gallery_image">
             <div id="gallery_prev" role="button" tabindex="0" data-tooltip="Previous image">❰</div>
-            <img crossorigin="anonymous" loading="lazy" decoding="async" id="gallery_loaded_image" alt="" src="">
+            {# Width and height get updated dynamically #}
+            <img crossorigin="anonymous" loading="lazy" decoding="async" id="gallery_loaded_image" alt="" src="" width="32" height="32">
             <div id="gallery_next" role="button" tabindex="0" data-tooltip="Next image">❱</div>
         </div>
         <div id="gallery_counter">

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 #TODO: Consider moving this to `/app/tests`
 namespace App\Service;
 
+use JetBrains\PhpStorm\FileReference;
 use JetBrains\PhpStorm\NoReturn;
 use Simbiat\http20\Common;
 use Simbiat\http20\Sharing;
@@ -20,7 +21,7 @@ class Tests
     #$data = $lodestone->getDeepDungeon(2, '', '', '')->getResult();
     
     #Function to test file upload using PUT
-    #[NoReturn] public function uploadPut(string $filepath): void
+    #[NoReturn] public function uploadPut(#[FileReference] string $filepath): void
     {
         $curl = (new Curl)::$curl_handle;
         \curl_setopt($curl, \CURLOPT_URL, \App\Service\Config::$base_url);
@@ -35,7 +36,7 @@ class Tests
     }
     
     #Function to test file upload using POST
-    public function uploadPost(string $upload_path, int $max_file_size = 300000000): void
+    public function uploadPost(#[FileReference] string $upload_path, int $max_file_size = 300000000): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $output = '
@@ -60,7 +61,7 @@ class Tests
     }
     
     #Function to test download
-    #[NoReturn] public function downloadTest(string $filepath, string $bytes = ''): void
+    #[NoReturn] public function downloadTest(#[FileReference] string $filepath, string $bytes = ''): void
     {
         if (!empty($bytes)) {
             $_SERVER['HTTP_RANGE'] = 'bytes='.$bytes;

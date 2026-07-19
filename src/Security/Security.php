@@ -284,18 +284,17 @@ class Security
         $browser = Config::$device_detector->isBrowser();
         $client = Config::$device_detector->getClient();
         #Check if a client is supported
-        if (\preg_match('/^(Internet Explorer|Opera Mini|Opera Mobile|Baidu|UC Browser|QQ Browser|KaiOS Browser)/ui', $client['name'] ?? '') === 1 ||
-            (!empty($client['version']) && (
-                    #Safari started supporting Sec-Fetch from 16.4
-                    (\preg_match('/^(Safari)/ui', $client['name'] ?? '') === 1 && \version_compare(mb_strtolower($client['version'], 'UTF-8'), '16.4', 'lt')) ||
-                    #Similar to Chrome and Edge, but full support started from 80
-                    (\preg_match('/^(Chrome)/ui', $client['name'] ?? '') === 1 && \version_compare(mb_strtolower($client['version'], 'UTF-8'), '80.0', 'lt')) ||
-                    (\preg_match('/^(Edge)/ui', $client['name'] ?? '') === 1 && \version_compare(mb_strtolower($client['version'], 'UTF-8'), '80.0', 'lt')) ||
-                    #Version 90 for Firefox
-                    (\preg_match('/^(Firefox)/ui', $client['name'] ?? '') === 1 && \version_compare(mb_strtolower($client['version'], 'UTF-8'), '90.0', 'lt')) ||
-                    #Version 67 for Opera
-                    (\preg_match('/^(Opera)/ui', $client['name'] ?? '') === 1 && \version_compare(mb_strtolower($client['version'], 'UTF-8'), '67.0', 'lt'))
-                ))
+        if (
+            \preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser)/ui', $client['name'] ?? '') === 1 ||
+            (
+                Config::$shared_with_js !== [] &&
+                \array_key_exists('teapot_browsers', Config::$shared_with_js) &&
+                \array_key_exists($client['name'] ?? '', Config::$shared_with_js['teapot_browsers']) &&
+                (
+                    empty($client['version']) ||
+                    \version_compare($client['version'], Config::$shared_with_js['teapot_browsers'][$client['name']], 'lt')
+                )
+            )
         ) {
             $unsupported = true;
         } else {

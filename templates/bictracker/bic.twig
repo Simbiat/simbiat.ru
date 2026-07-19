@@ -2,13 +2,19 @@
     <a class="tab_name active" id="tab_name_general" href="#tab_name_general">Общее</a>
     <div id="tab_content_general" class="tab_content active">
         {% if bicdetails.Ukraine %}
-            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Це Україна! Іди додому, окупанте!" src="/assets/images/flags/Ukraine.svg">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Це Україна! Іди додому, окупанте!" src="/assets/images/flags/Ukraine.svg" width="512" height="512">
         {% endif %}
         {% if bicdetails.DateOut %}
-            <p class="failure"><span class="emoji_red">❌</span>Организация закрыта {{ timeTag(bicdetails.DateOut, 'd/m/Y') }}<span class="emoji_red">❌</span></p>
+            <p class="failure">
+                <span class="emoji_red">❌</span>
+                Организация закрыта {{ timeTag(bicdetails.DateOut, 'd/m/Y') }}
+                <span class="emoji_red">❌</span>
+            </p>
         {% endif %}
         <table>
-            <caption><h2 class="no_margin">Информация для расчётов</h2></caption>
+            <caption>
+                <h2 class="no_margin">Информация для расчётов</h2>
+            </caption>
             <tbody>
                 <tr>
                     <td>Наименование:</td>
@@ -28,7 +34,9 @@
                 </tr>
                 {% if bicdetails.SWIFTs|length == 1 %}
                     <tr>
-                        <td><abbr data-tooltip="Банковский идентификационный код">БИК</abbr> системы <abbr data-tooltip="Society for Worldwide Interbank Financial Telecommunications">SWIFT</abbr>:</td>
+                        <td><abbr data-tooltip="Банковский идентификационный код">БИК</abbr> системы
+                            <abbr data-tooltip="Society for Worldwide Interbank Financial Telecommunications">SWIFT</abbr>:
+                        </td>
                         <td>{{ bicdetails.SWIFTs.0.SWBIC }}
                             {% if bicdetails.SWIFTs.0.DateIn %}
                                 с {{ timeTag(bicdetails.SWIFTs.0.DateIn, 'd/m/Y') }}
@@ -43,10 +51,14 @@
         </table>
         {% if bicdetails.SWIFTs|length > 1 %}
             <table>
-                <caption><h2 class="no_margin">SWIFT коды</h2></caption>
+                <caption>
+                    <h2 class="no_margin">SWIFT коды</h2>
+                </caption>
                 <tbody>
                     <tr>
-                        <th><abbr data-tooltip="Банковский идентификационный код">БИК</abbr> системы <abbr data-tooltip="Society for Worldwide Interbank Financial Telecommunications">SWIFT</abbr></th>
+                        <th><abbr data-tooltip="Банковский идентификационный код">БИК</abbr> системы
+                            <abbr data-tooltip="Society for Worldwide Interbank Financial Telecommunications">SWIFT</abbr>
+                        </th>
                         <th>По умолчанию</th>
                         <th>Начало действия</th>
                         <th>Конец действия</th>
@@ -75,7 +87,9 @@
             </table>
         {% endif %}
         <table>
-            <caption><h2 class="no_margin">Контакты</h2></caption>
+            <caption>
+                <h2 class="no_margin">Контакты</h2>
+            </caption>
             <tbody>
                 <tr>
                     <td>Код страны:</td>
@@ -91,12 +105,27 @@
                 </tr>
                 <tr>
                     <td>Адрес:</td>
-                    <td>{% if bicdetails.Adr %}{% if bicdetails.Ind %}{{ bicdetails.Ind }}, {% endif %}{% if bicdetails.Tnp %}{{ bicdetails.Tnp }} {% endif %}{% if bicdetails.Nnp %}{{ bicdetails.Nnp }}, {% endif %}{{ bicdetails.Adr }} <a target="_blank" rel="noopener noreferrer" href="https://yandex.ru/maps/?mode=search&amp;text={% if bicdetails.Ind %}{{ bicdetails.Ind|url_encode }}%2C%20{% endif %}{% if bicdetails.Tnp %}{{ bicdetails.Tnp|url_encode }}%20{% endif %}{% if bicdetails.Nnp %}{{ bicdetails.Nnp|url_encode }}%2C%20{% endif %}{{ bicdetails.Adr|url_encode }}"><img crossorigin="anonymous" loading="lazy" decoding="async" src="/assets/images/icons/YandexMaps.svg" class="link_icon" alt="Яндекс Карты"></a><a target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/{% if bicdetails.Ind %}{{ bicdetails.Ind|url_encode }}%2C%20{% endif %}{% if bicdetails.Tnp %}{{ bicdetails.Tnp|url_encode }}%20{% endif %}{% if bicdetails.Nnp %}{{ bicdetails.Nnp|url_encode }}%2C%20{% endif %}{{ bicdetails.Adr|url_encode }}"><img crossorigin="anonymous" loading="lazy" decoding="async" src="/assets/images/icons/GoogleMaps.svg" class="link_icon" alt="Google Maps"></a>{% else %}-{% endif %}</td>
+                    <td>{% if bicdetails.Adr %}
+                            {% if bicdetails.Ind %}{{ bicdetails.Ind }}, {% endif %}
+                            {% if bicdetails.Tnp %}{{ bicdetails.Tnp }} {% endif %}
+                            {% if bicdetails.Nnp %}{{ bicdetails.Nnp }}, {% endif %}{{ bicdetails.Adr }}
+                            <a target="_blank" href="https://yandex.ru/maps/?mode=search&amp;text={% if bicdetails.Ind %}{{ bicdetails.Ind|url_encode }}%2C%20{% endif %}{% if bicdetails.Tnp %}{{ bicdetails.Tnp|url_encode }}%20{% endif %}{% if bicdetails.Nnp %}{{ bicdetails.Nnp|url_encode }}%2C%20{% endif %}{{ bicdetails.Adr|url_encode }}">
+                                <img crossorigin="anonymous" loading="lazy" decoding="async" src="/assets/images/icons/YandexMaps.svg" class="link_icon" alt="Яндекс Карты" width="440" height="719">
+                            </a>
+                            <a target="_blank" href="https://www.google.com/maps/search/{% if bicdetails.Ind %}{{ bicdetails.Ind|url_encode }}%2C%20{% endif %}{% if bicdetails.Tnp %}{{ bicdetails.Tnp|url_encode }}%20{% endif %}{% if bicdetails.Nnp %}{{ bicdetails.Nnp|url_encode }}%2C%20{% endif %}{{ bicdetails.Adr|url_encode }}">
+                                <img crossorigin="anonymous" loading="lazy" decoding="async" src="/assets/images/icons/GoogleMaps.svg" class="link_icon" alt="Google Maps" width="5644" height="5644">
+                            </a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
                 </tr>
             </tbody>
         </table>
         <table>
-            <caption><h2 class="no_margin">Служебная информация</h2></caption>
+            <caption>
+                <h2 class="no_margin">Служебная информация</h2>
+            </caption>
             <tbody>
                 <tr>
                     <td>Участник обмена:</td>
@@ -120,7 +149,15 @@
                 </tr>
                 <tr>
                     <td>Дата включения в справочник:</td>
-                    <td>{% if bicdetails.DateIn %}{{ timeTag(bicdetails.DateIn, 'd/m/Y') }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}<img crossorigin="anonymous" loading="lazy" decoding="async" class="tooltip_footnote" alt="tooltip" src="/assets/images/tooltip.svg" data-tooltip="Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК">{% endif %}{% else %}-{% endif %}</td>
+                    <td>
+                        {% if bicdetails.DateIn %}{{ timeTag(bicdetails.DateIn, 'd/m/Y') }}
+                            {% if date(bicdetails.DateIn) == date('1996-07-10') %}
+                                <img crossorigin="anonymous" loading="lazy" decoding="async" class="tooltip_footnote" alt="tooltip" src="/assets/images/tooltip.svg" data-tooltip="Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК" width="496" height="496">
+                            {% endif %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
                 </tr>
                 <tr>
                     <td>Дата последнего изменения:</td>
@@ -133,7 +170,9 @@
         <a class="tab_name" id="tab_name_accounts" href="#tab_name_general">Счета</a>
         <div class="tab_content" id="tab_content_accounts">
             <table>
-                <caption><h2 class="no_margin">Счета</h2></caption>
+                <caption>
+                    <h2 class="no_margin">Счета</h2>
+                </caption>
                 <tbody>
                     <tr>
                         <th>Счёт</th>
@@ -150,7 +189,15 @@
                                 <td>{{ account.AccountType }}</td>
                                 <td>{{ account.CK|default('-') }}</td>
                                 <td>{% if account.AccountCBRBIC %}<a href="/bictracker/bics/{{ account.AccountCBRBIC }}">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td>
-                                <td>{% if account.DateIn %}{{ timeTag(account.DateIn, 'd/m/Y') }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}<img crossorigin="anonymous" loading="lazy" decoding="async" class="tooltip_footnote" alt="tooltip" src="/assets/images/tooltip.svg" data-tooltip="Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК">{% endif %}{% else %}-{% endif %}</td>
+                                <td>
+                                    {% if account.DateIn %}{{ timeTag(account.DateIn, 'd/m/Y') }}
+                                        {% if date(bicdetails.DateIn) == date('1996-07-10') %}
+                                            <img crossorigin="anonymous" loading="lazy" decoding="async" class="tooltip_footnote" alt="tooltip" src="/assets/images/tooltip.svg" data-tooltip="Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК" width="496" height="496">
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
                                 <td>-</td>
                             </tr>
                         {% endif %}
@@ -161,8 +208,22 @@
                                 <td>{{ account.Account }}</td>
                                 <td>{{ account.AccountType }}</td>
                                 <td>{{ account.CK|default('-') }}</td>
-                                <td>{% if account.AccountCBRBIC %}<a href="/bictracker/bics/{{ account.AccountCBRBIC }}">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td>
-                                <td>{% if account.DateIn %}{{ timeTag(account.DateIn, 'd/m/Y') }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}<img crossorigin="anonymous" loading="lazy" decoding="async" class="tooltip_footnote" alt="tooltip" src="/assets/images/tooltip.svg" data-tooltip="Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК">{% endif %}{% else %}-{% endif %}</td>
+                                <td>
+                                    {% if account.AccountCBRBIC %}
+                                        <a href="/bictracker/bics/{{ account.AccountCBRBIC }}">{{ account.AccountCBRBIC }}</a>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if account.DateIn %}{{ timeTag(account.DateIn, 'd/m/Y') }}
+                                        {% if date(bicdetails.DateIn) == date('1996-07-10') %}
+                                            <img crossorigin="anonymous" loading="lazy" decoding="async" class="tooltip_footnote" alt="tooltip" src="/assets/images/tooltip.svg" data-tooltip="Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК" width="496" height="496">
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
                                 <td>{{ timeTag(account.DateOut, 'd/m/Y', "failure") }}</td>
                             </tr>
                         {% endif %}
@@ -244,7 +305,9 @@
         <a class="tab_name" id="tab_name_dbf" href="#tab_name_dbf">Из DBF</a>
         <div class="tab_content" id="tab_content_dbf">
             <table>
-                <caption><h2 class="no_margin">Старые наименования</h2></caption>
+                <caption>
+                    <h2 class="no_margin">Старые наименования</h2>
+                </caption>
                 <tbody>
                     <tr>
                         <td>Фирменное (полное официальное) наименование кредитной организации:</td>
@@ -261,7 +324,9 @@
                 </tbody>
             </table>
             <table>
-                <caption><h2 class="no_margin">Старые контакты</h2></caption>
+                <caption>
+                    <h2 class="no_margin">Старые контакты</h2>
+                </caption>
                 <tbody>
                     <tr>
                         <td>Абонентский телеграф 1:</td>
@@ -275,7 +340,7 @@
                         <td>Телефон{% if bicdetails.DBF.contacts.TELEF and bicdetails.DBF.contacts.TELEF.phones|length > 1 %}ы{% endif %}:</td>
                         <td>{% if bicdetails.DBF.contacts.TELEF %}
                                 {% for tel in bicdetails.DBF.contacts.TELEF.phones %}
-                                    📞<a target="_blank" rel="noopener noreferrer" href="tel://{{ tel.url }}">{{ tel.phone }}</a>{% if not loop.last %},<br>{% endif %}
+                                    📞<a target="_blank" href="tel://{{ tel.url }}">{{ tel.phone }}</a>{% if not loop.last %},<br>{% endif %}
                                 {% endfor %}
                                 {% if bicdetails.DBF.contacts.TELEF.dob %}
                                     (доб. {{ bicdetails.DBF.contacts.TELEF.dob }})
@@ -289,7 +354,9 @@
                 </tbody>
             </table>
             <table>
-                <caption><h2 class="no_margin">Потенциально неактуальная информация</h2></caption>
+                <caption>
+                    <h2 class="no_margin">Потенциально неактуальная информация</h2>
+                </caption>
                 <tbody>
                     <tr>
                         <td>Дата контроля:</td>
@@ -335,7 +402,9 @@
             {% endif %}
             {% if bicdetails.DateOut %}
                 <table>
-                    <caption><h2 class="no_margin">Информация о закрытии</h2></caption>
+                    <caption>
+                        <h2 class="no_margin">Информация о закрытии</h2>
+                    </caption>
                     <tbody>
                         <tr>
                             <td>Причина закрытия счёта:</td>

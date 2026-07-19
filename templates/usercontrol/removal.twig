@@ -1,10 +1,19 @@
 <p>This page allows you to remove your account.</p>
 <p>There are two types of removal: <i>soft</i> and <i>hard</i>.</p>
-<p><i>Soft</i> removal will remove all groups from your account and replace them with <i>Deleted</i> group. If you change you mind and want to return to the website, you can <a href="/about/contacts">contact</a> administration to have your account restored.</p>
-<p><i>Hard</i> removal will replace your internal user ID with one for <a href="/talks/users/3"><i>Deleted user</i></a> for all sections, threads and posts created, as well as all files uploaded, and then remove your user <b>entirely</b>, that is <b>without the ability to restore</b> at a later day.</p>
-<p>If unlinking of your account from respective sections, threads, posts and files is not enough, and you want to remove them as well, please, create a post in <a href="/talks/sections/5">Support</a>, so that the administration can check and ensure that some potentially useful information is not lost.</p>
-<form id="user_removal" class="middle">
-    <span class="float_label"><input id="hard_removal" type="checkbox"><label for="hard_removal">I want it hard</label></span><br>
+<p><i>Soft</i> removal will remove all groups from your account and replace them with <i>Deleted</i> group. If you change your mind and want to return to the website, you can <a href="/about/contacts">contact</a> administration to have your account restored.</p>
+<p><i>Hard</i> removal will replace your internal user ID with one for <a href="/talks/users/3"><i>Deleted user</i></a> for all content created, including files uploaded, and then remove your user <b>entirely</b>, that is <b>without the ability to restore</b> at a later day.</p>
+<p>If such unlinking of your account from respective content is not enough, please, create a post in <a href="/talks/sections/5">Support</a>, so that the administration can check and ensure that some potentially useful information is not lost.</p>
+<form id="user_removal" class="middle" method="post">
+    <span class="float_label">
+        <input id="hard_removal" type="checkbox">
+        <label for="hard_removal">
+            <span class="checkbox_checked_icon" aria-hidden="true"></span>
+            <span class="checkbox_checked">I want it hard</span>
+            <span class="checkbox_not_checked_icon" aria-hidden="true"></span>
+            <span class="checkbox_not_checked">I want it hard</span>
+        </label>
+    </span>
+    <br>
     <button type="submit" name="submit" id="remove_user" value="Remove me" data-alt-attribute="Removing user...">
         <span class="warning">Remove me</span>
     </button>

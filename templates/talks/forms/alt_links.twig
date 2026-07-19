@@ -4,7 +4,10 @@
     {% for altlink in thread_link_types %}
         <span class="float_label">
             <input type="url" aria-required="false" name="thread_data[alt_links][{{ altlink.type }}]" id="thread_data_{{ altlink.type }}" value="{% if external_links %}{{ external_links[altlink.type].url }}{% endif %}" placeholder="{{ altlink.type }}" inputmode="url" minlength="0" maxlength="255" pattern="^https:\/\/(www\.)?{{ altlink.regex }}.*$">
-            <label for="thread_data_{{ altlink.type }}"><img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="{{ altlink.type }}" src="{{ altlink.icon }}">{{ altlink.type }}</label>
+            <label for="thread_data_{{ altlink.type }}">
+                <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="{{ altlink.type }}" src="{{ altlink.icon }}" width="20" height="20">
+                {{ altlink.type }}
+            </label>
         </span>
     {% endfor %}
 </details>

@@ -11,10 +11,6 @@ a {
     padding: 0.1rem;
     text-decoration: none;
 
-    &:link {
-        text-decoration-line: underline;
-    }
-
     &:visited {
         border-style: inset;
         text-decoration: none;
@@ -22,6 +18,7 @@ a {
 
     &:hover,
     &:focus,
+    &:focus-visible,
     &:active {
         border-color: var(--color_interactive);
         text-decoration: none;
@@ -31,7 +28,20 @@ a {
         filter: brightness(0.7);
     }
 
-    &:has(img:only-child) {
+    &:link:not(:has(img)),
+    &:link:has(img) > span:not(.new_tab_icon, .entity_arrow) {
+        text-decoration-line: underline;
+    }
+
+    &:has(img:not(.link_icon):only-child) {
         text-decoration: none;
+    }
+
+    & .new_tab_icon {
+        display: inline-block;
+        margin: 0;
+        text-decoration: none;
+        user-select: none;
+        vertical-align: super;
     }
 }

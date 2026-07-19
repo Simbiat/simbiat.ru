@@ -82,6 +82,6 @@
 }
 
 .no_list_style {
-    /* noinspection Stylelint */
+    /* stylelint-disable-next-line declaration-no-important -- Valid case */
     list-style: none !important;
 }

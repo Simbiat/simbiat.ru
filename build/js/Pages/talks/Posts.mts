@@ -4,7 +4,7 @@
 import { empty, pageRefresh } from 'Common/Helpers.mts';
 import { Ajax } from 'Common/Ajax.mts';
 import { Snackbar } from 'Common/Snackbar.mts';
-import { saveTinyMCE } from 'Common/TinyMCE.mts';
+import { TinyMCE } from 'Common/TinyMCE.mts';
 import { Form } from 'NativeElements/Form.mts';
 
 /**
@@ -85,12 +85,12 @@ export class Posts {
             //Notify TinyMCE that data was saved
             const textarea = this.post_form?.querySelector<HTMLTextAreaElement>('textarea');
             if (textarea && !empty(textarea.id)) {
-              await saveTinyMCE(textarea.id);
+              await TinyMCE.save(textarea.id);
             }
             void new Snackbar('Post updated. Reloading...', 'success');
             pageRefresh(response.location);
           } else if (response.location) {
-            void new Snackbar(`${response.reason} View the post <a href="${response.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'failure', 0);
+            void new Snackbar(`${response.reason} View the post <a href="${response.location}" target="_blank">here</a>.`, 'failure', 0);
           }
         },
         keep_disabled: true,

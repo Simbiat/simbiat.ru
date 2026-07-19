@@ -1,13 +1,13 @@
 {% if reason == 'Failed to connect to database' %}
     <p>{{ reason }}.</p>
     <code data-description="Requested page">{{ url }}</code>
-    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="No database connection" src="/assets/images/errors/database.svg">
+    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="No database connection" src="/assets/images/errors/database.svg" width="56" height="56">
 {% elseif reason == 'Site is under maintenance and temporary unavailable' %}
     <p>{{ reason }}.</p>
     <code data-description="Requested page">{{ url }}</code>
-    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Maintenance" src="/assets/images/errors/maintenance.webp">
+    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Maintenance" src="/assets/images/errors/maintenance.webp" width="694" height="520">
 {% else %}
     <blockquote class="w100pc" data-author="Server">Page is unavailable. Possibly a bug or some kind of issue.</blockquote>
     {% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
-    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="503 Service unavailable" src="/assets/images/errors/bug2.avif">
+    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="503 Service unavailable" src="/assets/images/errors/bug2.avif" width="500" height="272">
 {% endif %}

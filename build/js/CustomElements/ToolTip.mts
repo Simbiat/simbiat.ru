@@ -1,8 +1,9 @@
 /**
  * @file Custom logic for the `tool-tip` element.
  */
+import { Sanitize } from 'Common/Sanitize.mts';
+import DOMPurify from 'dompurify';
 import { empty } from '../Common/Helpers.mts';
-import { Sanitize } from '../Common/Sanitize.mts';
 
 /**
  * Custom logic for the `tool-tip` element.
@@ -152,8 +153,8 @@ export class ToolTip extends HTMLElement {
       ?? '';
     if (!empty(tooltip) && element !== this && (coarse || matchMedia('(pointer:fine)').matches)) {
       this.setAttribute('data-tooltip', 'true');
-      //this.textContent = tooltip;
-      this.replaceChildren(Sanitize.html(tooltip));
+      // noinspection InnerHTMLJS
+      this.innerHTML = DOMPurify.sanitize(tooltip, Sanitize.PURIFY_CONFIG);
       this.showPopover();
     } else {
       this.removeAttribute('data-tooltip');

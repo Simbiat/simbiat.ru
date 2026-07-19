@@ -1,8 +1,9 @@
 /**
  * @file Snackbars are small pop-up messages at the bottom of the screen.
  */
+import { Sanitize } from 'Common/Sanitize.mts';
+import DOMPurify from 'dompurify';
 import { TIME_MANAGER } from './Constants.mts';
-import { Sanitize } from './Sanitize.mts';
 
 export const SNACKBAR_FAIL_TIMEOUT = 10000;
 
@@ -33,8 +34,8 @@ export class Snackbar {
         //Add text
         const text_block = this.snack.querySelector<HTMLSpanElement>('.snack_text');
         if (text_block !== null) {
-          // This is fine, since manipulating element, which is not yet in the element tree, and it can be legitimate (and sanitized) HTML
-          text_block.replaceChildren(Sanitize.html(text));
+          // noinspection InnerHTMLJS
+          text_block.innerHTML = DOMPurify.sanitize(text, Sanitize.PURIFY_CONFIG);
         }
         // Get close button
         const close_button = this.snack.querySelector<HTMLButtonElement>('.snack_close');

@@ -16,7 +16,7 @@
             {% if post.no_post_id != true %}
                 <div class="post_id_wrapper">
                     <h2 class="post_id" id="post_{{ post.id }}">#{{ post.id }}</h2>
-                    <a class="post_id_link" target="_blank" href="/talks/posts/{{ post.id }}"></a>
+                    <a class="post_id_link no_text_decoration" target="_blank" href="/talks/posts/{{ post.id }}"><span class="new_tab_icon">↗</span></a>
                 </div>
             {% endif %}
         </div>
@@ -31,7 +31,7 @@
                 <section class="post_user">
                     <div class="post_username"><a href="/talks/users/{{ post.author }}">{{ post.author_name }}</a></div>
                     <div class="post_avatar">
-                        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ post.author_name }}" src="{{ post.avatar }}" class="avatar">
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ post.author_name }}" src="{{ post.avatar }}" class="avatar" width="64" height="64">
                     </div>
                 </section>
             {% endif %}
@@ -63,12 +63,12 @@
             {% endif %}
             {% if post.locked %}
                 {% if not history_version and 'edit_locked' in session_data.permissions and ((owned and 'edit_own_posts' in session_data.permissions) or (not owned and 'edit_others_posts' in session_data.permissions)) %}
-                    <a class="button" href="/talks/posts/{{ post.id }}#tab_name_edit" data-tooltip="Edit">✏</a>
+                    <a class="button no_text_decoration" href="/talks/posts/{{ post.id }}#tab_name_edit" data-tooltip="Edit">✏</a>
                 {% endif %}
                 <span class="no_decor" data-tooltip="Locked post">🔒</span>
             {% else %}
                 {% if not history_version and ((owned and 'edit_own_posts' in session_data.permissions) or (not owned and 'edit_others_posts' in session_data.permissions)) %}
-                    <a class="button" href="/talks/posts/{{ post.id }}#tab_name_edit" data-tooltip="Edit">✏</a>
+                    <a class="button no_text_decoration" href="/talks/posts/{{ post.id }}#tab_name_edit" data-tooltip="Edit">✏</a>
                 {% endif %}
             {% endif %}
             {% if post.attachments|length > 0 %}
@@ -91,7 +91,7 @@
                     {% for attachment in post.attachments %}
                         <tr>
                             <td>
-                                <a href="{{ uploadedLink(attachment.file_id ~ '.' ~ attachment.extension) }}" target="_blank" rel="noopener noreferrer">{{ attachment.name }}</a>
+                                <a href="{{ uploadedLink(attachment.file_id ~ '.' ~ attachment.extension) }}" target="_blank">{{ attachment.name }}</a>
                             </td>
                             <td>{{ attachment.mime }}</td>
                             <td>{{ cuteBytes(attachment.size) }}</td>

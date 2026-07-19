@@ -17,7 +17,7 @@
 {% elseif change_type == 'unpin' %}
     {% set action = 'unpinned' %}
 {% endif %}
-<p>Your thread {% if change_type != 'delete' %}<a href="{{ domain }}/talks/threads/{{ thread_id }}" rel="noopener noreferrer">{{ name }}</a>{% else %}<var>{{ name }}</var>{% endif %} was {{ action }} {% if change_type == 'move' %} to <a href="{{ domain }}/talks/sections/{{ section_id }}" rel="noopener noreferrer">{{ parent_name }}</a> {% endif %}by <a href="{{ domain }}/talks/users/{{ editor_id }}" rel="noopener noreferrer">{{ editor_name }}</a>.</p>
+<p>Your thread {% if change_type != 'delete' %}<a href="{{ domain }}/talks/threads/{{ thread_id }}">{{ name }}</a>{% else %}<var>{{ name }}</var>{% endif %} was {{ action }} {% if change_type == 'move' %} to <a href="{{ domain }}/talks/sections/{{ section_id }}">{{ parent_name }}</a> {% endif %}by <a href="{{ domain }}/talks/users/{{ editor_id }}">{{ editor_name }}</a>.</p>
 {% if changes|length > 0 %}
     <br>
     <p>These are the changes:</p>
@@ -25,7 +25,10 @@
         {% for key, change in changes %}
             {% if key == 'og_image' %}
                 {% if change.to %}
-                    <li>Banner: to <img crossorigin="anonymous" loading="lazy" decoding="async" alt="New banner" src="{{ domain }}{{ change.to }}" class="banner_preview">
+                    <li>
+                        Banner: to
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="New banner" src="{{ domain }}{{ change.to }}" class="banner_preview" width="1200" height="630">
+                    </li>
                 {% else %}
                     <li>Banner: removed</li>
                 {% endif %}
@@ -34,12 +37,22 @@
             {% else %}
                 {% if change.to %}
                     {% if change.from %}
-                        <li><img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.to.icon }}" class="link_icon">: changed to <var>{{ change.to.url }}</var></li>
+                        <li>
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.to.icon }}" class="link_icon" width="32" height="32">
+                            : changed to <var>{{ change.to.url }}</var>
+                        </li>
                     {% else %}
-                        <li><img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.to.icon }}" class="link_icon">: linked to <var>{{ change.to.url }}</var></li>
+                        <li>
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.to.icon }}" class="link_icon" width="32" height="32">
+                            : linked to
+                            <var>{{ change.to.url }}</var>
+                        </li>
                     {% endif %}
                 {% else %}
-                    <li><img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.from.icon }}" class="link_icon">: removed</li>
+                    <li>
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.from.icon }}" class="link_icon" width="32" height="32">
+                        : removed
+                    </li>
                 {% endif %}
             {% endif %}
         {% endfor %}

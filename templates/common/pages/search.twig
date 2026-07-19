@@ -18,7 +18,10 @@
     {% else %}
         {# TODO: Need to intercept this so that search button is replaced by spinner when page is loading #}
         <form role="search" class="search_form" action="{{ action_url }}" method="get">
-            <span class="float_label" id="search_label"><input id="search_field" type="search" inputmode="search" name="search" autocomplete="on" maxlength="100"{% if search_value is defined %} value="{{ search_value }}"{% else %} autofocus{% endif %}><label for="search_field">{% if service_name == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
+            <span class="float_label" id="search_label">
+                <input id="search_field" type="search" inputmode="search" name="search" autocomplete="on" maxlength="100"{% if search_value is defined %} value="{{ search_value }}"{% else %} autofocus{% endif %}>
+                <label for="search_field">{% if service_name == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label>
+            </span>
             <button type="submit" value="{% if service_name == 'bictracker' %}Поиск{% else %}Search{% endif %}" id="search_button" data-noname>
                 {% if service_name == 'bictracker' %}Поиск{% else %}Search{% endif %}
             </button>
@@ -31,7 +34,7 @@
         <p class="relative">
             Библиотека обновлена {{ timeTag(bic_date, 'd.m.Y', 'bic_date') }}.
             <button type="button" class="refresh" id="bic_refresh" data-tooltip="Обновить библиотеку">
-                <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Обновить библиотеку" src="/assets/images/refresh.svg">
+                <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Обновить библиотеку" src="/assets/images/refresh.svg" width="24" height="24">
             </button>
         </p>
     {% endif %}
@@ -74,7 +77,7 @@
                     {% set list_url = '/fftracker/crossworld_linkshells/' %}
                 {% endif %}
                 {# Show link itself #}
-                <a rel="noopener noreferrer" href="{{ list_url }}{% if search_value %}?search={{ search_value|url_encode }}{% endif %}">{{ sub_result.count }}</a>
+                <a href="{{ list_url }}{% if search_value %}?search={{ search_value|url_encode }}{% endif %}">{{ sub_result.count }}</a>
             {% else %}
                 {{ sub_result.count }}
             {% endif %}

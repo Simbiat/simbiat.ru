@@ -92,12 +92,6 @@
       <path value="$PROJECT_DIR$/vendor/symfony/dependency-injection" />
       <path value="$PROJECT_DIR$/vendor/symfony/config" />
       <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher-contracts" />
-      <path value="$PROJECT_DIR$/vendor/geoip2/geoip2 (# Name clash 2026-07-19 s3wbyoC #)" />
-      <path value="$PROJECT_DIR$/vendor/symfony/cache (# Name clash 2026-07-19 5su8veC #)" />
-      <path value="$PROJECT_DIR$/vendor/symfony/var-exporter (# Name clash 2026-07-19 beftlxC #)" />
-      <path value="$PROJECT_DIR$/vendor/symfony/service-contracts (# Name clash 2026-07-19 dgqn7vC #)" />
-      <path value="$PROJECT_DIR$/vendor/symfony/cache-contracts (# Name clash 2026-07-19 tgjec3C #)" />
-      <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts (# Name clash 2026-07-19 1xgsceC #)" />
       <path value="$PROJECT_DIR$/vendor/geoip2/geoip2" />
       <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts" />
       <path value="$PROJECT_DIR$/vendor/symfony/cache-contracts" />

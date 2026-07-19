@@ -5,7 +5,7 @@ import { Ajax } from 'Common/Ajax.mts';
 import { TIME_MANAGER } from 'Common/Constants.mts';
 import { empty } from 'Common/Helpers.mts';
 import { Snackbar } from 'Common/Snackbar.mts';
-import { saveTinyMCE } from 'Common/TinyMCE.mts';
+import { TinyMCE } from 'Common/TinyMCE.mts';
 import { Form } from 'NativeElements/Form.mts';
 
 /**
@@ -87,7 +87,7 @@ export class EditProfile {
           }
           //Notify TinyMCE that data was saved
           if (this.about_value && !empty(this.about_value.id)) {
-            await saveTinyMCE(this.about_value.id);
+            await TinyMCE.save(this.about_value.id);
           }
         },
       });

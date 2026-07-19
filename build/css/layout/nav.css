@@ -100,6 +100,7 @@ nav li::before {
     display: inline-block;
     inline-size: 100%;
     min-block-size: 2rem;
+    text-decoration: none;
     vertical-align: middle;
 }
 
@@ -128,6 +129,7 @@ nav li::before {
 
         & li .nav_item {
             box-sizing: border-box;
+            text-decoration: none;
         }
 
         & .current {
@@ -165,20 +167,21 @@ nav li::before {
     cursor: default;
 }
 
-nav[aria-label='breadcrumb 1' i],
+nav,
 #ol_breadcrumbs_1 li {
     display: inline-block;
-}
-
-nav[aria-label='breadcrumb 1' i] {
-    font-size: 0.6rem;
-    inline-size: 100%;
 }
 
 #ol_breadcrumbs_1 {
     display: inline-flex;
     flex-flow: row wrap;
+    font-size: 0.6rem;
     padding-inline-start: 0;
+
+    & li a {
+        display: inline-block;
+        padding: 0.25rem;
+    }
 
     & li:first-child {
         display: none;
@@ -193,6 +196,7 @@ nav[aria-label='breadcrumb 1' i] {
         content: '❮';
         display: inline-block;
         font-weight: 700;
+        margin-block-start: 0.5em;
         margin-inline-end: 0.1rem;
     }
 

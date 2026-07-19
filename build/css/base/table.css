@@ -122,6 +122,6 @@ table {
     }
 
     & tr:hover {
-        border-color: white;
+        border-color: oklch(100% 0 none);
     }
 }

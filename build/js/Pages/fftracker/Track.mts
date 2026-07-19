@@ -52,11 +52,11 @@ export class Track {
            */
           onSuccess: (response) => {
             if (response.data === true) {
-              void new Snackbar(`${select_text} with ID ${this.id_input?.value ?? ''} was registered. Check <a href="${response.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'success', 0);
+              void new Snackbar(`${select_text} with ID ${this.id_input?.value ?? ''} was registered. Check <a href="${response.location}" target="_blank">here</a>.`, 'success', 0);
             } else if (response.status === HTTP_NOT_FOUND) {
               void new Snackbar(`${select_text} with ID ${this.id_input?.value ?? ''} was not found on Lodestone.`, 'failure', SNACKBAR_FAIL_TIMEOUT);
             } else if ((/^id `.*` is already registered$/iv).exec(response.reason)) {
-              void new Snackbar(`${response.reason}. Check <a href="${response.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'warning', 0);
+              void new Snackbar(`${response.reason}. Check <a href="${response.location}" target="_blank">here</a>.`, 'warning', 0);
             } else {
               void new Snackbar(response.reason, 'failure', SNACKBAR_FAIL_TIMEOUT);
             }

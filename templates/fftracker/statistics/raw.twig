@@ -1,14 +1,16 @@
 <p>Raw character numbers as of {{ timeTag(ffstats.data.time, 'd/m/Y') }} for analysing race, clan, gender, guardian, city and Grand Company distribution</p>
 <table>
-    <thead><tr>
-        <th>Count</th>
-        <th>Race</th>
-        <th>Clan</th>
-        <th>Gender</th>
-        <th>Guardian</th>
-        <th>City</th>
-        <th>Grand Company</th>
-    </tr></thead>
+    <thead>
+        <tr>
+            <th>Count</th>
+            <th>Race</th>
+            <th>Clan</th>
+            <th>Gender</th>
+            <th>Guardian</th>
+            <th>City</th>
+            <th>Grand Company</th>
+        </tr>
+    </thead>
     {% for datapoint in ffstats.data.raw %}
         <tr>
             <td>{{ datapoint.count }}</td>

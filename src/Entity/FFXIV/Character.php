@@ -175,6 +175,9 @@ class Character extends AbstractEntity
             'registered' => \strtotime($from_db['registered']),
             'updated' => \strtotime($from_db['updated']),
             'hidden' => (empty($from_db['hidden']) ? null : \strtotime($from_db['hidden'])),
+            'hidden_achievements' => (empty($from_db['hidden_achievements']) ? null : \strtotime($from_db['hidden_achievements'])),
+            'hidden_friends' => (empty($from_db['hidden_friends']) ? null : \strtotime($from_db['hidden_friends'])),
+            'hidden_following' => (empty($from_db['hidden_following']) ? null : \strtotime($from_db['hidden_following'])),
             'deleted' => (empty($from_db['deleted']) ? null : \strtotime($from_db['deleted'])),
         ];
         $this->biology = [
@@ -213,7 +216,13 @@ class Character extends AbstractEntity
         $this->pvp = (int)($from_db['pvp_matches'] ?? 0);
         $this->groups = $from_db['groups'] ?? [];
         $this->friends = $from_db['friends'] ?? [];
+        if ($this->dates['hidden_friends'] !== null) {
+            $this->friends = [];
+        }
         $this->following = $from_db['following'] ?? [];
+        if ($this->dates['hidden_following'] !== null) {
+            $this->following = [];
+        }
         $this->owned = [
             'id' => $from_db['user_id'] ?? null,
             'name' => $from_db['username'] ?? null
@@ -228,6 +237,9 @@ class Character extends AbstractEntity
             $this->following[$key]['current'] = (bool)$character['current'];
         }
         $this->achievements = $from_db['achievements'] ?? [];
+        if ($this->dates['hidden_achievements'] !== null) {
+            $this->achievements = [];
+        }
         foreach ($this->achievements as $key => $achievement) {
             $this->achievements[$key]['time'] = (empty($achievement['time']) ? null : \strtotime($achievement['time']));
         }
@@ -441,12 +453,20 @@ class Character extends AbstractEntity
             }
             #Process friends/following
             if (!$hidden_friends && !empty($this->lodestone['friends']) && is_array($this->lodestone['friends'])) {
-                $queries[] = [
-                    'UPDATE `ffxiv__character_friends` SET `current`=0 WHERE `character_id`=:character_id;',
-                    [
-                        ':character_id' => $this->id,
-                    ],
-                ];
+                #Get current friends from tracker
+                $friends_list = Query::query('SELECT `character_id` FROM `ffxiv__character_friends` WHERE `character_id`=:character_id AND `current`=1;', [':character_id' => $this->id], return: 'column');
+                #Update status of removed friends
+                foreach ($friends_list as $friend) {
+                    if (!\array_key_exists($friend, $this->lodestone['friends'])) {
+                        $queries[] = [
+                            'UPDATE `ffxiv__character_friends` SET `current`=0 WHERE `character_id`=:character_id AND `friend`=:friend_id;',
+                            [
+                                ':friend_id' => $friend,
+                                ':character_id' => $this->id,
+                            ],
+                        ];
+                    }
+                }
                 foreach ($this->lodestone['friends'] as $friend_id => $character_data) {
                     $this->charQuickRegister($friend_id, $this->lodestone['friends'], $queries);
                     $queries[] = [
@@ -459,12 +479,20 @@ class Character extends AbstractEntity
                 }
             }
             if (!$hidden_following && !empty($this->lodestone['following']) && is_array($this->lodestone['following'])) {
-                $queries[] = [
-                    'UPDATE `ffxiv__character_following` SET `current`=0 WHERE `character_id`=:character_id;',
-                    [
-                        ':character_id' => $this->id,
-                    ],
-                ];
+                #Get current friends from tracker
+                $following_list = Query::query('SELECT `character_id` FROM `ffxiv__character_following` WHERE `character_id`=:character_id AND `current`=1;', [':character_id' => $this->id], return: 'column');
+                #Update status of removed friends
+                foreach ($following_list as $following) {
+                    if (!\array_key_exists($following, $this->lodestone['following'])) {
+                        $queries[] = [
+                            'UPDATE `ffxiv__character_following` SET `current`=0 WHERE `character_id`=:character_id AND `following`=:following_id;',
+                            [
+                                ':following_id' => $following,
+                                ':character_id' => $this->id,
+                            ],
+                        ];
+                    }
+                }
                 foreach ($this->lodestone['following'] as $following_id => $character_data) {
                     $this->charQuickRegister($following_id, $this->lodestone['following'], $queries);
                     $queries[] = [
@@ -486,11 +514,19 @@ class Character extends AbstractEntity
             }
             #Register the Free Company update if a change was detected
             if (!empty($this->lodestone['free_company']['id']) && !Query::query('SELECT `character_id` FROM `ffxiv__freecompany_character` WHERE `character_id`=:character_id AND `fc_id`=:fcID;', [':character_id' => $this->id, ':fcID' => $this->lodestone['free_company']['id']], return: 'check') && new FreeCompany($this->lodestone['free_company']['id'])->update() !== true) {
-                new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$this->lodestone['free_company']['id'], 'freecompany'], 'message' => 'Updating free company with ID '.$this->lodestone['free_company']['id'], 'priority' => 2])->add();
+                try {
+                    new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$this->lodestone['free_company']['id'], 'freecompany'], 'message' => 'Updating free company with ID '.$this->lodestone['free_company']['id'], 'priority' => 2])->add();
+                } catch (\Throwable) {
+                    #Do nothing, not as critical
+                }
             }
             #Register PvP Team update if a change was detected
             if (!empty($this->lodestone['pvp']['id']) && !Query::query('SELECT `character_id` FROM `ffxiv__pvpteam_character` WHERE `character_id`=:character_id AND `pvp_id`=:pvpID;', [':character_id' => $this->id, ':pvpID' => $this->lodestone['pvp']['id']], return: 'check') && new PvPTeam($this->lodestone['pvp']['id'])->update() !== true) {
-                new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$this->lodestone['pvp']['id'], 'pvpteam'], 'message' => 'Updating PvP team with ID '.$this->lodestone['pvp']['id'], 'priority' => 2])->add();
+                try {
+                    new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$this->lodestone['pvp']['id'], 'pvpteam'], 'message' => 'Updating PvP team with ID '.$this->lodestone['pvp']['id'], 'priority' => 2])->add();
+                } catch (\Throwable) {
+                    #Do nothing, not as critical
+                }
             }
             #Check if a character is linked to a user
             $character = Query::query('SELECT `character_id`, `user_id` FROM `uc__user_to_ff_character` WHERE `character_id`=:id;', [':id' => $this->id], return: 'row');

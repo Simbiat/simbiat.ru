@@ -42,7 +42,7 @@ final class Errors
     public static function error_log(\Throwable $error, mixed $context = '', bool $debug = false): false
     {
         #Generate message
-        $message = self::genLogEntry(\get_class($error).' Exception', $error->getFile(), $error->getLine(), $error->getMessage(), $error->getTraceAsString(), $context);
+        $message = self::genLogEntry(\get_class($error).' Exception', $error->getFile(), $error->getLine(), $error->getMessage(), $error->getTraceAsString(), $error->getPrevious(), $context);
         #Write to log
         if ($debug) {
             echo '<pre>'.$message.'</pre>';
@@ -56,19 +56,29 @@ final class Errors
     /**
      * Helper to write errors in the log
      *
-     * @param string     $type    Error type
-     * @param string     $file    The file where the error happened
-     * @param string|int $line    Line in file where the error happened
-     * @param string     $message Error message
-     * @param string     $trace
-     * @param mixed      $context
+     * @param string          $type     Error type
+     * @param string          $file     The file where the error happened
+     * @param string|int      $line     Line in file where the error happened
+     * @param string          $message  Error message
+     * @param string          $trace    Trace from the error
+     * @param \Throwable|null $previous Previous Throwable, if this was re-thrown. Will be merged with context.
+     * @param mixed           $context  Optional additional cotext
      *
      * @return string
      */
-    private static function genLogEntry(string $type, string $file, string|int $line, string $message, string $trace = '', mixed $context = ''): string
+    private static function genLogEntry(string $type, string $file, string|int $line, string $message, string $trace = '', null|\Throwable $previous = null, mixed $context = ''): string
     {
         #Determine page link
         $page = self::getRequest();
+        $previous_throw = '';
+        if ($previous !== null) {
+            $previous_trace = $previous->getTraceAsString();
+            $previous_throw = "\t".'Previous Exception: '."\r\n\t\t".
+                'File: '.$previous->getFile()."\r\n\t\t".
+                'Line: '.$previous->getLine()."\r\n\t\t".
+                'Message: '.$previous->getMessage()."\r\n".
+                ($previous_trace === '' ? '' : "\t\t".'Trace: '.$previous_trace."\r\n");
+        }
         #Prepare context
         if (!\is_string($context)) {
             try {
@@ -83,7 +93,8 @@ final class Errors
             'Line: '.$line."\r\n\t".
             'Message: '.$message."\r\n".
             ($trace === '' ? '' : "\t".'Trace: '.$trace."\r\n").
-            ($context === '' ? '' : "\t".'Context: '.$context."\r\n");
+            ($context === '' ? '' : "\t".'Context: '.$context."\r\n").
+            $previous_throw;
     }
     
     /**

@@ -1,7 +1,9 @@
 <section class="margin_bottom_2rem">
     <details>
         <summary class="right_summary">Технические детали</summary>
-        <p>Функционал доступен в виде API (JSON), для доступа к которому используйте следующую ссылку (обновляются динамически): <code>{{ domain }}/api/bictracker/keying/<span id="bic_key_sample" class="warning">{% if bic_value %}{{ bic_value }}{% else %}БИК{% endif %}</span>/<span id="account_key_sample" class="warning">{% if acc_value %}{{ acc_value }}{% else %}СЧЁТ{% endif %}</span>/</code></p>
+        <p>
+            Функционал доступен в виде API (JSON), для доступа к которому используйте следующую ссылку (обновляются динамически): <code>{{ domain }}/api/bictracker/keying/<span id="bic_key_sample" class="warning">{% if bic_value %}{{ bic_value }}{% else %}БИК{% endif %}</span>/<span id="account_key_sample" class="warning">{% if acc_value %}{{ acc_value }}{% else %}СЧЁТ{% endif %}</span>/</code>
+        </p>
     </details>
 </section>
 <section>
@@ -9,10 +11,16 @@
     {% if request_from_bot %}
         <p class="error">Вы были идентифицированы как бот, форма проверки скрыта.</p>
     {% else %}
-        <form action="" id="bic_keying" name="bic_keying">
-            <span class="float_label"><input id="bic_key" name="bic_key" type="text" inputmode="decimal" autocomplete="on" required maxlength="9" size="9" pattern="^\d{9}$"{% if bic_value %} value="{{ bic_value }}"{% endif %}><label for="bic_key">БИК</label></span>
-            <span class="float_label"><input id="account_key" name="account_key" type="text" inputmode="text" autocomplete="on" required maxlength="20" size="20" pattern="^\d{5}[\dАВСЕНКМРТХавсенкмртх]{1}\d{14}$"{% if acc_value %} value="{{ acc_value }}"{% endif %}><label for="account_key">Номер счёта</label></span>
-            <img crossorigin="anonymous" loading="lazy" decoding="async" id="bic_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Проверяем ключевание...">
+        <form action="" id="bic_keying" name="bic_keying" method="POST">
+            <span class="float_label">
+                <input id="bic_key" name="bic_key" type="text" inputmode="decimal" autocomplete="on" required maxlength="9" size="9" pattern="^\d{9}$"{% if bic_value %} value="{{ bic_value }}"{% endif %}>
+                <label for="bic_key">БИК</label>
+            </span>
+            <span class="float_label">
+                <input id="account_key" name="account_key" type="text" inputmode="text" autocomplete="on" required maxlength="20" size="20" pattern="^\d{5}[\dАВСЕНКМРТХавсенкмртх]{1}\d{14}$"{% if acc_value %} value="{{ acc_value }}"{% endif %}>
+                <label for="account_key">Номер счёта</label>
+            </span>
+            <img crossorigin="anonymous" loading="lazy" decoding="async" id="bic_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Проверяем ключевание..." width="200" height="200">
         </form>
     {% endif %}
     <p>

@@ -1,22 +1,24 @@
 {% if session_data.user_id != 1 and session_data.username %}
-    <a id="uc_settings" class="button" href="/uc/profile"><img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="Settings" src="/assets/images/cog.svg"></a>
+    <a id="uc_settings" class="button" href="/uc/profile">
+        <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="Settings" src="/assets/images/cog.svg" width="512" height="512">
+    </a>
     <div class="middle">Hi,
         <a href="/talks/users/{{ session_data.user_id }}" id="own_profile_link">{{ session_data.username }}</a>!
     </div>
     <div class="middle">
-        <img crossorigin="anonymous" loading="lazy" decoding="async" class="avatar" alt="Your avatar" id="sidebar_avatar" src="{{ session_data.avatar|default('/assets/images/avatar.svg') }}">
+        <img crossorigin="anonymous" loading="lazy" decoding="async" class="avatar" alt="Your avatar" id="sidebar_avatar" src="{{ session_data.avatar|default('/assets/images/avatar.svg') }}" width="248" height="248">
     </div>
     {% if session_data.activated == false %}
         <div class="warning">Pending <a href="/uc/emails">activation</a>.</div>
     {% endif %}
     <login-form>
-        <form id="signinup" name="signinup" autocomplete="on">
+        <form id="signinup" name="signinup" autocomplete="on" method="post">
             <button type="submit" name="signinup[submit]" id="signinup_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Logout" data-alt-attribute="Logging out...">Logout</button>
         </form>
     </login-form>
 {% else %}
     <login-form>
-        <form id="signinup" name="signinup" autocomplete="on">
+        <form id="signinup" name="signinup" autocomplete="on" method="post">
             {% if registration == 0 %}
                 <div class="warning">Registration is currently closed</div>
             {% endif %}
@@ -47,8 +49,13 @@
             </div>
             {{ include('common/elements/password_field.twig', {'new_password': true, 'password_field_id': 'signinup_password', 'password_field_name': 'signinup[password]', 'password_field_placeholder': 'Password'}) }}
             <div class="float_label" id="rememberme_div">
-                <input type="checkbox" name="signinup[rememberme]" id="rememberme">
-                <label for="rememberme">Remember me</label>
+                <input id="rememberme" type="checkbox" name="signinup[rememberme]">
+                <label for="rememberme">
+                    <span class="checkbox_checked_icon" aria-hidden="true"></span>
+                    <span class="checkbox_checked">Remember me</span>
+                    <span class="checkbox_not_checked_icon" aria-hidden="true"></span>
+                    <span class="checkbox_not_checked">Remember me</span>
+                </label>
             </div>
             <button type="submit" name="signinup[submit]" id="signinup_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Sign in/Join" data-alt-attribute="Sign in in...">Sign in/Join</button>
         </form>

@@ -1,7 +1,7 @@
 {% if not posts.entities %}
     <article class="margin_05rem">
-        <p class="middle">Looks like we've got nothing in here</p>
-        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block">
+        <p class="middle">It looks like we've got nothing in here</p>
+        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block" width="490" height="476">
     </article>
 {% else %}
     {% if created|date('Y/m/d H:i') != published|date('Y/m/d H:i') or pinned or closed or private or system or (access_token and get_access_token and access_token == get_access_token) %}
@@ -25,7 +25,7 @@
                 <span data-tooltip="System thread">⚠</span>
             {% endif %}
             {% if access_token and get_access_token and access_token == get_access_token %}
-                <p class="warning margin_bottom_2rem">You have accessed this page using an access token. To be able to access the page in the future use this link: <var data-tooltip="Click to copy link">{{ canonical }}?access_token={{ access_token }}</var></p>
+                <p class="warning margin_bottom_2rem">You’ve accessed this page using an access token. To be able to access the page in the future use this link: <var data-tooltip="Click to copy link">{{ canonical }}?access_token={{ access_token }}</var></p>
             {% endif %}
         </div>
     {% endif %}

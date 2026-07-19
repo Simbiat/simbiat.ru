@@ -15,7 +15,7 @@ header,
 #header_web,
 #header_mail {
     block-size: 2rem;
-    color: var(--border_light);
+    color: var(--color_logo);
     display: flex;
     font-family: var(--font_serif);
     font-size: 2rem;
@@ -33,6 +33,7 @@ header,
     }
 
     & img {
+        inline-size: 2rem;
         margin-block-end: 0.4rem;
         position: absolute;
     }

@@ -31,18 +31,54 @@ input[type='radio' i] {
     }
 }
 
-input[type='checkbox' i]:checked + label::before {
-    content: '☑';
-}
-
-input[type='checkbox' i]:not(:checked) + label::before {
-    content: '☐';
-}
-
 input[type='radio' i]:checked + label::before {
     content: '⦿';
 }
 
 input[type='radio' i]:not(:checked) + label::before {
     content: '◯';
+}
+
+input[type='checkbox' i] {
+    display: none;
+
+    & + label[data-tooltip] {
+        /* stylelint-disable-next-line declaration-no-important -- Valid case, since tooltip is applied to the label, but that results in the image being underlined */
+        text-decoration: none !important;
+
+        & span {
+            &.checkbox_not_checked,
+            &.checkbox_checked {
+                text-decoration: var(--tooltip_decoration);
+            }
+        }
+    }
+
+    & + label span.checkbox_checked_icon:empty::before {
+        content: '☑';
+    }
+
+    & + label span.checkbox_not_checked_icon:empty::before {
+        content: '☐';
+    }
+
+    & + label span {
+        color: var(--color_interactive);
+        cursor: pointer;
+        text-decoration-color: var(--color_interactive);
+    }
+
+    &:not(:checked) + label span {
+        &.checkbox_checked,
+        &.checkbox_checked_icon {
+            display: none;
+        }
+    }
+
+    &:checked + label span {
+        &.checkbox_not_checked,
+        &.checkbox_not_checked_icon {
+            display: none;
+        }
+    }
 }

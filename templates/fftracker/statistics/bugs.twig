@@ -19,22 +19,24 @@
 {% endif %}
 <h2>Groups with no members</h2>
 {% if ffstats.data.bugs.no_members|length > 0 %}
-    <p>These are either groups that are freshly added to the tracker (which is normal) or those that do not have any members on Lodestone, which may mean, that these are groups pending removal from the game.</p>
+    <p>These are either groups that are freshly added to the tracker (which is normal) or those that do not have any members on Lodestone, which may mean that these are groups pending removal from the game.</p>
     {% for group in ffstats.data.bugs.no_members %}
         {{ include('common/elements/entitycard.twig', group) }}
     {% endfor %}
 {% else %}
-    <p>No active groups without members found.</p>
+    <p>No active groups without members were found.</p>
 {% endif %}
 <h2>Duplicate names</h2>
 {% if ffstats.data.bugs.duplicate_names|length > 0 %}
-    <p>The game does not allow duplicate case-insensitive character names and duplicate case-sensitive group names on the same server or data center. If there are duplicates, most likely one of the copy has name changed, and needs an update on tracker.</p>
+    <p>The game does not allow duplicate case-insensitive character names and duplicate case-sensitive group names on the same server or data center. If there are duplicates, most likely one of the copies has name changed and needs an update on the tracker.</p>
     <table class="ff_duplicate_names">
-        <thead><tr>
-            <th>Entity type</th>
-            <th>Server or Data Center</th>
-            <th>Duplicates</th>
-        </tr></thead>
+        <thead>
+            <tr>
+                <th>Entity type</th>
+                <th>Server or Data Center</th>
+                <th>Duplicates</th>
+            </tr>
+        </thead>
         {% for entity_type, servers in ffstats.data.bugs.duplicate_names %}
             {% for server, names in servers %}
                 {% for duplicates in names %}
@@ -62,5 +64,5 @@
         {% endfor %}
     </table>
 {% else %}
-    <p>No duplicate names found.</p>
+    <p>No duplicate names were found.</p>
 {% endif %}

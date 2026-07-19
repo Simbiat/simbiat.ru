@@ -84,7 +84,7 @@ class Character extends Page
             $output_array['character']['lodestone_url'] = null;
         }
         #Set favicon to avatar
-        if ($output_array['character']['avatar_id'] !== 'defaultf') {
+        if (empty($output_array['character']['dates']['hidden']) && $output_array['character']['avatar_id'] !== 'defaultf') {
             $output_array['favicon'] = 'https://img2.finalfantasyxiv.com/f/'.$output_array['character']['avatar_id'].'c0.jpg';
         }
         return $output_array;

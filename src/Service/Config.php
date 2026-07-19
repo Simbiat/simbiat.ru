@@ -245,9 +245,14 @@ final class Config
      */
     public static function dbConnect(): bool
     {
+        #Check if flag file exists for an earlier exit
+        if (\is_file('/app/logs/db_maintenance.flag')) {
+            self::$dbup = false;
+            self::$db_update = true;
+            return false;
+        }
         #Check in case we accidentally call this for the 2nd time
         if (!self::$dbup) {
-            self::$dbup = true;
             try {
                 new Query(Pool::openConnection(
                     new Connection()
@@ -265,6 +270,7 @@ final class Config
                                                                                     SESSION time_zone=\'+00:00\';')
                         ->setOption(\PDO::ATTR_TIMEOUT, 1), max_tries: 5)
                 );
+                self::$dbup = true;
                 #Check for maintenance
                 try {
                     self::$db_update = (bool)Query::query('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'', return: 'value');

@@ -89,43 +89,6 @@
     }
 }
 
-.section_private + label,
-.section_closed + label {
-    text-decoration-color: var(--color_interactive);
-}
-
-.section_private:not(:checked) + label::after {
-    content: 'Public';
-}
-
-.section_private:checked + label::after {
-    content: 'Private';
-}
-
-input[type='checkbox' i].section_private:not(:checked) + label::before {
-    content: '🚶';
-}
-
-input[type='checkbox' i].section_private:checked + label::before {
-    content: '🚷';
-}
-
-.section_closed:not(:checked) + label::after {
-    content: 'Open';
-}
-
-.section_closed:checked + label::after {
-    content: 'Closed';
-}
-
-input[type='checkbox' i].section_closed:not(:checked) + label::before {
-    content: '🔓';
-}
-
-input[type='checkbox' i].section_closed:checked + label::before {
-    content: '🔒';
-}
-
 #delete_section {
     color: var(--color_failure);
     display: block;

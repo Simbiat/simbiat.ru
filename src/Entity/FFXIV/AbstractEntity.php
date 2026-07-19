@@ -8,6 +8,7 @@ use App\HomePage;
 use App\Service\Config;
 use App\Service\Errors;
 use App\Service\Images;
+use JetBrains\PhpStorm\FileReference;
 use Simbiat\Cron\TaskInstance;
 use Simbiat\Database\Query;
 use function dirname;
@@ -143,11 +144,15 @@ abstract class AbstractEntity
         if ($this::ENTITY_TYPE === 'achievement') {
             /** @noinspection PhpPossiblePolymorphicInvocationInspection These attributes are specific for achievements */
             if (\count($this->characters) !== 0 && ($this->category === null || $this->subcategory === null || $this->how_to === null || $this->db_id === null || (\time() - \strtotime($this->updated)) >= 31536000)) {
-                $cron_task = new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$this->id, 'achievement'], 'message' => 'Updating achievement with ID '.$this->id, 'priority' => 2]);
-                $cron_task->add();
-                $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
-                if ($scheduled) {
-                    return \strtotime($scheduled);
+                try {
+                    $cron_task = new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$this->id, 'achievement'], 'message' => 'Updating achievement with ID '.$this->id, 'priority' => 2]);
+                    $cron_task->add();
+                    $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
+                    if ($scheduled) {
+                        return \strtotime($scheduled);
+                    }
+                } catch (\Throwable) {
+                    return null;
                 }
                 return null;
             }
@@ -300,12 +305,16 @@ abstract class AbstractEntity
             $result = ['http_error' => 503, 'reason' => 'Failed to update: '.$exception->getMessage()];
         }
         if ($result !== true) {
-            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-            $cron_task = new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$this->id, ($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE], 'message' => 'Updating '.($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE.' with ID '.$this->id, 'priority' => 3]);
-            $cron_task->add();
-            $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
-            if ($scheduled && is_array($result)) {
-                $result['reason'] .= 'Scheduled for '.$scheduled;
+            try {
+                /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+                $cron_task = new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$this->id, ($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE], 'message' => 'Updating '.($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE.' with ID '.$this->id, 'priority' => 3]);
+                $cron_task->add();
+                $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
+                if ($scheduled && is_array($result)) {
+                    $result['reason'] .= 'Scheduled for '.$scheduled;
+                }
+            } catch (\Throwable) {
+                #Do nothing, not critical
             }
         }
         return $result;
@@ -359,7 +368,7 @@ abstract class AbstractEntity
         }
         #At some point, empty linkshells became possible on lodestone, those that have a page, but no members at all, and are not searchable by name. Possibly private linkshells or something like that
         #Since they lack some basic information, it's not possible to register them, so treat them as private
-        if (isset($this->lodestone['empty']) && $this->lodestone['empty'] === true && \in_array($this::ENTITY_TYPE, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'])) {
+        if (isset($this->lodestone['empty']) && $this->lodestone['empty'] === true && \in_array($this::ENTITY_TYPE,['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'], true)) {
             return 403;
         }
         unset($this->lodestone['404']);
@@ -576,7 +585,7 @@ abstract class AbstractEntity
      *
      * @return bool
      **/
-    protected static function crestMerge(array $images, string $final_path, bool $debug = false): bool
+    protected static function crestMerge(array $images, #[FileReference] string $final_path, bool $debug = false): bool
     {
         try {
             #Don't do anything if an empty array

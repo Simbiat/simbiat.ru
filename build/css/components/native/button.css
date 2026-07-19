@@ -29,8 +29,8 @@ a.button {
     vertical-align: middle;
 
     > * {
-        /* noinspection Stylelint */
-        cursor: pointer !important; /* Valid case, need to ensure the cursor is pointer regardless of the content inside */
+        /* stylelint-disable-next-line declaration-no-important -- Valid case, need to ensure the cursor is pointer regardless of the content inside */
+        cursor: pointer !important;
     }
 
     &::-moz-focus-inner {

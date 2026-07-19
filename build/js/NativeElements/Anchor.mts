@@ -24,7 +24,7 @@ export class Anchor {
       // Technically, all modern browsers are supposed to add them during onclick, but can't trust that.
       // Also, noreferrer already implies noopener, but allegedly some browsers at least used to require both, not following the spec.
       if (empty(anchor.rel)) {
-        anchor.rel = 'noopener noreferrer';
+        anchor.rel = 'noreferrer';
       } else {
         if (!anchor.rel.includes('noopener')) {
           anchor.rel += ' noopener';
@@ -35,13 +35,10 @@ export class Anchor {
       }
     }
     // Add an icon indicating that the link will open in a new tab
-    if (anchor.target === '_blank' && anchor.querySelector<HTMLImageElement>('img[src*="newtab.svg"]') === null && !anchor.classList.contains('no_new_tab_icon')) {
-      const new_tab_icon = document.createElement('img');
-      new_tab_icon.loading = 'lazy';
-      new_tab_icon.decoding = 'async';
-      new_tab_icon.alt = 'Opens in new tab';
-      new_tab_icon.src = '/assets/images/newtab.svg';
+    if (anchor.target === '_blank' && anchor.querySelector<HTMLSpanElement>('span.new_tab_icon') === null && !anchor.classList.contains('no_new_tab_icon')) {
+      const new_tab_icon = document.createElement('span');
       new_tab_icon.classList.add('new_tab_icon');
+      new_tab_icon.textContent = '↗';
       anchor.insertAdjacentElement('beforeend', new_tab_icon);
       // I am aware of some extensions adding blank anchors that can break the code, so we need to check if the href is empty
     } else if (

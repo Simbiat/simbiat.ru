@@ -41,8 +41,7 @@ progress {
 
     &[value]::-webkit-progress-value {
         background-image: linear-gradient(to right, var(--color_failure), var(--color_success));
-        /* Suppressing inspection for transition: progress-value is limited in styling and looks like only `width` can work with it */
-        /* noinspection Stylelint */
+        /* stylelint-disable-next-line plugin/no-low-performance-animation-properties -- Suppressing inspection for transition: progress-value is limited in styling and looks like only `width` can work with it */
         transition: inline-size 0.5s;
     }
 

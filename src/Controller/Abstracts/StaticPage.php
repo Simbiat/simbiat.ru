@@ -14,7 +14,7 @@ class StaticPage extends Page
     protected string $cache_strategy = 'week';
     
     /**
-     * Static pages have all the data in Twig templates, thus we just return empty array
+     * Static pages have all the data in Twig templates, thus we usually return an empty array
      * @param array $path
      *
      * @return array

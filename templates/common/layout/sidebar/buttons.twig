@@ -1,13 +1,13 @@
 {% if http_error != 'database' and http_error != 'maintenance' %}
     <side-show data-sidebar="login_form">
         <button type="button">
-            <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="{% if session_data.user_id != 1 and session_data.username %}User profile{% else %}Login{% endif %}" src="{% if session_data.user_id != 1 %}{{ session_data.avatar|default('/assets/images/avatar.svg') }}{% else %}/assets/images/navigation/login.svg{% endif %}">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="{% if session_data.user_id != 1 and session_data.username %}User profile{% else %}Login{% endif %}" src="{% if session_data.user_id != 1 %}{{ session_data.avatar|default('/assets/images/avatar.svg') }}{% else %}/assets/images/navigation/login.svg{% endif %}" width="248" height="248">
         </button>
     </side-show>
 {% else %}
     <side-show data-sidebar="sidebar_no_db">
         <button type="button">
-            <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="{% if http_error == 'database' %}No database{% else %}Maintenance{% endif %}" src="/assets/images/errors/{% if http_error == 'database' %}database.svg{% else %}maintenance.svg{% endif %}">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="{% if http_error == 'database' %}No database{% else %}Maintenance{% endif %}" src="/assets/images/errors/{% if http_error == 'database' %}database.svg{% else %}maintenance.svg{% endif %}" width="56" height="56">
         </button>
     </side-show>
 {% endif %}
@@ -17,10 +17,10 @@
 {% if is_prod == false %}
     <side-show id="prod_link" class="sepia_100">
         <button type="button">
-            <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="Open Prod version" src="/assets/images/newtab.svg">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="Open Prod version" src="/assets/images/newtab.svg" width="735" height="735">
         </button>
     </side-show>
 {% endif %}
-<side-show id="back-to-top">
+<side-show id="back_to_top">
     {{ include('CustomElements/BackToTop.twig', with_context = false) }}
 </side-show>

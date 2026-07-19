@@ -1,6 +1,6 @@
 <post-form>
     {% if not new_thread %}
-        <form id="post_form" name="post_form" autocomplete="off" class="middle">
+        <form id="post_form" name="post_form" autocomplete="off" class="middle" method="post">
     {% endif %}
         <input type="hidden" name="verb" value="{{ verb }}" required>
         {% if not new_thread %}
@@ -18,8 +18,13 @@
         </div>
         {% if verb == 'edit' and 'hide_update' in permissions %}
             <div class="float_label">
-                <input id="post_hide_update" name="post_data[hide_update]" type="checkbox">
-                <label for="post_hide_update" data-tooltip="If checked and there is a text change, the `updated` time of the post will not be changed.">Hide update</label>
+                <input id="post_hide_update" type="checkbox" name="post_data[hide_update]">
+                <label for="post_hide_update" data-tooltip="If checked and there is a text change, the `updated` time of the post will not be changed.">
+                    <span class="checkbox_checked_icon" aria-hidden="true"></span>
+                    <span class="checkbox_checked">Hide update</span>
+                    <span class="checkbox_not_checked_icon" aria-hidden="true"></span>
+                    <span class="checkbox_not_checked">Hide update</span>
+                </label>
             </div>
         {% endif %}
         {% if verb == 'edit' and author != current_user and author not in system_users %}

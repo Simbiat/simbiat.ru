@@ -1,27 +1,23 @@
 @keyframes anchor-flash {
     from {
-        /* Do not see a better alternative for desired effect */
-        /* noinspection Stylelint */
+        /* stylelint-disable-next-line plugin/no-low-performance-animation-properties -- Do not see a better alternative for desired effect */
         background: var(--color_interactive);
     }
 
     to {
-        /* Do not see a better alternative for desired effect */
-        /* noinspection Stylelint */
+        /* stylelint-disable-next-line plugin/no-low-performance-animation-properties -- Do not see a better alternative for desired effect */
         background: inherit;
     }
 }
 
 @keyframes timeline-flash {
     from {
-        /* Do not see a better alternative for desired effect */
-        /* noinspection Stylelint */
+        /* stylelint-disable-next-line plugin/no-low-performance-animation-properties -- Do not see a better alternative for desired effect */
         background: var(--color_interactive);
     }
 
     to {
-        /* Do not see a better alternative for desired effect */
-        /* noinspection Stylelint */
+        /* stylelint-disable-next-line plugin/no-low-performance-animation-properties -- Do not see a better alternative for desired effect */
         background: var(--color_block);
     }
 }

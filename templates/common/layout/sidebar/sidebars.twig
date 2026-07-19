@@ -14,11 +14,11 @@
             {{ include('CustomElements/SideHide.twig', with_context = false) }}
             <section id="no_db_section">
                 {% if http_error == 'database' %}
-                    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="No database connection" src="/assets/images/errors/database.svg">
-                    <p class="warning">The database is currently unavailable, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
+                    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="No database connection" src="/assets/images/errors/database.svg" width="56" height="56">
+                    <p class="warning">The database is currently unavailable, and you are seeing a static or cached page that is not dependent on it. Sidebar elements suppressed.</p>
                 {% else %}
-                    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Maintenance" src="/assets/images/errors/maintenance.svg">
-                    <p class="warning">The database is currently under maintenance, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
+                    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Maintenance" src="/assets/images/errors/maintenance.svg" width="511" height="511">
+                    <p class="warning">The database is currently under maintenance, and you are seeing a static or cached page that is not dependent on it. Sidebar elements suppressed.</p>
                 {% endif %}
             </section>
         </aside>

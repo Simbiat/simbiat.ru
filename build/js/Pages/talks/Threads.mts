@@ -6,7 +6,7 @@ import { pageRefresh, empty } from 'Common/Helpers.mts';
 import { Ajax } from 'Common/Ajax.mts';
 import { Snackbar } from 'Common/Snackbar.mts';
 import { type PostForm } from 'CustomElements/PostForm.mts';
-import { saveTinyMCE } from 'Common/TinyMCE.mts';
+import { TinyMCE as TinyMCEClass } from 'Common/TinyMCE.mts';
 import type { TinyMCE } from 'tinymce/tinymce.d.ts';
 import { Form } from 'NativeElements/Form.mts';
 
@@ -100,7 +100,7 @@ export class Threads {
       const textarea = this.add_post_form.querySelector<HTMLTextAreaElement>('textarea');
       //Ensure we have the latest version of the text from TinyMCE instance
       if (textarea && !empty(textarea.id)) {
-        await saveTinyMCE(textarea.id, true);
+        await TinyMCEClass.save(textarea.id, true);
       }
       //Get the `submit` button
       const button = this.add_post_form.querySelector<HTMLButtonElement>('button[type=submit]');
@@ -121,12 +121,12 @@ export class Threads {
           if (response.data === true) {
             //Notify TinyMCE that data was saved
             if (textarea && !empty(textarea.id)) {
-              await saveTinyMCE(textarea.id);
+              await TinyMCEClass.save(textarea.id);
             }
             void new Snackbar('Post created. Reloading...', 'success');
             pageRefresh(response.location);
           } else if (response.location) {
-            void new Snackbar(`${response.reason} View the post <a href="${response.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'failure', 0);
+            void new Snackbar(`${response.reason} View the post <a href="${response.location}" target="_blank">here</a>.`, 'failure', 0);
           }
         },
         keep_disabled: true,
@@ -250,7 +250,7 @@ export class Threads {
             void new Snackbar('Thread updated. Reloading...', 'success');
             pageRefresh();
           } else if (response.location) {
-            void new Snackbar(`${response.reason} View the thread <a href="${response.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'failure', 0);
+            void new Snackbar(`${response.reason} View the thread <a href="${response.location}" target="_blank">here</a>.`, 'failure', 0);
           }
         },
         keep_disabled: true,

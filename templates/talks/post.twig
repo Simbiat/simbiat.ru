@@ -31,7 +31,7 @@
         {% if 'move_posts' in session_data.permissions %}
             <a class="tab_name warning" id="tab_name_move" href="#tab_name_move">Move</a>
             <div class="tab_content" id="tab_content_move">
-                <form id="post_move_form" name="post_move_form" autocomplete="off" class="middle">
+                <form id="post_move_form" name="post_move_form" autocomplete="off" class="middle" method="post">
                     <p>Input ID of the parent thread to which you want to move this post.</p>
                     <p class="warning">Note that moving this post
                         <b>can</b> affect content availability if new parent public and/or close status differ.</p>
@@ -51,7 +51,7 @@
         {% if 'remove_posts' in session_data.permissions %}
             <a class="tab_name danger" id="tab_name_delete" href="#tab_name_delete">Delete</a>
             <div class="tab_content" id="tab_content_delete">
-                <form id="delete_post_form" name="delete_post_form" autocomplete="off">
+                <form id="delete_post_form" name="delete_post_form" autocomplete="off" method="post">
                     <p>Pressing the below button will delete the current post completely.
                         <b class="warning">It will not be possible to restore it</b>, so do it after good and long thinking.
                     </p>

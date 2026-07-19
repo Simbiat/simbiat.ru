@@ -1,6 +1,8 @@
 /**
  * @file Initialization of the frontend.
  */
+import { Sanitize } from 'Common/Sanitize.mts';
+import DOMPurify from 'dompurify';
 import { cleanGET, hashCheck } from './Common/Helpers.mts';
 import { BackToTop } from './CustomElements/BackToTop.mts';
 import { CarouselList } from './CustomElements/CarouselList.mts';
@@ -218,7 +220,47 @@ function router(): void {
 /**
  * Runs initialization routines.
  */
-function init(): void {
+function globalInit(): void {
+  if (typeof window.trustedTypes !== 'undefined') {
+    window.trustedTypes.createPolicy('default', {
+      /**
+       * Allow only TinyMCE scripts.
+       * @param url - URL to process.
+       * @throws {Error}
+       */
+      createScriptURL: (url: string): string => {
+        const allowed = ['tinymce/', '/tinymce/'];
+        // Normalize: get pathname if it's an absolute URL
+        let path = url;
+        try {
+          path = new URL(url, window.location.origin).pathname;
+        } catch {
+          // not a valid absolute URL, treat as-is
+        }
+        if (allowed.some((prefix) => {
+          return path.includes(prefix);
+        })) {
+          return url;
+        }
+        throw new Error(`[TrustedTypes] Blocked script URL: ${url}`);
+      },
+      /**
+       * Pass raw HTML through DOMPurify rather than blocking it.
+       * @param html - HTML to process.
+       */
+      createHTML: (html: string): string => {
+        return DOMPurify.sanitize(html, Sanitize.PURIFY_CONFIG);
+      },
+      /**
+       * Block arbitrary script strings entirely.
+       * @param _script - Script to process.
+       * @throws {Error}
+       */
+      createScript: (_script: string): string => {
+        throw new Error('[TrustedTypes] Blocked dynamic script evaluation');
+      },
+    });
+  }
   // Customize native elements already in DOM
   for (const element of document.querySelectorAll<HTMLElement>('input, textarea, a, h1:not(#h1_title), h2, h3, h4, h5, h6, form, details, samp, code, blockquote, q, var, dialog, img, button')) {
     customizeNewElements(element);
@@ -249,7 +291,7 @@ function init(): void {
 }
 
 // Stuff to do on the initial load
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', globalInit);
 window.addEventListener('hashchange', () => {
   hashCheck();
 });

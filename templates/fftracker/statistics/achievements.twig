@@ -2,11 +2,15 @@
 <p>Achievement leaderboard can be found <a href="/fftracker/points">here</a>.</p>
 {% for categoryname, category in ffstats.data.achievements %}
     <table>
-        <caption><h2>Top 20 rarest "{{ categoryname }}" achievements</h2></caption>
-        <thead><tr>
-            <th>Achievement</th>
-            <th>Earned by</th>
-        </tr></thead>
+        <caption>
+            <h2>Top 20 rarest "{{ categoryname }}" achievements</h2>
+        </caption>
+        <thead>
+            <tr>
+                <th>Achievement</th>
+                <th>Earned by</th>
+            </tr>
+        </thead>
         {% for row in category %}
             <tr>
                 <td>{{ include('common/elements/entitycard.twig', row) }}</td>
@@ -14,13 +18,17 @@
             </tr>
         {% endfor %}
     </table>
-{%endfor%}
+{% endfor %}
 <table>
-    <caption><h2>20 most popular titles</h2></caption>
-    <thead><tr>
-        <th>Title</th>
-        <th>Used by</th>
-    </tr></thead>
+    <caption>
+        <h2>20 most popular titles</h2>
+    </caption>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Used by</th>
+        </tr>
+    </thead>
     {% for datapoint in ffstats.data.titles.top %}
         <tr>
             <td><a href="/fftracker/achievements/{{ datapoint.achievement_id }}">{{ datapoint.title }}</a></td>
@@ -29,11 +37,15 @@
     {% endfor %}
 </table>
 <table>
-    <caption><h2>20 least popular titles</h2></caption>
-    <thead><tr>
-        <th>Title</th>
-        <th>Used by</th>
-    </tr></thead>
+    <caption>
+        <h2>20 least popular titles</h2>
+    </caption>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Used by</th>
+        </tr>
+    </thead>
     {% for datapoint in ffstats.data.titles.bottom %}
         <tr>
             <td><a href="/fftracker/achievements/{{ datapoint.achievement_id }}">{{ datapoint.title }}</a></td>

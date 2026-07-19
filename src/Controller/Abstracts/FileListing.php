@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace App\Controller\Abstracts;
 
 use App\Service\Config;
+use JetBrains\PhpStorm\FileReference;
 use Simbiat\http20\Headers;
 use Simbiat\StringHelpers\Convert;
 use function array_slice;
@@ -113,7 +114,7 @@ class FileListing extends StaticPage
      *
      * @return string|false
      */
-    private function getRealSubDirPath(string $path, array $sub_dir): string|false
+    private function getRealSubDirPath(#[FileReference] string $path, array $sub_dir): string|false
     {
         $full_sub_dir = '/';
         foreach ($sub_dir as $sub_path) {
@@ -140,7 +141,7 @@ class FileListing extends StaticPage
      *
      * @return array
      */
-    private function listFiles(string $path, string $sub_dir = ''): array
+    private function listFiles(#[FileReference] string $path, #[FileReference] string $sub_dir = ''): array
     {
         $output_array['files'][$path] = $this->getFiles(Config::$work_dir.$this->dirs[$path]['path'].$sub_dir);
         #Process pagination
@@ -194,7 +195,7 @@ class FileListing extends StaticPage
      *
      * @return array
      */
-    private function getDirs(string $path, bool $count_only = false): array
+    private function getDirs(#[FileReference] string $path, bool $count_only = false): array
     {
         #Order results
         /* @noinspection IteratorToArrayKeysCollisionInspection */
@@ -232,7 +233,7 @@ class FileListing extends StaticPage
      *
      * @return array
      */
-    protected function getFiles(string $path, bool $count_only = false): array
+    protected function getFiles(#[FileReference] string $path, bool $count_only = false): array
     {
         if ($this->recursive) {
             $iterator = new \CallbackFilterIterator(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST), function ($cur) {

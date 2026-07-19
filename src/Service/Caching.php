@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace App\Service;
 
 use App\HomePage;
+use JetBrains\PhpStorm\FileReference;
 use Simbiat\StringHelpers\Sanitize;
 
 /**
@@ -14,12 +15,13 @@ class Caching
     /**
      * @param string $cache_dir Directory to use for cache files
      */
-    public function __construct(private string $cache_dir = '')
+    public function __construct(#[FileReference] private string $cache_dir = '')
     {
         if (Sanitize::whiteString($this->cache_dir)) {
             $this->cache_dir = Config::$html_cache;
         }
-        if (!\is_dir($this->cache_dir) && !\mkdir($this->cache_dir, recursive: true) && !\is_dir($this->cache_dir)) {
+        /** @noinspection PhpUsageOfSilenceOperatorInspection */
+        if (!\is_dir($this->cache_dir) && !@\mkdir($this->cache_dir, recursive: true) && !\is_dir($this->cache_dir)) {
             throw new \RuntimeException(\sprintf('Directory "%s" was not created', $this->cache_dir));
         }
         if (\preg_match('/\/$/', $this->cache_dir) !== 1) {
@@ -139,7 +141,7 @@ class Caching
      *
      * @return array
      */
-    public function getArrayFromFile(string $cache_path): array
+    public function getArrayFromFile(#[FileReference] string $cache_path): array
     {
         #Check if the cache file exists
         if (\is_file($cache_path)) {
