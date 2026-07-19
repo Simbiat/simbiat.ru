@@ -82,14 +82,7 @@ class Day
             ->setGlobalFineTune('prefer_extended', true)
             ->setGlobalFineTune('compress_auto_run', true)
             ->setGlobalFineTune('use_flush', true);
-        $commands = $analyzer->getCommands($_ENV['DATABASE_NAME'], [], true, true);
-        foreach ($commands as $key => $command) {
-            if (\preg_match('/^UPDATE.*`sys__settings` SET/ui', $command) === 1) {
-                unset($commands[$key]);
-            }
-        }
-        #Dump commands to file
-        \file_put_contents(Config::$work_dir.'/data/backups/optimization_commands.sql', \implode(\PHP_EOL, $commands));
+        $analyzer->writeCommandsToFiles(Config::$work_dir.'/data/backups/optimization', $_ENV['DATABASE_NAME'], [], true);
     }
     
     /**
@@ -99,8 +92,8 @@ class Day
     public function libraryUpdate(): bool|string|int
     {
         $result = new BICLibrary()->update(true);
-        #Ignore failures to download the file, CBR started using DDoS-Guard, which seems to be blocking the server most of the time now
-        if (\is_string($result) && !\is_numeric($result) && !str_contains($result, 'Не удалось скачать файл')) {
+        #Ignore failures to download the file. CBR started using DDoS-Guard, which seems to be blocking the server most of the time now
+        if (\is_string($result) && !\is_numeric($result) && !\str_contains($result, 'Не удалось скачать файл')) {
             #Send email notification, this most likely means some change in UFEBS form
             (void)new CronFailure()->save(SystemUser::Owner->value, ['method' => __METHOD__, 'errors' => $result], true, false, Config::ADMIN_MAIL);
         }
