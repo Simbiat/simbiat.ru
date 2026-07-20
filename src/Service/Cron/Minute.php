@@ -9,6 +9,7 @@ use App\Notification\Notification;
 use App\Notification\Test;
 use App\Security\Security;
 use App\Security\Session;
+use App\Service\Config;
 use App\Service\Errors;
 use Simbiat\Cron\Agent;
 use Simbiat\Cron\EventTypes;
@@ -107,7 +108,9 @@ class Minute
     {
         echo '['.\date('c').'] '.$message.\PHP_EOL;
         try {
-            new Agent()->log($message, $event);
+            if (Config::$dbup) {
+                new Agent()->log($message, $event);
+            }
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
         }
