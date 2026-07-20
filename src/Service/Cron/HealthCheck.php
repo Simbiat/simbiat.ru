@@ -84,6 +84,12 @@ class HealthCheck
         }
         $no_db_flag = $dir.'/no_db.flag';
         $crash_flag = '/app/logs/backup_crash.flag';
+        #If maintenance flag found it's normal
+        if (\is_file('/app/logs/db_maintenance.flag')) {
+            /** @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
+            @\unlink($no_db_flag);
+            return;
+        }
         if (Config::$prod && !Config::$dbup) {
             #Do not do anything if mail has already been sent
             if (!\is_file($no_db_flag)) {
