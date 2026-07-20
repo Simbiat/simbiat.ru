@@ -540,33 +540,11 @@ SQL_EOF
     # =========================================================
     # COMPRESS BACKUPS
     # =========================================================
-    log_msg "Zipping logical and physical backups in parallel"
-
-    # Disable errexit for parallel section - we handle errors manually
-    set +e
-    trap - ERR
-
-    7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -mhe -mtc -mta -mtm -mmt=5 -p"${MARIADB_BACKUP_PASSWORD}" "$backup_dir/$current_date-${logical_name}.7z" "$logical_backup" &
-    pid_logical=$!
-    7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -mhe -mtc -mta -mtm -mmt=5 -p"${MARIADB_BACKUP_PASSWORD}" "$backup_dir/$current_date-physical.7z" "$physical_backup" &
-    pid_physical=$!
-
-    wait "$pid_logical"
-    status_logical=$?
-    wait "$pid_physical"
-    status_physical=$?
-
-    # Re-enable error handling
-    trap 'error_handler $? $LINENO' ERR
-    set -e
-
-    if [ "$status_logical" -ne 0 ] || [ "$status_physical" -ne 0 ]; then
-      log_msg "Parallel compression failed (logical: $status_logical, physical: $status_physical)"
-      error_handler "${status_logical:-$status_physical}" "$LINENO"
-    fi
-
-    #For some reason the logical backup file is not deleted after compression, despite the flag, so using a separate command to do that
+    log_msg "Zipping logical backup"
+    7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -mhe -mtc -mta -mtm -mmt=on -p"${MARIADB_BACKUP_PASSWORD}" "$backup_dir/$current_date-${logical_name}.7z" "$logical_backup"
     rm -rf "$logical_backup";
+    log_msg "Zipping physical backup"
+    7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -mhe -mtc -mta -mtm -mmt=on -p"${MARIADB_BACKUP_PASSWORD}" "$backup_dir/$current_date-physical.7z" "$physical_backup"
     rm -rf "$physical_backup";
     log_msg "Backup completed"
     rm -f "$maintenance_flag"
