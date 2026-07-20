@@ -15,10 +15,10 @@ set +a
 
 if [ "$WEB_SERVER_TEST" != "true" ]; then
   current_date=$(date +%Y.%m.%d)
-  log_file=/usr/local/logs/backup-$current_date.log
+  log_file=/usr/local/logs/backup-${current_date}.log
   backup_dir=/usr/local/backups
-  physical_backup=/usr/local/backups/physical
-  logical_backup=/usr/local/backups/logical
+  physical_backup=/usr/local/backups/physical-${current_date}
+  logical_backup=/usr/local/backups/logical-${current_date}
   tables_order=$(cat /usr/local/DDL/000-recommended_table_order.txt)
   optimization_dir=/usr/local/backups/optimization
   maintenance_flag=/usr/local/logs/maintenance.flag
@@ -267,10 +267,23 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
     # =========================================================
     log_msg "Cleaning previous files";
     rm -rf "$backup_dir"/*.sql;
-    rm -rf "$backup_dir"/*.7z;
-    rm -rf "$physical_backup";
-    rm -rf "$logical_backup";
     rm -f "$tmp_socket" "$tmp_pidfile";
+    # Remove physical/logical folders, and respective 7z archives. 7z archives without a folder (meaning successful compression) are preserved
+    for dir in "$backup_dir"/physical-* "$backup_dir"/logical-*; do
+      [ -d "$dir" ] || continue
+      dir_base=$(basename "$dir")
+      # strip "physical-" / "logical-" prefix
+      dir_date="${dir_base#*-}"
+      rm -rf "$dir"
+      if [[ "$dir_base" == physical-* ]]; then
+        rm -f "$backup_dir/${dir_date}-physical.7z"
+      elif [[ "$dir_base" == logical-* ]]; then
+        # logical_name varies (daily/weekly/monthly), so try all three
+        rm -f "$backup_dir/${dir_date}-daily.7z" \
+              "$backup_dir/${dir_date}-weekly.7z" \
+              "$backup_dir/${dir_date}-monthly.7z"
+      fi
+    done
 
     # =========================================================
     # ENABLE MAINTENANCE
