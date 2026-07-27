@@ -55,7 +55,7 @@ export function empty(variable: unknown): boolean {
 }
 
 /**
- * Remove table row based on containing the element.
+ * Remove a table row based on containing the element.
  * @param element - HTML element to use to find the closest "tr" element to remove.
  */
 export function deleteRow(element: HTMLElement): boolean {
@@ -110,7 +110,7 @@ export function cleanGET(): void {
 }
 
 /**
- * Remove forbidden parameters from URL string.
+ * Remove forbidden parameters from a URL string.
  * @param url - URL to process.
  */
 export function urlCleanString(url: string): string {

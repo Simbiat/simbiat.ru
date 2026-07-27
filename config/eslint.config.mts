@@ -2,33 +2,31 @@
  * @file ESLint config.
  */
 // eslint-disable-next-line github/filenames-match-regex
+import { configs as eslint } from '@eslint/js';
+import json from '@eslint/json';
+import markdown from '@eslint/markdown';
+import { configs as html } from '@html-eslint/eslint-plugin';
+import html_parser from '@html-eslint/parser';
+import simbiat from '@simbiat/eslint-plugin-simbiat';
 import stylistic from '@stylistic/eslint-plugin';
-import globals from 'globals';
-import eslint from '@eslint/js';
-import ts_eslint from 'typescript-eslint';
-import ts_parser from '@typescript-eslint/parser';
-import compat from 'eslint-plugin-compat';
-import { defineConfig, globalIgnores } from 'eslint/config';
+import { configs as compat } from 'eslint-plugin-compat';
 import { configs as deMorgan } from 'eslint-plugin-de-morgan';
 import { plugin as ex } from 'eslint-plugin-exception-handling';
-import no_unsanitized from 'eslint-plugin-no-unsanitized';
-import markdown from '@eslint/markdown';
-import json from '@eslint/json';
-import no_constructor from 'eslint-plugin-no-constructor-bind';
-import redos from 'eslint-plugin-redos';
-import pii from 'eslint-plugin-pii';
-import xss from 'eslint-plugin-xss';
 import github from 'eslint-plugin-github';
-import plugin_promise from 'eslint-plugin-promise';
+import jsdoc from 'eslint-plugin-jsdoc';
+import no_constructor from 'eslint-plugin-no-constructor-bind';
+import no_unsanitized from 'eslint-plugin-no-unsanitized';
+import { configs as package_json } from 'eslint-plugin-package-json';
+import { configs as plugin_promise } from 'eslint-plugin-promise';
+import redos from 'eslint-plugin-redos';
 import { configs as regexp_plugin } from 'eslint-plugin-regexp';
+import { configs as security } from 'eslint-plugin-security';
 import { configs as sonarjs } from 'eslint-plugin-sonarjs';
 import unicorn from 'eslint-plugin-unicorn';
-import jsdoc from 'eslint-plugin-jsdoc';
-import simbiat from '@simbiat/eslint-plugin-simbiat';
-import { configs as security } from 'eslint-plugin-security';
-import html from '@html-eslint/eslint-plugin';
-import html_parser from '@html-eslint/parser';
-import { configs as package_json } from 'eslint-plugin-package-json';
+import xss from 'eslint-plugin-xss';
+import { defineConfig, globalIgnores } from 'eslint/config';
+import globals from 'globals';
+import ts_eslint from 'typescript-eslint';
 
 // It looks like a false positive for the inspection, so suppressing it.
 // noinspection JSCheckFunctionSignatures
@@ -41,20 +39,20 @@ export default defineConfig([
   {
     files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.mjs', '**/*.mjsx', '**/*.mts', '**/*.mtsx'],
     extends: [
-      compat.configs['flat/recommended'],
-      eslint.configs.recommended,
+      compat['flat/recommended'],
+      eslint.recommended,
       stylistic.configs.recommended,
       deMorgan.recommended,
       // GitHub configs include eslint-plugin-escompat, eslint-plugin-import, eslint-plugin-jsx-a11y, eslint-plugin-prettier, eslint-plugin-eslint-comments, eslint-plugin-filenames, eslint-plugin-i18n-text, eslint-plugin-no-only-tests
       github.getFlatConfigs().browser,
       github.getFlatConfigs().recommended,
       github.getFlatConfigs().react,
-      plugin_promise.configs['flat/recommended'],
+      plugin_promise['flat/recommended'],
       regexp_plugin['flat/recommended'],
-      sonarjs.recommended,
-      security.recommended,
       jsdoc.configs['flat/recommended'],
       jsdoc.configs['flat/recommended-mixed'],
+      sonarjs.recommended,
+      security.recommended,
     ],
     plugins: {
       '@stylistic': stylistic,
@@ -62,9 +60,7 @@ export default defineConfig([
       'no-unsanitized': no_unsanitized,
       'no-constructor-bind': no_constructor,
       redos,
-      pii,
       xss,
-      'promise': plugin_promise,
       unicorn,
       simbiat,
       jsdoc,
@@ -77,8 +73,8 @@ export default defineConfig([
       ecmaVersion: 'latest',
       sourceType: 'module',
     },
-    // This is for compat/compat rule
     settings: {
+      // This is for compat/compat rule
       lintAllEsApis: true,
     },
     rules: {
@@ -223,7 +219,8 @@ export default defineConfig([
       '@stylistic/operator-linebreak': 'warn',
       'no-implied-eval': 'error',
       'require-await': 'error',
-      'dot-notation': 'error',
+      'dot-notation': 'warn',
+      '@typescript-eslint/dot-notation': 'warn',
       'no-throw-literal': 'error',
       'no-useless-constructor': 'error',
       'no-constructor-bind/no-constructor-bind': 'error',
@@ -249,9 +246,6 @@ export default defineConfig([
           ],
         },
       }],
-      'pii/no-email': 'error',
-      'pii/no-ip': 'error',
-      'pii/no-phone-number': 'error',
       'xss/no-location-href-assign': 'error',
       'promise/no-multiple-resolved': 'error',
       'promise/prefer-await-to-callbacks': 'warn',
@@ -404,7 +398,6 @@ export default defineConfig([
       ts_eslint.configs.strict,
     ],
     languageOptions: {
-      parser: ts_parser,
       parserOptions: {
         sourceType: 'module',
         ecmaVersion: 'latest',
@@ -504,11 +497,8 @@ export default defineConfig([
   {
     files: ['**/*.html', '**/*.htm', '**/*.twig', '**/*.svg'],
     extends: [
-      html.configs.recommended,
+      html.recommended,
     ],
-    plugins: {
-      html,
-    },
     languageOptions: {
       parser: html_parser,
       parserOptions: {
@@ -588,5 +578,8 @@ export default defineConfig([
       package_json.stylistic,
     ],
     files: ['**/package.json'],
+    rules: {
+      'package-json/sort-collections': 'warn',
+    },
   },
 ]);

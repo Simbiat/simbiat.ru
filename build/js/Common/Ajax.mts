@@ -171,7 +171,7 @@ export class Ajax {
     let spinner = null;
     if (button) {
       if (button instanceof HTMLButtonElement) {
-        // Use Array.from to actually "copy" contents, and not to reference live node list
+        // Use Array.from to actually "copy" contents and not to reference live node list
         to_replace = Array.from(button.childNodes);
       } else {
         to_replace = button;

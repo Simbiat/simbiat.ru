@@ -230,7 +230,7 @@ function globalInit(): void {
        */
       createScriptURL: (url: string): string => {
         const allowed = ['tinymce/', '/tinymce/'];
-        // Normalize: get pathname if it's an absolute URL
+        // Normalize: get a pathname if it's an absolute URL
         let path = url;
         try {
           path = new URL(url, window.location.origin).pathname;
@@ -238,7 +238,7 @@ function globalInit(): void {
           // not a valid absolute URL, treat as-is
         }
         if (allowed.some((prefix) => {
-          return path.includes(prefix);
+          return path.startsWith(`${window.location.origin}${prefix}`);
         })) {
           return url;
         }
@@ -266,7 +266,7 @@ function globalInit(): void {
     customizeNewElements(element);
   }
   customElementsInits();
-  //Add tabindex to elements with data-tooltip attribute, if missing
+  //Add tabindex to elements with a data-tooltip attribute, if missing
   for (const item of document.querySelectorAll<HTMLElement>('[data-tooltip]:not(dialog):not([tabindex])')) {
     item.setAttribute('tabindex', '0');
   }

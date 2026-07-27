@@ -4,7 +4,7 @@
  * Email is one used for ACME, not a PII.
  */
 
-/* eslint-disable no-console, pii/no-email */
+/* eslint-disable no-console */
 
 import hosts from '../../docker/frankenphp/config/hosts.jsonc';
 import logs from '../../docker/frankenphp/config/logs.jsonc';
