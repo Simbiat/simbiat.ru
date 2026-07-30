@@ -281,6 +281,10 @@ services:
     depends_on:
       socket-proxy:
         condition: service_started
+      frankenphp:
+        condition: service_started
+      mariadb:
+        condition: service_started
     environment:
       DOCKER_HOST: tcp://socket-proxy:2375
       PROTON_HOST: ${PROTON_HOST}
