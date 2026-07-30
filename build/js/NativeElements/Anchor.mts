@@ -22,20 +22,15 @@ export class Anchor {
       anchor.target = '_blank';
       // Add noopener and noreferrer for some level of security/privacy.
       // Technically, all modern browsers are supposed to add them during onclick, but can't trust that.
-      // Also, noreferrer already implies noopener, but allegedly some browsers at least used to require both, not following the spec.
       if (empty(anchor.rel)) {
         anchor.rel = 'noreferrer';
-      } else {
-        if (!anchor.rel.includes('noopener')) {
-          anchor.rel += ' noopener';
-        }
-        if (!anchor.rel.includes('noreferrer')) {
-          anchor.rel += ' noreferrer';
-        }
+      } else if (!anchor.rel.includes('noreferrer')) {
+        anchor.rel += ' noreferrer';
       }
     }
     // Add an icon indicating that the link will open in a new tab
     if (anchor.target === '_blank' && anchor.querySelector<HTMLSpanElement>('span.new_tab_icon') === null && !anchor.classList.contains('no_new_tab_icon')) {
+      this.wrapTextNodes(anchor);
       const new_tab_icon = document.createElement('span');
       new_tab_icon.classList.add('new_tab_icon');
       new_tab_icon.textContent = '↗';
@@ -56,6 +51,19 @@ export class Anchor {
           history.replaceState(document.title, document.title, `${current_url.hash}`);
         }
       });
+    }
+  }
+
+  /**
+   * Wrap text nodes in `span`.
+   */
+  private static wrapTextNodes(parent: Element): void {
+    for (const node of [...parent.childNodes]) {
+      if (node.nodeType === Node.TEXT_NODE && (node.textContent?.trim().length ?? 0) > 0) {
+        const wrapper = document.createElement('span');
+        parent.insertBefore(wrapper, node);
+        wrapper.appendChild(node);
+      }
     }
   }
 }

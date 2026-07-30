@@ -43,5 +43,9 @@ a {
         text-decoration: none;
         user-select: none;
         vertical-align: super;
+
+        &:not(:first-child) {
+            margin-inline-start: -1.5rem;
+        }
     }
 }
