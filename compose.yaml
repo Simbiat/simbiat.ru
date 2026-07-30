@@ -3,6 +3,9 @@ name: simbiat-dev
 
 #It looks like subnet may change in some cases for no clear (to me) reason, so trying to force it
 networks:
+  #This network is used for the sake of isolation
+  ofelia-internal:
+    driver: bridge
   webserver:
     driver: bridge
     enable_ipv6: true
@@ -12,6 +15,16 @@ networks:
         - subnet: 2001:db8:1::/64
 
 volumes:
+  caddy_config:
+    driver: local
+  caddy_data:
+    driver: local
+  crowdsec_config:
+    driver: local
+  crowdsec_data:
+    driver: local
+  geoip_data:
+    driver: local
   mariadb_data:
     driver: local
   mariadb_socket:
@@ -19,97 +32,100 @@ volumes:
   #Volume shared between FrankenPHP and MariaDB
   temp_volume:
     driver: local
-  geoip_data:
-    driver: local
-  crowdsec_data:
-    driver: local
-  crowdsec_config:
-    driver: local
-  caddy_data:
-    driver: local
-  caddy_config:
-    driver: local
 
 services:
   phpmyadmin:
-    container_name: phpmyadmin
     build:
       context: ./build/docker/phpmyadmin
       dockerfile: Dockerfile
-    profiles:
-      - dev_only
-    restart: no
-    security_opt:
-      - no-new-privileges=true
+    container_name: phpmyadmin
+    depends_on:
+      mariadb:
+        condition: service_healthy
     environment:
       APACHE_PORT: ${PHPMYADMIN_PORT}
+      PMA_CONTROLPASS: ${PHPMYADMIN_PASSWORD}
+      PMA_PASSWORD: ${DATABASE_PASSWORD}
       PMA_SOCKET: ${DATABASE_SOCKET}
       PMA_USER: ${DATABASE_USER}
-      PMA_PASSWORD: ${DATABASE_PASSWORD}
-      PMA_CONTROLPASS: ${PHPMYADMIN_PASSWORD}
+    links:
+      - mariadb:mysql
+      - mariadb:database
     networks:
       - webserver
     ports:
-      - "127.0.0.1:${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}"
-      - "[::1]:${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}"
+      - 127.0.0.1:${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}
+      - '[::1]:${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}'
+    profiles:
+      - dev_only
+    restart: 'no'
+    security_opt:
+      - no-new-privileges=true
     volumes:
       - mariadb_socket:/run/mysqld/:ro
       - ./build/phpmyadmin/upload:/etc/phpmyadmin/upload:ro
       - ./build/phpmyadmin/save:/etc/phpmyadmin/save:rw
-    depends_on:
-      mariadb:
-        condition: service_healthy
-    links:
-      - mariadb:mysql
-      - mariadb:database
+
 
   geoip:
-    container_name: geoip
     build:
       context: ./build/docker/geoip
       dockerfile: Dockerfile
-    restart: unless-stopped
-    read_only: true
     cap_drop:
       - ALL
-    security_opt:
-      - no-new-privileges=true
+    container_name: geoip
     environment:
       GEOIPUPDATE_ACCOUNT_ID: ${GEOIP_ACCOUNT}
       GEOIPUPDATE_LICENSE_KEY: ${GEOIP_LICENSE}
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
     tmpfs:
       - /tmp
     volumes:
       - geoip_data:/usr/share/GeoIP/:rw
 
   frankenphp:
-    container_name: frankenphp
     build:
       context: ./build/docker/frankenphp
       dockerfile: Dockerfile
       target: PROD
-    restart: unless-stopped
-    read_only: true
-    cap_drop:
-      - ALL
     cap_add:
       - NET_BIND_SERVICE
+      #This was added to fix mismatch between file ownership
       - DAC_READ_SEARCH
+      #These seemed to be required for Crontab to work
       - CHOWN
       - SETUID
       - SETGID
       - FOWNER
-    security_opt:
-      - no-new-privileges=true
+    cap_drop:
+      - ALL
+    container_name: frankenphp
+    depends_on:
+      crowdsec:
+        condition: service_healthy
+      geoip:
+        condition: service_started
+      mariadb:
+        condition: service_started
     environment:
-      WEB_SERVER_TEST: ${WEB_SERVER_TEST}
       CROWDSEC_API_KEY: ${CROWDSEC_CADDY_KEY}
+      WEB_SERVER_TEST: ${WEB_SERVER_TEST}
+    links:
+      - mariadb:mysql
+      - mariadb:database
     networks:
       - webserver
     ports:
       - "80:80" # HTTP
       - "443:443/tcp" # HTTPS
       - "443:443/udp" # HTTP/3
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
     tmpfs:
       - /run
       # These are required for adding certificates to local trust store
@@ -133,41 +149,29 @@ services:
       - ./public/assets/images/fftracker/icons:/app/public/assets/images/fftracker/icons:rw
       - ./public/assets/images/fftracker/crests-components:/app/public/assets/images/fftracker/crests-components:rw
       - ./logs:/app/logs:rw
-    depends_on:
-      #Used for determining country in PHP code
-      geoip:
-        condition: service_started
-      #We need Caddy bouncer to get at least the initial decision list from CrowdSec to keep the server protected
-      crowdsec:
-        condition: service_healthy
-      #If database is not available, an error page will be shown, so technically not critical
-      mariadb:
-        condition: service_started
-    links:
-      - mariadb:mysql
-      - mariadb:database
 
   crowdsec:
     #Based on https://github.com/crowdsecurity/example-docker-compose/tree/main/caddy
-    container_name: crowdsec
     build:
       context: ./build/docker/crowdsec
       dockerfile: Dockerfile
-    restart: unless-stopped
-    read_only: true
-    cap_drop:
-      - ALL
     cap_add:
       - CHOWN
       - SETGID
-    security_opt:
-      - no-new-privileges=true
+    cap_drop:
+      - ALL
+    container_name: crowdsec
+    depends_on:
+      geoip:
+        condition: service_started
+      mariadb:
+        condition: service_healthy
     environment:
       BOUNCER_KEY_CADDY: ${CROWDSEC_CADDY_KEY}
       BOUNCER_KEY_IPTABLES: ${CROWDSEC_IPTABLES_KEY}
-      ENROLL_KEY: ${CROWDSEC_ENROLL_KEY}
-      DATABASE_SOCKET: ${DATABASE_SOCKET}
       DATABASE_PASSWORD: ${CROWDSEC_PASSWORD}
+      DATABASE_SOCKET: ${DATABASE_SOCKET}
+      ENROLL_KEY: ${CROWDSEC_ENROLL_KEY}
     #Looks like this is required to allow reading the MariaDB log file (at least after hardening)
     group_add:
       - 999
@@ -181,6 +185,10 @@ services:
       - "[::1]:8080:8080"
       - "[::1]:6060:6060"
       - "[::1]:7422:7422"
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
     tmpfs:
       - /tmp
       - /run
@@ -196,39 +204,34 @@ services:
       - /var/log/:/var/log/:ro
       #Caddy logs folder is RW, because we're also writing Crowdsec logs here
       - ./logs:/usr/local/logs/:rw
-    depends_on:
-      geoip:
-        condition: service_started
-      mariadb:
-        condition: service_healthy
 
   mariadb:
-    container_name: mariadb
     build:
       context: ./build/docker/mariadb
       dockerfile: Dockerfile
-    restart: unless-stopped
-    read_only: true
-    cap_drop:
-      - ALL
     cap_add:
       - CHOWN
       - DAC_OVERRIDE
       - SETUID
       - SETGID
       - FOWNER
-    security_opt:
-      - no-new-privileges=true
+    cap_drop:
+      - ALL
+    container_name: mariadb
     environment:
-      WEB_SERVER_TEST: ${WEB_SERVER_TEST}
-      #Password for backups created by CRON job
-      MARIADB_BACKUP_PASSWORD: ${MARIADB_BACKUP_PASSWORD}
       #Pass database name for backup
       DATABASE_NAME: ${DATABASE_NAME}
+      #Password for backups created by CRON job
+      MARIADB_BACKUP_PASSWORD: ${MARIADB_BACKUP_PASSWORD}
+      WEB_SERVER_TEST: ${WEB_SERVER_TEST}
     networks:
       - webserver
     ports:
       - "127.0.0.1:3306:3306"
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
     tmpfs:
       - /run
     volumes:
@@ -244,3 +247,53 @@ services:
       - ${MARIADB_BACKUP_DIR}:/usr/local/backups:rw
       #RO for DDL directory, used during maintenance stuff
       - ./build/DDL:/usr/local/DDL:ro
+
+  socket-proxy:
+    cap_drop:
+      - ALL
+    container_name: socket-proxy
+    environment:
+      # Everything defaults to 0/disabled in this image — only turn on what job-exec needs
+      CONTAINERS: 1 # list/inspect containers, needed to resolve name -> id and check running state
+      EVENTS: 1 # ofelia's docker client watches events; cheap to allow, read-only info
+      EXEC: 1 # the actual exec create/start endpoints
+      POST: 1 # gate for any mutating call — exec create/start are POST
+    image: tecnativa/docker-socket-proxy:latest
+    networks:
+      - ofelia-internal
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  ofelia:
+    build:
+      context: ./build/docker/ofelia
+      dockerfile: Dockerfile
+    cap_drop:
+      - ALL
+    container_name: ofelia
+    depends_on:
+      socket-proxy:
+        condition: service_started
+    environment:
+      DOCKER_HOST: tcp://socket-proxy:2375
+      PROTON_HOST: ${PROTON_HOST}
+      PROTON_PASSWORD: ${PROTON_PASSWORD}
+      PROTON_PORT: ${PROTON_PORT}
+      PROTON_USER: ${PROTON_USER}
+    networks:
+      - ofelia-internal
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    volumes:
+      - ./logs:/var/log:rw

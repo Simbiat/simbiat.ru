@@ -55,8 +55,8 @@ RUN mkdir -p /tmp/sessions
 RUN mkdir -p /tmp/soap
 RUN mkdir -p /tmp/opcache
 
-# cron required for crontab, libnss3-tools is recommended for Caddy (looks like)
-RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install cron libnss3-tools&&apt-get -y autoremove&&apt-get clean
+# libnss3-tools is recommended for Caddy (looks like)
+RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install libnss3-tools&&apt-get -y autoremove&&apt-get clean
 
 #Copy custom mime.types
 COPY mime.types /etc/mime.types
@@ -64,13 +64,7 @@ COPY mime.types /etc/mime.types
 COPY caddy.json /usr/local/etc/php/caddy.json
 
 #Copy cron files
-COPY cron/php.cron /etc/cron.d/php.cron
 COPY cron/*.sh /usr/local/bin/
-
-#Setup cron
-RUN chmod 0644 /etc/cron.d/php.cron && \
-    chmod +x /usr/local/bin/*.sh && \
-    crontab /etc/cron.d/php.cron
 
 # Copy entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

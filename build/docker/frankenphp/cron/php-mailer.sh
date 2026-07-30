@@ -1,12 +1,8 @@
 #!/bin/sh
-# Import environment variables
-set -a; . /run/cron-env; set +a
 
 #We do not want to run this regularly on test environment
 if [ "$WEB_SERVER_TEST" != "true" ]; then
-  #Ensure working directory is changed
-  cd /app || exit
-  #Run the script itself
-  /usr/local/bin/php -f /app/src/Command/Mailer.php
+  #Run the script itself and ensure that xDebug is off (needed on DEV only, does not hurt PROD)
+  /usr/local/bin/php -d xdebug.mode=off -f /app/src/Command/Mailer.php
 fi
 exit

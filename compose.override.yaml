@@ -19,20 +19,20 @@ services:
   #Bugs were originally raised for Node.js, but they are applicable to Bun, as well.
   #Also, possible that this is not even doable at all, and `node_modules` will need to be local either way.
   bun:
+    #Command is required in case some manual runs are needed, since PHPStorm stops the container right away (uses "run")
+    #command: tail -f /dev/null
     container_name: bun
     image: oven/bun:latest
+    networks:
+      - webserver
     profiles:
       - dev_only
     restart: no
     security_opt:
       - no-new-privileges=true
-    networks:
-      - webserver
     volumes:
       #- ./:/home/bun/app:rw
       #- node_modules:/home/bun/app/node_modules/:rw
       #- ./bun.lock:/home/bun/app/bun.lock:rw
       #- ./package.json:/home/bun/app/package.json:rw
       - ./:/home/bun/app/:ro
-    #Command is required in case some manual runs are needed, since PHPStorm stops the container right away (uses "run")
-    #command: tail -f /dev/null

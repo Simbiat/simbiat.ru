@@ -1,8 +1,0 @@
-* * * * * /usr/local/bin/php-healthcheck.sh
-* * * * * /usr/local/bin/php-minute.sh
-* * * * * /usr/local/bin/php-mailer.sh
-* * * * * /usr/local/bin/php-cron.sh
-* * * * * sleep 20 && /usr/local/bin/php-cron.sh
-* * * * * sleep 40 && /usr/local/bin/php-cron.sh
-30 1 * * * /usr/local/bin/php-day.sh
-30 0 28 * * /usr/local/bin/php-month.sh
