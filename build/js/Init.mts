@@ -275,6 +275,11 @@ function globalInit(): void {
     for (const mutation of mutations_list) {
       for (const added_node of mutation.addedNodes) {
         customizeNewElements(added_node);
+        if (added_node instanceof Element) {
+          for (const descendant of added_node.querySelectorAll('*')) {
+            customizeNewElements(descendant);
+          }
+        }
       }
     }
   });
