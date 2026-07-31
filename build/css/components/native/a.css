@@ -28,8 +28,7 @@ a {
         filter: brightness(0.7);
     }
 
-    &:link:not(:has(img)),
-    &:link:has(img) > span:not(.new_tab_icon, .entity_arrow) {
+    &:link > span:not(.new_tab_icon, .entity_arrow, img) {
         text-decoration-line: underline;
     }
 
@@ -38,14 +37,9 @@ a {
     }
 
     & .new_tab_icon {
-        display: inline-block;
-        margin: 0;
+        display: inline;
         text-decoration: none;
         user-select: none;
         vertical-align: super;
-
-        &:not(:first-child) {
-            margin-inline-start: -1.5rem;
-        }
     }
 }

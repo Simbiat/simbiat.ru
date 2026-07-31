@@ -58,9 +58,14 @@ services:
       - '[::1]:${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}'
     profiles:
       - dev_only
-    restart: 'no'
+    read_only: true
+    restart: no
     security_opt:
       - no-new-privileges=true
+    tmpfs:
+      - /tmp
+      - /var/run
+      - /var/lock
     volumes:
       - mariadb_socket:/run/mysqld/:ro
       - ./build/phpmyadmin/upload:/etc/phpmyadmin/upload:ro
@@ -280,6 +285,8 @@ services:
     container_name: ofelia
     depends_on:
       socket-proxy:
+        condition: service_started
+      geoip:
         condition: service_started
       frankenphp:
         condition: service_started

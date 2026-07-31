@@ -99,20 +99,12 @@ class Minute
     /**
      * Output for CLI
      *
-     * @param string                   $message Message to output
-     * @param \Simbiat\Cron\EventTypes $event   Cron event type
+     * @param string $message Message to output
      *
      * @return void
      */
-    public static function cliOutput(string $message, EventTypes $event = EventTypes::CustomInformation): void
+    public static function cliOutput(string $message): void
     {
         echo '['.\date('c').'] '.$message.\PHP_EOL;
-        try {
-            if (Config::$dbup) {
-                new Agent()->log($message, $event);
-            }
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
-        }
     }
 }
