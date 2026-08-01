@@ -28,9 +28,9 @@ export class Anchor {
         anchor.rel += ' noreferrer';
       }
     }
+    this.wrapTextNodes(anchor);
     // Add an icon indicating that the link will open in a new tab
     if (anchor.target === '_blank' && anchor.querySelector<HTMLSpanElement>('span.new_tab_icon') === null && !anchor.classList.contains('no_new_tab_icon')) {
-      this.wrapTextNodes(anchor);
       const new_tab_icon = document.createElement('span');
       new_tab_icon.classList.add('new_tab_icon');
       new_tab_icon.textContent = '↗';
