@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
+services:
+  geoip:
+    build:
+      context: ../../../build/docker/geoip
+      dockerfile: Dockerfile
+    cap_drop:
+      - ALL
+    container_name: geoip
+    environment:
+      GEOIPUPDATE_ACCOUNT_ID: ${GEOIP_ACCOUNT}
+      GEOIPUPDATE_LICENSE_KEY: ${GEOIP_LICENSE}
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
+    tmpfs:
+      - /tmp
+      - /usr/local/share
+    volumes:
+      - geoip_data:/usr/share/GeoIP/:rw

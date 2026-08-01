@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
+services:
+  ofelia:
+    build:
+      context: ../../../build/docker/ofelia
+      dockerfile: Dockerfile
+    cap_drop:
+      - ALL
+    container_name: ofelia
+    depends_on:
+      socket-proxy:
+        condition: service_started
+      geoip:
+        condition: service_started
+      frankenphp:
+        condition: service_started
+      mariadb:
+        condition: service_started
+    environment:
+      DOCKER_HOST: tcp://socket-proxy:2375
+      PROTON_HOST: ${PROTON_HOST}
+      PROTON_PASSWORD: ${PROTON_PASSWORD}
+      PROTON_PORT: ${PROTON_PORT}
+      PROTON_USER: ${PROTON_USER}
+    networks:
+      - ofelia-internal
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    volumes:
+      - ../../../logs:/var/log:rw

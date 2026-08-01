@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
+services:
+  phpmyadmin:
+    build:
+      context: ../../../build/docker/phpmyadmin
+      dockerfile: Dockerfile
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETUID
+      - SETGID
+    container_name: phpmyadmin
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      PMA_CONTROLPASS: ${PHPMYADMIN_PASSWORD}
+      PMA_PASSWORD: ${DATABASE_PASSWORD}
+      PMA_SOCKET: ${DATABASE_SOCKET}
+      PMA_USER: ${DATABASE_USER}
+    links:
+      - mariadb:mysql
+      - mariadb:database
+    networks:
+      - webserver
+    ports:
+      - 127.0.0.1:${PHPMYADMIN_PORT}:80
+      - "[::1]:${PHPMYADMIN_PORT}:80"
+    profiles:
+      - dev_only
+    read_only: true
+    restart: no
+    security_opt:
+      - no-new-privileges=true
+    tmpfs:
+      - /tmp
+      - /var/lock
+      - /var/www/html/tmp
+      - /var/run/apache2
+      - /var/log/apache2
+      - /sessions
+    volumes:
+      - mariadb_socket:/run/mysqld/:ro
+      - ../../../build/phpmyadmin/upload:/etc/phpmyadmin/upload:ro
+      - ../../../build/phpmyadmin/save:/etc/phpmyadmin/save:rw

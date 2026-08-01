@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
+services:
+  mariadb:
+    build:
+      context: ../../../build/docker/mariadb
+      dockerfile: Dockerfile
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - SETUID
+      - SETGID
+      - FOWNER
+    cap_drop:
+      - ALL
+    container_name: mariadb
+    environment:
+      #Pass database name for backup
+      DATABASE_NAME: ${DATABASE_NAME}
+      #Password for backups created by CRON job
+      MARIADB_BACKUP_PASSWORD: ${MARIADB_BACKUP_PASSWORD}
+      WEB_SERVER_TEST: ${WEB_SERVER_TEST}
+    networks:
+      - webserver
+    ports:
+      - "127.0.0.1:3306:3306"
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
+    tmpfs:
+      - /run
+    volumes:
+      #RW for the socket
+      - mariadb_socket:/run/mysqld/:rw
+      #RW for database files directory
+      - mariadb_data:/var/lib/mysql:rw
+      #Using tmpfs for /tmp is not a good idea, since it's used during various operations on large tables
+      - temp_volume:/tmp:rw
+      #RW for logs directory
+      - ../../../logs:/usr/local/logs:rw
+      #RW for backups directory
+      - ${MARIADB_BACKUP_DIR}:/usr/local/backups:rw
+      #RO for DDL directory, used during maintenance stuff
+      - ../../../build/DDL:/usr/local/DDL:ro

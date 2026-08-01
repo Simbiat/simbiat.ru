@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
+services:
+  frankenphp:
+    build:
+      context: ../../../build/docker/frankenphp
+      dockerfile: Dockerfile
+      target: PROD
+    cap_add:
+      - NET_BIND_SERVICE
+      #This was added to fix mismatch between file ownership
+      - DAC_READ_SEARCH
+      #These seemed to be required for Crontab to work
+      - CHOWN
+      - SETUID
+      - SETGID
+      - FOWNER
+    cap_drop:
+      - ALL
+    container_name: frankenphp
+    depends_on:
+      crowdsec:
+        condition: service_healthy
+      geoip:
+        condition: service_started
+      mariadb:
+        condition: service_started
+    environment:
+      CROWDSEC_API_KEY: ${CROWDSEC_CADDY_KEY}
+      WEB_SERVER_TEST: ${WEB_SERVER_TEST}
+    links:
+      - mariadb:mysql
+      - mariadb:database
+    networks:
+      - webserver
+    ports:
+      - "80:80" # HTTP
+      - "443:443/tcp" # HTTPS
+      - "443:443/udp" # HTTP/3
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
+    tmpfs:
+      - /run
+      # These are required for adding certificates to local trust store
+      - /usr/local/share/ca-certificates/
+      - /etc/ssl/certs/
+    volumes:
+      #Using tmpfs for /tmp is not a good idea, since there can be relatively large files being processed simultaneously
+      - temp_volume:/tmp:rw
+      #RO for MariaDB socket
+      - mariadb_socket:/run/mysqld/:ro
+      #geoip mapping
+      - geoip_data:/geoip:ro
+      #Caddy folders requiring RW
+      - caddy_data:/data:rw
+      - caddy_config:/config:rw
+      #Main project folder is RO
+      - ../../../:/app:ro
+      #Some files/folders are overridden for RW permissions
+      - ../../../build/DDL:/app/build/DDL:rw
+      - ../../../data:/app/data:rw
+      - ../../../public/assets/images/fftracker/icons:/app/public/assets/images/fftracker/icons:rw
+      - ../../../public/assets/images/fftracker/crests-components:/app/public/assets/images/fftracker/crests-components:rw
+      - ../../../logs:/app/logs:rw

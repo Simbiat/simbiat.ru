@@ -35,276 +35,37 @@ volumes:
 
 services:
   phpmyadmin:
-    build:
-      context: ./build/docker/phpmyadmin
-      dockerfile: Dockerfile
-    container_name: phpmyadmin
-    depends_on:
-      mariadb:
-        condition: service_healthy
-    environment:
-      APACHE_PORT: ${PHPMYADMIN_PORT}
-      PMA_CONTROLPASS: ${PHPMYADMIN_PASSWORD}
-      PMA_PASSWORD: ${DATABASE_PASSWORD}
-      PMA_SOCKET: ${DATABASE_SOCKET}
-      PMA_USER: ${DATABASE_USER}
-    links:
-      - mariadb:mysql
-      - mariadb:database
-    networks:
-      - webserver
-    ports:
-      - 127.0.0.1:${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}
-      - '[::1]:${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}'
-    profiles:
-      - dev_only
-    read_only: true
-    restart: no
-    security_opt:
-      - no-new-privileges=true
-    tmpfs:
-      - /tmp
-      - /var/run
-      - /var/lock
-    volumes:
-      - mariadb_socket:/run/mysqld/:ro
-      - ./build/phpmyadmin/upload:/etc/phpmyadmin/upload:ro
-      - ./build/phpmyadmin/save:/etc/phpmyadmin/save:rw
+    extends:
+      file: ./build/docker/phpmyadmin/compose.yaml
+      service: phpmyadmin
 
 
   geoip:
-    build:
-      context: ./build/docker/geoip
-      dockerfile: Dockerfile
-    cap_drop:
-      - ALL
-    container_name: geoip
-    environment:
-      GEOIPUPDATE_ACCOUNT_ID: ${GEOIP_ACCOUNT}
-      GEOIPUPDATE_LICENSE_KEY: ${GEOIP_LICENSE}
-    read_only: true
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges=true
-    tmpfs:
-      - /tmp
-    volumes:
-      - geoip_data:/usr/share/GeoIP/:rw
+    extends:
+      file: ./build/docker/geoip/compose.yaml
+      service: geoip
 
   frankenphp:
-    build:
-      context: ./build/docker/frankenphp
-      dockerfile: Dockerfile
-      target: PROD
-    cap_add:
-      - NET_BIND_SERVICE
-      #This was added to fix mismatch between file ownership
-      - DAC_READ_SEARCH
-      #These seemed to be required for Crontab to work
-      - CHOWN
-      - SETUID
-      - SETGID
-      - FOWNER
-    cap_drop:
-      - ALL
-    container_name: frankenphp
-    depends_on:
-      crowdsec:
-        condition: service_healthy
-      geoip:
-        condition: service_started
-      mariadb:
-        condition: service_started
-    environment:
-      CROWDSEC_API_KEY: ${CROWDSEC_CADDY_KEY}
-      WEB_SERVER_TEST: ${WEB_SERVER_TEST}
-    links:
-      - mariadb:mysql
-      - mariadb:database
-    networks:
-      - webserver
-    ports:
-      - "80:80" # HTTP
-      - "443:443/tcp" # HTTPS
-      - "443:443/udp" # HTTP/3
-    read_only: true
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges=true
-    tmpfs:
-      - /run
-      # These are required for adding certificates to local trust store
-      - /usr/local/share/ca-certificates/
-      - /etc/ssl/certs/
-    volumes:
-      #Using tmpfs for /tmp is not a good idea, since there can be relatively large files being processed simultaneously
-      - temp_volume:/tmp:rw
-      #RO for MariaDB socket
-      - mariadb_socket:/run/mysqld/:ro
-      #geoip mapping
-      - geoip_data:/geoip:ro
-      #Caddy folders requiring RW
-      - caddy_data:/data:rw
-      - caddy_config:/config:rw
-      #Main project folder is RO
-      - ./:/app:ro
-      #Some files/folders are overridden for RW permissions
-      - ./build/DDL:/app/build/DDL:rw
-      - ./data:/app/data:rw
-      - ./public/assets/images/fftracker/icons:/app/public/assets/images/fftracker/icons:rw
-      - ./public/assets/images/fftracker/crests-components:/app/public/assets/images/fftracker/crests-components:rw
-      - ./logs:/app/logs:rw
+    extends:
+      file: ./build/docker/frankenphp/compose.yaml
+      service: frankenphp
 
   crowdsec:
-    #Based on https://github.com/crowdsecurity/example-docker-compose/tree/main/caddy
-    build:
-      context: ./build/docker/crowdsec
-      dockerfile: Dockerfile
-    cap_add:
-      - CHOWN
-      - SETGID
-    cap_drop:
-      - ALL
-    container_name: crowdsec
-    depends_on:
-      geoip:
-        condition: service_started
-      mariadb:
-        condition: service_healthy
-    environment:
-      BOUNCER_KEY_CADDY: ${CROWDSEC_CADDY_KEY}
-      BOUNCER_KEY_IPTABLES: ${CROWDSEC_IPTABLES_KEY}
-      DATABASE_PASSWORD: ${CROWDSEC_PASSWORD}
-      DATABASE_SOCKET: ${DATABASE_SOCKET}
-      ENROLL_KEY: ${CROWDSEC_ENROLL_KEY}
-    #Looks like this is required to allow reading the MariaDB log file (at least after hardening)
-    group_add:
-      - 999
-    networks:
-      - webserver
-    ports:
-      - "127.0.0.1:8080:8080"
-      - "127.0.0.1:6060:6060"
-      - "127.0.0.1:7422:7422"
-      #These are valid despite the IDE highlighting them. https://youtrack.jetbrains.com/issue/IJPL-228615
-      - "[::1]:8080:8080"
-      - "[::1]:6060:6060"
-      - "[::1]:7422:7422"
-    read_only: true
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges=true
-    tmpfs:
-      - /tmp
-      - /run
-    volumes:
-      #RO for MariaDB socket
-      - mariadb_socket:/run/mysqld/:ro
-      #Data folder is required to be mounted, otherwise container does not start
-      - crowdsec_data:/var/lib/crowdsec/data/:rw
-      - crowdsec_config:/etc/crowdsec/:rw
-      #RO for GeoLite2 files
-      - geoip_data:/geoip:ro
-      #Required to read syslog. This will be valid only on UNIX
-      - /var/log/:/var/log/:ro
-      #Caddy logs folder is RW, because we're also writing Crowdsec logs here
-      - ./logs:/usr/local/logs/:rw
+    extends:
+      file: ./build/docker/crowdsec/compose.yaml
+      service: crowdsec
 
   mariadb:
-    build:
-      context: ./build/docker/mariadb
-      dockerfile: Dockerfile
-    cap_add:
-      - CHOWN
-      - DAC_OVERRIDE
-      - SETUID
-      - SETGID
-      - FOWNER
-    cap_drop:
-      - ALL
-    container_name: mariadb
-    environment:
-      #Pass database name for backup
-      DATABASE_NAME: ${DATABASE_NAME}
-      #Password for backups created by CRON job
-      MARIADB_BACKUP_PASSWORD: ${MARIADB_BACKUP_PASSWORD}
-      WEB_SERVER_TEST: ${WEB_SERVER_TEST}
-    networks:
-      - webserver
-    ports:
-      - "127.0.0.1:3306:3306"
-    read_only: true
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges=true
-    tmpfs:
-      - /run
-    volumes:
-      #RW for the socket
-      - mariadb_socket:/run/mysqld/:rw
-      #RW for database files directory
-      - mariadb_data:/var/lib/mysql:rw
-      #Using tmpfs for /tmp is not a good idea, since it's used during various operations on large tables
-      - temp_volume:/tmp:rw
-      #RW for logs directory
-      - ./logs:/usr/local/logs:rw
-      #RW for backups directory
-      - ${MARIADB_BACKUP_DIR}:/usr/local/backups:rw
-      #RO for DDL directory, used during maintenance stuff
-      - ./build/DDL:/usr/local/DDL:ro
+    extends:
+      file: ./build/docker/mariadb/compose.yaml
+      service: mariadb
 
   socket-proxy:
-    cap_drop:
-      - ALL
-    container_name: socket-proxy
-    environment:
-      # Everything defaults to 0/disabled in this image — only turn on what job-exec needs
-      CONTAINERS: 1 # list/inspect containers, needed to resolve name -> id and check running state
-      EVENTS: 1 # ofelia's docker client watches events; cheap to allow, read-only info
-      EXEC: 1 # the actual exec create/start endpoints
-      POST: 1 # gate for any mutating call — exec create/start are POST
-    image: tecnativa/docker-socket-proxy:latest
-    networks:
-      - ofelia-internal
-    read_only: true
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges=true
-    tmpfs:
-      - /run
-      - /tmp
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+    extends:
+      file: ./build/docker/socket-proxy/compose.yaml
+      service: socket-proxy
 
   ofelia:
-    build:
-      context: ./build/docker/ofelia
-      dockerfile: Dockerfile
-    cap_drop:
-      - ALL
-    container_name: ofelia
-    depends_on:
-      socket-proxy:
-        condition: service_started
-      geoip:
-        condition: service_started
-      frankenphp:
-        condition: service_started
-      mariadb:
-        condition: service_started
-    environment:
-      DOCKER_HOST: tcp://socket-proxy:2375
-      PROTON_HOST: ${PROTON_HOST}
-      PROTON_PASSWORD: ${PROTON_PASSWORD}
-      PROTON_PORT: ${PROTON_PORT}
-      PROTON_USER: ${PROTON_USER}
-    networks:
-      - ofelia-internal
-    read_only: true
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    tmpfs:
-      - /tmp
-    volumes:
-      - ./logs:/var/log:rw
+    extends:
+      file: ./build/docker/ofelia/compose.yaml
+      service: ofelia

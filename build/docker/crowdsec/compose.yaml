@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
+services:
+  crowdsec:
+    #Based on https://github.com/crowdsecurity/example-docker-compose/tree/main/caddy
+    build:
+      context: ../../../build/docker/crowdsec
+      dockerfile: Dockerfile
+    cap_add:
+      - CHOWN
+      - SETGID
+    cap_drop:
+      - ALL
+    container_name: crowdsec
+    depends_on:
+      geoip:
+        condition: service_started
+      mariadb:
+        condition: service_healthy
+    environment:
+      BOUNCER_KEY_CADDY: ${CROWDSEC_CADDY_KEY}
+      BOUNCER_KEY_IPTABLES: ${CROWDSEC_IPTABLES_KEY}
+      DATABASE_PASSWORD: ${CROWDSEC_PASSWORD}
+      DATABASE_SOCKET: ${DATABASE_SOCKET}
+      ENROLL_KEY: ${CROWDSEC_ENROLL_KEY}
+    #Looks like this is required to allow reading the MariaDB log file (at least after hardening)
+    group_add:
+      - 999
+    networks:
+      - webserver
+    ports:
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:6060:6060"
+      - "127.0.0.1:7422:7422"
+      #These are valid despite the IDE highlighting them. https://youtrack.jetbrains.com/issue/IJPL-228615
+      - "[::1]:8080:8080"
+      - "[::1]:6060:6060"
+      - "[::1]:7422:7422"
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
+    tmpfs:
+      - /tmp
+      - /run
+    volumes:
+      #RO for MariaDB socket
+      - mariadb_socket:/run/mysqld/:ro
+      #Data folder is required to be mounted, otherwise container does not start
+      - crowdsec_data:/var/lib/crowdsec/data/:rw
+      - crowdsec_config:/etc/crowdsec/:rw
+      #RO for GeoLite2 files
+      - geoip_data:/geoip:ro
+      #Required to read syslog. This will be valid only on UNIX
+      - /var/log/:/var/log/:ro
+      #Caddy logs folder is RW, because we're also writing Crowdsec logs here
+      - ../../../logs:/usr/local/logs/:rw
