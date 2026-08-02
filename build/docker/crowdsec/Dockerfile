@@ -38,7 +38,7 @@ HEALTHCHECK --start-period=120s --interval=10s --timeout=5s --retries=3 CMD ["cs
 
 # Copy entrypoint scripts
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod 755 /usr/local/bin/entrypoint.sh
 
 # Own the files
 RUN chown -R crowdsec:crowdsec /var/lib/crowdsec /staging /usr/local/lib/crowdsec/plugins /var/lib/OWASP/rules

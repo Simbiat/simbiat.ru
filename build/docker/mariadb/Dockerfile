@@ -33,6 +33,6 @@ HEALTHCHECK --start-period=120s --interval=10s --timeout=5s --retries=3 CMD ["he
 
 # Copy entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod 755 /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
