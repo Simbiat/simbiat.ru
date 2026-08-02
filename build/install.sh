@@ -14,6 +14,9 @@ APIKEY=$2
 # Add user to sudoers with passwordless sudo (for convenience)
 (echo "$USERNAME ALL=(ALL:ALL) NOPASSWD: ALL") | sudo EDITOR='tee -a' visudo
 
+# Add user to adm group (required for reading some logs through CrowdSec)
+sudo usermod -aG adm "$USERNAME"
+
 # Disable auto-updates. Applying them manually periodically for extra control over environment
 sudo systemctl stop unattended-upgrades
 sudo apt-get purge unattended-upgrades
@@ -125,7 +128,7 @@ sudo sed -i 's/AllowUsers.*/AllowUsers administrator/g' /etc/ssh/sshd_config
 
 echo "Creating webserver folder..."
 sudo mkdir /usr/local/webserver
-sudo chown -R -L $USERNAME:$USERNAME /usr/local/webserver
+sudo chown -R -L "$USERNAME":"$USERNAME" /usr/local/webserver
 
 # Cleanup
 echo "Cleaning up..."

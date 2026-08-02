@@ -18,4 +18,4 @@ services:
       - /tmp
       - /usr/local/share
     volumes:
-      - geoip_data:/usr/share/GeoIP/:rw
+      - ../../../data/geoip:/usr/share/GeoIP/:rw

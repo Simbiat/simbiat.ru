@@ -2,18 +2,14 @@
 services:
   frankenphp:
     build:
+      args:
+        PUID: ${HOST_UID}
+        PGID: ${HOST_GID}
       context: ../../../build/docker/frankenphp
       dockerfile: Dockerfile
       target: PROD
     cap_add:
       - NET_BIND_SERVICE
-      #This was added to fix mismatch between file ownership
-      - DAC_READ_SEARCH
-      #These seemed to be required for Crontab to work
-      - CHOWN
-      - SETUID
-      - SETGID
-      - FOWNER
     cap_drop:
       - ALL
     container_name: frankenphp
@@ -47,14 +43,18 @@ services:
       - /etc/ssl/certs/
     volumes:
       #Using tmpfs for /tmp is not a good idea, since there can be relatively large files being processed simultaneously
-      - temp_volume:/tmp:rw
+      - ../../../data/temp/frankenphp:/tmp:rw
       #RO for MariaDB socket
-      - mariadb_socket:/run/mysqld/:ro
+      - ../../../data/mariadb/socket:/run/mysqld/:ro
       #geoip mapping
-      - geoip_data:/geoip:ro
+      - ../../../data/geoip:/geoip:ro
       #Caddy folders requiring RW
-      - caddy_data:/data:rw
-      - caddy_config:/config:rw
+      - ../../../data/caddy/config:/config:rw
+      - ../../../data/caddy/data:/data:rw
+      #PHP config
+      - ../../../config/mime.types:/etc/mime.types:ro
+      #PHP config
+      - ../../../config/php.ini:/usr/local/etc/php/php.ini:ro
       #Main project folder is RO
       - ../../../:/app:ro
       #Some files/folders are overridden for RW permissions

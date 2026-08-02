@@ -2,6 +2,9 @@
 services:
   ofelia:
     build:
+      args:
+        PUID: ${HOST_UID}
+        PGID: ${HOST_GID}
       context: ../../../build/docker/ofelia
       dockerfile: Dockerfile
     cap_drop:
@@ -17,14 +20,19 @@ services:
       mariadb:
         condition: service_started
     environment:
+      #Address of docker socker proxy
       DOCKER_HOST: tcp://socket-proxy:2375
+      #Settings for email notifications
       PROTON_HOST: ${PROTON_HOST}
       PROTON_PASSWORD: ${PROTON_PASSWORD}
       PROTON_PORT: ${PROTON_PORT}
       PROTON_USER: ${PROTON_USER}
     networks:
       - ofelia-internal
-    read_only: true
+    ports:
+      - "127.0.0.1:7486:8080"
+      - "[::1]:7486:8080"
+    #read_only: true
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -32,3 +40,4 @@ services:
       - /tmp
     volumes:
       - ../../../logs:/var/log:rw
+      - ../../../config/ofelia.ini:/etc/ofelia/config.ini:ro

@@ -2,10 +2,10 @@
 set -e
 
 LOGFILE="/usr/local/logs/mariadb.log"
+touch "$LOGFILE"
+chown mysql:mysql "$LOGFILE"
 exec > >(tee -a "$LOGFILE") 2>&1
 
-#Required to pass environment variables to crontab
-printenv | grep -v "no_proxy" > /run/cron-env &&
 #We need to ensure that buffer pool file exists
 touch /var/lib/mysql/ib_buffer_pool &&
 chown mysql:mysql /var/lib/mysql/ib_buffer_pool &&

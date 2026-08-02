@@ -53,7 +53,7 @@ interface DomainRedirect {
  */
 async function main(): Promise<void> {
   try {
-    const output_file = './build/docker/frankenphp/caddy.json';
+    const output_file = './config/caddy.json';
     const all_hosts = [
       ...((hosts as Record<string, unknown>)['alt'] as []),
       ...((hosts as Record<string, unknown>)['supops'] as []),

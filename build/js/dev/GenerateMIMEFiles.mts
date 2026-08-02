@@ -22,7 +22,7 @@ interface MimeEntry {
   const project_root = path.resolve(dir_name, '../../..');
   const custom_file = path.resolve(dir_name, 'custom_mime.json');
   const output_json = path.join(project_root, '/packages/http20/mime.json');
-  const output_mime_types = path.join(project_root, 'build/docker/frankenphp/mime.types');
+  const output_mime_types = path.join(project_root, 'config/mime.types');
 
   // Load custom MIME data
   let custom_mime: Record<string, MimeEntry> = {};

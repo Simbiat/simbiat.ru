@@ -49,28 +49,17 @@ RUN install-php-extensions \
 
 # Completely custom
 
-# Create some temp directories
-RUN mkdir -p /tmp/upload
-RUN mkdir -p /tmp/sessions
-RUN mkdir -p /tmp/soap
-RUN mkdir -p /tmp/opcache
-
 # libnss3-tools is recommended for Caddy (looks like)
 RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install libnss3-tools&&apt-get -y autoremove&&apt-get clean
 
-#Copy custom mime.types
-COPY mime.types /etc/mime.types
-#Copy Caddy config
-COPY caddy.json /usr/local/etc/php/caddy.json
+# Default values
+ARG PUID=1000
+ARG PGID=1000
 
-#Copy cron files
-COPY cron/*.sh /usr/local/bin/
+# Create custom user with UID and GID matching host
+RUN groupadd -g "${PGID}"  frankenphp && useradd -u "${PUID}"  -g frankenphp -m -s /bin/bash frankenphp
 
-# Copy entrypoint script
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT exec docker-php-entrypoint --config /app/config/caddy.json
 
 # ---------------------------------------------------------------------------
 # PROD target: nothing beyond base. No git, no unzip, no composer global
@@ -78,8 +67,7 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 # ---------------------------------------------------------------------------
 FROM base AS PROD
 
-#Copy php.ini file
-COPY php.ini /usr/local/etc/php/php.ini
+USER frankenphp
 
 # ---------------------------------------------------------------------------
 # DEV target: adds the extra extensions and QA tooling on top of base.
@@ -120,5 +108,4 @@ RUN composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffe
                             "phpcsstandards/phpcsextra:@stable" \
                             "phpcompatibility/php-compatibility:@stable"
 
-#Copy php.ini file
-COPY php.ini /usr/local/etc/php/php.ini
+USER frankenphp

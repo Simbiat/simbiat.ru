@@ -40,6 +40,7 @@ services:
       - /var/log/apache2
       - /sessions
     volumes:
-      - mariadb_socket:/run/mysqld/:ro
+      - ../../../data/mariadb/socket:/run/mysqld:ro
       - ../../../build/phpmyadmin/upload:/etc/phpmyadmin/upload:ro
       - ../../../build/phpmyadmin/save:/etc/phpmyadmin/save:rw
+      - ../../../config/phpmyadmin.php:/etc/phpmyadmin/config.user.inc.php:ro

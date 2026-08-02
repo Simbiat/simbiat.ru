@@ -4,6 +4,13 @@ FROM crowdsecurity/crowdsec:v1.7.8-debian
 ARG CRS_RELEASE="4.28.0"
 #TODO: When CRS is updated, check for potential changes in 02-crs-setup.conf as well
 
+# Default values
+ARG PUID=1000
+ARG PGID=1000
+
+# Create custom user with UID and GID matching host
+RUN groupadd -g "${PGID}"  crowdsec && useradd -u "${PUID}"  -g crowdsec -m -s /bin/bash crowdsec
+
 ENV TZ=UTC \
     ENABLE_CONSOLE_MANAGEMENT=true \
     ENABLE_CONSOLE_ALL=true \
@@ -29,17 +36,13 @@ RUN apt-get -y update && \
 
 HEALTHCHECK --start-period=120s --interval=10s --timeout=5s --retries=3 CMD ["cscli", "lapi", "status"]
 
-# Copy configs
-COPY yaml/acquis.yaml /staging/etc/crowdsec/acquis.yaml
-COPY yaml/config.yaml.local /staging/etc/crowdsec/config.yaml.local
-COPY yaml/online_api_credentials.yaml /staging/etc/crowdsec/online_api_credentials.yaml
-COPY yaml/acquis/*.yaml /staging/etc/crowdsec/acquis.d/
-COPY yaml/appsec/simbiat-appsec.yaml /staging/etc/crowdsec/appsec-configs/simbiat-appsec.yaml
-COPY yaml/appsec/simbiat-seclang.yaml /staging/etc/crowdsec/appsec-rules/simbiat-seclang.yaml
-COPY CoreRuleSet/* /opt/CoreRuleSet/
-
-# Copy entrypoint script
+# Copy entrypoint scripts
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+# Own the files
+RUN chown -R crowdsec:crowdsec /var/lib/crowdsec /staging /usr/local/lib/crowdsec/plugins /var/lib/OWASP/rules
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+USER crowdsec

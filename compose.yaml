@@ -14,31 +14,11 @@ networks:
         - subnet: 172.21.0.0/16
         - subnet: 2001:db8:1::/64
 
-volumes:
-  caddy_config:
-    driver: local
-  caddy_data:
-    driver: local
-  crowdsec_config:
-    driver: local
-  crowdsec_data:
-    driver: local
-  geoip_data:
-    driver: local
-  mariadb_data:
-    driver: local
-  mariadb_socket:
-    driver: local
-  #Volume shared between FrankenPHP and MariaDB
-  temp_volume:
-    driver: local
-
 services:
   phpmyadmin:
     extends:
       file: ./build/docker/phpmyadmin/compose.yaml
       service: phpmyadmin
-
 
   geoip:
     extends:

@@ -152,7 +152,7 @@ dist
 #Environment variables should not be included
 /.env
 #CrowdSec credentials
-/build/docker/crowdsec/yaml/online_api_credentials.yaml
+/config/crowdsec/online_api_credentials.yaml
 #ESLint cache
 /config/.eslintcache
 #StyleLint cache

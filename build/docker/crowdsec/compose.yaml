@@ -3,11 +3,11 @@ services:
   crowdsec:
     #Based on https://github.com/crowdsecurity/example-docker-compose/tree/main/caddy
     build:
+      args:
+        PUID: ${HOST_UID}
+        PGID: ${HOST_GID}
       context: ../../../build/docker/crowdsec
       dockerfile: Dockerfile
-    cap_add:
-      - CHOWN
-      - SETGID
     cap_drop:
       - ALL
     container_name: crowdsec
@@ -22,9 +22,6 @@ services:
       DATABASE_PASSWORD: ${CROWDSEC_PASSWORD}
       DATABASE_SOCKET: ${DATABASE_SOCKET}
       ENROLL_KEY: ${CROWDSEC_ENROLL_KEY}
-    #Looks like this is required to allow reading the MariaDB log file (at least after hardening)
-    group_add:
-      - 999
     networks:
       - webserver
     ports:
@@ -44,12 +41,21 @@ services:
       - /run
     volumes:
       #RO for MariaDB socket
-      - mariadb_socket:/run/mysqld/:ro
+      - ../../../data/mariadb/socket:/run/mysqld:ro
       #Data folder is required to be mounted, otherwise container does not start
-      - crowdsec_data:/var/lib/crowdsec/data/:rw
-      - crowdsec_config:/etc/crowdsec/:rw
+      - ../../../data/crowdsec/config:/etc/crowdsec:rw
+      - ../../../data/crowdsec/data:/var/lib/crowdsec/data:rw
+      - ../../../config/CoreRuleSet:/var/lib/crowdsec/data/CoreRuleSet:ro
+      #Mount config files (need to mount as RW due to CHOWN, that has to run on them)
+      - ../../../config/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - ../../../config/crowdsec/config.yaml.local:/etc/crowdsec/config.yaml.local:ro
+      - ../../../config/crowdsec/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:ro
+      - ../../../config/crowdsec/acquis.d:/etc/crowdsec/acquis.d:ro
+      - ../../../config/crowdsec/appsec-configs/simbiat-appsec.yaml:/etc/crowdsec/appsec-configs//simbiat-appsec.yaml:ro
+      - ../../../config/crowdsec/appsec-rules/simbiat-seclang.yaml:/etc/crowdsec/appsec-rules/simbiat-seclang.yaml:ro
       #RO for GeoLite2 files
-      - geoip_data:/geoip:ro
+      - ../../../data/geoip/GeoLite2-ASN.mmdb:/var/lib/crowdsec/data/GeoLite2-ASN.mmdb:ro
+      - ../../../data/geoip/GeoLite2-City.mmdb:/var/lib/crowdsec/data/GeoLite2-City.mmdb:ro
       #Required to read syslog. This will be valid only on UNIX
       - /var/log/:/var/log/:ro
       #Caddy logs folder is RW, because we're also writing Crowdsec logs here

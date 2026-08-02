@@ -1,6 +1,9 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
 services:
   socket-proxy:
+    build:
+      context: ../../../build/docker/socket-proxy
+      dockerfile: Dockerfile
     cap_drop:
       - ALL
     container_name: socket-proxy
@@ -10,7 +13,6 @@ services:
       EVENTS: 1 # ofelia's docker client watches events; cheap to allow, read-only info
       EXEC: 1 # the actual exec create/start endpoints
       POST: 1 # gate for any mutating call — exec create/start are POST
-    image: tecnativa/docker-socket-proxy:latest
     networks:
       - ofelia-internal
     read_only: true

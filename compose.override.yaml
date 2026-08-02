@@ -3,16 +3,20 @@ services:
   frankenphp:
     build:
       target: DEV
+    depends_on:
+      crowdsec:
+        #On Windows CrowdSec startup takes a long while, which does not prevent use of the container for PHP-only stuff.
+        condition: service_started
     volumes:
       #PHPStorm's integrations require `/opt` to be persistent, so using named volume
-      - temp_volume:/opt:rw
+      - ./data/temp/frankenphp:/opt:rw
       #Main project folder is RO but have to do RW on DEV due to https://github.com/docker/desktop-feedback/issues/491
       - ./:/app:rw
       #These 2 items need write permissions for composer to run properly
       - ./composer.lock:/app/composer.lock:rw
       - ./vendor:/app/vendor:rw
       #Name is used to ensure the .ini is loaded last
-      - ./build/docker/frankenphp/php_dev.ini:/usr/local/etc/php/conf.d/zz-dev-overrides.ini
+      - ./config/php_dev.ini:/usr/local/etc/php/conf.d/zz-dev-overrides.ini
 
   #Attempt to use Bun from a container. Was meant to allow not keeping `node_modules` in the host, but it doesn't work
   #due to https://youtrack.jetbrains.com/issue/WEB-73725 and https://youtrack.jetbrains.com/issue/WEB-73722 bugs.
