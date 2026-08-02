@@ -51,7 +51,7 @@ services:
       - ../../../config/crowdsec/config.yaml.local:/etc/crowdsec/config.yaml.local:ro
       - ../../../config/crowdsec/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:ro
       - ../../../config/crowdsec/acquis.d:/etc/crowdsec/acquis.d:ro
-      - ../../../config/crowdsec/appsec-configs/simbiat-appsec.yaml:/etc/crowdsec/appsec-configs//simbiat-appsec.yaml:ro
+      - ../../../config/crowdsec/appsec-configs/simbiat-appsec.yaml:/etc/crowdsec/appsec-configs/simbiat-appsec.yaml:ro
       - ../../../config/crowdsec/appsec-rules/simbiat-seclang.yaml:/etc/crowdsec/appsec-rules/simbiat-seclang.yaml:ro
       #RO for GeoLite2 files
       - ../../../data/geoip/GeoLite2-ASN.mmdb:/var/lib/crowdsec/data/GeoLite2-ASN.mmdb:ro
