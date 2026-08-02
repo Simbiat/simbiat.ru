@@ -59,7 +59,14 @@ ARG PGID=1000
 # Create custom user with UID and GID matching host
 RUN groupadd -g "${PGID}"  frankenphp && useradd -u "${PUID}"  -g frankenphp -m -s /bin/bash frankenphp
 
-ENTRYPOINT exec docker-php-entrypoint --config /app/config/caddy.json
+RUN mkdir -p /usr/local/share/ca-bundle-backup && \
+    cp -a /etc/ssl/certs/. /usr/local/share/ca-bundle-backup/
+
+# Copy entrypoint script
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod 755 /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # ---------------------------------------------------------------------------
 # PROD target: nothing beyond base. No git, no unzip, no composer global

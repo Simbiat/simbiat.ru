@@ -39,8 +39,8 @@ services:
     tmpfs:
       - /run
       # These are required for adding certificates to local trust store
-      - /usr/local/share/ca-certificates/
-      - /etc/ssl/certs/
+      - /usr/local/share/ca-certificates/:uid=${HOST_UID},gid=${HOST_GID}
+      - /etc/ssl/certs/:uid=${HOST_UID},gid=${HOST_GID}
     volumes:
       #Using tmpfs for /tmp is not a good idea, since there can be relatively large files being processed simultaneously
       - ../../../data/temp/frankenphp:/tmp:rw
