@@ -28,6 +28,11 @@ a {
         filter: brightness(0.7);
     }
 
+    &.no_text_decoration > span {
+        /* stylelint-disable-next-line declaration-no-important -- Enforce no underline for span */
+        text-decoration: none !important;
+    }
+
     &:link > span:not(.new_tab_icon, .entity_arrow, img) {
         text-decoration-line: underline;
     }

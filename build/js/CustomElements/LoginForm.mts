@@ -79,7 +79,7 @@ export class LoginForm extends HTMLElement {
             pageRefresh();
           }
         },
-        keep_disabled: true,
+        keep_disabled: false,
       });
     }
   }

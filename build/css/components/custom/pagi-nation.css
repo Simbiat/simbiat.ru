@@ -13,7 +13,6 @@ pagi-nation {
         display: inline-block;
     }
 
-    & a,
     & span {
         block-size: 2rem;
         border-color: var(--color_interactive);
@@ -31,27 +30,24 @@ pagi-nation {
     }
 
     & a {
-        &:hover,
-        &:focus {
-            background-color: var(--color_block);
+        border: none;
+
+        & > span {
+            /* stylelint-disable-next-line declaration-no-important --  Otherwise gets underlined by general style of anchors */
+            text-decoration: none !important;
+
+            &:hover,
+            &:focus {
+                background-color: var(--color_block);
+            }
         }
     }
 
-    & li.pagination_current > a,
     & li.pagination_current > span {
         border-color: var(--color_success);
         border-style: inset;
         color: var(--color_success);
         cursor: not-allowed;
-    }
-
-    & li.pagination_prev > a,
-    & li.pagination_next > a,
-    & li.pagination_first > a,
-    & li.pagination_last > a {
-        border-color: var(--color_interactive);
-        color: var(--color_interactive);
-        cursor: pointer;
     }
 
     & li.pagination_prev > span,
@@ -62,5 +58,14 @@ pagi-nation {
         border-style: inset;
         color: var(--color_disabled);
         cursor: not-allowed;
+    }
+
+    & li.pagination_prev > a > span,
+    & li.pagination_next > a > span,
+    & li.pagination_first > a > span,
+    & li.pagination_last > a > span {
+        border-color: var(--color_interactive);
+        color: var(--color_interactive);
+        cursor: pointer;
     }
 }

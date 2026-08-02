@@ -46,7 +46,7 @@ export class Heading {
       //Get the element under the mouse pointer
       const element_under_mouse = document.elementFromPoint(event.clientX, event.clientY);
       //Check if it's an <a> element
-      if (element_under_mouse?.tagName === 'A') {
+      if (element_under_mouse?.tagName === 'A' || element_under_mouse?.closest('a')) {
         //Cancel this event if we clicked on an anchor, because it can confuse if we get notification about copy and follow the link right away
         return;
       }
