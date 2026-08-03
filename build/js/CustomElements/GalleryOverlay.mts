@@ -73,7 +73,7 @@ export class GalleryOverlay extends HTMLElement {
         item.addEventListener('click', (event) => {
           event.preventDefault();
           event.stopPropagation();
-          this.original_trigger = event.target as HTMLAnchorElement | HTMLImageElement;
+          this.original_trigger = event.currentTarget as HTMLAnchorElement | HTMLImageElement;
           this.current = index;
           return false;
         });

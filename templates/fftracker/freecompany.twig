@@ -1,6 +1,17 @@
 <tab-menu role="tablist">
-    <a class="tab_name active" id="tab_name_general" href="#tab_name_general">General</a>
-    <div id="tab_content_general" class="tab_content active">
+    <div role="tablist" class="tab_list">
+        <a class="tab_name active" role="tab" id="tab_name_general" href="#tab_name_general" aria-controls="tab_content_general">General</a>
+        {% if freecompany.members|length > 0 %}
+            <a class="tab_name" role="tab" id="tab_name_members" href="#tab_name_members" aria-controls="tab_content_members">Current members</a>
+        {% endif %}
+        {% if freecompany.past_members|length > 0 %}
+            <a class="tab_name" role="tab" id="tab_name_past_members" href="#tab_name_past_members" aria-controls="tab_content_past_members">Past members</a>
+        {% endif %}
+        {% if freecompany.ranking|length > 0 %}
+            <a class="tab_name" role="tab" id="tab_name_ranking" href="#tab_name_ranking" aria-controls="tab_content_ranking">Ranking history</a>
+        {% endif %}
+    </div>
+    <div id="tab_content_general" class="tab_content active" role="tabpanel" aria-labelledby="tab_name_general">
         <img crossorigin="anonymous" loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ freecompany.name }}" src="{{ freecompany.crest }}" width="128" height="128">
         <p>Rank <i>{{ freecompany.rank }}</i> Free Company
             <b>"{{ freecompany.name }}"</b> was formed on {{ timeTag(freecompany.dates.formed, 'd/m/Y') }} and registered on {{ timeTag(freecompany.dates.registered, 'd/m/Y') }} with ID
@@ -113,8 +124,7 @@
         {% endif %}
     </div>
     {% if freecompany.members|length > 0 %}
-        <a class="tab_name" id="tab_name_members" href="#tab_name_members">Current members</a>
-        <div class="tab_content" id="tab_content_members">
+        <div class="tab_content" id="tab_content_members" role="tabpanel" aria-labelledby="tab_name_members">
             <ul class="search_results">
                 {% for entity in freecompany.members %}
                     <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
@@ -123,8 +133,7 @@
         </div>
     {% endif %}
     {% if freecompany.past_members|length > 0 %}
-        <a class="tab_name" id="tab_name_past_members" href="#tab_name_past_members">Past members</a>
-        <div class="tab_content" id="tab_content_past_members">
+        <div class="tab_content" id="tab_content_past_members" role="tabpanel" aria-labelledby="tab_name_past_members">
             <ul class="search_results">
                 {% for entity in freecompany.past_members %}
                     <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
@@ -133,8 +142,7 @@
         </div>
     {% endif %}
     {% if freecompany.ranking|length > 0 %}
-        <a class="tab_name" id="tab_name_ranking" href="#tab_name_ranking">Ranking history</a>
-        <div class="tab_content" id="tab_content_ranking">
+        <div class="tab_content" id="tab_content_ranking" role="tabpanel" aria-labelledby="tab_name_ranking">
             <table>
                 <tr>
                     <th>Date</th>

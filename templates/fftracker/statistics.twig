@@ -1,11 +1,13 @@
-<tab-menu role="tablist">
-    <a class="tab_name{% if ffstats.category == 'characters' %} active{% endif %}" href="/fftracker/statistics/characters">Characters</a>
-    <a class="tab_name{% if ffstats.category == 'groups' %} active{% endif %}" href="/fftracker/statistics/groups">Groups</a>
-    <a class="tab_name{% if ffstats.category == 'achievements' %} active{% endif %}" href="/fftracker/statistics/achievements">Achievements</a>
-    <a class="tab_name{% if ffstats.category == 'timelines' %} active{% endif %}" href="/fftracker/statistics/timelines">Timelines</a>
-    <a class="tab_name{% if ffstats.category == 'bugs' %} active{% endif %}" href="/fftracker/statistics/bugs">Bugs</a>
-    <a class="tab_name{% if ffstats.category == 'raw' %} active{% endif %}" href="/fftracker/statistics/raw">Raw</a>
-    <a class="tab_name{% if ffstats.category == 'other' %} active{% endif %}" href="/fftracker/statistics/other">Other</a>
+<tab-menu>
+    <div role="tablist" class="tab_list">
+        <a role="tab" class="tab_name{% if ffstats.category == 'characters' %} active{% endif %}" href="/fftracker/statistics/characters">Characters</a>
+        <a role="tab" class="tab_name{% if ffstats.category == 'groups' %} active{% endif %}" href="/fftracker/statistics/groups">Groups</a>
+        <a role="tab" class="tab_name{% if ffstats.category == 'achievements' %} active{% endif %}" href="/fftracker/statistics/achievements">Achievements</a>
+        <a role="tab" class="tab_name{% if ffstats.category == 'timelines' %} active{% endif %}" href="/fftracker/statistics/timelines">Timelines</a>
+        <a role="tab" class="tab_name{% if ffstats.category == 'bugs' %} active{% endif %}" href="/fftracker/statistics/bugs">Bugs</a>
+        <a role="tab" class="tab_name{% if ffstats.category == 'raw' %} active{% endif %}" href="/fftracker/statistics/raw">Raw</a>
+        <a role="tab" class="tab_name{% if ffstats.category == 'other' %} active{% endif %}" href="/fftracker/statistics/other">Other</a>
+    </div>
 </tab-menu>
 <section>
     {% if ffstats.category %}

@@ -19,9 +19,6 @@ export class TabMenu extends HTMLElement {
     this.contents = this.querySelectorAll<HTMLDivElement>('div.tab_content[id^=tab_content_]');
     let current_tab = 0;
     for (const tab of this.tabs) {
-      tab.setAttribute('role', 'tab');
-      tab.setAttribute('aria-controls', tab.id.replace('tab_name_', 'tab_content_'));
-      tab.setAttribute('href', `#${tab.id}`);
       if (tab.classList.contains('active')) {
         this.current_tab = current_tab;
         this.showTab(tab);
@@ -31,8 +28,6 @@ export class TabMenu extends HTMLElement {
       current_tab++;
     }
     for (const content of this.contents) {
-      content.setAttribute('role', 'tabpanel');
-      content.setAttribute('aria-labelledby', content.id.replace('tab_content_', 'tab_name_'));
       if (content.classList.contains('active')) {
         this.showContent(content);
       } else {
@@ -43,7 +38,7 @@ export class TabMenu extends HTMLElement {
       tab.addEventListener('click', (event: MouseEvent) => {
         event.preventDefault();
         event.stopImmediatePropagation();
-        const target = event.target as HTMLAnchorElement;
+        const target = event.currentTarget as HTMLAnchorElement;
         this.tabSwitch(target);
       });
       tab.addEventListener('keydown', (event: KeyboardEvent) => {

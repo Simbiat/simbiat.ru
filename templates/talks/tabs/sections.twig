@@ -1,31 +1,66 @@
+<div role="tablist" class="tab_list">
+    {# Check if user does not have a blog created and we are in a blog root section #}
+    {% if id == 1 and not session_data.sections.blog %}
+        <a class="tab_name" role="tab" id="tab_name_start_blog" href="#tab_name_start_blog" aria-controls="tab_content_start_blog">Start blog</a>
+    {% endif %}
+    {# Check if user does not have a changelog created and we are in a changelog root section #}
+    {% if id == 3 and not session_data.sections.changelog %}
+        <a class="tab_name" role="tab" id="tab_name_start_changelog" href="#tab_name_start_changelog" aria-controls="tab_content_changelog">Start changelog</a>
+    {% endif %}
+    {# Check if user does not have a knowledgebase created and we are in a knowledgebase root section #}
+    {% if id == 4 and not session_data.sections.knowledgebase %}
+        <a class="tab_name" role="tab" id="tab_name_start_knowledgebase" href="#tab_name_start_knowledgebase" aria-controls="tab_content_knowledgebase">Start knowledgebase</a>
+    {% endif %}
+    {% if type != 'Category' and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
+        {% if (type != 'Blog' and type != 'Knowledgebase' and type != 'Changelog') or ((type == 'Blog' or type == 'Knowledgebase' or type == 'Changelog') and owned) %}
+            <a class="tab_name" role="tab" id="tab_name_new_thread" href="#tab_name_new_thread" aria-controls="tab_content_new_thread">New {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}</a>
+        {% endif %}
+    {% endif %}
+    {% if (id == 1 and session_data.sections.blog) or (id == 3 and session_data.sections.changelog) or (id == 4 and session_data.sections.knowledgebase) or (id != 1 and id != 3 and id != 4) %}
+        {% if inherited_type != 'Blog' and (owned or ('add_sections' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions))) %}
+            <a class="tab_name" role="tab" id="tab_name_new_section" href="#tab_name_new_section" aria-controls="tab_content_new_section">Add subsection</a>
+        {% endif %}
+    {% endif %}
+    {% if owned or 'edit_sections' in session_data.permissions %}
+        <a class="tab_name" role="tab" id="tab_name_edit" href="#tab_name_edit" aria-controls="tab_content_edit">Edit</a>
+    {% endif %}
+    {% if owned or 'edit_sections' in session_data.permissions %}
+        <a class="tab_name warning" role="tab" id="tab_name_private" href="#tab_name_private" aria-controls="tab_content_private">Mark {% if private %}public{% else %}private{% endif %}</a>
+    {% endif %}
+    {% if 'move_sections' in session_data.permissions and parent_id %}
+        <a class="tab_name warning" role="tab" id="tab_name_move" href="#tab_name_move" aria-controls="tab_content_move">Move</a>
+    {% endif %}
+    {% if owned or 'edit_sections' in session_data.permissions %}
+        <a class="tab_name danger" role="tab" id="tab_name_close" href="#tab_name_close" aria-controls="tab_content_close">{% if closed %}Open{% else %}Close{% endif %}</a>
+    {% endif %}
+    {% if (owned or 'remove_sections' in session_data.permissions) and not system %}
+        <a class="tab_name danger" role="tab" id="tab_name_delete" href="#tab_name_delete" aria-controls="tab_content_delete">Delete</a>
+    {% endif %}
+</div>
 {# Check if user does not have a blog created and we are in a blog root section #}
 {% if id == 1 and not session_data.sections.blog %}
-    <a class="tab_name" id="tab_name_start_blog" href="#tab_name_start_blog">Start blog</a>
-    <div class="tab_content" id="tab_content_start_blog">
+    <div class="tab_content" id="tab_content_start_blog" role="tabpanel" aria-labelledby="tab_name_start_blog">
         <p>Fill in and submit the form below to create your personal blog.</p>
         {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': true, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
     </div>
 {% endif %}
 {# Check if user does not have a changelog created and we are in a changelog root section #}
 {% if id == 3 and not session_data.sections.changelog %}
-    <a class="tab_name" id="tab_name_start_changelog" href="#tab_name_start_changelog">Start changelog</a>
-    <div class="tab_content" id="tab_content_start_changelog">
+    <div class="tab_content" id="tab_content_start_changelog" role="tabpanel" aria-labelledby="tab_name_start_changelog">
         <p>Fill in and submit the form below to create your changelog.</p>
         {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': true, 'starting_new_kb': false}) }}
     </div>
 {% endif %}
 {# Check if user does not have a knowledgebase created and we are in a knowledgebase root section #}
 {% if id == 4 and not session_data.sections.knowledgebase %}
-    <a class="tab_name" id="tab_name_start_knowledgebase" href="#tab_name_start_knowledgebase">Start knowledgebase</a>
-    <div class="tab_content" id="tab_content_start_knowledgebase">
+    <div class="tab_content" id="tab_content_start_knowledgebase" role="tabpanel" aria-labelledby="tab_name_start_knowledgebase">
         <p>Fill in and submit the form below to create your knowledgebase.</p>
         {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': true}) }}
     </div>
 {% endif %}
 {% if type != 'Category' and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
     {% if (type != 'Blog' and type != 'Knowledgebase' and type != 'Changelog') or ((type == 'Blog' or type == 'Knowledgebase' or type == 'Changelog') and owned) %}
-        <a class="tab_name" id="tab_name_new_thread" href="#tab_name_new_thread">New {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}</a>
-        <div class="tab_content" id="tab_content_new_thread">
+        <div class="tab_content" id="tab_content_new_thread" role="tabpanel" aria-labelledby="tab_name_new_thread">
             <p>Fill in and submit the form below to create a new {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}.</p>
             {{ include('talks/forms/thread.twig', {'thread_edit': false, 'contact_form': false, 'external_links': null}) }}
         </div>
@@ -33,22 +68,19 @@
 {% endif %}
 {% if (id == 1 and session_data.sections.blog) or (id == 3 and session_data.sections.changelog) or (id == 4 and session_data.sections.knowledgebase) or (id != 1 and id != 3 and id != 4) %}
     {% if inherited_type != 'Blog' and (owned or ('add_sections' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions))) %}
-        <a class="tab_name" id="tab_name_new_section" href="#tab_name_new_section">Add subsection</a>
-        <div class="tab_content" id="tab_content_new_section">
+        <div class="tab_content" id="tab_content_new_section" role="tabpanel" aria-labelledby="tab_name_new_section">
             <p>Fill in and submit the form below to create a new subsection in the currently selected one.</p>
             {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
         </div>
     {% endif %}
 {% endif %}
 {% if owned or 'edit_sections' in session_data.permissions %}
-    <a class="tab_name" id="tab_name_edit" href="#tab_name_edit">Edit</a>
-    <div class="tab_content" id="tab_content_edit">
+    <div class="tab_content" id="tab_content_edit" role="tabpanel" aria-labelledby="tab_name_edit">
         {{ include('talks/forms/section.twig', {'section_edit': true, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
     </div>
 {% endif %}
 {% if owned or 'edit_sections' in session_data.permissions %}
-    <a class="tab_name warning" id="tab_name_private" href="#tab_name_private">Mark {% if private %}public{% else %}private{% endif %}</a>
-    <div class="tab_content" id="tab_content_private">
+    <div class="tab_content" id="tab_content_private" role="tabpanel" aria-labelledby="tab_name_private">
         <form id="section_private_form" name="section_private_form" autocomplete="off" class="middle" method="post">
             {% if private %}
                 <p>Marking the section public will make all content inside this section available for public view.</p>
@@ -69,8 +101,7 @@
     </div>
 {% endif %}
 {% if 'move_sections' in session_data.permissions and parent_id %}
-    <a class="tab_name warning" id="tab_name_move" href="#tab_name_move">Move</a>
-    <div class="tab_content" id="tab_content_move">
+    <div class="tab_content" id="tab_content_move" role="tabpanel" aria-labelledby="tab_name_move">
         <form id="section_move_form" name="section_move_form" autocomplete="off" class="middle" method="post">
             <p>Input ID of the parent section to which you want to move this section.</p>
             <p class="warning">Note that moving this section
@@ -89,8 +120,7 @@
     </div>
 {% endif %}
 {% if owned or 'edit_sections' in session_data.permissions %}
-    <a class="tab_name danger" id="tab_name_close" href="#tab_name_close">{% if closed %}Open{% else %}Close{% endif %}</a>
-    <div class="tab_content" id="tab_content_close">
+    <div class="tab_content" id="tab_content_close" role="tabpanel" aria-labelledby="tab_name_close">
         <form id="section_closed_form" name="section_closed_form" autocomplete="off" class="middle" method="post">
             {% if closed %}
                 <p>Opening this section will allow others to create threads and posts in it if they have appropriate permissions.</p>
@@ -110,8 +140,7 @@
     </div>
 {% endif %}
 {% if (owned or 'remove_sections' in session_data.permissions) and not system %}
-    <a class="tab_name danger" id="tab_name_delete" href="#tab_name_delete">Delete</a>
-    <div class="tab_content" id="tab_content_delete">
+    <div class="tab_content" id="tab_content_delete" role="tabpanel" aria-labelledby="tab_name_delete">
         {% if children.entities|length > 0 or threads.entities|length > 0 %}
             <p>This section has subsections or/and threads. Removal is not possible.</p>
         {% else %}

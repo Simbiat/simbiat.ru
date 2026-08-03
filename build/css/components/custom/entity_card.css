@@ -23,6 +23,8 @@ a.entity_card {
         inline-size: 2.5rem;
         line-height: 2.5rem;
         text-align: center;
+        /* stylelint-disable-next-line declaration-no-important -- Enforce no underline for all spans (there can be several) */
+        text-decoration: none !important;
 
         & img {
             block-size: 100%;

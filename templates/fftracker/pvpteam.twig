@@ -1,6 +1,11 @@
 <tab-menu role="tablist">
-    <a class="tab_name active" id="tab_name_general" href="#tab_name_general">General</a>
-    <div id="tab_content_general" class="tab_content active">
+    <div role="tablist" class="tab_list">
+        <a class="tab_name active" role="tab" id="tab_name_general" href="#tab_name_general" aria-controls="tab_content_general">General</a>
+        {% if pvpteam.past_members|length > 0 %}
+            <a class="tab_name" role="tab" id="tab_name_past_members" href="#tab_name_past_members" aria-controls="tab_content_past_members">Past members</a>
+        {% endif %}
+    </div>
+    <div id="tab_content_general" class="tab_content active" role="tabpanel" aria-labelledby="tab_name_general">
         <img crossorigin="anonymous" loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ pvpteam.name }}" src="{{ pvpteam.crest }}" width="128" height="128">
         <p>PvP Team
             <b>"{{ pvpteam.name }}"</b> was {% if pvpteam.dates.formed %}formed on {{ timeTag(pvpteam.dates.formed, 'd/m/Y') }} and {% endif %}registered on {{ timeTag(pvpteam.dates.registered, 'd/m/Y') }} with ID
@@ -45,8 +50,7 @@
         {% endif %}
     </div>
     {% if pvpteam.past_members|length > 0 %}
-        <a class="tab_name" id="tab_name_past_members" href="#tab_name_past_members">Past members</a>
-        <div class="tab_content" id="tab_content_past_members">
+        <div class="tab_content" id="tab_content_past_members" role="tabpanel" aria-labelledby="tab_name_past_members">
             <ul class="search_results">
                 {% for entity in pvpteam.past_members %}
                     <li>{{ include('common/elements/entitycard.twig', entity) }}</li>

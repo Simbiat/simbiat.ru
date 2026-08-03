@@ -82,7 +82,7 @@ USER frankenphp
 FROM base AS DEV
 
 # Add composer
-ENV COMPOSER_HOME=/root/.composer
+ENV COMPOSER_HOME=/composer
 ENV COMPOSER_CACHE_DIR=/tmp/composer_cache
 ENV PATH="${COMPOSER_HOME}/vendor/bin:${PATH}"
 COPY --from=composer/composer /usr/bin/composer /usr/bin/composer

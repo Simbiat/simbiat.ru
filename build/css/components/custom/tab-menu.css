@@ -1,11 +1,5 @@
 /* Style tab menu's components */
 tab-menu {
-    align-items: flex-start;
-    display: flex;
-    flex-wrap: wrap;
-    margin-block-end: -0.65rem;
-    margin-inline: calc(var(--border_radius) * 2.25);
-
     & > div.tab_content {
         &.active {
             display: block;
@@ -19,83 +13,99 @@ tab-menu {
         display: none;
         flex: 1 0 100%;
         margin-block-end: 0.5rem;
-        margin-inline: calc(var(--border_radius) * 2.25 * -0.75);
+        margin-inline: 0.5rem;
         order: 2;
         padding: .5rem;
     }
 
-    & > a.tab_name {
-        background-color: var(--color_body);
-        block-size: 1.8rem;
-        border-color: var(--border_color_outset);
-        border-radius: var(--border_radius) var(--border_radius) 0 0;
-        border-style: solid;
-        border-width: var(--border_width);
-        color: var(--color_interactive);
-        cursor: pointer;
-        display: block;
-        flex: 0 0 auto;
-        font-weight: 700;
-        inline-size: fit-content;
-        line-height: 1.8rem;
-        margin-block-end: 0.025rem;
-        margin-inline-start: -0.15rem;
-        order: 1;
-        padding: .1rem .5rem;
-        text-decoration: none;
+    & > div.tab_list {
+        align-items: flex-start;
+        display: flex;
+        flex-wrap: wrap;
+        margin-inline: calc(var(--border_radius) * 2.25);
 
-        &.active {
-            background-color: var(--color_article);
-            border-color: var(--border_color_inset);
-            cursor: default;
+        & > a.tab_name {
+            background-color: var(--color_body);
+            block-size: 1.8rem;
+            border-color: var(--border_color_outset);
+            border-radius: var(--border_radius) var(--border_radius) 0 0;
+            border-style: solid;
+            border-width: var(--border_width);
+            color: var(--color_interactive);
+            cursor: pointer;
+            display: block;
+            flex: 0 0 auto;
+            font-weight: 700;
+            inline-size: fit-content;
+            line-height: 1.8rem;
+            margin-block-end: 0.025rem;
+            margin-inline-start: -0.15rem;
+            order: 1;
+            padding: .1rem .5rem;
             text-decoration: none;
-        }
-
-        &:hover {
-            background-color: var(--color_article);
-            border-color: var(--border_color_inset);
-            text-decoration: none;
-        }
-
-        &.danger {
-            color: var(--color_failure);
-        }
-
-        &.warning {
-            color: var(--color_warning);
-        }
-
-        &.danger,
-        &.warning {
-            filter: brightness(0.7);
-            font-weight: 100;
 
             &.active {
-                filter: none;
+                background-color: var(--color_article);
+                border-color: var(--border_color_inset);
+                cursor: default;
+                text-decoration: none;
             }
 
             &:hover {
-                filter: none;
+                background-color: var(--color_article);
+                border-color: var(--border_color_inset);
+                text-decoration: none;
+            }
+
+            &.danger {
+                color: var(--color_failure);
+            }
+
+            &.warning {
+                color: var(--color_warning);
+            }
+
+            &.danger,
+            &.warning {
+                filter: brightness(0.7);
+                font-weight: 100;
+
+                &.active {
+                    filter: none;
+                }
+
+                &:hover {
+                    filter: none;
+                }
+            }
+
+            &:link {
+                text-decoration-line: none;
+            }
+
+            &:visited {
+                border-style: solid;
+                text-decoration: none;
+            }
+
+            &:focus,
+            &:active {
+                border-color: var(--color_interactive);
+                text-decoration: none;
+            }
+
+            &:active {
+                filter: brightness(0.7);
+            }
+
+            & > span {
+                /* stylelint-disable-next-line declaration-no-important -- Enforce no underline for tabs' text */
+                text-decoration: none !important;
             }
         }
+    }
 
-        &:link {
-            text-decoration-line: none;
-        }
-
-        &:visited {
-            border-style: solid;
-            text-decoration: none;
-        }
-
-        &:focus,
-        &:active {
-            border-color: var(--color_interactive);
-            text-decoration: none;
-        }
-
-        &:active {
-            filter: brightness(0.7);
-        }
+    &:not(:has(.tab_content)) > div.tab_list {
+        margin-block-end: -0.65rem;
     }
 }

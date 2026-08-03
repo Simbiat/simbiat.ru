@@ -1,6 +1,20 @@
 <tab-menu role="tablist">
-    <a class="tab_name active" id="tab_name_general" href="#tab_name_general">Общее</a>
-    <div id="tab_content_general" class="tab_content active">
+    <div role="tablist" class="tab_list">
+        <a class="tab_name active" role="tab" id="tab_name_general" href="#tab_name_general" aria-controls="tab_content_general">Общее</a>
+        {% if bicdetails.accounts|length > 0 %}
+            <a class="tab_name" role="tab" id="tab_name_accounts" href="#tab_name_accounts" aria-controls="tab_content_accounts">Счета</a>
+        {% endif %}
+        {% if bicdetails.restrictions %}
+            <a class="tab_name" role="tab" id="tab_name_restrictions" href="#tab_name_restrictions" aria-controls="tab_content_restrictions">Ограничения</a>
+        {% endif %}
+        {% if bicdetails.PrntBIC or bicdetails.branches or bicdetails.same_bic or bicdetails.same_address %}
+            <a class="tab_name" role="tab" id="tab_name_connections" href="#tab_name_connections" aria-controls="tab_content_connections">Связанные организации</a>
+        {% endif %}
+        {% if bicdetails.DateIn is null or date(bicdetails.DateIn) <= date('2018-12-30') %}
+            <a class="tab_name" role="tab" id="tab_name_dbf" href="#tab_name_dbf" aria-controls="tab_content_dbf">Из DBF</a>
+        {% endif %}
+    </div>
+    <div id="tab_content_general" class="tab_content active" role="tabpanel" aria-labelledby="tab_name_general">
         {% if bicdetails.Ukraine %}
             <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Це Україна! Іди додому, окупанте!" src="/assets/images/flags/Ukraine.svg" width="512" height="512">
         {% endif %}
@@ -167,8 +181,7 @@
         </table>
     </div>
     {% if bicdetails.accounts|length > 0 %}
-        <a class="tab_name" id="tab_name_accounts" href="#tab_name_general">Счета</a>
-        <div class="tab_content" id="tab_content_accounts">
+        <div class="tab_content" id="tab_content_accounts" role="tabpanel" aria-labelledby="tab_name_accounts">
             <table>
                 <caption>
                     <h2 class="no_margin">Счета</h2>
@@ -233,14 +246,12 @@
         </div>
     {% endif %}
     {% if bicdetails.restrictions %}
-        <a class="tab_name" id="tab_name_restrictions" href="#tab_name_restrictions">Ограничения</a>
-        <div class="tab_content" id="tab_content_restrictions">
+        <div class="tab_content" id="tab_content_restrictions" role="tabpanel" aria-labelledby="tab_name_restrictions">
             {{ timeline(bicdetails.restrictions) }}
         </div>
     {% endif %}
     {% if bicdetails.PrntBIC or bicdetails.branches or bicdetails.same_bic or bicdetails.same_address %}
-        <a class="tab_name" id="tab_name_connections" href="#tab_name_connections">Связанные организации</a>
-        <div class="tab_content" id="tab_content_connections">
+        <div class="tab_content" id="tab_content_connections" role="tabpanel" aria-labelledby="tab_name_connections">
             {% if bicdetails.PrntBIC %}
                 <h3>Головн{% if bicdetails.PrntBIC|length > 1 %}ые{% else %}ая{% endif %} организаци{% if bicdetails.PrntBIC|length > 1 %}и{% else %}я{% endif %}</h3>
                 <ul class="search_results bic_chain">
@@ -302,8 +313,7 @@
     {% endif %}
     {# DBF data visualization #}
     {% if bicdetails.DateIn is null or date(bicdetails.DateIn) <= date('2018-12-30') %}
-        <a class="tab_name" id="tab_name_dbf" href="#tab_name_dbf">Из DBF</a>
-        <div class="tab_content" id="tab_content_dbf">
+        <div class="tab_content" id="tab_content_dbf" role="tabpanel" aria-labelledby="tab_name_dbf">
             <table>
                 <caption>
                     <h2 class="no_margin">Старые наименования</h2>

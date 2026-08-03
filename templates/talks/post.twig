@@ -1,19 +1,33 @@
 <tab-menu role="tablist">
-    <a class="tab_name active" id="tab_name_view" href="#tab_name_view">View</a>
-    <div class="tab_content active" id="tab_content_view">
+    <div role="tablist" class="tab_list">
+        <a class="tab_name active" role="tab" id="tab_name_view" href="#tab_name_view" aria-controls="tab_content_view">View</a>
+        {% if not history_version %}
+            {% if can_edit_post %}
+                <a class="tab_name" role="tab" id="tab_name_edit" href="#tab_name_edit" aria-controls="tab_content_edit">Edit</a>
+            {% endif %}
+            {% if history and 'view_posts_history' in session_data.permissions %}
+                <a class="tab_name" role="tab" id="tab_name_history" href="#tab_name_history" aria-controls="tab_content_history">History</a>
+            {% endif %}
+            {% if 'move_posts' in session_data.permissions %}
+                <a class="tab_name warning" role="tab" id="tab_name_move" href="#tab_name_move" aria-controls="tab_content_move">Move</a>
+            {% endif %}
+            {% if 'remove_posts' in session_data.permissions %}
+                <a class="tab_name danger" role="tab" id="tab_name_delete" href="#tab_name_delete" aria-controls="tab_content_delete">Delete</a>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="tab_content active" id="tab_content_view" role="tabpanel" aria-labelledby="tab_name_view">
         {% set post = post|merge({'no_user': false, 'noname': false, 'detailed_type': null, 'text_only': false, 'allow_reply_to': false, 'noeditedtime': false}) %}
         {{ include('common/elements/post.twig', post) }}
     </div>
     {% if not history_version %}
         {% if can_edit_post %}
-            <a class="tab_name" id="tab_name_edit" href="#tab_name_edit">Edit</a>
-            <div class="tab_content" id="tab_content_edit">
+            <div class="tab_content" id="tab_content_edit" role="tabpanel" aria-labelledby="tab_name_edit">
                 {{ include('talks/forms/post.twig', {'verb': 'edit', 'new_thread': false, 'thread_id': thread_id, 'post_id': id, 'text': text, 'permissions': session_data.permissions, 'author': author, 'current_user': session_data.user_id}, with_context = false) }}
             </div>
         {% endif %}
         {% if history and 'view_posts_history' in session_data.permissions %}
-            <a class="tab_name" id="tab_name_history" href="#tab_name_history">History</a>
-            <div class="tab_content" id="tab_content_history">
+            <div class="tab_content" id="tab_content_history" role="tabpanel" aria-labelledby="tab_name_history">
                 {% if history|length > 0 %}
                     <p>The list of versions below does not include any versions with the same text as the current one.</p>
                     <ol class="post_history" reversed>
@@ -29,8 +43,7 @@
             </div>
         {% endif %}
         {% if 'move_posts' in session_data.permissions %}
-            <a class="tab_name warning" id="tab_name_move" href="#tab_name_move">Move</a>
-            <div class="tab_content" id="tab_content_move">
+            <div class="tab_content" id="tab_content_move" role="tabpanel" aria-labelledby="tab_name_move">
                 <form id="post_move_form" name="post_move_form" autocomplete="off" class="middle" method="post">
                     <p>Input ID of the parent thread to which you want to move this post.</p>
                     <p class="warning">Note that moving this post
@@ -49,8 +62,7 @@
             </div>
         {% endif %}
         {% if 'remove_posts' in session_data.permissions %}
-            <a class="tab_name danger" id="tab_name_delete" href="#tab_name_delete">Delete</a>
-            <div class="tab_content" id="tab_content_delete">
+            <div class="tab_content" id="tab_content_delete" role="tabpanel" aria-labelledby="tab_name_delete">
                 <form id="delete_post_form" name="delete_post_form" autocomplete="off" method="post">
                     <p>Pressing the below button will delete the current post completely.
                         <b class="warning">It will not be possible to restore it</b>, so do it after good and long thinking.
