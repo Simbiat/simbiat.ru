@@ -105,7 +105,7 @@ sync_binlog = 1
 ft_min_word_len = 1
 innodb_ft_min_token_size = 1
 innodb_ft_num_word_optimize = 10000
-innodb_ft_sort_pll_degree = 4
+innodb_ft_sort_pll_degree = 8
 
 # Capping definition cache. Unlikely this much will ever be needed even
 table_definition_cache = 2000
@@ -121,8 +121,9 @@ innodb_lru_scan_depth=128
 max_seeks_for_key=32
 max_write_lock_count=16
 
-sort_buffer_size = 5M
-innodb_sort_buffer_size = 5M
+sort_buffer_size = 10M
+#Using max possible value
+innodb_sort_buffer_size = 64M
 #1M is maximum value
 table_open_cache = 1048576
 table_open_cache_instances = 8
