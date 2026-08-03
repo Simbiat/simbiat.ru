@@ -27,10 +27,6 @@ RUN apt-get -y update && \
 
 HEALTHCHECK --start-period=120s --interval=10s --timeout=5s --retries=3 CMD ["healthcheck.sh", "--defaults-file=/etc/mysql/conf.d/my.cnf", "--connect", "--innodb_initialized", "--innodb_buffer_pool_loaded", "--mariadbupgrade"]
 
-#Copy config
-#COPY my.cnf /etc/mysql/conf.d/my.cnf
-#RUN chmod 0444 /etc/mysql/conf.d/my.cnf
-
 # Copy entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod 755 /usr/local/bin/entrypoint.sh
