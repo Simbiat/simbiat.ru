@@ -472,6 +472,17 @@ SQL_EOF
       error_handler 1 "$LINENO"
     fi
 
+    log_msg "Truncating tables"
+    mariadb --socket="$tmp_socket" << SQL_EOF
+      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`cron__log\`;
+      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`seo__pageviews\`;
+      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`seo__visitors\`;
+      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`sys__logs\`;
+      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`sys__slow_log\`;
+      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`uc__cookies\`;
+      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`uc__sessions\`;
+SQL_EOF
+
     # =========================================================
     # LOGICAL BACKUP FROM THE TEMP INSTANCE
     # =========================================================
