@@ -474,6 +474,7 @@ SQL_EOF
 
     log_msg "Truncating tables"
     mariadb --socket="$tmp_socket" << SQL_EOF
+      SET FOREIGN_KEY_CHECKS = 0;
       TRUNCATE TABLE \`${DATABASE_NAME}\`.\`cron__log\`;
       TRUNCATE TABLE \`${DATABASE_NAME}\`.\`seo__pageviews\`;
       TRUNCATE TABLE \`${DATABASE_NAME}\`.\`seo__visitors\`;
@@ -481,6 +482,7 @@ SQL_EOF
       TRUNCATE TABLE \`${DATABASE_NAME}\`.\`sys__slow_log\`;
       TRUNCATE TABLE \`${DATABASE_NAME}\`.\`uc__cookies\`;
       TRUNCATE TABLE \`${DATABASE_NAME}\`.\`uc__sessions\`;
+      SET FOREIGN_KEY_CHECKS = 1;
 SQL_EOF
 
     # =========================================================
