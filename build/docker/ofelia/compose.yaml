@@ -12,13 +12,13 @@ services:
     container_name: ofelia
     depends_on:
       socket-proxy:
-        condition: service_started
+        condition: service_healthy
       geoip:
-        condition: service_started
+        condition: service_healthy
       frankenphp:
-        condition: service_started
+        condition: service_healthy
       mariadb:
-        condition: service_started
+        condition: service_healthy
     environment:
       #Address of docker socker proxy
       DOCKER_HOST: tcp://socket-proxy:2375
@@ -40,4 +40,5 @@ services:
       - /tmp
     volumes:
       - ../../../logs:/var/log:rw
-      - ../../../config/ofelia.ini:/etc/ofelia/config.ini:ro
+      - ../../../bin:/etc/ofelia/cron:ro
+      - ../../../config:/etc/ofelia/config:ro

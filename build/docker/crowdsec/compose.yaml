@@ -13,7 +13,7 @@ services:
     container_name: crowdsec
     depends_on:
       geoip:
-        condition: service_started
+        condition: service_healthy
       mariadb:
         condition: service_healthy
     environment:

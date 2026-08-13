@@ -36,7 +36,7 @@ services:
       #RW for the socket
       - ../../../data/mariadb/socket:/run/mysqld/:rw
       #RO for config
-      - ../../../config/mariadb.cnf:/etc/mysql/conf.d/my.cnf:ro
+      - ../../../config:/etc/mysql/conf.d:ro
       #RW for database files directory
       - ../../../data/mariadb/data:/var/lib/mysql:rw
       #Using tmpfs for /tmp is not a good idea, since it's used during various operations on large tables
@@ -48,5 +48,4 @@ services:
       #RO for DDL directory, used during maintenance stuff
       - ../../../build/DDL:/usr/local/DDL:ro
       #CRON scripts:
-      - ../../../bin/mariadb-backup.sh:/usr/local/bin/mariadb-backup.sh:ro
-      - ../../../bin/mariadb-log-rotate.sh:/usr/local/bin/mariadb-log-rotate.sh:ro
+      - ../../../bin:/etc/mysql/cron:ro

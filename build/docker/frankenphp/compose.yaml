@@ -17,9 +17,9 @@ services:
       crowdsec:
         condition: service_healthy
       geoip:
-        condition: service_started
+        condition: service_healthy
       mariadb:
-        condition: service_started
+        condition: service_healthy
     environment:
       CROWDSEC_API_KEY: ${CROWDSEC_CADDY_KEY}
       WEB_SERVER_TEST: ${WEB_SERVER_TEST}

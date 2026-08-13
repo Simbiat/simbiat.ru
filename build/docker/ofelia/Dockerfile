@@ -9,4 +9,4 @@ RUN addgroup -g "${PGID}" ofelia && adduser -u "${PUID}" -G ofelia -h /home/ofel
 
 USER ofelia
 
-ENTRYPOINT exec ofelia daemon --config=/etc/ofelia/config.ini 2>&1 | tee -a /var/log/ofelia.log
+ENTRYPOINT exec ofelia daemon --config=/etc/ofelia/config/ofelia.ini 2>&1 | tee -a /var/log/ofelia.log
