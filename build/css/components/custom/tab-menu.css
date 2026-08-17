@@ -1,5 +1,7 @@
 /* Style tab menu's components */
 tab-menu {
+    display: block;
+
     & > div.tab_content {
         &.active {
             display: block;

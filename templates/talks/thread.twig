@@ -30,7 +30,7 @@
         </div>
     {% endif %}
     {% if session_data.user_id != 1 and session_data.username %}
-        <tab-menu>
+        <tab-menu class="margin_bottom_negative_05rem">
             {{ include('talks/tabs/threads.twig') }}
         </tab-menu>
     {% endif %}

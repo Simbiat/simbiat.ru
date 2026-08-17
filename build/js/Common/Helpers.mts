@@ -171,8 +171,8 @@ export function hashCheck(): void {
     const tab_name_id = hash.replace(/^#(?=tab_name_)/iv, '');
     const tab_element = document.querySelector<HTMLElement>(`#${tab_name_id}`);
     if (tab_element?.tagName.toLowerCase() === 'a') {
-      //Open respective tab
-      const tab_menu = tab_element.parentElement;
+      //Open the respective tab. Need to select the 2nd parent since the first parent is a div wrapper.
+      const tab_menu = tab_element.parentElement?.parentElement;
       if (tab_menu?.tagName.toLowerCase() === 'tab-menu') {
         (tab_menu as TabMenu).tabSwitch(tab_element as HTMLAnchorElement);
       }

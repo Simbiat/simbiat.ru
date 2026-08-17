@@ -5,7 +5,7 @@
 {% if user_data.about %}
     <div id="about_user">{{ sanitize(user_data.about) }}</div>
 {% endif %}
-{% if fftracker.characters %}
+{% if fftracker.characters|default(null) %}
     <section>
         <div class="middle">Linked FFXIV characters:</div>
         <ul class="search_results">
