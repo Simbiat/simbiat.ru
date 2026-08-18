@@ -94,7 +94,8 @@
         "handle": [
             {
                 "handler": "file_server",
-                "status_code": 200
+                // Resets HTTP error code when in error route
+                "status_code": "{http.vars.asset_status_reset}"
             }
         ]
     }

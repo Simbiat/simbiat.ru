@@ -49,6 +49,38 @@ interface DomainRedirect {
 }
 
 /**
+ * Removes `status_code` override for `file_server`. The override is needed only in the `errors` route, because Caddy
+ * pushes the value to static files, which results in failure to apply CSS and JS on custom error pages.
+ */
+function stripSuccessStatusOverride(node: unknown): unknown {
+  if (Array.isArray(node)) {
+    return node.map((item) => {
+      return stripSuccessStatusOverride(item);
+    });
+  }
+  if (node !== null && typeof node === 'object') {
+    const obj = node as Record<string, unknown>;
+    if (
+      obj['handler'] === 'file_server'
+      && typeof obj['status_code'] !== 'undefined'
+      && obj['status_code'] !== null
+    ) {
+      const {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        status_code,
+        ...rest
+      } = obj;
+      return rest;
+    }
+    return Object.fromEntries(Object.entries(obj)
+                                    .map(([k, v]) => {
+                                      return [k, stripSuccessStatusOverride(v)];
+                                    }));
+  }
+  return node;
+}
+
+/**
  * Actual generator.
  */
 async function main(): Promise<void> {
@@ -220,12 +252,12 @@ async function main(): Promise<void> {
                       ...internal_redirects,
                     },
                     {
-                      ...rewrites,
+                      ...stripSuccessStatusOverride(rewrites) as Record<string, unknown>,
                     },
                     {
                       handler: 'subroute',
                       routes: [
-                        ...(php as []),
+                        ...stripSuccessStatusOverride((php as [])) as [],
                       ],
                     },
                   ],
@@ -238,6 +270,10 @@ async function main(): Promise<void> {
                   ...(common_routes as []),
                   {
                     handle: [
+                      {
+                        handler: 'vars',
+                        asset_status_reset: '200',
+                      },
                       {
                         ...internal_redirects,
                       },

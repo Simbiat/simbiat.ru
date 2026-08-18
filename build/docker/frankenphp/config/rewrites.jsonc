@@ -112,7 +112,8 @@
             "handle": [
                 {
                     "handler": "file_server",
-                    "status_code": 200,
+                    // Resets HTTP error code when in error route
+                    "status_code": "{http.vars.asset_status_reset}",
                     "root": "/app/vendor/tinymce"
                 }
             ]
@@ -143,7 +144,8 @@
                 },
                 {
                     "handler": "file_server",
-                    "status_code": 200
+                    // Resets HTTP error code when in error route
+                    "status_code": "{http.vars.asset_status_reset}"
                 }
             ]
         },
@@ -196,7 +198,8 @@
                 },
                 {
                     "handler": "file_server",
-                    "status_code": 200,
+                    // Resets HTTP error code when in error route
+                    "status_code": "{http.vars.asset_status_reset}",
                     "root": "/app"
                 }
             ]
@@ -252,7 +255,8 @@
                 {
                     "handler": "file_server",
                     "root": "/app/public",
-                    "status_code": 200
+                    // Resets HTTP error code when in error route
+                    "status_code": "{http.vars.asset_status_reset}"
                 }
             ]
         },
@@ -305,7 +309,8 @@
                 {
                     "handler": "file_server",
                     "root": "/app",
-                    "status_code": 200
+                    // Resets HTTP error code when in error route
+                    "status_code": "{http.vars.asset_status_reset}"
                 }
             ]
         },
@@ -358,7 +363,8 @@
                 {
                     "handler": "file_server",
                     "root": "/app",
-                    "status_code": 200
+                    // Resets HTTP error code when in error route
+                    "status_code": "{http.vars.asset_status_reset}"
                 }
             ]
         },
@@ -410,7 +416,8 @@
                 {
                     "handler": "file_server",
                     "root": "/app/public",
-                    "status_code": 200
+                    // Resets HTTP error code when in error route
+                    "status_code": "{http.vars.asset_status_reset}"
                 }
             ]
         },
@@ -466,7 +473,8 @@
                 {
                     "handler": "file_server",
                     "root": "/app",
-                    "status_code": 200
+                    // Resets HTTP error code when in error route
+                    "status_code": "{http.vars.asset_status_reset}"
                 }
             ]
         },
@@ -519,7 +527,8 @@
                 {
                     "handler": "file_server",
                     "root": "/app/public",
-                    "status_code": 200
+                    // Resets HTTP error code when in error route
+                    "status_code": "{http.vars.asset_status_reset}"
                 }
             ]
         },
@@ -553,7 +562,8 @@
                 {
                     "handler": "file_server",
                     "root": "/app/data",
-                    "status_code": 200
+                    // Resets HTTP error code when in error route
+                    "status_code": "{http.vars.asset_status_reset}"
                 }
             ]
         }
