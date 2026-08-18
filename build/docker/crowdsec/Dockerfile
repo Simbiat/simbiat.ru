@@ -1,7 +1,7 @@
 FROM crowdsecurity/crowdsec:v1.7.8-debian
 
 #TODO: When CRS is updated, check for potential changes in 02-crs-setup.conf as well
-ARG CRS_RELEASE="4.28.0"
+ARG CRS_RELEASE="4.29.0"
 #TODO: When CRS is updated, check for potential changes in 02-crs-setup.conf as well
 
 # Default values
