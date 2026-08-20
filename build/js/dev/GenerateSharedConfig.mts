@@ -173,6 +173,11 @@ for (const [browser, versions] of Object.entries(collected)) {
   }
 }
 
+// caniuse does not store history for Chrome Mobile, but due to Chrome's release cycle, it's safe to use the same value as from desktop Chrome
+if (typeof minimums['Chrome'] !== 'undefined' && minimums['Chrome'] !== null) {
+  minimums['Chrome Mobile'] = minimums['Chrome'];
+}
+
 fs.writeFileSync(
   './build/js/shared_with_php.json',
   JSON.stringify({
