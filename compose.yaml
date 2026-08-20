@@ -45,7 +45,7 @@ services:
       file: ./build/docker/socket-proxy/compose.yaml
       service: socket-proxy
 
-  ofelia:
+  supercronic:
     extends:
-      file: ./build/docker/ofelia/compose.yaml
-      service: ofelia
+      file: ./build/docker/supercronic/compose.yaml
+      service: supercronic
