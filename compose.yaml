@@ -4,7 +4,7 @@ name: simbiat-dev
 #It looks like subnet may change in some cases for no clear (to me) reason, so trying to force it
 networks:
   #This network is used for the sake of isolation
-  ofelia-internal:
+  docker-api:
     driver: bridge
   webserver:
     driver: bridge

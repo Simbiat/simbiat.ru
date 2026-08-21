@@ -14,7 +14,7 @@ services:
       EXEC: 1 # the actual exec create/start endpoints
       POST: 1 # gate for any mutating call — exec create/start are POST
     networks:
-      - ofelia-internal
+      - docker-api
     read_only: true
     restart: unless-stopped
     security_opt:

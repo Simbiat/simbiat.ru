@@ -23,7 +23,7 @@ services:
       #Address of docker socker proxy
       DOCKER_HOST: tcp://socket-proxy:2375
     networks:
-      - ofelia-internal
+      - docker-api
     read_only: true
     restart: unless-stopped
     security_opt:
