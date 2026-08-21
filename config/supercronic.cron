@@ -9,3 +9,4 @@
 0 0 * * * /etc/supercronic/bin/cron-wrapper.sh mariadb /etc/mysql/cron/mariadb-log-rotate.sh
 0 0 * * * /etc/supercronic/bin/cron-wrapper.sh geoip /usr/bin/geoipupdate --output
 0 0 * * * /etc/supercronic/bin/cron-log-rotate.sh
+* * * * * touch /tmp/heartbeat

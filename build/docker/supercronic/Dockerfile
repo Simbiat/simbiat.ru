@@ -16,6 +16,9 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chown supercronic:supercronic -R /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD find /tmp/heartbeat -mmin -2 -type f | grep -q . || exit 1
+
 USER supercronic
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

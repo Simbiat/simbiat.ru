@@ -24,7 +24,7 @@
     <fileExtensions>
         <extension name=".php"/>
         <extension name=".twig"
-                   checker="../../../../root/.composer/vendor/psalm/plugin-symfony/src/Twig/TemplateFileAnalyzer.php"/>
+                   checker="../../../../composer/vendor/psalm/plugin-symfony/src/Twig/TemplateFileAnalyzer.php"/>
     </fileExtensions>
     <plugins>
         <pluginClass xmlns="https://getpsalm.org/schema/config" class="Psalm\PhpUnitPlugin\Plugin"/>

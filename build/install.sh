@@ -130,6 +130,9 @@ echo "Creating webserver folder..."
 sudo mkdir /usr/local/webserver
 sudo chown -R -L "$USERNAME":"$USERNAME" /usr/local/webserver
 
+echo "Giving executable permission to bin folder..."
+sudo chmod +x /usr/local/webserver/bin/*
+
 # Cleanup
 echo "Cleaning up..."
 sudo apt autoremove -y

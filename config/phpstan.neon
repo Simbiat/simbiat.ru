@@ -1,11 +1,11 @@
 includes:
-    - /root/.composer/vendor/phpstan/phpstan/conf/bleedingEdge.neon
-    - /root/.composer/vendor/phpstan/phpstan-strict-rules/rules.neon
-    - /root/.composer/vendor/phpstan/phpstan-deprecation-rules/rules.neon
-    - /root/.composer/vendor/phpstan/phpstan-phpunit/extension.neon
-    - /root/.composer/vendor/phpstan/phpstan-phpunit/rules.neon
-    - /root/.composer/vendor/phpstan/phpstan-symfony/extension.neon
-    - /root/.composer/vendor/phpstan/phpstan-symfony/rules.neon
+    - /composer/vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - /composer/vendor/phpstan/phpstan-strict-rules/rules.neon
+    - /composer/vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    - /composer/vendor/phpstan/phpstan-phpunit/extension.neon
+    - /composer/vendor/phpstan/phpstan-phpunit/rules.neon
+    - /composer/vendor/phpstan/phpstan-symfony/extension.neon
+    - /composer/vendor/phpstan/phpstan-symfony/rules.neon
 parameters:
     level: max
     excludePaths:
