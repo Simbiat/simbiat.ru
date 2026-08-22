@@ -4,7 +4,6 @@
 #This has to use a 7-elements format to properly run every 20 seconds. PHPStorm's plugin does not like the format, though.
 */20 * * * * * * /etc/supercronic/bin/cron-wrapper.sh frankenphp /app/bin/php-cron.sh
 30 1 * * * /etc/supercronic/bin/cron-wrapper.sh frankenphp /app/bin/php-day.sh
-30 0 28 * * /etc/supercronic/bin/cron-wrapper.sh frankenphp /app/bin/php-month.sh
 0 3 * * * /etc/supercronic/bin/cron-wrapper.sh mariadb /etc/mysql/cron/mariadb-backup.sh
 0 0 * * * /etc/supercronic/bin/cron-wrapper.sh mariadb /etc/mysql/cron/mariadb-log-rotate.sh
 0 0 * * * /etc/supercronic/bin/cron-wrapper.sh geoip /usr/bin/geoipupdate --output

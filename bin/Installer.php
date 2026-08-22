@@ -2,6 +2,7 @@
 declare(strict_types = 1);
 
 #TODO: consider replacing with `bin/console app:install`
+use App\Security\Security;
 use App\Service\Config;
 use App\Service\Cron\FFXIV;
 use Simbiat\Cron\Agent;
@@ -15,7 +16,13 @@ require_once '/app/bin/Bootstrap.php';
 #Enable implicit flush for CLI mode
 ini_set('implicit_flush', 1);
 
-#The below script is to be run once to install the necessary stuff for the service ro work correctly
+#The below script is to be run once to install the necessary stuff for the service to work correctly
+
+#Set Argon settings
+if (count(Security::argonCalc(true)) === 0) {
+    echo 'Failed to set Argon settings';
+    exit(1);
+}
 
 #Connect to DB
 Config::dbConnect();
