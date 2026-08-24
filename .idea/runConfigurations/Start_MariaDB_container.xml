@@ -2,6 +2,7 @@
   <configuration default="false" name="Start MariaDB container" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
     <deployment type="docker-compose.yml">
       <settings>
+        <option name="containerName" value="" />
         <option name="secondarySourceFiles">
           <list>
             <option value="compose.override.yaml" />

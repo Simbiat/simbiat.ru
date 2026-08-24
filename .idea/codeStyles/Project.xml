@@ -1,5 +1,6 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
+    <option name="LINE_SEPARATOR" value="&#10;" />
     <CssCodeStyleSettings>
       <option name="HEX_COLOR_LOWER_CASE" value="true" />
       <option name="HEX_COLOR_LONG_FORMAT" value="true" />
@@ -78,9 +79,6 @@
       <option name="SPACES_WITHIN_IMPORTS" value="true" />
       <option name="IMPORT_SORT_MODULE_NAME" value="true" />
     </TypeScriptCodeStyleSettings>
-    <editorconfig>
-      <option name="ENABLED" value="false" />
-    </editorconfig>
     <yaml>
       <option name="AUTOINSERT_SEQUENCE_MARKER" value="false" />
     </yaml>
@@ -138,9 +136,6 @@
     </codeStyleSettings>
     <codeStyleSettings language="PHP">
       <option name="RIGHT_MARGIN" value="240" />
-      <indentOptions>
-        <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
-      </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="SASS">
       <indentOptions>

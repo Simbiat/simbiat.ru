@@ -41,6 +41,16 @@
             <excludedPath local="true" path="$PROJECT_DIR$/build/docker/frankenphp/config" />
             <excludedPath local="true" path="$PROJECT_DIR$/config/.eslintcache" />
             <excludedPath local="true" path="$PROJECT_DIR$/compose.override.yaml" />
+            <excludedPath local="true" path="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer" />
+            <excludedPath local="true" path="$PROJECT_DIR$/vendor/slevomat/coding-standard" />
+            <excludedPath local="true" path="$PROJECT_DIR$/vendor/phpunit" />
+            <excludedPath local="true" path="$PROJECT_DIR$/vendor/phpstan" />
+            <excludedPath local="true" path="$PROJECT_DIR$/vendor/phpcompatibility" />
+            <excludedPath local="true" path="$PROJECT_DIR$/vendor/phpcsstandards" />
+            <excludedPath local="true" path="$PROJECT_DIR$/vendor/psalm" />
+            <excludedPath local="true" path="$PROJECT_DIR$/vendor/vimeo/psalm" />
+            <excludedPath local="true" path="$PROJECT_DIR$/vendor/dealerdirect" />
+            <excludedPath local="true" path="$PROJECT_DIR$/vendor/escapestudios" />
           </excludedPaths>
         </serverdata>
       </paths>
