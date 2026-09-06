@@ -67,13 +67,18 @@ final class Database
     {
         $output->writeln(Errors::logfmt('Generating DDLs...'));
         try {
+            #Run only ony DEV
+            if (Config::$prod) {
+
+                return Command::SUCCESS;
+            }
             // Connect to DB
             Config::dbConnect();
             if (Config::$dbup) {
                 if (!\is_dir(Config::$ddl_dir) && !\mkdir(Config::$ddl_dir, recursive: true) && !\is_dir(Config::$ddl_dir)) {
                     Errors::error_log(new \RuntimeException('Failed to create DDL directory'));
                 }
-                #Clean up SQL files, but do not touch manually maintained files with prefixes `000` and `999`
+                #Clean up SQL files but do not touch manually maintained files with prefixes `000` and `999`
                 \array_map(
                     '\unlink',
                     \preg_grep('/\/(000|999)[^\/]*\.sql$/u', \glob(Config::$ddl_dir.'/*.sql'), \PREG_GREP_INVERT)

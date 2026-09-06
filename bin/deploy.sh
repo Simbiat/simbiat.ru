@@ -7,8 +7,8 @@
 #   0. If a pending-actions file exists from a previous incomplete run,
 #      offer to resume it (skip everything else) or discard it.
 #   1. Run the local Bun build scripts, one at a time.
-#   2. Dry-run rsync against PROD, using ./config/rsync-filter.txt.
-#   3. Classify changed paths into actions, using ./config/service-patterns.ini.
+#   2. Dry-run rsync against PROD, using ./config/deploy/rsync-filter.txt.
+#   3. Classify changed paths into actions, using ./config/deploy/service-patterns.ini.
 #   4. Show a summary. Ask for confirmation. Default: cancel.
 #   5. Real rsync transfer.
 #   6. Write the action list to the pending-actions file, then run each
@@ -35,6 +35,9 @@ PROD_HOST="${RSYNC_REMOTE_USER}@${RSYNC_REMOTE_HOST}"
 PROD_PATH="${RSYNC_PROD_DIR}"
 LOCAL_PROJECT_ROOT="${RSYNC_DEV_DIR}"
 
+# All relative paths below ("./compose.yaml", etc.) depend on this.
+cd "$LOCAL_PROJECT_ROOT"
+
 # ---------------------------------------------------------------------------
 # CONFIG — fill in for this project
 # ---------------------------------------------------------------------------
@@ -50,7 +53,9 @@ PENDING_FILE="${LOG_DIR}/deploy-pending.txt"
 SVC_FRANKENPHP="frankenphp"
 BUN_SERVICE="bun"
 
-# The 5 Bun build scripts, run in this order.
+# The 5 Bun build scripts, run in this order. Each entry is split on
+# whitespace into separate argv elements before being passed to
+# "docker compose run" — do not quote these when expanding below.
 BUN_BUILD_COMMANDS=(
     "bun run generate:config"
     "bun run generate:css"
@@ -64,7 +69,8 @@ MAINTENANCE_FLAG="/var/log/db_maintenance.flag"
 OPCACHE_RESET_URL="http://localhost:2027/"
 
 PATTERN_COMPOSER='(^|/)composer\.(json|lock)$'
-PATTERN_ENV_CONFIG='(^|/)\.env(\..+)?$|(^|/)config/'
+# Changes to these files need to trigger Symfony rebuild.
+PATTERN_ENV_CONFIG='(^|/)\.env(\..+)?$|(^|/)config/(packages|routes)/|(^|/)config/(services|bundles|routes)\.ya?ml$|(^|/)config/(bundles|preload)\.php$'
 PATTERN_PHP='\.php$'
 PATTERN_ROOT_COMPOSE='^compose\.ya?ml$'
 
@@ -88,6 +94,8 @@ fail() { log "ERROR: $*"; exit 1; }
 run_remote_action() {
     local cmd="$1"
     log "Remote: $cmd"
+    #PROD_PATH and cmd are fully resolved on DEV before being sent; nothing here is meant to expand on PROD's side.
+    # shellcheck disable=SC2029
     ssh "$PROD_HOST" "cd ${PROD_PATH} && ${cmd}"
 }
 
@@ -140,7 +148,11 @@ fi
 log "Running Bun build scripts..."
 for bun_cmd in "${BUN_BUILD_COMMANDS[@]}"; do
     log "Bun: $bun_cmd"
-    if ! docker compose -f ./compose.yaml run --rm "$BUN_SERVICE" "$bun_cmd"; then
+    # Split on whitespace into separate argv elements — do not quote
+    # "$bun_cmd" when passing it on, or Compose receives one argument
+    # instead of several and fails to find the binary.
+    read -ra bun_argv <<< "$bun_cmd"
+    if ! docker compose -f ./compose.yaml run --rm "$BUN_SERVICE" "${bun_argv[@]}"; then
         read -r -p "Bun script '${bun_cmd}' failed. Continue with remaining Bun scripts and the deploy? [y/N]: " CONT
         CONT="${CONT:-N}"
         [[ "$CONT" =~ ^[Yy]$ ]] || fail "Stopped after Bun build failure."
@@ -152,6 +164,7 @@ done
 # ---------------------------------------------------------------------------
 
 log "Running rsync dry run..."
+# DO *****NOT***** use `--delete-excluded` or it can result in data loss!
 DRY_RUN_OUTPUT="$(rsync -a --delete-delayed --delay-updates --dry-run --itemize-changes \
     --filter="merge ${RSYNC_FILTER_FILE}" \
     "${LOCAL_PROJECT_ROOT}/" "${PROD_HOST}:${PROD_PATH}/")"
@@ -174,10 +187,12 @@ declare -a REBUILD_RULES=()   # "service|pattern"
 declare -a RESTART_RULES=()
 declare -A ALL_SERVICES_SEEN=()
 
+trim() { echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'; }
+
 current_section=""
 while IFS= read -r line; do
     line="${line%%;*}"
-    line="$(echo "$line" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    line="$(trim "$line")"
     [ -z "$line" ] && continue
     [[ "$line" == \#* ]] && continue
     if [[ "$line" =~ ^\[(.+)\]$ ]]; then
@@ -186,9 +201,17 @@ while IFS= read -r line; do
         continue
     fi
     if [[ "$line" =~ ^rebuild[[:space:]]*=[[:space:]]*(.+)$ ]]; then
-        REBUILD_RULES+=("${current_section}|${BASH_REMATCH[1]}")
+        IFS=',' read -ra pats <<< "${BASH_REMATCH[1]}"
+        for p in "${pats[@]}"; do
+            p="$(trim "$p")"
+            [ -n "$p" ] && REBUILD_RULES+=("${current_section}|${p}")
+        done
     elif [[ "$line" =~ ^restart[[:space:]]*=[[:space:]]*(.+)$ ]]; then
-        RESTART_RULES+=("${current_section}|${BASH_REMATCH[1]}")
+        IFS=',' read -ra pats <<< "${BASH_REMATCH[1]}"
+        for p in "${pats[@]}"; do
+            p="$(trim "$p")"
+            [ -n "$p" ] && RESTART_RULES+=("${current_section}|${p}")
+        done
     fi
 done < "$SERVICE_PATTERNS_FILE"
 
@@ -219,12 +242,12 @@ while IFS= read -r path; do
     done
 done <<< "$CHANGED_PATHS"
 
-# A service already flagged for rebuild does not also need a plain restart.
+# A service already flagged for rebuild does not also need a separate
+# restart-only entry — it gets recreated either way, see STEP 4.
 for svc in "${!need_rebuild[@]}"; do
     unset "need_restart[$svc]" 2>/dev/null || true
 done
 
-restart_all_confirmed=false
 if $root_compose_changed; then
     echo ""
     echo "compose.yaml at the project root changed. This file can affect"
@@ -234,7 +257,6 @@ if $root_compose_changed; then
     read -r -p "Restart ALL known services now? [y/N] (No = you restart manually later): " RESTART_ALL
     RESTART_ALL="${RESTART_ALL:-N}"
     if [[ "$RESTART_ALL" =~ ^[Yy]$ ]]; then
-        restart_all_confirmed=true
         for svc in "${!ALL_SERVICES_SEEN[@]}"; do
             [ -n "${need_rebuild[$svc]+x}" ] || need_restart["$svc"]=1
         done
@@ -245,30 +267,63 @@ fi
 # STEP 4 — BUILD ACTION LIST + SUMMARY + CONFIRMATION
 # ---------------------------------------------------------------------------
 
+declare -a rebuild_svc_list=()
+for svc in "${!need_rebuild[@]}"; do rebuild_svc_list+=("$svc"); done
+
+declare -a restart_svc_list=()
+for svc in "${!need_restart[@]}"; do restart_svc_list+=("$svc"); done
+
+# Rebuild-needing services AND restart-only services are recreated
+# together in one combined "up -d" call later, so Compose resolves
+# cross-service startup order via depends_on for the whole affected
+# set at once — this script does not hand-roll that ordering itself.
+declare -a recreate_svc_list=("${rebuild_svc_list[@]}" "${restart_svc_list[@]}")
+
+frankenphp_recreated=false
+for svc in "${recreate_svc_list[@]}"; do
+    [ "$svc" == "$SVC_FRANKENPHP" ] && frankenphp_recreated=true
+done
+
 declare -a ACTIONS=()
+
+# Build first, before the maintenance flag goes up. This doesn't touch
+# the live containers or the shared project volume, so there's no
+# reason for it to sit inside the maintenance window.
+if [ "${#rebuild_svc_list[@]}" -gt 0 ]; then
+    ACTIONS+=("docker compose -f ./compose.yaml build ${rebuild_svc_list[*]}")
+fi
 
 if $need_composer || $need_cache; then
     ACTIONS+=("touch ${MAINTENANCE_FLAG}")
 fi
 if $need_composer; then
+    # Uses the image built just above if frankenphp was rebuilt this
+    # deploy; otherwise the currently-live image, unchanged.
     ACTIONS+=("docker compose -f ./compose.yaml run --rm ${SVC_FRANKENPHP} composer install --no-dev --optimize-autoloader")
 fi
 if $need_cache; then
     ACTIONS+=("docker compose -f ./compose.yaml run --rm ${SVC_FRANKENPHP} bin/console cache:clear --env=prod --no-debug")
     ACTIONS+=("docker compose -f ./compose.yaml run --rm ${SVC_FRANKENPHP} bin/console dotenv:dump prod")
 fi
+
+# Recreate phase — see the comment on recreate_svc_list above. Restart-
+# only services get a full recreate here too, not a lighter "restart":
+# safe as long as their real state lives in a volume outside the
+# container, true for everything in service-patterns.ini today.
+if [ "${#recreate_svc_list[@]}" -gt 0 ]; then
+    ACTIONS+=("docker compose -f ./compose.yaml up -d --force-recreate ${recreate_svc_list[*]}")
+fi
+
 if $need_composer || $need_cache; then
     ACTIONS+=("rm -f ${MAINTENANCE_FLAG}")
 fi
-for svc in "${!need_rebuild[@]}"; do
-    ACTIONS+=("docker compose -f ./compose.yaml build ${svc}")
-    ACTIONS+=("docker compose -f ./compose.yaml up -d ${svc}")
-done
-for svc in "${!need_restart[@]}"; do
-    ACTIONS+=("docker compose -f ./compose.yaml restart ${svc}")
-done
-if $need_opcache; then
-    ACTIONS+=("curl -fsS ${OPCACHE_RESET_URL}")
+
+# Skip if frankenphp itself was rebuilt/recreated above — a fresh
+# process already starts with an empty opcache, and hitting the
+# endpoint right after recreation is redundant at best and can race a
+# container that isn't fully ready yet.
+if $need_opcache && ! $frankenphp_recreated; then
+    ACTIONS+=("docker compose -f ./compose.yaml exec ${SVC_FRANKENPHP} curl -fsS ${OPCACHE_RESET_URL}")
 fi
 
 echo ""
