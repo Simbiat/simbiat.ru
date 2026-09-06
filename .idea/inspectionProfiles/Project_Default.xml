@@ -1054,7 +1054,6 @@
     <inspection_tool class="UnusedDefine" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UsingInclusionReturnValueInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="XHTMLIncompatabilitiesJS" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="abef8912-ef3f-367e-9726-c6a56288dce5" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="c80cc5f5-1826-35e5-8cd7-617f9f606617" enabled="true" level="WARNING" enabled_by_default="false">
       <scope name="Twig" level="WARNING" enabled="true" />
     </inspection_tool>

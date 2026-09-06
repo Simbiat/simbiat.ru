@@ -45,12 +45,38 @@ RUN install-php-extensions \
     gmp \
     maxminddb \
     yaml \
-    uuid
+    uuid \
+    ctype \
+    iconv \
+    mbstring \
+    curl \
+    fileinfo \
+    zlib \
+    dom \
+    libxml \
+    openssl \
+    pcntl \
+    igbinary \
+    xdebug \
+    pcov \
+    opcache
 
 # Completely custom
 
-# libnss3-tools is recommended for Caddy (looks like)
-RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install libnss3-tools&&apt-get -y autoremove&&apt-get clean
+# libnss3-tools is recommended for Caddy (looks like), unzip and git are requried for Composer
+RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install libnss3-tools unzip git&&apt-get -y autoremove&&apt-get clean
+
+# Add composer
+ENV COMPOSER_HOME=/composer
+ENV COMPOSER_CACHE_DIR=/tmp/composer_cache
+ENV PATH="${COMPOSER_HOME}/vendor/bin:/app/vendor/bin:/app/bin:${PATH}"
+COPY --from=composer/composer /usr/bin/composer /usr/bin/composer
+RUN composer self-update
+
+# Symfony CLI
+#TODO: Update version when Symfony CLI has a new release
+COPY --link --from=ghcr.io/symfony-cli/symfony-cli:v5.20 /usr/local/bin/symfony /usr/local/bin/symfony
+RUN mkdir -p /etc/bash_completion.d && symfony completion bash | tee /etc/bash_completion.d/symfony
 
 # Default values
 ARG PUID=1000
@@ -62,57 +88,18 @@ RUN groupadd -g "${PGID}"  frankenphp && useradd -u "${PUID}"  -g frankenphp -m 
 RUN mkdir -p /usr/local/share/ca-bundle-backup && \
     cp -a /etc/ssl/certs/. /usr/local/share/ca-bundle-backup/
 
+RUN mkdir -p /config && chown -R ${PUID}:${PGID} /config
+RUN mkdir -p /data && chown -R ${PUID}:${PGID} /data
+
 # Copy entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod 755 /usr/local/bin/entrypoint.sh
 
+RUN mkdir /healthcheck
+COPY healthcheck.php /healthcheck/healthcheck.php
+
+HEALTHCHECK --start-period=30s --interval=10s --timeout=5s --retries=3 CMD ["curl", "-f", "http://localhost:2026"]
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-# ---------------------------------------------------------------------------
-# PROD target: nothing beyond base. No git, no unzip, no composer global
-# tooling, no xdebug ever get built into this image at all.
-# ---------------------------------------------------------------------------
-FROM base AS PROD
-
-USER frankenphp
-
-# ---------------------------------------------------------------------------
-# DEV target: adds the extra extensions and QA tooling on top of base.
-# ---------------------------------------------------------------------------
-FROM base AS DEV
-
-# Add composer
-ENV COMPOSER_HOME=/composer
-ENV COMPOSER_CACHE_DIR=/tmp/composer_cache
-ENV PATH="${COMPOSER_HOME}/vendor/bin:${PATH}"
-COPY --from=composer/composer /usr/bin/composer /usr/bin/composer
-RUN composer self-update
-
-# Git and unzip needed by composer for VCS/zip package installs
-RUN apt-get install -y --no-install-recommends unzip git
-
-# Add PHP extensions for DEV
-RUN install-php-extensions \
-    pcntl \
-    igbinary \
-    xdebug
-
-RUN composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true && \
-    composer global require "roave/security-advisories:dev-latest" \
-                            "phpstan/phpstan:@stable" \
-                            "phpstan/phpstan-strict-rules:@stable" \
-                            "phpstan/phpstan-deprecation-rules:@stable" \
-                            "phpstan/phpstan-phpunit:@stable" \
-                            "phpstan/phpstan-symfony:@stable" \
-                            "vimeo/psalm:@stable" \
-                            "psalm/plugin-phpunit:@stable" \
-                            "psalm/plugin-symfony:@stable" \
-                            "phpunit/phpunit:@stable" \
-                            "squizlabs/php_codesniffer:@stable" \
-                            "dealerdirect/phpcodesniffer-composer-installer:@stable" \
-                            "escapestudios/symfony2-coding-standard:@stable" \
-                            "slevomat/coding-standard:@stable" \
-                            "phpcsstandards/phpcsextra:@stable" \
-                            "phpcompatibility/php-compatibility:@stable"
 
 USER frankenphp

@@ -21,7 +21,7 @@ class FFXIVStatistics
      * List of supported statistics types
      */
     private const array STATISTICS_TYPE = ['raw', 'characters', 'groups', 'achievements', 'timelines', 'bugs', 'other'];
-    
+
     /**
      * @param string $type
      * @internal
@@ -70,7 +70,7 @@ class FFXIVStatistics
             $this->scheduleBugs($data);
         }
     }
-    
+
     /**
      * Get data raw data for character statistics based on counts
      *
@@ -90,7 +90,7 @@ class FFXIVStatistics
                                 WHERE `ffxiv__character`.`clan_id` IS NOT NULL GROUP BY `ffxiv__clan`.`race`, `ffxiv__clan`.`clan`, `ffxiv__character`.`gender`, `ffxiv__guardian`.`guardian`, `ffxiv__city`.`city_id`, `ffxiv__grandcompany_rank`.`gc_id` ORDER BY `count` DESC;
                     ', return: 'all');
     }
-    
+
     /**
      * Get data for character-based statistics
      *
@@ -152,7 +152,7 @@ class FFXIVStatistics
         #Characters
         $data['servers']['characters'] = Query::query('SELECT `ffxiv__character`.`gender`, `ffxiv__server`.`server` AS `value`, count(`ffxiv__character`.`server_id`) AS `count` FROM `ffxiv__character` INNER JOIN `ffxiv__server` ON `ffxiv__character`.`server_id`=`ffxiv__server`.`server_id` WHERE `ffxiv__character`.`deleted` IS NULL GROUP BY `ffxiv__character`.`gender`, `value` ORDER BY `count` DESC', return: 'all');
     }
-    
+
     /**
      * Get data for statistics related to different groups
      *
@@ -198,7 +198,7 @@ class FFXIVStatistics
         #Get the most popular crests for PvP Teams
         $data['pvpteam']['crests'] = AbstractEntity::cleanCrestResults(Query::query('SELECT COUNT(*) AS `count`, `crest_part_1`, `crest_part_2`, `crest_part_3` FROM `ffxiv__pvpteam` GROUP BY `crest_part_1`, `crest_part_2`, `crest_part_3` ORDER BY `count` DESC LIMIT 20;', return: 'all'));
     }
-    
+
     /**
      * Get data for achievements' statistics
      *
@@ -222,9 +222,9 @@ class FFXIVStatistics
         }
         #Get the most and least popular titles
         $data['titles'] = Splitters::topAndBottom(Query::query('SELECT COUNT(*) as `count`, `ffxiv__achievement`.`title`, `ffxiv__achievement`.`achievement_id` FROM `ffxiv__character` LEFT JOIN `ffxiv__achievement` ON `ffxiv__achievement`.`achievement_id`=`ffxiv__character`.`title_id` WHERE `ffxiv__character`.`title_id` IS NOT NULL GROUP BY `title_id` ORDER BY `count` DESC;', return: 'all'), 20);
-        
+
     }
-    
+
     /**
      * Get data statistics linked to dates
      *
@@ -268,7 +268,7 @@ class FFXIVStatistics
         }
         \krsort($data['timelines']);
     }
-    
+
     /**
      * Get data for potential data bugs
      *
@@ -409,7 +409,7 @@ class FFXIVStatistics
         $data['bugs']['duplicate_names'] = Splitters::splitByKey($duplicate_names, 'type', keep_key: true);
         foreach ($data['bugs']['duplicate_names'] as $entity_type => $names_data) {
             #Split by server/data center
-            $data['bugs']['duplicate_names'][$entity_type] = Splitters::splitByKey($names_data, (in_array($entity_type, ['pvpteam', 'crosswordlinkshell']) ? 'data_center' : 'server'));
+            $data['bugs']['duplicate_names'][$entity_type] = Splitters::splitByKey($names_data, (in_array($entity_type, ['pvpteam', 'crossworldlinkshell']) ? 'data_center' : 'server'));
             foreach ($data['bugs']['duplicate_names'][$entity_type] as $server => $server_data) {
                 #Split by name
                 $data['bugs']['duplicate_names'][$entity_type][$server] = Splitters::splitByKey($server_data, 'name', keep_key: true, case_insensitive: true);
@@ -432,7 +432,7 @@ class FFXIVStatistics
             }
         }
     }
-    
+
     /**
      * Get data for uncategorized statistics
      *
@@ -501,7 +501,7 @@ class FFXIVStatistics
         \krsort($data['updates_stats']);
         $data['updates_stats'] = \array_slice($data['updates_stats'], 0, 30);
     }
-    
+
     /**
      * Adds jobs for all entities considered as potential bugs
      *

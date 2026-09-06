@@ -2,7 +2,7 @@
     // Default log file. Log only warnings and completely exclude access logs.
     "default": {
         "writer": {
-            "filename": "/app/logs/caddy.log",
+            "filename": "/app/var/log/caddy.log",
             "output": "file",
             "roll": true,
             "roll_size_mb": 10,
@@ -20,7 +20,7 @@
     // Crowdsec logs. If logs for API communication ever are required, add `crowdsec` to `include`.
     "bouncer": {
         "writer": {
-            "filename": "/app/logs/bouncer.log",
+            "filename": "/app/var/log/bouncer.log",
             "output": "file",
             "roll": true,
             "roll_size_mb": 10,
@@ -36,7 +36,7 @@
     // Access logs. Using DEBUG level to ensure as many details as possible, since it's read by CrowdSec.
     "access_log": {
         "writer": {
-            "filename": "/app/logs/access.log",
+            "filename": "/app/var/log/access.log",
             "output": "file",
             "roll": true,
             "roll_size_mb": 50,

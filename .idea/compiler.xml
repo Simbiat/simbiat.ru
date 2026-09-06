@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="TypeScriptCompiler">
-    <option name="nodeInterpreterTextField" value="$USER_HOME$/.bun/bin/bun" />
+    <option name="nodeInterpreterTextField" value="docker-compose://[//wsl.localhost/Ubuntu/home/simbiat/simbiat.eu/compose.yaml]:bun/bun" />
     <option name="recompileOnChanges" value="true" />
   </component>
 </project>

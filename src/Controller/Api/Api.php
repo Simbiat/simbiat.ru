@@ -47,7 +47,7 @@ abstract class Api
     protected bool $csrf = false;
     #List of allowed origins, if we want to limit them
     protected array $allowed_origins = [];
-    
+
     /**
      * Send API headers
      * @return void
@@ -61,7 +61,7 @@ abstract class Api
             \header('Content-Type: application/json; charset=utf-8');
         }
     }
-    
+
     /**
      * This is a general routing check for supported node
      * @param array $path
@@ -195,7 +195,7 @@ abstract class Api
         Sorters::recursiveSort($data, true, false, \SORT_NATURAL);
         return $data;
     }
-    
+
     /**
      * Method to filter output fields
      * @param array $array
@@ -216,7 +216,7 @@ abstract class Api
             }
         }
     }
-    
+
     /**
      * Check that method used is allowed
      * @return bool
@@ -234,7 +234,7 @@ abstract class Api
         /** @noinspection InArrayMissUseInspection */
         return in_array(HomePage::$method, $allowed_methods, true);
     }
-    
+
     /**
      * Function to help protect against CSRF. Suggested using for forms or APIs. Needs to be used before writing anything to `$_SESSION`
      *
@@ -302,7 +302,7 @@ abstract class Api
         }
         return false;
     }
-    
+
     /**
      * This is a wrapper to allow some common checks
      * @param array $path
@@ -335,7 +335,7 @@ abstract class Api
                     #If we have an array of possible verbs for method, check that proper verb is provided
                 } elseif (is_array($this->methods[HomePage::$method])) {
                     if (empty($path[1])) {
-                        return \array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method supports multiple AIP verbs, none provided']);
+                        return \array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method supports multiple API verbs, none provided']);
                     }
                     if (!in_array($path[1], $this->methods[HomePage::$method], true)) {
                         return \array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method does not support `'.$path[1].'` API verb']);
@@ -359,7 +359,7 @@ abstract class Api
         }
         return $result;
     }
-    
+
     /**
      * This is an actual API response generation based on further details of the $path
      * @param array $path

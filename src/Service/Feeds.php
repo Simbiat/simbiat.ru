@@ -28,7 +28,7 @@ class Feeds
             default => ['http_error' => 404],
         };
     }
-    
+
     /**
      * Generate Atom/RSS
      * @param array  $uri    List of URIs
@@ -54,7 +54,7 @@ class Feeds
                     $settings = [
                         'authors' => [[
                             'name' => Config::ADMIN_NAME,
-                            'email' => Config::ADMIN_MAIL,
+                            'email' => Config::$admin_email,
                             'uri' => Config::$base_url.'/',
                         ]],
                         'icon' => Config::$base_url.'/assets/images/favicons/simbiat.png',
@@ -62,8 +62,8 @@ class Feeds
                     ];
                 } elseif ($format === 'rss') {
                     $settings = [
-                        'webMaster' => Config::ADMIN_MAIL,
-                        'managingEditor' => Config::ADMIN_MAIL,
+                        'webMaster' => Config::$admin_email,
+                        'managingEditor' => Config::$admin_email,
                         'language' => 'en-us',
                         'ttl' => 3600,
                         'image' => [

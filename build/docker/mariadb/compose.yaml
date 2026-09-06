@@ -21,9 +21,9 @@ services:
       DATABASE_NAME: ${DATABASE_NAME}
       #Password for backups created by CRON job
       MARIADB_BACKUP_PASSWORD: ${MARIADB_BACKUP_PASSWORD}
-      WEB_SERVER_TEST: ${WEB_SERVER_TEST}
-    networks:
-      - webserver
+    network_mode: none
+    # Help avoid killing the database, it's better if FrankenPHP (second main consumer) gets restarted.
+    oom_score_adj: -500
     ports:
       - "127.0.0.1:3306:3306"
     read_only: true
@@ -34,15 +34,15 @@ services:
       - /run
     volumes:
       #RW for the socket
-      - ../../../data/mariadb/socket:/run/mysqld/:rw
+      - mariadb_socket:/run/mysqld:rw
       #RO for config
       - ../../../config:/etc/mysql/conf.d:ro
       #RW for database files directory
-      - ../../../data/mariadb/data:/var/lib/mysql:rw
+      - ../../../data/mariadb:/var/lib/mysql:rw
       #Using tmpfs for /tmp is not a good idea, since it's used during various operations on large tables
-      - ../../../data/temp/mariadb:/tmp:rw
+      - mariadb_temp:/tmp:rw
       #RW for logs directory
-      - ../../../logs:/usr/local/logs:rw
+      - ../../../var/log:/usr/local/logs:rw
       #RW for backups directory
       - ../../../data/backups:/usr/local/backups:rw
       #RO for DDL directory, used during maintenance stuff

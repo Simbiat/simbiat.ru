@@ -36,3 +36,6 @@ node_modules/
 
 /build/PSDs/
 /build/phpmyadmin/
+
+vendor/
+var/

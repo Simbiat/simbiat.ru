@@ -1,4 +1,4 @@
-FROM ghcr.io/maxmind/geoipupdate:latest
+FROM ghcr.io/maxmind/geoipupdate:v8.0.0-amd64
 
 # Default values
 ARG PUID=1000
@@ -13,6 +13,8 @@ RUN chmod 755 /usr/local/bin/entrypoint.sh
 
 # Create custom user with UID and GID matching host (note, that this uses BusyBox commands, unlike other containers)
 RUN addgroup -g "${PGID}" geoip && adduser -u "${PUID}" -G geoip -h /home/geoip -s /bin/bash -D geoip
+
+RUN mkdir -p /usr/share/GeoIP && chown -R ${PUID}:${PGID} /usr/share/GeoIP
 
 HEALTHCHECK --start-period=60s --interval=1h --timeout=5s --retries=3 \
             CMD stat -c%s /usr/share/GeoIP/GeoLite2-City.mmdb | awk '{exit !($1 > 10000)}' && stat -c%s /usr/share/GeoIP/GeoLite2-ASN.mmdb | awk '{exit !($1 > 10000)}'

@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Enum;
 
@@ -8,22 +9,28 @@ namespace App\Enum;
  */
 enum NotificationType: int
 {
-    #Maintenance-related notifications
+    // Maintenance-related notifications
     case Test = 0;
+    #[\Deprecated(message: 'No longer sent from PHP')]
     case CronFailure = 1;
+    #[\Deprecated(message: 'No longer sent from PHP')]
     case ErrorLog = 2;
     case DatabaseDown = 3;
     case DatabaseUp = 4;
+    #[\Deprecated(message: 'No longer sent from PHP')]
     case NoSpace = 5;
+    #[\Deprecated(message: 'No longer sent from PHP')]
     case EnoughSpace = 6;
-    #User management notifications
+
+    // User management notifications
     case UserActivation = 7;
     case PasswordReset = 8;
     case PasswordChange = 9;
     case UserLock = 10;
     case LoginFailed = 11;
     case LoginSuccess = 12;
-    #Subscriptions
+
+    // Subscriptions
     case NewThread = 13;
     case NewPost = 14;
     case TicketCreation = 15;

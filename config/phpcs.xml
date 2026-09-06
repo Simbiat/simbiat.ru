@@ -1,91 +1,192 @@
 <?xml version="1.0"?>
 <!-- TODO: Monitor discussion about PER ruleset https://github.com/PHPCSStandards/PHP_CodeSniffer/issues/29 -->
-<ruleset name="Application">
-    
+<ruleset name="Application" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="/vendor/squizlabs/php_codesniffer/phpcs.xsd">
+
     <description>
         PHPCS configuration for Symfony application.
     </description>
-    
+
     <!-- Directories to scan -->
     <file>src</file>
     <file>tests</file>
     <file>packages</file>
     <file>bin</file>
-    
+    <file>config</file>
+    <file>public</file>
+    <arg name="extensions" value="php"/>
     <!-- Exclusions -->
     <exclude-pattern>vendor/*</exclude-pattern>
     <exclude-pattern>var/*</exclude-pattern>
     <exclude-pattern>cache/*</exclude-pattern>
-    
+    <exclude-pattern>config/reference\.php$</exclude-pattern>
+
     <!-- Performance -->
     <arg name="cache" value="/tmp/phpcs.cache"/>
     <arg value="p"/>
-    
+
     <!-- Reporting -->
     <arg name="colors"/>
     <arg name="parallel" value="8"/>
-    
+
     <!-- Assume modern PHP -->
     <config name="testVersion" value="8.3-"/>
-    
+
     <!-- Base standards -->
-    <rule ref="PSR12"/>
-    
+    <rule ref="PSR12">
+        <exclude name="PSR12.Operators.OperatorSpacing"/>
+    </rule>
+
     <!-- Symfony coding standard -->
     <rule ref="Symfony"/>
-    
+    <rule ref="Symfony.Commenting.License.Warning">
+        <exclude name="Symfony.Commenting.License.Warning"/>
+    </rule>
+
     <!-- PHP compatibility -->
     <rule ref="PHPCompatibility"/>
-    
+
     <!-- Slevomat quality rules -->
     <rule ref="SlevomatCodingStandard"/>
-    
+
     <!-- Useful modern strictness -->
-    
+
     <rule ref="Generic.PHP.DisallowShortOpenTag"/>
     <rule ref="Generic.CodeAnalysis.EmptyStatement"/>
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
-    
+
     <rule ref="Squiz.PHP.CommentedOutCode"/>
-    
+
     <!-- Symfony projects typically use attributes -->
     <rule ref="SlevomatCodingStandard.Attributes"/>
-    
+    <rule ref="SlevomatCodingStandard.Attributes.AttributesOrder">
+        <properties>
+            <property name="orderAlphabetically" value="true"/>
+        </properties>
+    </rule>
+
     <!-- Type declarations -->
     <rule ref="SlevomatCodingStandard.TypeHints">
-        <exclude name="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat"/>
+        <!-- Conflicts Symfony.Commenting.FunctionComment.MissingReturn -->
+        <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.UselessAnnotation"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.UselessAnnotation"/>
     </rule>
-    
+    <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
+        <properties>
+            <property name="spacesCountAroundEqualsSign" value="0"/>
+        </properties>
+    </rule>
+
     <!-- Namespaces -->
     <rule ref="SlevomatCodingStandard.Namespaces"/>
-    
+    <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly">
+        <properties>
+            <property name="allowFullyQualifiedGlobalClasses" value="true"/>
+            <property name="allowFullyQualifiedGlobalFunctions" value="true"/>
+            <property name="allowFullyQualifiedGlobalConstants" value="true"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.UseOnlyWhitelistedNamespaces.NonFullyQualified">
+        <exclude name="SlevomatCodingStandard.Namespaces.UseOnlyWhitelistedNamespaces.NonFullyQualified"/>
+    </rule>
+
     <!-- Classes -->
-    <rule ref="SlevomatCodingStandard.Classes"/>
-    
+    <rule ref="SlevomatCodingStandard.Classes">
+        <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineAfterOpeningBrace"/>
+        <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineBeforeClosingBrace"/>
+    </rule>
+
     <!-- Functions -->
-    <rule ref="SlevomatCodingStandard.Functions"/>
-    
+    <rule ref="SlevomatCodingStandard.Functions">
+        <exclude name="SlevomatCodingStandard.Functions.DisallowNamedArguments.DisallowedNamedArgument"/>
+        <exclude name="SlevomatCodingStandard.Functions.FunctionLength.FunctionLength"/>
+        <!-- Conflicts with SlevomatCodingStandard.Functions.RequireTrailingCommaInCall.MissingTrailingComma -->
+        <exclude name="SlevomatCodingStandard.Functions.DisallowTrailingCommaInCall.DisallowedTrailingComma"/>
+    </rule>
+
     <!-- Control structures -->
-    <rule ref="SlevomatCodingStandard.ControlStructures"/>
-    
+    <rule ref="SlevomatCodingStandard.ControlStructures">
+        <exclude name="SlevomatCodingStandard.ControlStructures.BlockControlStructureSpacing"/>
+        <exclude name="SlevomatCodingStandard.ControlStructures.NewWithoutParentheses.UselessParentheses"/>
+        <exclude name="SlevomatCodingStandard.Exceptions.DisallowNonCapturingCatch.DisallowedNonCapturingCatch"/>
+        <!-- Duplicates Symfony.ControlStructure.YodaConditions.Invalid -->
+        <exclude name="SlevomatCodingStandard.ControlStructures.RequireYodaComparison.RequiredYodaComparison"/>
+        <!-- Conflicts Symfony.ControlStructure.YodaConditions.Invalid -->
+        <exclude name="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison.DisallowedYodaComparison"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.ControlStructures.EarlyExit">
+        <properties>
+            <property name="ignoreStandaloneIfInScope" value="true"/>
+            <property name="ignoreOneLineTrailingIf" value="true"/>
+            <property name="ignoreTrailingIfWithOneInstruction" value="true"/>
+        </properties>
+    </rule>
+
     <!-- Variables -->
     <rule ref="SlevomatCodingStandard.Variables"/>
-    
+
     <!-- Arrays -->
     <rule ref="SlevomatCodingStandard.Arrays"/>
-    
+
     <!-- Operators -->
     <rule ref="SlevomatCodingStandard.Operators"/>
-    
+
     <!-- Complexity -->
-    <rule ref="SlevomatCodingStandard.Complexity"/>
-    
+    <rule ref="SlevomatCodingStandard.Complexity">
+        <exclude name="SlevomatCodingStandard.Complexity.Cognitive.ComplexityTooHigh"/>
+    </rule>
+
     <!-- Exceptions -->
     <rule ref="SlevomatCodingStandard.Exceptions"/>
-    
+
     <!-- Include PHPCSExtra rulesets -->
     <rule ref="NormalizedArrays"/>
     <rule ref="Modernize"/>
-    <rule ref="Universal"/>
+    <rule ref="Universal">
+        <exclude name="Universal.UseStatements.DisallowUseClass.FoundWithoutAlias"/>
+        <exclude name="Universal.Classes.DisallowFinalClass.FinalClassFound"/>
+        <exclude name="Universal.Namespaces.EnforceCurlyBraceSyntax.Forbidden"/>
+        <exclude name="Universal.UseStatements.DisallowUseClass.FoundWithAlias"/>
+        <exclude name="Universal.ControlStructures.IfElseDeclaration.NoNewLine"/>
+        <exclude name="Universal.Arrays.DisallowShortArraySyntax.Found"/>
+    </rule>
 
+    <rule ref="Zend">
+        <!-- Conflicts with project's conventions -->
+        <exclude name="Zend.NamingConventions.ValidVariableName.NotCamelCaps"/>
+        <!-- Deprecated rule -->
+        <exclude name="Zend.Debug.CodeAnalyzer"/>
+    </rule>
+
+    <rule ref="Generic.Files.LineLength.MaxExceeded">
+        <exclude name="Generic.Files.LineLength.MaxExceeded"/>
+    </rule>
+    <rule ref="Generic.Files.LineLength.TooLong">
+        <exclude name="Generic.Files.LineLength.TooLong"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+        <properties>
+            <property name="rootNamespaces" type="array">
+                <element key="src" value="App"/>
+            </property>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Files.LineLength.LineTooLong">
+        <exclude name="SlevomatCodingStandard.Files.LineLength.LineTooLong"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing">
+        <properties>
+            <property name="linesCountBetweenDescriptionAndAnnotations" value="1"/>
+            <property name="linesCountBetweenDifferentAnnotationsTypes" value="1"/>
+        </properties>
+    </rule>
+    <!-- PHPDoc is usually much cleaner than assert() -->
+    <rule ref="SlevomatCodingStandard.PHP.RequireExplicitAssertion.RequiredExplicitAssertion">
+        <exclude name="SlevomatCodingStandard.PHP.RequireExplicitAssertion.RequiredExplicitAssertion"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces">
+        <properties>
+            <property name="ignoreSpacesInAnnotation" value="true"/>
+        </properties>
+    </rule>
 </ruleset>

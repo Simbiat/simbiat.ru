@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectTasksOptions">
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="run generate:css" />
+      <option name="arguments" value="compose -f ./compose.yaml exec bun bun run generate:css" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
@@ -14,7 +14,7 @@
         <array />
       </option>
       <option name="outputFromStdout" value="false" />
-      <option name="program" value="bun" />
+      <option name="program" value="docker" />
       <option name="runOnExternalChanges" value="true" />
       <option name="scopeName" value="CSS" />
       <option name="trackOnlyRoot" value="false" />
@@ -22,7 +22,7 @@
       <envs />
     </TaskOptions>
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="run prepare" />
+      <option name="arguments" value="compose -f ./compose.yaml exec bun bun run prepare" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
@@ -34,7 +34,7 @@
         <array />
       </option>
       <option name="outputFromStdout" value="false" />
-      <option name="program" value="bun" />
+      <option name="program" value="docker" />
       <option name="runOnExternalChanges" value="true" />
       <option name="scopeName" value="JS" />
       <option name="trackOnlyRoot" value="false" />
@@ -42,7 +42,7 @@
       <envs />
     </TaskOptions>
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="run generate:caddy" />
+      <option name="arguments" value="compose -f ./compose.yaml exec bun bun run generate:caddy" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
@@ -54,7 +54,7 @@
         <array />
       </option>
       <option name="outputFromStdout" value="false" />
-      <option name="program" value="bun" />
+      <option name="program" value="docker" />
       <option name="runOnExternalChanges" value="true" />
       <option name="scopeName" value="CaddyConfig" />
       <option name="trackOnlyRoot" value="false" />

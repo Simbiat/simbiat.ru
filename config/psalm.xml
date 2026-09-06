@@ -15,6 +15,7 @@
     ensureArrayIntOffsetsExist="true"
     cacheDirectory="/tmp/psalm"
     serializer="igbinary"
+    allowStringToStandInForClass="true"
 >
     <projectFiles>
         <ignoreFiles allowMissingFiles="true">
@@ -24,7 +25,7 @@
     <fileExtensions>
         <extension name=".php"/>
         <extension name=".twig"
-                   checker="../../../../composer/vendor/psalm/plugin-symfony/src/Twig/TemplateFileAnalyzer.php"/>
+                   checker="../vendor/psalm/plugin-symfony/src/Twig/TemplateFileAnalyzer.php"/>
     </fileExtensions>
     <plugins>
         <pluginClass xmlns="https://getpsalm.org/schema/config" class="Psalm\PhpUnitPlugin\Plugin"/>

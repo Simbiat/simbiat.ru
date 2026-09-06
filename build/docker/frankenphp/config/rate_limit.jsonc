@@ -39,5 +39,6 @@
     "jitter": 0.15,
     "sweep_interval": "1m",
     "log_key": true,
-    "disable_metrics": false
+    // Floods `metrics` endpoint hard, which breaks the health check https://github.com/php/frankenphp/issues/2630
+    "disable_metrics": true
 }

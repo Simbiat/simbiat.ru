@@ -27,9 +27,10 @@ fi
 
 touch /usr/share/GeoIP/GeoLite2-City.mmdb
 touch /usr/share/GeoIP/GeoLite2-ASN.mmdb
+chmod 777 -R /usr/share/GeoIP/
 
 echo "# STATE: Running initial geoipupdate"
 /usr/bin/geoipupdate --output
 
-echo "# STATE: Idling — refreshes are handled by Ofelia"
+echo "# STATE: Idling — refreshes are handled by Supercronic"
 exec tail -f /dev/null

@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
+services:
+  bun:
+    build:
+      args:
+        PUID: ${HOST_UID}
+        PGID: ${HOST_GID}
+      context: ../../../build/docker/bun
+      dockerfile: Dockerfile
+    #cap_drop:
+    #  - ALL
+    container_name: bun
+    networks:
+      - default
+    profiles:
+      - dev_only
+    read_only: true
+    restart: no
+    security_opt:
+      - no-new-privileges:true
+    #tmpfs:
+    #  - /tmp
+    volumes:
+      #This is in case container gets launched on PROD
+      - ../../../:/home/bun/app:ro

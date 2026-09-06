@@ -12,7 +12,6 @@ use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use DeviceDetector\Yaml\Pecl;
-use Symfony\Component\Dotenv\Dotenv;
 use Pdo\Mysql;
 use Simbiat\Database\Connection;
 use Simbiat\Database\Pool;
@@ -29,7 +28,7 @@ final class Config
     /**
      * Mail for admin of the service
      */
-    public const string ADMIN_MAIL = 'admin@simbiat.eu';
+    private(set) static string $admin_email = '';
     /**
      * Name of the admin
      */
@@ -41,7 +40,7 @@ final class Config
     /**
      * Mail to use to send emails from
      */
-    public const string FROM = 'noreply@simbiat.eu';
+    private(set) static string $from_email = '';
     private(set) static string $http_host = 'www.simbiat.eu';
     private(set) static string $base_url = 'https://www.simbiat.eu';
     private(set) static string $html_cache = '';
@@ -107,7 +106,7 @@ final class Config
         'view_ff',
         'view_posts',
     ];
-    
+
     public function __construct()
     {
         #Check if we are in CLI
@@ -117,27 +116,27 @@ final class Config
             self::$cli = false;
         }
         self::$work_dir = '/app';
-        $dotenv = new Dotenv();
-        $dotenv->load(self::$work_dir.'/.env');
         #Database settings
         if (empty($_ENV['DATABASE_USER']) || empty($_ENV['DATABASE_PASSWORD']) || empty($_ENV['DATABASE_NAME']) || empty($_ENV['DATABASE_SOCKET'])) {
             throw new \RuntimeException('Missing database configuration');
         }
         #Other important settings
-        if (empty($_ENV['PROTON_DSN']) || empty($_ENV['ENCRYPTION_PASSPHRASE'])) {
+        if (empty($_ENV['ADMIN_EMAIL']) || empty($_ENV['PROTON_USER']) || empty($_ENV['MAILER_DSN']) || empty($_ENV['ENCRYPTION_PASSPHRASE'])) {
             throw new \RuntimeException('Missing important setting');
         }
-        if (\array_key_exists('WEB_SERVER_TEST', $_ENV)) {
-            self::$prod = ($_ENV['WEB_SERVER_TEST'] === 'false');
+        if (\array_key_exists('APP_ENV', $_ENV)) {
+            self::$prod = ($_ENV['APP_ENV'] === 'prod');
         } else {
             self::$prod = false;
         }
+        self::$admin_email = $_ENV['ADMIN_EMAIL'];
+        self::$from_email = $_ENV['PROTON_USER'];
         self::$http_host = (self::$prod ? 'www.simbiat.eu' : 'localhost');
         self::$base_url = 'https://'.self::$http_host;
         self::$html_cache = \sys_get_temp_dir().'/html/';
         #TODO consider moving the JSON config to `/config`
         self::$security_settings = self::$work_dir.'/data/security.json';
-        self::$sitemap = self::$work_dir.'/data/sitemap/';
+        self::$sitemap = self::$work_dir.'/var/sitemap/';
         self::$js_dir = self::$work_dir.'/public/assets';
         self::$css_dir = self::$work_dir.'/public/assets/styles/';
         self::$img_dir = self::$work_dir.'/public/assets/images';
@@ -145,7 +144,7 @@ final class Config
         self::$uploaded_img = self::$work_dir.'/data/uploadedimages';
         self::$ddl_dir = self::$work_dir.'/build/DDL';
         self::$crests_components = self::$work_dir.'/public/assets/images/fftracker/crests-components/';
-        self::$merged_crests_cache = self::$work_dir.'/data/mergedcrests/';
+        self::$merged_crests_cache = self::$work_dir.'/var/mergedcrests/';
         self::$icons = self::$work_dir.'/public/assets/images/fftracker/icons/';
         self::$statistics = self::$work_dir.'/data/ffstatistics/';
         #Generate Argon settings
@@ -186,7 +185,7 @@ final class Config
         self::$device_detector->setYamlParser(new Pecl());
         self::$device_detector->setCache(new PSR6Bridge(new ApcuAdapter('Matomo')));
     }
-    
+
     /**
      * Generate a canonical link
      * @return void
@@ -219,7 +218,7 @@ final class Config
         #Update the list with dynamic values
         self::$links[] = ['rel' => 'canonical', 'href' => self::$canonical];
     }
-    
+
     /**
      * Add CSS and JS preload links, if not using API
      * @return void
@@ -238,7 +237,7 @@ final class Config
             );
         }
     }
-    
+
     /**
      * Database connection
      * @return bool
@@ -246,7 +245,7 @@ final class Config
     public static function dbConnect(): bool
     {
         #Check if flag file exists for an earlier exit
-        if (\is_file('/app/logs/db_maintenance.flag')) {
+        if (\is_file('/app/var/log/db_maintenance.flag')) {
             self::$dbup = false;
             self::$db_update = true;
             return false;

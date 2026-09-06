@@ -7,7 +7,6 @@ services:
         PGID: ${HOST_GID}
       context: ../../../build/docker/frankenphp
       dockerfile: Dockerfile
-      target: PROD
     cap_add:
       - NET_BIND_SERVICE
     cap_drop:
@@ -22,12 +21,13 @@ services:
         condition: service_healthy
     environment:
       CROWDSEC_API_KEY: ${CROWDSEC_CADDY_KEY}
-      WEB_SERVER_TEST: ${WEB_SERVER_TEST}
     links:
       - mariadb:mysql
       - mariadb:database
     networks:
-      - webserver
+      - default
+      - smtp
+      - crowdsec
     ports:
       - "80:80" # HTTP
       - "443:443/tcp" # HTTPS
@@ -43,14 +43,14 @@ services:
       - /etc/ssl/certs/:uid=${HOST_UID},gid=${HOST_GID}
     volumes:
       #Using tmpfs for /tmp is not a good idea, since there can be relatively large files being processed simultaneously
-      - ../../../data/temp/frankenphp:/tmp:rw
+      - ../../../data/temp:/tmp:rw
       #RO for MariaDB socket
-      - ../../../data/mariadb/socket:/run/mysqld/:ro
+      - mariadb_socket:/run/mysqld:ro
       #geoip mapping
-      - ../../../data/geoip:/geoip:ro
+      - geoip_data:/geoip:ro
       #Caddy folders requiring RW
-      - ../../../data/caddy/config:/config:rw
-      - ../../../data/caddy/data:/data:rw
+      - caddy_config:/config:rw
+      - caddy_data:/data:rw
       #PHP config
       - ../../../config/mime.types:/etc/mime.types:ro
       #PHP config
@@ -62,4 +62,4 @@ services:
       - ../../../data:/app/data:rw
       - ../../../public/assets/images/fftracker/icons:/app/public/assets/images/fftracker/icons:rw
       - ../../../public/assets/images/fftracker/crests-components:/app/public/assets/images/fftracker/crests-components:rw
-      - ../../../logs:/app/logs:rw
+      - ../../../var/log:/app/var/log:rw

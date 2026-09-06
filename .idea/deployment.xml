@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="local.simbiat.ru" createEmptyFolders="true" uploadOnCheckin="2f49962b-eba5-4df8-958e-bb6f81f23f56" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
+  <component name="PublishConfigData" serverName="local.simbiat.ru" createEmptyFolders="true" persistUploadOnCheckin="false" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
     <option name="confirmBeforeUploading" value="false" />
     <serverData>
       <paths name="local.simbiat.ru">
@@ -51,10 +51,10 @@
             <excludedPath local="true" path="$PROJECT_DIR$/vendor/vimeo/psalm" />
             <excludedPath local="true" path="$PROJECT_DIR$/vendor/dealerdirect" />
             <excludedPath local="true" path="$PROJECT_DIR$/vendor/escapestudios" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.editorconfig" />
           </excludedPaths>
         </serverdata>
       </paths>
     </serverData>
-    <option name="myUploadOnCheckinName" value="www.simbiat.dev" />
   </component>
 </project>

@@ -22,7 +22,6 @@
     <mapping directory="$PROJECT_DIR$/packages/Database/Pool" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/Database/Query" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/FFXIV/Lodestone" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/packages/HTML/ArrayToTable" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/HTML/Cut" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/HTML/nl2tag" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/HTMLCache" vcs="Git" />

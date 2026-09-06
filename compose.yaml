@@ -1,18 +1,42 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
 name: simbiat-dev
 
-#It looks like subnet may change in some cases for no clear (to me) reason, so trying to force it
 networks:
-  #This network is used for the sake of isolation
-  docker-api:
+  default:
+  docker:
     driver: bridge
-  webserver:
+    internal: true
+  smtp:
     driver: bridge
-    enable_ipv6: true
-    ipam:
-      config:
-        - subnet: 172.21.0.0/16
-        - subnet: 2001:db8:1::/64
+    internal: true
+  crowdsec:
+    driver: bridge
+
+volumes:
+  caddy_config:
+    driver: local
+  caddy_data:
+    driver: local
+  crowdsec_config:
+    driver: local
+  crowdsec_data:
+    driver: local
+  geoip_data:
+    driver: local
+  mariadb_socket:
+    driver: local
+  mariadb_temp:
+    driver: local
+  postfix_etc:
+    driver: local
+  postfix_lib:
+    driver: local
+  postfix_mail:
+    driver: local
+  postfix_spool:
+    driver: local
+  postfix_dkim_keys:
+    driver: local
 
 services:
   phpmyadmin:
@@ -49,3 +73,18 @@ services:
     extends:
       file: ./build/docker/supercronic/compose.yaml
       service: supercronic
+
+  postfix:
+    extends:
+      file: ./build/docker/postfix/compose.yaml
+      service: postfix
+
+  # Note that PHPStorm starts this container and keeps it open as long as any JS/TS service is running.
+  # Whether that's a bug or not is unclear, but tracked in https://youtrack.jetbrains.com/issue/WEB-73725 and https://youtrack.jetbrains.com/issue/WEB-73722
+  bun:
+    # Command is required in case some manual runs are needed, since PHPStorm stops the container right away (uses "run").
+    # Alternatively, open any TS file in PHPStorm, and then use the container it creates
+    #command: tail -f /dev/null
+    extends:
+      file: ./build/docker/bun/compose.yaml
+      service: bun

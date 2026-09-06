@@ -13,17 +13,11 @@ services:
     depends_on:
       socket-proxy:
         condition: service_healthy
-      geoip:
+      postfix:
         condition: service_healthy
-      frankenphp:
-        condition: service_healthy
-      mariadb:
-        condition: service_healthy
-    environment:
-      #Address of docker socker proxy
-      DOCKER_HOST: tcp://socket-proxy:2375
     networks:
-      - docker-api
+      - docker
+      - smtp
     read_only: true
     restart: unless-stopped
     security_opt:
@@ -33,5 +27,8 @@ services:
     volumes:
       - ../../../bin:/etc/supercronic/bin:ro
       - ../../../config:/etc/supercronic/config:ro
-      - ../../../logs:/var/log:rw
-    command: tail -f /dev/null
+      - ../../../.env:/etc/supercronic/.env:ro
+      - ../../../var/log:/var/log:rw
+      #Volumes mounted for daily cleaning
+      - ../../../data/temp:/to_clean/temp
+      - ../../../var/mergedcrests:/to_clean/crests

@@ -16,7 +16,7 @@
         </ul>
     </section>
 {% endif %}
-{% if threads %}
+{% if threads|default(null) %}
     <section>
         <div class="middle">Last created threads:</div>
         <ul class="search_results">
@@ -27,7 +27,7 @@
         </ul>
     </section>
 {% endif %}
-{% if posts %}
+{% if posts|default(null) %}
     <section>
         <div class="middle">Last posts:</div>
         {% for post in posts %}

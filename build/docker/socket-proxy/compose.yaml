@@ -7,14 +7,8 @@ services:
     cap_drop:
       - ALL
     container_name: socket-proxy
-    environment:
-      # Everything defaults to 0/disabled in this image — only turn on what job-exec needs
-      CONTAINERS: 1 # list/inspect containers, needed to resolve name -> id and check running state
-      EVENTS: 1 # ofelia's docker client watches events; cheap to allow, read-only info
-      EXEC: 1 # the actual exec create/start endpoints
-      POST: 1 # gate for any mutating call — exec create/start are POST
     networks:
-      - docker-api
+      - docker
     read_only: true
     restart: unless-stopped
     security_opt:

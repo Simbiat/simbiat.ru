@@ -22,7 +22,7 @@
                     "path": [
                         "/img*",
                         "/data/uploadedimages*",
-                        "/data/mergedcrests*"
+                        "/var/mergedcrests*"
                     ]
                 }
             ]

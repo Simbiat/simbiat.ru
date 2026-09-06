@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
+services:
+  postfix:
+    build:
+      args:
+        PUID: ${HOST_UID}
+        PGID: ${HOST_GID}
+      context: ../../../build/docker/postfix
+      dockerfile: Dockerfile
+    # These are copied from https://github.com/wader/postfix-relay
+    cap_add:
+      - CHOWN            # hand the queue to postfix and the DKIM keys to openDKIM
+      - DAC_OVERRIDE     # read them back afterward
+      - FOWNER           # set their modes
+      - NET_BIND_SERVICE # port 25, where docker does not already allow it
+      - SETGID           # the daemons dropping privileges
+      - SETUID
+      - SYS_CHROOT       # the jails they drop into
+    cap_drop:
+      - ALL
+    container_name: postfix
+    environment:
+      POSTFIX_relayhost: "[${PROTON_HOST}]:${PROTON_PORT}"
+      POSTMAP_sasl_passwd: "[${PROTON_HOST}]:${PROTON_PORT} ${PROTON_USER}:${PROTON_PASSWORD}"
+    networks:
+      - default
+      - smtp
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
+    tmpfs:
+      - /tmp
+      - /run
+    volumes:
+      - postfix_etc:/etc:rw
+      - postfix_lib:/var/lib/postfix:rw
+      - postfix_mail:/var/mail:rw
+      - postfix_spool:/var/spool/postfix:rw
+      - postfix_dkim_keys:/etc/opendkim/keys:rw
+      - ../../../var/log:/var/log:rw

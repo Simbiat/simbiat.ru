@@ -9,12 +9,9 @@ use App\Entity\FFXIV\CrossworldLinkshell;
 use App\Entity\FFXIV\FreeCompany;
 use App\Entity\FFXIV\Linkshell;
 use App\Entity\FFXIV\PvPTeam;
-use App\Enum\SystemUser;
-use App\Notification\CronFailure;
 use App\Service\Caching;
 use App\Service\Config;
 use App\Service\Errors;
-use App\Service\FFXIVStatistics;
 use JetBrains\PhpStorm\ExpectedValues;
 use Simbiat\Cron\Agent;
 use Simbiat\Cron\EventTypes;
@@ -27,24 +24,6 @@ use Simbiat\FFXIV\Lodestone;
  */
 class FFXIV
 {
-    /**
-     * Update statistics
-     * @return void
-     */
-    public function updateStatistics(): void
-    {
-        try {
-            $cron_agent = new Agent();
-            foreach (['raw', 'characters', 'groups', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
-                $cron_agent->log('Updating FFXIV '.$type.' statistics...', EventTypes::CustomInformation);
-                new FFXIVStatistics()->update($type);
-            }
-        } catch (\Throwable $throwable) {
-            $error = $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
-            new CronFailure()->save(SystemUser::Owner->value, ['method' => __METHOD__, 'errors' => $error], true, false, Config::ADMIN_MAIL);
-        }
-    }
-    
     /**
      * Update a FFXIV entity
      * @param string|int $id   Entity ID
@@ -64,7 +43,7 @@ class FFXIV
             default => false,
         };
     }
-    
+
     /**
      * Function to update old entities
      *
@@ -122,57 +101,7 @@ class FFXIV
             return $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
         }
     }
-    
-    /**
-     * Update the list of servers
-     * @return void
-     */
-    public function updateServers(): void
-    {
-        try {
-            $lodestone = (new Lodestone());
-            #Get server
-            $worlds = $lodestone->getWorldStatus()->getResult()['worlds'];
-            #Prepare queries
-            $queries = [];
-            foreach ($worlds as $data_center => $servers) {
-                foreach ($servers as $server => $status) {
-                    $queries[] = [
-                        'INSERT IGNORE INTO `ffxiv__server` (`server`, `data_center`) VALUES (:server, :data_center)',
-                        [':server' => $server, ':data_center' => $data_center],
-                    ];
-                }
-            }
-            Query::query($queries);
-        } catch (\Throwable $throwable) {
-            $error = $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
-            new CronFailure()->save(SystemUser::Owner->value, ['method' => __METHOD__, 'errors' => $error], true, false, Config::ADMIN_MAIL);
-        }
-    }
-    
-    /**
-     * Generate tasks to attempt to register new characters
-     * @return void
-     */
-    public function registerNewCharacters(): void
-    {
-        try {
-            $cron = new TaskInstance();
-            #Try to register new characters
-            $max_id = Query::query('SELECT MAX(`character_id`) as `character_id` FROM `ffxiv__character`;', return: 'value');
-            #We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
-            $new_max_id = \min($max_id + 500, 4294967295);
-            if ((int)$max_id < (int)$new_max_id) {
-                for ($character = $max_id + 1; (int)$character <= (int)$new_max_id; $character++) {
-                    $extra_for_error = 'character ID '.$character;
-                    $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$character, 'character'], 'message' => 'Updating character with ID '.$character])->add();
-                }
-            }
-        } catch (\Throwable $exception) {
-            Errors::error_log($exception, $extra_for_error ?? '');
-        }
-    }
-    
+
     /**
      * Register any new linkshells found
      * @return bool|string

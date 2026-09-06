@@ -30,22 +30,22 @@ import rate_limit from '../../docker/frankenphp/config/rate_limit.jsonc';
 
 // The following 3 interfaces are just to help with suppressing type-related errors
 interface HostMatch {
-  host: string[]
+    host: string[]
 }
 
 interface StaticResponseHandler {
-  handler: 'static_response'
-  headers: {
-    'Location': string[]
-    'X-Redirect-Source': string[]
-  }
-  status_code: number
-  close: boolean
+    handler: 'static_response'
+    headers: {
+        'Location': string[]
+        'X-Redirect-Source': string[]
+    }
+    status_code: number
+    close: boolean
 }
 
 interface DomainRedirect {
-  match: HostMatch[]
-  handle: StaticResponseHandler[]
+    match: HostMatch[]
+    handle: StaticResponseHandler[]
 }
 
 /**
@@ -53,279 +53,310 @@ interface DomainRedirect {
  * pushes the value to static files, which results in failure to apply CSS and JS on custom error pages.
  */
 function stripSuccessStatusOverride(node: unknown): unknown {
-  if (Array.isArray(node)) {
-    return node.map((item) => {
-      return stripSuccessStatusOverride(item);
-    });
-  }
-  if (node !== null && typeof node === 'object') {
-    const obj = node as Record<string, unknown>;
-    if (
-      obj['handler'] === 'file_server'
-      && typeof obj['status_code'] !== 'undefined'
-      && obj['status_code'] !== null
-    ) {
-      const {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        status_code,
-        ...rest
-      } = obj;
-      return rest;
+    if (Array.isArray(node)) {
+        return node.map((item) => {
+            return stripSuccessStatusOverride(item);
+        });
     }
-    return Object.fromEntries(Object.entries(obj)
-                                    .map(([k, v]) => {
-                                      return [k, stripSuccessStatusOverride(v)];
-                                    }));
-  }
-  return node;
+    if (node !== null && typeof node === 'object') {
+        const obj = node as Record<string, unknown>;
+        if (
+            obj['handler'] === 'file_server'
+            && typeof obj['status_code'] !== 'undefined'
+            && obj['status_code'] !== null
+        ) {
+            const {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                status_code,
+                ...rest
+            } = obj;
+            return rest;
+        }
+        return Object.fromEntries(Object.entries(obj)
+                                        .map(([k, v]) => {
+                                            return [k, stripSuccessStatusOverride(v)];
+                                        }));
+    }
+    return node;
 }
 
 /**
  * Actual generator.
  */
 async function main(): Promise<void> {
-  try {
-    const output_file = './config/caddy.json';
-    const all_hosts = [
-      ...((hosts as Record<string, unknown>)['alt'] as []),
-      ...((hosts as Record<string, unknown>)['supops'] as []),
-      ...((hosts as Record<string, unknown>)['main'] as []),
-    ];
-    const domain_redirects_raw = domain_redirects as DomainRedirect[];
-    if (domain_redirects_raw[0]?.match?.[0]) {
-      domain_redirects_raw[0].match[0].host = [
-        ...((hosts as Record<string, unknown>)['alt'] as []),
-      ];
-    }
-    if (domain_redirects_raw[1]?.match?.[0]) {
-      domain_redirects_raw[1].match[0].host = [
-        ...((hosts as Record<string, unknown>)['supops'] as []),
-      ];
-    }
-    // Routes used by both normal and error processing.
-    const common_routes = [
-      // Common headers manipulation
-      {
-        handle: [
-          {
-            ...headers_remove,
-          },
-          {
-            ...headers_add,
-          },
-          {
-            ...headers_deny,
-          },
-          ...(headers_access_control as []),
-          ...(headers_cache_control as []),
-          //Set Allow, if empty
-          {
-            handler: 'headers',
-            response: {
-              set: {
-                Allow: [
-                  'HEAD, OPTIONS, GET',
+    try {
+        const output_file = './config/caddy.json';
+        const all_hosts = [
+            ...((hosts as Record<string, unknown>)['alt'] as []),
+            ...((hosts as Record<string, unknown>)['supops'] as []),
+            ...((hosts as Record<string, unknown>)['main'] as []),
+        ];
+        const domain_redirects_raw = domain_redirects as DomainRedirect[];
+        if (domain_redirects_raw[0]?.match?.[0]) {
+            domain_redirects_raw[0].match[0].host = [
+                ...((hosts as Record<string, unknown>)['alt'] as []),
+            ];
+        }
+        if (domain_redirects_raw[1]?.match?.[0]) {
+            domain_redirects_raw[1].match[0].host = [
+                ...((hosts as Record<string, unknown>)['supops'] as []),
+            ];
+        }
+        // Routes used by both normal and error processing.
+        const common_routes = [
+            // Common headers manipulation
+            {
+                handle: [
+                    {
+                        ...headers_remove,
+                    },
+                    {
+                        ...headers_add,
+                    },
+                    {
+                        ...headers_deny,
+                    },
+                    ...(headers_access_control as []),
+                    ...(headers_cache_control as []),
+                    //Set Allow, if empty
+                    {
+                        handler: 'headers',
+                        response: {
+                            set: {
+                                Allow: [
+                                    'HEAD, OPTIONS, GET',
+                                ],
+                            },
+                            require: {
+                                headers: {
+                                    Allow: null,
+                                },
+                            },
+                        },
+                    },
+                    {
+                        ...headers_path_based,
+                    },
+                    {
+                        ...headers_cross_origin,
+                    },
+                    ...(headers_vary as []),
+                    {
+                        ...headers_utf,
+                    },
+                    {
+                        ...headers_compression,
+                    },
                 ],
-              },
-              require: {
-                headers: {
-                  Allow: null,
-                },
-              },
             },
-          },
-          {
-            ...headers_path_based,
-          },
-          {
-            ...headers_cross_origin,
-          },
-          ...(headers_vary as []),
-          {
-            ...headers_utf,
-          },
-          {
-            ...headers_compression,
-          },
-        ],
-      },
-      {
-        ...https,
-      },
-      {
-        ...hsts,
-      },
-      ...domain_redirects_raw,
-    ];
+            {
+                ...https,
+            },
+            {
+                ...hsts,
+            },
+            ...domain_redirects_raw,
+        ];
 
-    // Caddy's config tree.
-    const caddy_config = {
-      logging: {
-        logs: logs as Record<string, unknown>,
-      },
-      apps: {
-        crowdsec: crowdsec as Record<string, unknown>,
-        tls: {
-          certificates: {
-            automate: [
-              ...all_hosts,
-            ],
-          },
-          automation: {
-            policies: [
-              {
-                subjects: [
-                  ...all_hosts,
-                ],
-                issuers: [
-                  //Let's Encrypt is default
-                  {
-                    module: 'acme',
-                    ca: 'https://acme-v02.api.letsencrypt.org/directory',
-                    email: 'letsencrypt@simbiat.eu',
-                    acme_timeout: '60s',
-                  },
-                  //Internal is supposed to be used only for localhost
-                  {
-                    module: 'internal',
-                    lifetime: '30d',
-                  },
-                ],
-                key_type: 'rsa4096',
-                must_staple: false,
-              },
-            ],
-          },
-        },
-        frankenphp: {},
-        http: {
-          grace_period: '30s',
-          shutdown_delay: '10s',
-          servers: {
-            server_0: {
-              listen: [
-                ':80',
-                ':443',
-              ],
-              //Enable access logs for Crowdsec
-              logs: {
-                default_logger_name: 'access_log',
-              },
-              read_timeout: '10s',
-              read_header_timeout: '10s',
-              write_timeout: '30m',
-              strict_sni_host: true,
-              routes: [
-                {
-                  handle: [
-                    rate_limit,
-                  ],
-                },
-                // Crowdsec
-                {
-                  handle: [
-                    {
-                      handler: 'crowdsec',
-                    },
-                  ],
-                },
-                // Coraza provided by Crowdsec
-                {
-                  handle: [
-                    {
-                      handler: 'appsec',
-                    },
-                  ],
-                },
-                ...(common_routes as []),
-                // Main hosts' normal processing.
-                {
-                  match: [
-                    {
-                      host: [
-                        ...((hosts as Record<string, unknown>)['main'] as []),
-                      ],
-                    },
-                  ],
-                  handle: [
-                    {
-                      ...internal_redirects,
-                    },
-                    {
-                      ...stripSuccessStatusOverride(rewrites) as Record<string, unknown>,
-                    },
-                    {
-                      handler: 'subroute',
-                      routes: [
-                        ...stripSuccessStatusOverride((php as [])) as [],
-                      ],
-                    },
-                  ],
-                  terminal: true,
-                },
-              ],
-              // Error processing.
-              errors: {
-                routes: [
-                  ...(common_routes as []),
-                  {
-                    handle: [
-                      {
-                        handler: 'vars',
-                        asset_status_reset: '200',
-                      },
-                      {
-                        ...internal_redirects,
-                      },
-                      // Placing this here to prevent hotlinking, but to allow loading resources from the custom page.
-                      // "Sec-Fetch-Site: none" covers direct navigation.
-                      // "Sec-Fetch-Dest: document" covers opening resources in a new tab from the current document.
-                      {
-                        handler: 'subroute',
-                        routes: [
-                          hotlinks,
+        // Caddy's config tree.
+        const caddy_config = {
+            logging: {
+                logs: logs as Record<string, unknown>,
+            },
+            apps: {
+                crowdsec: crowdsec as Record<string, unknown>,
+                tls: {
+                    certificates: {
+                        automate: [
+                            ...all_hosts,
                         ],
-                      },
-                      {
-                        ...rewrites,
-                      },
-                      {
-                        handler: 'subroute',
-                        routes: [
-                          {
-                            handle: [
-                              {
-                                handler: 'vars',
-                                root: '/app/public',
-                              },
+                    },
+                    automation: {
+                        policies: [
+                            {
+                                subjects: [
+                                    ...all_hosts,
+                                ],
+                                issuers: [
+                                    //Let's Encrypt is default
+                                    {
+                                        module: 'acme',
+                                        ca: 'https://acme-v02.api.letsencrypt.org/directory',
+                                        email: 'letsencrypt@simbiat.eu',
+                                        acme_timeout: '60s',
+                                    },
+                                    //Internal is supposed to be used only for localhost
+                                    {
+                                        module: 'internal',
+                                        lifetime: '30d',
+                                    },
+                                ],
+                                key_type: 'rsa4096',
+                                must_staple: false,
+                            },
+                        ],
+                    },
+                },
+                frankenphp: {},
+                http: {
+                    grace_period: '30s',
+                    shutdown_delay: '10s',
+                    servers: {
+                        healthcheck: {
+                            listen: [':2026'],
+                            routes: [
+                                {
+                                    match: [
+                                        {
+                                            remote_ip: {
+                                                ranges: [
+                                                    '127.0.0.1/32',
+                                                    '::1/128',
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                    handle: [
+                                        {
+                                            handler: 'vars',
+                                            root: '/healthcheck',
+                                        },
+                                        {
+                                            handler: 'rewrite',
+                                            uri: '/healthcheck.php',
+                                        },
+                                        {
+                                            handler: 'php',
+                                        },
+                                    ],
+                                    terminal: true,
+                                },
                             ],
-                          },
-                          ...(php as []),
-                        ],
-                      },
-                    ],
-                    terminal: true,
-                  },
-                ],
-              },
+                        },
+                        frankenphp: {
+                            listen: [
+                                ':80',
+                                ':443',
+                            ],
+                            //Enable access logs for Crowdsec
+                            logs: {
+                                default_logger_name: 'access_log',
+                            },
+                            read_timeout: '10s',
+                            read_header_timeout: '10s',
+                            write_timeout: '30m',
+                            strict_sni_host: true,
+                            routes: [
+                                {
+                                    handle: [
+                                        rate_limit,
+                                    ],
+                                },
+                                // Crowdsec
+                                {
+                                    handle: [
+                                        {
+                                            handler: 'crowdsec',
+                                        },
+                                    ],
+                                },
+                                // Coraza provided by Crowdsec
+                                {
+                                    handle: [
+                                        {
+                                            handler: 'appsec',
+                                        },
+                                    ],
+                                },
+                                ...(common_routes as []),
+                                // Main hosts' normal processing.
+                                {
+                                    match: [
+                                        {
+                                            host: [
+                                                ...((hosts as Record<string, unknown>)['main'] as []),
+                                            ],
+                                        },
+                                    ],
+                                    handle: [
+                                        {
+                                            ...internal_redirects,
+                                        },
+                                        {
+                                            ...stripSuccessStatusOverride(rewrites) as Record<string, unknown>,
+                                        },
+                                        {
+                                            handler: 'subroute',
+                                            routes: [
+                                                ...stripSuccessStatusOverride((php as [])) as [],
+                                            ],
+                                        },
+                                    ],
+                                    terminal: true,
+                                },
+                            ],
+                            // Error processing.
+                            errors: {
+                                routes: [
+                                    ...(common_routes as []),
+                                    {
+                                        handle: [
+                                            {
+                                                handler: 'vars',
+                                                asset_status_reset: '200',
+                                            },
+                                            {
+                                                ...internal_redirects,
+                                            },
+                                            // Placing this here to prevent hotlinking, but to allow loading resources from the custom page.
+                                            // "Sec-Fetch-Site: none" covers direct navigation.
+                                            // "Sec-Fetch-Dest: document" covers opening resources in a new tab from the current document.
+                                            {
+                                                handler: 'subroute',
+                                                routes: [
+                                                    hotlinks,
+                                                ],
+                                            },
+                                            {
+                                                ...rewrites,
+                                            },
+                                            {
+                                                handler: 'subroute',
+                                                routes: [
+                                                    {
+                                                        handle: [
+                                                            {
+                                                                handler: 'vars',
+                                                                root: '/app/public',
+                                                            },
+                                                        ],
+                                                    },
+                                                    ...(php as []),
+                                                ],
+                                            },
+                                        ],
+                                        terminal: true,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
             },
-          },
-        },
-      },
-    };
+        };
 
-    await Bun.write(output_file, JSON.stringify(caddy_config, null, 2));
-    console.log(`✅ Caddy config written to: ${output_file}`);
-  } catch (err) {
-    throw new Error(err instanceof Error ? err.message : '', { cause: err });
-  }
+        await Bun.write(output_file, JSON.stringify(caddy_config, null, 2));
+        console.log(`✅ Caddy config written to: ${output_file}`);
+    } catch (err) {
+        throw new Error(err instanceof Error ? err.message : '', { cause: err });
+    }
 }
 
 void (async (): Promise<void> => {
-  try {
-    await main();
-  } catch (err) {
-    console.error(`❌ Config generation failed: ${err instanceof Error ? err.message : String(err)}`);
-    process.exit(1);
-  }
+    try {
+        await main();
+    } catch (err) {
+        console.error(`❌ Config generation failed: ${err instanceof Error ? err.message : String(err)}`);
+        process.exit(1);
+    }
 })();

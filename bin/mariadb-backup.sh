@@ -5,65 +5,64 @@
 : "${DATABASE_NAME:?DATABASE_NAME is not set}"
 : "${MARIADB_BACKUP_PASSWORD:?MARIADB_BACKUP_PASSWORD is not set}"
 
-if [ "$WEB_SERVER_TEST" != "true" ]; then
-  current_date=$(date +%Y.%m.%d)
-  log_file=/usr/local/logs/backup-${current_date}.log
-  backup_dir=/usr/local/backups
-  physical_backup=/usr/local/backups/physical-${current_date}
-  logical_backup=/usr/local/backups/logical-${current_date}
-  tables_order=$(cat /usr/local/DDL/000-recommended_table_order.txt)
-  optimization_dir=/usr/local/backups/optimization
-  maintenance_flag=/usr/local/logs/maintenance.flag
-  db_maintenance_flag=/usr/local/logs/db_maintenance.flag
-  # PHP log is monitored by FrankenPHP container and an email is sent if found, so we can use this for some notifications
-  notify_log=/usr/local/logs/php.log
-  max_parallel=3
+current_date=$(date +%Y.%m.%d)
+log_file=/usr/local/logs/backup-${current_date}.log
+backup_dir=/usr/local/backups
+physical_backup=/usr/local/backups/physical-${current_date}
+logical_backup=/usr/local/backups/logical-${current_date}
+tables_order=$(cat /usr/local/DDL/000-recommended_table_order.txt)
+optimization_dir=/usr/local/backups/optimization
+maintenance_flag=/usr/local/logs/maintenance.flag
+db_maintenance_flag=/usr/local/logs/db_maintenance.flag
+# PHP log is monitored by FrankenPHP container and an email is sent if found, so we can use this for some notifications
+notify_log=/usr/local/logs/php.log
+max_parallel=3
 
-  # Common flags shared by every MariaDB call
-  common_dump_opts=(--opt --default-character-set=utf8mb4 --quote-names --single-transaction --tz-utc)
+# Common flags shared by every MariaDB call
+common_dump_opts=(--opt --default-character-set=utf8mb4 --quote-names --single-transaction --tz-utc)
 
-  # Timeout for pure metadata/administrative calls SQL calls
-  db_admin_timeout=30
+# Timeout for pure metadata/administrative calls SQL calls
+db_admin_timeout=30
 
-  # Multiplier applied to current datadir size to estimate free space
-  disk_space_multiplier=3
+# Multiplier applied to current datadir size to estimate free space
+disk_space_multiplier=3
 
-  logical_name="daily"
-  if [ "$(date +%u)" -eq 1 ]; then
-    logical_name="weekly"
-  fi
-  if [ "$(date +%d)" -eq 01 ]; then
-    logical_name="monthly"
-  fi
+logical_name="daily"
+if [ "$(date +%u)" -eq 1 ]; then
+logical_name="weekly"
+fi
+if [ "$(date +%d)" -eq 01 ]; then
+logical_name="monthly"
+fi
 
-  # Temporary MariaDB instance settings
-  tmp_socket="/tmp/mariadb-restore.sock"
-  tmp_pidfile="/tmp/mariadb-restore.pid"
-  tmp_port=3307
+# Temporary MariaDB instance settings
+tmp_socket="/tmp/mariadb-restore.sock"
+tmp_pidfile="/tmp/mariadb-restore.pid"
+tmp_port=3307
 
-  # Make sure target directories exist before anything tries to write
-  # into them. Still before `set -e` on purpose, so we control the error
-  # message rather than getting a cryptic one from the first `>>`.
-  if ! mkdir -p "$(dirname "$log_file")" "$backup_dir"; then
-    echo "FATAL: could not create required directories" >&2
-    exit 1
-  fi
+# Make sure target directories exist before anything tries to write
+# into them. Still before `set -e` on purpose, so we control the error
+# message rather than getting a cryptic one from the first `>>`.
+if ! mkdir -p "$(dirname "$log_file")" "$backup_dir"; then
+echo "FATAL: could not create required directories" >&2
+exit 1
+fi
 
-  # Single-instance guard. Released automatically when the script exits for any reason, since it's tied to this fd.
-  lock_file=/tmp/mariadb_backup.lock
-  exec 200>"$lock_file"
-  if ! flock -n 200; then
-    echo "FATAL: another backup run appears to be in progress (lock: $lock_file)" >&2
-    exit 1
-  fi
+# Single-instance guard. Released automatically when the script exits for any reason, since it's tied to this fd.
+lock_file=/tmp/mariadb_backup.lock
+exec 200>"$lock_file"
+if ! flock -n 200; then
+echo "FATAL: another backup run appears to be in progress (lock: $lock_file)" >&2
+exit 1
+fi
 
-  set -euE
-  set -o pipefail
+set -euE
+set -o pipefail
 
-  # =========================================================
-  # ERROR HANDLER
-  # =========================================================
-  error_handler() {
+# =========================================================
+# ERROR HANDLER
+# =========================================================
+error_handler() {
     # shellcheck disable=SC2320
     # This is fine, and the inspection gets triggered even if I explicitly save to an argument
     local exit_code=${1:-$?}
@@ -89,34 +88,34 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
       mv "${maintenance_flag}" /usr/local/logs/backup_crash.flag
     fi
     exit "$exit_code"
-  }
+}
 
-  # =========================================================
-  # LOGGING WRAPPER
-  # =========================================================
-  log_msg() {
+# =========================================================
+# LOGGING WRAPPER
+# =========================================================
+log_msg() {
     local msg="$*"
     local timestamp
     timestamp=$(date +%Y-%m-%dT%H:%M:%S%z)
     echo "[$timestamp] $msg"
-  }
+}
 
-  # =========================================================
-  # NOTIFICATION LOG
-  # =========================================================
-  # Flock-guarded so concurrent background jobs don't interleave writes.
-  log_notify() {
+# =========================================================
+# NOTIFICATION LOG
+# =========================================================
+# Flock-guarded so concurrent background jobs don't interleave writes.
+log_notify() {
     local msg="$*"
     {
       flock -x 9
       printf '%s\n' "$msg" >&9
     } 9>>"$notify_log"
-  }
+}
 
-  # =========================================================
-  # PARALLEL JOB HELPERS
-  # =========================================================
-  parallel_init() {
+# =========================================================
+# PARALLEL JOB HELPERS
+# =========================================================
+parallel_init() {
     local n="$1"
     local fifo
     fifo=$(mktemp -u)
@@ -127,14 +126,14 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
     for ((i = 0; i < n; i++)); do
       echo >&3
     done
-  }
+}
 
-  parallel_close() {
+parallel_close() {
     exec 3>&-
-  }
+}
 
-  # Shared runner used by both the optimization phases and the table dump loop.
-  run_parallel() {
+# Shared runner used by both the optimization phases and the table dump loop.
+run_parallel() {
     local status_file="$1"
     local -n items_ref=$2
     local worker="$3"
@@ -151,14 +150,14 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
     done
     wait
     parallel_close
-  }
+}
 
-  # =========================================================
-  # DUMP TABLE DATA
-  # =========================================================
-  # shellcheck disable=SC2317
-  # dump_table and dump_table_item are invoked indirectly via run_parallel's $worker parameter ("$worker" "$item")
-  dump_table() {
+# =========================================================
+# DUMP TABLE DATA
+# =========================================================
+# shellcheck disable=SC2317
+# dump_table and dump_table_item are invoked indirectly via run_parallel's $worker parameter ("$worker" "$item")
+dump_table() {
     local table="$1"
     local output_file="$2"
     local rc=0
@@ -179,19 +178,19 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
     fi
 
     return "$rc"
-  }
+}
 
-  # Thin adapter so dump_table (2 args) fits run_parallel's one-arg worker interface.
-  # shellcheck disable=SC2317
-  dump_table_item() {
+# Thin adapter so dump_table (2 args) fits run_parallel's one-arg worker interface.
+# shellcheck disable=SC2317
+dump_table_item() {
     local item="$1"
     local padded_idx="${item%%|*}"
     local table="${item#*|}"
     dump_table "$table" "$logical_backup/${padded_idx}-${table}.sql"
-  }
+}
 
-  trap 'error_handler $? $LINENO' ERR
-  {
+trap 'error_handler $? $LINENO' ERR
+{
     log_msg "Starting backup process"
 
     # =========================================================
@@ -225,6 +224,7 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
     # cleanly would otherwise collide with this run's. Check before
     # clean-up removes the evidence (rm -f below would hide this).
     if [ -S "$tmp_socket" ] || { [ -f "$tmp_pidfile" ] && kill -0 "$(cat "$tmp_pidfile" 2>/dev/null)" 2>/dev/null; }; then
+        #TODO Consider not stopping, but rather just sending a message
       log_msg "ERROR: temp instance socket/pidfile already present - a previous run may not have shut down cleanly"
       error_handler 1 "$LINENO"
     fi
@@ -289,7 +289,7 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
     # =========================================================
     log_msg "Processing slow log"
     mariadb << SQL_EOF
-      INSERT INTO \`${DATABASE_NAME}\`.\`sys__slow_log\`
+        INSERT INTO \`${DATABASE_NAME}\`.\`sys__slow_log\`
                                  (\`hash\`, \`time\`, \`length\`, \`examined\`, \`sent\`, \`text\`)
                              SELECT \`query_hash\`, \`start_time\`, \`query_time\`, \`rows_examined\`, \`rows_sent\`, \`sql_text\`
                              FROM (
@@ -339,73 +339,73 @@ SQL_EOF
     # OPTIMIZATION
     # =========================================================
     execute_sql_file() {
-      local sql_file="${1:-unknown}"
-      local rc=0
-      local output
-      log_msg "Executing $sql_file"
-      output=$(mariadb < "$sql_file" 2>> "$log_file") || rc=$?
+        local sql_file="${1:-unknown}"
+        local rc=0
+        local output
+        log_msg "Executing $sql_file"
+        output=$(mariadb < "$sql_file" 2>> "$log_file") || rc=$?
 
-      # Log the statement output to the main log same as before.
-      if [ -n "$output" ]; then
+        # Log the statement output to the main log same as before.
+        if [ -n "$output" ]; then
         printf '%s\n' "$output" >> "$log_file"
-      fi
+        fi
 
-      #If CHECK/ANALYZE/REPAIR returns a Warning row exit code is still 0.
-      #Scan the tab-separated Msg_type column for Warning/error rows and forward those to the notify log without touching $rc.
-      if [ -n "$output" ] && grep -qiE $'\tWarning\t|\terror\t' <<< "$output"; then
+        #If CHECK/ANALYZE/REPAIR returns a Warning row exit code is still 0.
+        #Scan the tab-separated Msg_type column for Warning/error rows and forward those to the notify log without touching $rc.
+        if [ -n "$output" ] && grep -qiE $'\tWarning\t|\terror\t' <<< "$output"; then
         log_notify "[$(date +%Y-%m-%dT%H:%M:%S%z)] Warning/error rows while executing $sql_file:"
         while IFS= read -r line; do
           log_notify "  $line"
         done < <(grep -iE $'\tWarning\t|\terror\t' <<< "$output")
-      fi
+        fi
 
-      if [ "$rc" -eq 0 ]; then
+        if [ "$rc" -eq 0 ]; then
         rm -f "$sql_file"
         log_msg "Executed $sql_file"
-      else
+        else
         log_msg "FAILED executing $sql_file (exit $rc)"
-      fi
-      return "$rc"
+        fi
+        return "$rc"
     }
 
     optimize_sequential() {
-      local phase="${1:-unknown}"
-      local file="${2:-unknown}"
-      if [ -f "$optimization_dir/$file" ]; then
+        local phase="${1:-unknown}"
+        local file="${2:-unknown}"
+        if [ -f "$optimization_dir/$file" ]; then
         log_msg "Starting optimization phase $phase"
         execute_sql_file "$optimization_dir/$file" || error_handler "$?" "$LINENO"
         log_msg "Finished optimization phase $phase"
-      fi
+        fi
     }
 
     optimize_parallel() {
-      local phase="${1:-unknown}"
-      local directory="${2:-unknown}"
+        local phase="${1:-unknown}"
+        local directory="${2:-unknown}"
 
-      [ -d "$optimization_dir/$directory" ] || return 0
+        [ -d "$optimization_dir/$directory" ] || return 0
 
-      local -a sql_files
-      mapfile -t sql_files < <(find "$optimization_dir/$directory" -maxdepth 1 -name "*.sql" -type f | sort)
+        local -a sql_files
+        mapfile -t sql_files < <(find "$optimization_dir/$directory" -maxdepth 1 -name "*.sql" -type f | sort)
 
-      [ "${#sql_files[@]}" -gt 0 ] || return 0
+        [ "${#sql_files[@]}" -gt 0 ] || return 0
 
-      log_msg "Starting optimization phase $phase (${#sql_files[@]} files)"
+        log_msg "Starting optimization phase $phase (${#sql_files[@]} files)"
 
-      local status_file
-      status_file=$(mktemp)
+        local status_file
+        status_file=$(mktemp)
 
-      run_parallel "$status_file" sql_files execute_sql_file
+        run_parallel "$status_file" sql_files execute_sql_file
 
-      local failed=0
-      [ -s "$status_file" ] && failed=1
-      rm -f "$status_file"
+        local failed=0
+        [ -s "$status_file" ] && failed=1
+        rm -f "$status_file"
 
-      if [ "$failed" -ne 0 ]; then
+        if [ "$failed" -ne 0 ]; then
         log_msg "ERROR: One or more SQL executions failed in phase $phase"
         error_handler 1 "$LINENO"
-      fi
+        fi
 
-      log_msg "Finished optimization phase $phase"
+        log_msg "Finished optimization phase $phase"
     }
 
     optimize_sequential 1 "01-prepare.sql"
@@ -474,15 +474,15 @@ SQL_EOF
 
     log_msg "Truncating tables"
     mariadb --socket="$tmp_socket" << SQL_EOF
-      SET FOREIGN_KEY_CHECKS = 0;
-      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`cron__log\`;
-      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`seo__pageviews\`;
-      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`seo__visitors\`;
-      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`sys__logs\`;
-      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`sys__slow_log\`;
-      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`uc__cookies\`;
-      TRUNCATE TABLE \`${DATABASE_NAME}\`.\`uc__sessions\`;
-      SET FOREIGN_KEY_CHECKS = 1;
+        SET FOREIGN_KEY_CHECKS = 0;
+        TRUNCATE TABLE \`${DATABASE_NAME}\`.\`cron__log\`;
+        TRUNCATE TABLE \`${DATABASE_NAME}\`.\`seo__pageviews\`;
+        TRUNCATE TABLE \`${DATABASE_NAME}\`.\`seo__visitors\`;
+        TRUNCATE TABLE \`${DATABASE_NAME}\`.\`sys__logs\`;
+        TRUNCATE TABLE \`${DATABASE_NAME}\`.\`sys__slow_log\`;
+        TRUNCATE TABLE \`${DATABASE_NAME}\`.\`uc__cookies\`;
+        TRUNCATE TABLE \`${DATABASE_NAME}\`.\`uc__sessions\`;
+        SET FOREIGN_KEY_CHECKS = 1;
 SQL_EOF
 
     # =========================================================
@@ -566,6 +566,5 @@ SQL_EOF
     rm -rf "$physical_backup";
     log_msg "Backup completed"
     rm -f "$maintenance_flag"
-  } >> "$log_file" 2>&1
-fi
+} >> "$log_file" 2>&1
 exit 0

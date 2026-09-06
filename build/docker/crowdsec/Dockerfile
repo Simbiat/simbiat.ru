@@ -1,8 +1,7 @@
-FROM crowdsecurity/crowdsec:v1.7.8-debian
+FROM crowdsecurity/crowdsec:v1.8.1-debian
 
 #TODO: When CRS is updated, check for potential changes in 02-crs-setup.conf as well
 ARG CRS_RELEASE="4.29.0"
-#TODO: When CRS is updated, check for potential changes in 02-crs-setup.conf as well
 
 # Default values
 ARG PUID=1000
@@ -12,8 +11,7 @@ ARG PGID=1000
 RUN groupadd -g "${PGID}"  crowdsec && useradd -u "${PUID}"  -g crowdsec -m -s /bin/bash crowdsec
 
 ENV TZ=UTC \
-    ENABLE_CONSOLE_MANAGEMENT=true \
-    ENABLE_CONSOLE_ALL=true \
+    ENROLL_INSTANCE_NAME="simbiat.eu" \
     COLLECTIONS="crowdsecurity/caddy crowdsecurity/whitelist-good-actors crowdsecurity/http-cve crowdsecurity/http-dos crowdsecurity/base-http-scenarios crowdsecurity/http-extended-context crowdsecurity/appsec-generic-rules crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-wordpress crowdsecurity/wordpress crowdsecurity/discord-crawler-whitelist crowdsecurity/linux crowdsecurity/linux-lpe crowdsecurity/iptables crowdsecurity/mariadb crowdsecurity/sshd barnoux/caddy-coraza openappsec/openappsec" \
     PARSERS="crowdsecurity/appsec-logs" \
     SCENARIOS="crowdsecurity/appsec-native crowdsecurity/crowdsec-appsec-outofband"
@@ -33,6 +31,9 @@ RUN apt-get -y update && \
     apt-get remove -y --purge curl gpg dirmngr gpg-agent && \
     apt-get -y autoremove && \
     apt-get clean
+
+RUN mkdir -p /etc/crowdsec/appsec-configs /etc/crowdsec/appsec-rules && chown -R ${PUID}:${PGID} /etc/crowdsec
+RUN mkdir -p /var/lib/crowdsec/data && chown -R ${PUID}:${PGID} /var/lib/crowdsec/data
 
 HEALTHCHECK --start-period=120s --interval=10s --timeout=5s --retries=3 CMD ["cscli", "lapi", "status"]
 

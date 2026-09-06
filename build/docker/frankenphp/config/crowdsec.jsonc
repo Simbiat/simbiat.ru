@@ -23,7 +23,8 @@
     // through when the AppSec component is unavailable or returns errors.
     // When false (the default), AppSec errors will result in requests
     // being blocked.
-    "appsec_fail_open": false,
+    //TODO:Set to `false` once https://github.com/crowdsecurity/crowdsec/issues/4641 is resolved
+    "appsec_fail_open": true,
     // EnableCaddyError indicates whether access denied responses should be
     // propagated as Caddy errors (allowing for custom error pages via handle_errors)
     // instead of writing a raw HTTP response directly.

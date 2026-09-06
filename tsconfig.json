@@ -29,10 +29,6 @@
             "trusted-types"
         ],
         "paths": {
-            // TODO: need to remove this path, ones the plugin gets its own types in a future update (it's already in master branch, but not yet on NPM).
-            "eslint-plugin-redos": [
-                "./build/js/dev/types/eslint-plugin-redos/index.d.ts"
-            ],
             "tinymce/tinymce.min.js": [
                 "./vendor/tinymce/tinymce/tinymce.d.ts"
             ],

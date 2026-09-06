@@ -48,7 +48,7 @@ class HomePage
         'banned' => false,
         'timezone' => 'UTC',
     ];
-    
+
     public function __construct()
     {
         #Cache headers object
@@ -69,7 +69,7 @@ class HomePage
         Sanitization::carefulArraySanitization($_GET);
         $this->init();
     }
-    
+
     /**
      * Initial routing logic
      *
@@ -81,7 +81,7 @@ class HomePage
         #\Simbiat\Website\Errors::dump(\Simbiat\Translit\Convert::caseVariations('OSDATA'));
         #echo 'here';
         #exit(0);
-        
+
         #Set default Session shape
         $_SESSION = self::SESSION_SHAPE;
         try {
@@ -182,7 +182,7 @@ class HomePage
             Errors::error_log($exception);
         }
     }
-    
+
     /**
      * Function to process some special files
      *
@@ -204,7 +204,7 @@ class HomePage
             exit(0);
         }
     }
-    
+
     /**
      * Twig processing of the generated page
      *

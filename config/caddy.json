@@ -3,7 +3,7 @@
     "logs": {
       "default": {
         "writer": {
-          "filename": "/app/logs/caddy.log",
+          "filename": "/app/var/log/caddy.log",
           "output": "file",
           "roll": true,
           "roll_size_mb": 10,
@@ -20,7 +20,7 @@
       },
       "bouncer": {
         "writer": {
-          "filename": "/app/logs/bouncer.log",
+          "filename": "/app/var/log/bouncer.log",
           "output": "file",
           "roll": true,
           "roll_size_mb": 10,
@@ -35,7 +35,7 @@
       },
       "access_log": {
         "writer": {
-          "filename": "/app/logs/access.log",
+          "filename": "/app/var/log/access.log",
           "output": "file",
           "roll": true,
           "roll_size_mb": 50,
@@ -58,7 +58,7 @@
       "metrics_interval": "15m",
       "enable_streaming": true,
       "enable_hard_fails": false,
-      "appsec_fail_open": false,
+      "appsec_fail_open": true,
       "enable_caddy_error": true,
       "enable_caddy_metrics": true
     },
@@ -137,7 +137,40 @@
       "grace_period": "30s",
       "shutdown_delay": "10s",
       "servers": {
-        "server_0": {
+        "healthcheck": {
+          "listen": [
+            ":2026"
+          ],
+          "routes": [
+            {
+              "match": [
+                {
+                  "remote_ip": {
+                    "ranges": [
+                      "127.0.0.1/32",
+                      "::1/128"
+                    ]
+                  }
+                }
+              ],
+              "handle": [
+                {
+                  "handler": "vars",
+                  "root": "/healthcheck"
+                },
+                {
+                  "handler": "rewrite",
+                  "uri": "/healthcheck.php"
+                },
+                {
+                  "handler": "php"
+                }
+              ],
+              "terminal": true
+            }
+          ]
+        },
+        "frankenphp": {
           "listen": [
             ":80",
             ":443"
@@ -193,7 +226,7 @@
                   "jitter": 0.15,
                   "sweep_interval": "1m",
                   "log_key": true,
-                  "disable_metrics": false
+                  "disable_metrics": true
                 }
               ]
             },
@@ -320,7 +353,7 @@
                             "/build*",
                             "/config*",
                             "/lib*",
-                            "/logs*",
+                            "/var*",
                             "/node_modules*",
                             "/templates*",
                             "/twig*",
@@ -333,8 +366,8 @@
                               "path": [
                                 "/vendor/tinymce/*",
                                 "/.well-known/*",
-                                "/data/sitemap*",
-                                "/data/mergedcrests*",
+                                "/var/sitemap*",
+                                "/var/mergedcrests*",
                                 "/data/ffstatistics*",
                                 "/data/uploaded*",
                                 "/data/uploadedimages*"
@@ -626,7 +659,7 @@
                           "path": [
                             "/img*",
                             "/data/uploadedimages*",
-                            "/data/mergedcrests*"
+                            "/var/mergedcrests*"
                           ]
                         }
                       ]
@@ -1223,7 +1256,7 @@
                             "split_path": [],
                             "try_policy": "first_exist_fallback",
                             "try_files": [
-                              "/data/mergedcrests/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                              "/var/mergedcrests/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
                               "/public/assets/images/fftracker/default-crests/pvp.webp",
                               "/public/assets/images/noimage.svg"
                             ]
@@ -1809,7 +1842,7 @@
                               "/build*",
                               "/config*",
                               "/lib*",
-                              "/logs*",
+                              "/var*",
                               "/node_modules*",
                               "/templates*",
                               "/twig*",
@@ -1822,8 +1855,8 @@
                                 "path": [
                                   "/vendor/tinymce/*",
                                   "/.well-known/*",
-                                  "/data/sitemap*",
-                                  "/data/mergedcrests*",
+                                  "/var/sitemap*",
+                                  "/var/mergedcrests*",
                                   "/data/ffstatistics*",
                                   "/data/uploaded*",
                                   "/data/uploadedimages*"
@@ -2115,7 +2148,7 @@
                             "path": [
                               "/img*",
                               "/data/uploadedimages*",
-                              "/data/mergedcrests*"
+                              "/var/mergedcrests*"
                             ]
                           }
                         ]
@@ -2775,7 +2808,7 @@
                               "split_path": [],
                               "try_policy": "first_exist_fallback",
                               "try_files": [
-                                "/data/mergedcrests/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                                "/var/mergedcrests/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
                                 "/public/assets/images/fftracker/default-crests/pvp.webp",
                                 "/public/assets/images/noimage.svg"
                               ]

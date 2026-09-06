@@ -20,6 +20,8 @@
       <sourceFolder url="file://$MODULE_DIR$/packages/SandClock/" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/packages/StringHelpers/" isTestSource="false" packagePrefix="Simbiat\StringHelpers\" />
       <sourceFolder url="file://$MODULE_DIR$/packages/http20/" isTestSource="false" packagePrefix="Simbiat\http20\" />
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/repo" />
@@ -64,6 +66,8 @@
       <excludeFolder url="file://$MODULE_DIR$/public/assets/images/fftracker/maps" />
       <excludeFolder url="file://$MODULE_DIR$/build/BIC" />
       <excludeFolder url="file://$MODULE_DIR$/packages/DDCIcons/icons" />
+      <excludeFolder url="file://$MODULE_DIR$/var/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/var/log" />
       <excludePattern pattern="public\assets\app.*" />
     </content>
     <orderEntry type="inheritedJdk" />

@@ -38,18 +38,6 @@
 
 Stabilize all libraries used throughout the project. Includes ongoing maintenance tasks.
 
-**array2table:**
-
-| Issue                                                                       | Note                 |
-|-----------------------------------------------------------------------------|----------------------|
-| [adjust to new cute-bytes](https://github.com/Simbiat/array2table/issues/2) | array2table 🟢 XS 🔧 |
-| [Ordinal numbers support](https://github.com/Simbiat/array2table/issues/3)  | array2table 🟡 S     |
-| [better currency support](https://github.com/Simbiat/array2table/issues/4)  | array2table 🟡 S     |
-| [more html types support](https://github.com/Simbiat/array2table/issues/5)  | array2table 🟡 S     |
-| [Support IRI](https://github.com/Simbiat/array2table/issues/7)              | array2table 🟡 S     |
-| [timezone in array2table](https://github.com/Simbiat/array2table/issues/8)  | array2table 🟡 S     |
-| [extensibility](https://github.com/Simbiat/array2table/issues/9)            | array2table 🟠 M     |
-
 **translit:**
 
 | Issue                                                                     | Note              |
@@ -72,7 +60,6 @@ Stabilize all libraries used throughout the project. Includes ongoing maintenanc
 | [refactor](https://github.com/Simbiat/HTMLCache/issues/1)                          | HTMLCache  | RFC 7234 compliance, cache invalidation 🟠 M                                                                                                                                                              |
 | [DOMDocument usage](https://github.com/Simbiat/simbiat.ru/issues/378)              | simbiat.ru | Replace DOMDocument with `\Dom\HTMLDocument` (PHP 8.4) in OG description and sitemap generation 🟡 S 🔧                                                                                                   |
 | [Generate list of missing icons](https://github.com/Simbiat/simbiat.ru/issues/379) | simbiat.ru | DeviceDetectorIcons library — generate list of missing icons to update README; ongoing maintenance 🟡 S                                                                                                   |
-| [integrate array2table](https://github.com/Simbiat/simbiat.ru/issues/141)          | simbiat.ru | Use array2table in templates where appropriate — note: requires `\|raw` in Twig; only apply where output is provably server-generated, not user-supplied. Revisit with Twig restructure in Phase 1.2 🟡 S |
 
 ---
 

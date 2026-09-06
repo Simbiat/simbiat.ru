@@ -46,7 +46,7 @@
                         "/build*",
                         "/config*",
                         "/lib*",
-                        "/logs*",
+                        "/var*",
                         "/node_modules*",
                         "/templates*",
                         "/twig*",
@@ -62,8 +62,8 @@
                                 //well-known folder is allowed to be accessed
                                 "/.well-known/*",
                                 //It is ok to access certain data folders
-                                "/data/sitemap*",
-                                "/data/mergedcrests*",
+                                "/var/sitemap*",
+                                "/var/mergedcrests*",
                                 "/data/ffstatistics*",
                                 "/data/uploaded*",
                                 "/data/uploadedimages*"

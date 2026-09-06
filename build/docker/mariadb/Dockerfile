@@ -1,4 +1,4 @@
-ARG MARIADB_VERSION=12.3.2
+ARG MARIADB_VERSION=12.3.3
 
 FROM mariadb:${MARIADB_VERSION}
 #Copying files for initial restore. Only really needed in case no physical backup (from mariadb-backup or alternatives) is available
@@ -15,7 +15,8 @@ RUN groupmod -o -g "${PGID}" mysql && usermod -o -u "${PUID}" -g "${PGID}" mysql
 ENV MARIADB_AUTO_UPGRADE=true \
     MARIADB_ROOT_HOST=localhost \
     MARIADB_RANDOM_ROOT_PASSWORD=true \
-    MARIADB_MYSQL_LOCALHOST_USER=true
+    MARIADB_MYSQL_LOCALHOST_USER=true \
+    LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libjemalloc.so.2"
 
 # Need LZ4 compression plugin for MariaDB, and 7zip for backups compression
 RUN apt-get -y update && \
@@ -26,6 +27,8 @@ RUN apt-get -y update && \
     apt-get clean
 
 HEALTHCHECK --start-period=120s --interval=10s --timeout=5s --retries=3 CMD ["healthcheck.sh", "--defaults-file=/etc/mysql/conf.d/my.cnf", "--connect", "--innodb_initialized", "--innodb_buffer_pool_loaded", "--mariadbupgrade"]
+
+RUN mkdir -p /run/mysqld && chown -R ${PUID}:${PGID} /run/mysqld
 
 # Copy entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

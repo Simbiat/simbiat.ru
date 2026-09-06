@@ -139,21 +139,39 @@ dist
 /build/DDL/000-optimization_commands.txt
 # File to store SQL changes yet to be applied to PROD
 /build/toupdateonprod.sql
-#Logs
-/logs
-#Composer
-/vendor/
-!/vendor/composer/
-!/vendor/autoload.php
-#This is a local script to grab some files from remote server for backup purposes
-/build/backup.cmd
 #Some useful local commands for maintanence purposes
 /build/useful.cmd
 #Environment variables should not be included
 /.env
+/.env.dev
+/.env.test
 #CrowdSec credentials
 /config/crowdsec/online_api_credentials.yaml
-#ESLint cache
-/config/.eslintcache
-#StyleLint cache
-/config/.stylelintcache
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
+
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###
+
+###> squizlabs/php_codesniffer ###
+/.phpcs-cache
+/phpcs.xml
+###< squizlabs/php_codesniffer ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###

@@ -1,9 +1,9 @@
 #!/bin/sh
 set -e
 
-# If these folders are not created, some errors can pop-up due to how configs are mounted
-mkdir -p /etc/crowdsec/appsec-configs
-mkdir -p /etc/crowdsec/appsec-rules
+# Need to link GeoIP files
+ln -sf /geoip/GeoLite2-ASN.mmdb /var/lib/crowdsec/data/GeoLite2-ASN.mmdb &&
+ln -sf /geoip/GeoLite2-City.mmdb /var/lib/crowdsec/data/GeoLite2-City.mmdb &&
 
 # Need to ensure that CRS files are up-to-date every time (since CrowdSec may attempt to replace them during updates), so we remove them first
 rm -f /var/lib/crowdsec/data/REQUEST-9*.conf \

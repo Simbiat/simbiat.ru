@@ -44,9 +44,11 @@
       <option name="ELSE_IF_STYLE" value="COMBINE" />
       <option name="VARIABLE_NAMING_STYLE" value="SNAKE_CASE" />
       <option name="FORCE_SHORT_DECLARATION_ARRAY_STYLE" value="true" />
-      <option name="SPACE_AROUND_ASSIGNMENT_IN_DECLARE" value="true" />
       <option name="FORCE_EMPTY_METHODS_IN_ONE_LINE" value="true" />
       <option name="PHPDOC_USE_FQCN" value="true" />
+      <option name="REFORMAT_NULL_TYPE_POSITION" value="IN_THE_END" />
+      <option name="NORMALIZE_CAST_PAREN_SPACING" value="true" />
+      <option name="COLLAPSE_LINE_BREAK_AFTER_TYPE_CAST" value="true" />
     </PHPCodeStyleSettings>
     <PostCssCodeStyleSettings>
       <option name="COMMENTS_INLINE_STYLE" value="false" />
@@ -136,6 +138,7 @@
     </codeStyleSettings>
     <codeStyleSettings language="PHP">
       <option name="RIGHT_MARGIN" value="240" />
+      <option name="SPACE_AFTER_TYPE_CAST" value="true" />
     </codeStyleSettings>
     <codeStyleSettings language="SASS">
       <indentOptions>
@@ -160,7 +163,6 @@
     <codeStyleSettings language="Twig">
       <indentOptions>
         <option name="CONTINUATION_INDENT_SIZE" value="4" />
-        <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="TypeScript">
@@ -179,7 +181,11 @@
     <codeStyleSettings language="XML">
       <indentOptions>
         <option name="CONTINUATION_INDENT_SIZE" value="4" />
-        <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
+      </indentOptions>
+    </codeStyleSettings>
+    <codeStyleSettings language="yaml">
+      <indentOptions>
+        <option name="INDENT_SIZE" value="4" />
       </indentOptions>
     </codeStyleSettings>
   </code_scheme>

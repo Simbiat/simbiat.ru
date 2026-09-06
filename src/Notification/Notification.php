@@ -76,7 +76,7 @@ abstract class Notification extends Entity
     protected(set) ?int $last_attempt = null;
     #Notification text
     protected(set) ?string $text = null;
-    
+
     /**
      * Set entity ID
      * @param string|int $id
@@ -94,7 +94,7 @@ abstract class Notification extends Entity
         $this->id = $id;
         return $this;
     }
-    
+
     /**
      * Mark the notification as read
      *
@@ -123,7 +123,7 @@ abstract class Notification extends Entity
         }
         return $result;
     }
-    
+
     /**
      * Delete the notification
      * @return bool
@@ -135,7 +135,7 @@ abstract class Notification extends Entity
         }
         return false;
     }
-    
+
     /**
      * Get data from DB
      * @return array
@@ -144,7 +144,7 @@ abstract class Notification extends Entity
     {
         return Query::query('SELECT * FROM `sys__notifications` WHERE `uuid`=:id;', [':id' => $this->id], return: 'row');
     }
-    
+
     /**
      * Function process database data
      * @param array $from_db
@@ -170,7 +170,7 @@ abstract class Notification extends Entity
             $this->text = Sanitization::sanitizeHTML($from_db['text']);
         }
     }
-    
+
     /**
      * Generate text for message
      *
@@ -179,7 +179,7 @@ abstract class Notification extends Entity
      * @return self
      */
     abstract protected function setText(array $twig_vars = []): self;
-    
+
     /**
      * Generate and save the notification to database (if available)
      *
@@ -347,7 +347,7 @@ abstract class Notification extends Entity
         $this->created = \time();
         return $this;
     }
-    
+
     /**
      * Send the notification
      *
@@ -437,17 +437,17 @@ abstract class Notification extends Entity
         $event_dispatcher = new EventDispatcher();
         $event_dispatcher->addSubscriber($message_listener);
         #Create transport
-        $mailer = new Mailer(Transport::fromDsn($_ENV['PROTON_DSN'], $event_dispatcher), null, $event_dispatcher);
+        $mailer = new Mailer(Transport::fromDsn($_ENV['MAILER_DSN'], $event_dispatcher), null, $event_dispatcher);
         #Create basic email
         $email = new TemplatedEmail()
-            ->from(new Address(Config::FROM, Config::SITE_NAME))
-            ->replyTo(new Address(Config::FROM, Config::SITE_NAME));
+            ->from(new Address(Config::$from_email, Config::SITE_NAME))
+            ->replyTo(new Address(Config::$from_email, Config::SITE_NAME));
         #Add receiver
         if (Config::$prod) {
             $email = $email->addTo(new Address($this->email, $username));
         } else {
             #On test always use admin mail
-            $email = $email->addTo(Config::ADMIN_MAIL);
+            $email = $email->addTo(Config::$admin_email);
         }
         #Set priority
         if (Config::$prod) {

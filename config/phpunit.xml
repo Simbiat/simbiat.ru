@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
 <phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="/vendor/phpunit/phpunit/phpunit.xsd"
     bootstrap="/app/vendor/autoload.php"
     backupGlobals="true"
     backupStaticAttributes="true"
@@ -21,6 +24,8 @@
     failOnAllIssues="true"
     failOnEmptyTestSuite="false"
     failOnDeprecation="true"
+    failOnNotice="true"
+    failOnWarning="true"
     failOnPhpunitDeprecation="true"
     failOnIncomplete="true"
     failOnRisky="true"
@@ -34,15 +39,30 @@
     displayDetailsOnAllIssues="true"
     displayDetailsOnSkippedTests="false"
 >
+    <php>
+        <ini name="display_errors" value="1"/>
+        <ini name="error_reporting" value="-1"/>
+        <server name="APP_ENV" value="test" force="true"/>
+        <server name="SHELL_VERBOSITY" value="-1"/>
+    </php>
     <testsuites>
         <testsuite name="Project Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-    <source>
+    <source ignoreSuppressionOfDeprecations="true"
+            ignoreIndirectDeprecations="true"
+            restrictNotices="true"
+            restrictWarnings="true"
+    >
         <include>
-            <directory suffix=".php">lib</directory>
+            <directory suffix=".php">src</directory>
         </include>
+        <deprecationTrigger>
+            <method>Doctrine\Deprecations\Deprecation::trigger</method>
+            <method>Doctrine\Deprecations\Deprecation::delegateTriggerToBackend</method>
+            <function>trigger_deprecation</function>
+        </deprecationTrigger>
     </source>
     <coverage
         includeUncoveredFiles="true"

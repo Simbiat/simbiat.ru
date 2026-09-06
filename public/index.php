@@ -1,10 +1,10 @@
 <?php
 declare(strict_types = 1);
 
-use App\HomePage;
+use App\Kernel;
 
-#Bootstrap things
-require_once '/app/bin/Bootstrap.php';
+require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
-$home_page = new HomePage();
-exit(0);
+return static function (array $context) {
+    return new Kernel($context['APP_ENV'], (bool)$context['APP_DEBUG']);
+};

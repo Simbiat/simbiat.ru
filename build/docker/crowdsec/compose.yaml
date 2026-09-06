@@ -14,16 +14,15 @@ services:
     depends_on:
       geoip:
         condition: service_healthy
-      mariadb:
-        condition: service_healthy
     environment:
       BOUNCER_KEY_CADDY: ${CROWDSEC_CADDY_KEY}
       BOUNCER_KEY_IPTABLES: ${CROWDSEC_IPTABLES_KEY}
-      DATABASE_PASSWORD: ${CROWDSEC_PASSWORD}
-      DATABASE_SOCKET: ${DATABASE_SOCKET}
       ENROLL_KEY: ${CROWDSEC_ENROLL_KEY}
+    group_add:
+      - 4
     networks:
-      - webserver
+      - default
+      - crowdsec
     ports:
       - "127.0.0.1:8080:8080"
       - "127.0.0.1:6060:6060"
@@ -40,11 +39,9 @@ services:
       - /tmp
       - /run
     volumes:
-      #RO for MariaDB socket
-      - ../../../data/mariadb/socket:/run/mysqld:ro
       #Data folder is required to be mounted, otherwise container does not start
-      - ../../../data/crowdsec/config:/etc/crowdsec:rw
-      - ../../../data/crowdsec/data:/var/lib/crowdsec/data:rw
+      - crowdsec_config:/etc/crowdsec:rw
+      - crowdsec_data:/var/lib/crowdsec/data:rw
       - ../../../config/CoreRuleSet:/var/lib/crowdsec/data/CoreRuleSet:ro
       #Mount config files (need to mount as RW due to CHOWN, that has to run on them)
       - ../../../config/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
@@ -54,9 +51,8 @@ services:
       - ../../../config/crowdsec/appsec-configs/simbiat-appsec.yaml:/etc/crowdsec/appsec-configs/simbiat-appsec.yaml:ro
       - ../../../config/crowdsec/appsec-rules/simbiat-seclang.yaml:/etc/crowdsec/appsec-rules/simbiat-seclang.yaml:ro
       #RO for GeoLite2 files
-      - ../../../data/geoip/GeoLite2-ASN.mmdb:/var/lib/crowdsec/data/GeoLite2-ASN.mmdb:ro
-      - ../../../data/geoip/GeoLite2-City.mmdb:/var/lib/crowdsec/data/GeoLite2-City.mmdb:ro
+      - geoip_data:/geoip:ro
       #Required to read syslog. This will be valid only on UNIX
       - /var/log/:/var/log/:ro
       #Caddy logs folder is RW, because we're also writing Crowdsec logs here
-      - ../../../logs:/usr/local/logs/:rw
+      - ../../../var/log:/usr/local/logs/:rw

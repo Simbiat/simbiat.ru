@@ -4,6 +4,7 @@ declare(strict_types = 1);
 #TODO: Consider moving this to `/app/src/EventSubscriber` and potentially utilizing Symfony's tools (possibly even as replacement for the class)
 namespace App\Service;
 
+use JetBrains\PhpStorm\ExpectedValues;
 use Simbiat\Database\Query;
 
 /**
@@ -30,7 +31,7 @@ final class Errors
         \E_DEPRECATED => 'PHP Deprecation Notice',
         \E_USER_DEPRECATED => 'PHP User Deprecation Notice',
     ];
-    
+
     /**
      * Helper function to log errors with identifying the page
      * @param \Throwable $error   Error object
@@ -52,7 +53,7 @@ final class Errors
         self::write($message);
         return false;
     }
-    
+
     /**
      * Helper to write errors in the log
      *
@@ -96,7 +97,7 @@ final class Errors
             ($context === '' ? '' : "\t".'Context: '.$context."\r\n").
             $previous_throw;
     }
-    
+
     /**
      * Actual custom error handler
      * @param int    $level   Error level
@@ -127,7 +128,7 @@ final class Errors
         self::write($message);
         return true;
     }
-    
+
     /**
      * Custom shutdown function
      * @return void
@@ -148,7 +149,7 @@ final class Errors
             Query::$dbh->rollBack();
         }
     }
-    
+
     /**
      * Helper to write errors in the log
      * @param string $message Error message
@@ -157,9 +158,9 @@ final class Errors
      */
     private static function write(string $message): void
     {
-        \file_put_contents(Config::$work_dir.'/logs/php.log', $message, \FILE_APPEND);
+        \file_put_contents(Config::$work_dir.'/var/log/php.log', $message, \FILE_APPEND);
     }
-    
+
     /**
      * Helper to attempt to get URL, which was used when the error occurred
      * @return string
@@ -173,7 +174,7 @@ final class Errors
         }
         return $request;
     }
-    
+
     /**
      * A simple wrapper function for var_dump to apply <pre> tag and exit the script (by default)
      * @param mixed $variable Variable to dump
@@ -192,5 +193,35 @@ final class Errors
         if ($exit) {
             exit(0);
         }
+    }
+
+    /**
+     * Output for CLI
+     *
+     * @param string $message Message to output
+     * @param string $level   Message level
+     * @param array  $context Optional additional context
+     *
+     * @return string
+     */
+    public static function logfmt(string $message, #[ExpectedValues(['emer', 'alert', 'crit', 'error', 'warn', 'note', 'info', 'debug'])] string $level = 'info', array $context = []): string
+    {
+        $parts = [
+            'time='.\json_encode(\gmdate('Y-m-d\TH:i:s\Z')),
+            'level='.$level,
+            'msg='.\json_encode($message),
+        ];
+
+        foreach ($context as $key => $value) {
+            if (\is_string($value)) {
+                $parts[] = $key.'='.\json_encode($value);
+            } elseif (\is_bool($value)) {
+                $parts[] = $key.'='.($value ? 'true' : 'false');
+            } else {
+                $parts[] = $key.'='.\json_encode((string)$value);
+            }
+        }
+
+        return \implode(' ', $parts);
     }
 }

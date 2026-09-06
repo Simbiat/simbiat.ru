@@ -2,6 +2,9 @@
 services:
   geoip:
     build:
+      args:
+        PUID: ${HOST_UID}
+        PGID: ${HOST_GID}
       context: ../../../build/docker/geoip
       dockerfile: Dockerfile
     cap_drop:
@@ -10,12 +13,13 @@ services:
     environment:
       GEOIPUPDATE_ACCOUNT_ID: ${GEOIP_ACCOUNT}
       GEOIPUPDATE_LICENSE_KEY: ${GEOIP_LICENSE}
+    networks:
+      - default
     read_only: true
     restart: unless-stopped
     security_opt:
       - no-new-privileges=true
     tmpfs:
       - /tmp
-      - /usr/local/share
     volumes:
-      - ../../../data/geoip:/usr/share/GeoIP/:rw
+      - geoip_data:/usr/share/GeoIP:rw

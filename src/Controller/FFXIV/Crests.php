@@ -26,16 +26,16 @@ class Crests extends FileListing
         'background' => ['path' => '/public/assets/images/fftracker/crests-components/backgrounds', 'name' => 'Backgrounds', 'depth' => 1],
         'frame' => ['path' => '/public/assets/images/fftracker/crests-components/frames', 'name' => 'Frames'],
         'emblem' => ['path' => '/public/assets/images/fftracker/crests-components/emblems', 'name' => 'Emblems', 'depth' => 1],
-        'merged' => ['path' => '/data/mergedcrests', 'name' => 'Merged crests (cached)', 'depth' => 1],
+        'merged' => ['path' => '/var/mergedcrests', 'name' => 'Merged crests (cached)', 'depth' => 1],
     ];
     #List of prohibited extensions, files with which should be excluded
     protected array $exclude = ['LICENSE', 'README.md', '.git'];
     #List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = ['view_ff'];
-    
+
     protected function extra(array &$file_details): void
     {
-        $file_details['icon'] = \str_replace('/public/assets/images/fftracker/crests-components', '/assets/images/fftracker/crests-components', \str_replace('/public/assets/', '/assets/', \str_replace('/data/mergedcrests', '/assets/images/fftracker/merged-crests', $file_details['path']))).'/'.$file_details['filename'];
+        $file_details['icon'] = \str_replace('/public/assets/images/fftracker/crests-components', '/assets/images/fftracker/crests-components', \str_replace('/public/assets/', '/assets/', \str_replace('/var/mergedcrests', '/assets/images/fftracker/merged-crests', $file_details['path']))).'/'.$file_details['filename'];
         $file_details['name'] = (str_contains($file_details['path'], 'merged') ? $file_details['key'] : $file_details['filename']);
     }
 }

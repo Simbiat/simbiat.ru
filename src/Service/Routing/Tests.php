@@ -19,7 +19,7 @@ class Tests extends Router
     protected string $title = 'Tests';
     protected string $h1 = 'Tests';
     protected string $og_desc = 'Tests';
-    
+
     /**
      * This is the actual page generation based on further details of the $path
      * @param array $path
@@ -39,7 +39,7 @@ class Tests extends Router
         switch ($path[0]) {
             case 'mail':
                 try {
-                    new Test()->save(SystemUser::Owner->value, email_override: Config::ADMIN_MAIL)->send(true);
+                    new Test()->save(SystemUser::Owner->value, email_override: Config::$admin_email)->send(true);
                 } catch (\Throwable $throwable) {
                     Errors::error_log($throwable, debug: true);
                 }

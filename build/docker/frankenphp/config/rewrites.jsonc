@@ -162,7 +162,7 @@
                         "split_path": [],
                         "try_policy": "first_exist_fallback",
                         "try_files": [
-                            "/data/mergedcrests/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                            "/var/mergedcrests/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
                             "/public/assets/images/fftracker/default-crests/pvp.webp",
                             "/public/assets/images/noimage.svg"
                         ]
