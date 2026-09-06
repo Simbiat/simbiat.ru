@@ -219,11 +219,42 @@ async function main(): Promise<void> {
                                     handle: [
                                         {
                                             handler: 'vars',
-                                            root: '/healthcheck',
+                                            root: '/built-in',
                                         },
                                         {
                                             handler: 'rewrite',
                                             uri: '/healthcheck.php',
+                                        },
+                                        {
+                                            handler: 'php',
+                                        },
+                                    ],
+                                    terminal: true,
+                                },
+                            ],
+                        },
+                        reset: {
+                            listen: [':2027'],
+                            routes: [
+                                {
+                                    match: [
+                                        {
+                                            remote_ip: {
+                                                ranges: [
+                                                    '127.0.0.1/32',
+                                                    '::1/128',
+                                                ],
+                                            },
+                                        },
+                                    ],
+                                    handle: [
+                                        {
+                                            handler: 'vars',
+                                            root: '/built-in',
+                                        },
+                                        {
+                                            handler: 'rewrite',
+                                            uri: '/reset.php',
                                         },
                                         {
                                             handler: 'php',

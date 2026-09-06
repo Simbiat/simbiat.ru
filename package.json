@@ -19,12 +19,13 @@
     },
     "files": [],
     "scripts": {
+        "bundle": "bun ./build/js/dev/Prepare.mts",
         "eslint": "eslint -c ./config/eslint.config.mts --no-config-lookup --color --report-unused-disable-directives-severity warn --report-unused-inline-configs warn --cache --cache-location ./data/temp/.eslintcache --cache-strategy content --concurrency auto",
         "generate:caddy": "bun ./build/js/dev/GenerateCaddyConfig.mts",
         "generate:config": "bun ./build/js/dev/GenerateSharedConfig.mts",
         "generate:css": "bun ./build/js/dev/GenerateCSS.mts",
         "generate:mime": "bun ./build/js/dev/GenerateMIMEFiles.mts",
-        "prepare": "bun generate:mime && bun generate:config && bun ./build/js/dev/Prepare.mts",
+        "prepare": "bun generate:mime && bun generate:config && bun bundle",
         "stylelint": "stylelint -c ./config/stylelint.config.ts --color --cache --cache-location ./data/temp/.stylelintcache --cache-strategy content --report-descriptionless-disables --report-invalid-scope-disables --report-needless-disables --report-unscoped-disables"
     },
     "browserslist": [

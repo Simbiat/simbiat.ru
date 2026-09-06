@@ -95,8 +95,9 @@ RUN mkdir -p /data && chown -R ${PUID}:${PGID} /data
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod 755 /usr/local/bin/entrypoint.sh
 
-RUN mkdir /healthcheck
-COPY healthcheck.php /healthcheck/healthcheck.php
+RUN mkdir /built-in
+COPY healthcheck.php /built-in/healthcheck.php
+COPY reset.php /built-in/reset.php
 
 HEALTHCHECK --start-period=30s --interval=10s --timeout=5s --retries=3 CMD ["curl", "-f", "http://localhost:2026"]
 
