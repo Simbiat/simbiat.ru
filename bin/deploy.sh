@@ -152,7 +152,7 @@ for bun_cmd in "${BUN_BUILD_COMMANDS[@]}"; do
     # "$bun_cmd" when passing it on, or Compose receives one argument
     # instead of several and fails to find the binary.
     read -ra bun_argv <<< "$bun_cmd"
-    if ! docker compose -f ./compose.yaml run --rm "$BUN_SERVICE" "${bun_argv[@]}"; then
+    if ! docker compose -f ./compose.yaml -f compose.override.yaml run --rm "$BUN_SERVICE" "${bun_argv[@]}"; then
         read -r -p "Bun script '${bun_cmd}' failed. Continue with remaining Bun scripts and the deploy? [y/N]: " CONT
         CONT="${CONT:-N}"
         [[ "$CONT" =~ ^[Yy]$ ]] || fail "Stopped after Bun build failure."
