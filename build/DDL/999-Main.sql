@@ -464,3 +464,6 @@ INSERT INTO `talks__sections` (`section_id`, `name`, `description`, `parent_id`,
 INSERT INTO `sys__log_types` (`type_id`, `name`) VALUES ('13', 'Password reset');
 ALTER TABLE `uc__emails` CHANGE `subscribed` `subscribed` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT 'Flag indicating, that this mail should receive notifications. The text is a token, that can be used to unsubscribe.';
 ALTER TABLE `uc__emails` CHANGE `activation` `activation` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT 'not yet activated' COMMENT 'Encrypted activation code';
+
+UPDATE `talks__alt_link_types` SET `regex` = '(linkedin\\.(com|at|cn)|lnkd\\.in)\\/p(osts)?\\/' WHERE `talks__alt_link_types`.`type_id` = 5;
+UPDATE `cron__settings` SET `value` = '6' WHERE `cron__settings`.`setting` = 'max_threads';

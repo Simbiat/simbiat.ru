@@ -45,7 +45,5 @@ services:
       - ../../../var/log:/usr/local/logs:rw
       #RW for backups directory
       - ../../../data/backups:/usr/local/backups:rw
-      #RO for DDL directory, used during maintenance stuff
-      - ../../../build/DDL:/usr/local/DDL:ro
       #CRON scripts:
       - ../../../bin:/etc/mysql/cron:ro

@@ -18,10 +18,11 @@
 H ./.git/
 H ./.github/
 + ./assets/
+- ./vendor/
 + ./bin/
 + ./build/
 H ./build/BIC/
-- ./build/DDL/
+H ./build/DDL/
 H ./build/docker/bun/
 H ./build/js/dev/
 H ./build/PSDs/

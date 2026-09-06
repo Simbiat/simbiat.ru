@@ -88,9 +88,6 @@ sync_retry "Syncing /var/log/" \
     --exclude=.crowdsec.log.swp --exclude=mail.log \
     "${RSYNC_REMOTE}/var/log/" "${MIRROR_DIR}/var/log/"
 
-sync_retry "Syncing /build/DDL/" \
-    rsync "${RSYNC_FLAGS[@]}" "${RSYNC_REMOTE}/build/DDL/" "${MIRROR_DIR}/build/DDL/"
-
 sync_retry "Syncing /data/uploaded/" \
     rsync "${RSYNC_FLAGS[@]}" --delete "${RSYNC_REMOTE}/data/uploaded/" "${PROJECT_DIR}/data/uploaded/"
 
@@ -126,7 +123,7 @@ sync_retry "Syncing project to mirror folder" \
     rsync --recursive --checksum --times --force --prune-empty-dirs \
             --human-readable --progress --stats --delete \
     --exclude=vendor/ --exclude=node_modules/ --exclude=var/ \
-    --exclude=data/backups/ --exclude=data/ffstatistics/ \
+    --exclude=data/backups/ --exclude=data/ffstatistics/ --include=data/DDL \
     --exclude=var/mergedcrests/ --exclude=var/sitemap/ --exclude=data/temp/ \
     --include=data/backups/.gitignore --include=data/ffstatistics/.gitignore \
     --include=var/mergedcrests/.gitignore --include=var/log/.gitignore \

@@ -163,7 +163,8 @@
         "auto-scripts": {
             "php -d xdebug.mode=off bin/console cache:clear": "script",
             "assets:install %PUBLIC_DIR%": "symfony-cmd",
-            "importmap:install": "symfony-cmd"
+            "importmap:install": "symfony-cmd",
+            "app:db:ddl": "symfony-cmd"
         },
         "post-install-cmd": [
             "@auto-scripts"

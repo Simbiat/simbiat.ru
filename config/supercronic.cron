@@ -23,7 +23,7 @@
 0 1 * * * /etc/supercronic/bin/cron-php.sh app:ffxiv:servers
 10 1 * * * /etc/supercronic/bin/cron-php.sh app:ffxiv:statistics
 40 1 * * * /etc/supercronic/bin/cron-php.sh app:ffxiv:characters
-0 2 * * * /etc/supercronic/bin/cron-php.sh app:db:for_backup
+0 2 * * * /etc/supercronic/bin/cron-php.sh app:db:order
 30 2 * * * /etc/supercronic/bin/cron-php.sh app:db:optimize
 0 2 * * * /etc/supercronic/bin/cron-php.sh app:sitemap
 # This one is not ready yet
