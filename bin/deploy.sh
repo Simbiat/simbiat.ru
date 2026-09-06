@@ -165,7 +165,7 @@ done
 
 log "Running rsync dry run..."
 # DO *****NOT***** use `--delete-excluded` or it can result in data loss!
-DRY_RUN_OUTPUT="$(rsync -a --delete-delayed --delay-updates --dry-run --itemize-changes \
+DRY_RUN_OUTPUT="$(rsync -a --delete-delay --delay-updates --dry-run --itemize-changes \
     --filter="merge ${RSYNC_FILTER_FILE}" \
     "${LOCAL_PROJECT_ROOT}/" "${PROD_HOST}:${PROD_PATH}/")"
 
