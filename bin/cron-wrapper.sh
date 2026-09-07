@@ -33,6 +33,8 @@ trap 'on_error $LINENO' ERR
 
 mkdir -p "$STATE_DIR"
 
+find "$STATE_DIR" -type f -name '*.lock' -mtime +7 -delete
+
 # Temp files for capturing exec output; cleaned up on any exit path.
 TMP_STDOUT=$(mktemp "$STATE_DIR/.cron.out.XXXXXX") || exit 1
 TMP_STDERR=$(mktemp "$STATE_DIR/.cron.err.XXXXXX") || { rm -f -- "$TMP_STDOUT"; exit 1; }
