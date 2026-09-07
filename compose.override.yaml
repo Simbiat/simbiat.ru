@@ -1,6 +1,8 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
 services:
   frankenphp:
+    build:
+      target: dev
     environment:
       APP_ENV: dev
     volumes:

@@ -165,7 +165,7 @@ done
 
 log "Running rsync dry run..."
 # DO *****NOT***** use `--delete-excluded` or it can result in data loss!
-DRY_RUN_OUTPUT="$(rsync -a --delete-delay --delay-updates --dry-run --itemize-changes \
+DRY_RUN_OUTPUT="$(rsync -a --delete-delay --delay-updates --checksum --times --dry-run --itemize-changes \
     --filter="merge ${RSYNC_FILTER_FILE}" \
     "${LOCAL_PROJECT_ROOT}/" "${PROD_HOST}:${PROD_PATH}/")"
 
@@ -328,7 +328,7 @@ fi
 
 echo ""
 echo "===== DEPLOY SUMMARY ====="
-echo "- Sync files to PROD (rsync, --delete-delayed --delay-updates)"
+echo "- Sync files to PROD (rsync, --delete-delay --delay-updates)"
 if [ "${#ACTIONS[@]}" -eq 0 ]; then
     echo "- No PROD-side actions required"
 else
@@ -351,7 +351,7 @@ fi
 # ---------------------------------------------------------------------------
 
 log "Running real rsync transfer..."
-rsync -a --delete-delayed --delay-updates --itemize-changes \
+rsync -a --delete-delay --delay-updates --checksum --times --itemize-changes \
     --filter="merge ${RSYNC_FILTER_FILE}" \
     "${LOCAL_PROJECT_ROOT}/" "${PROD_HOST}:${PROD_PATH}/" \
     || fail "rsync transfer failed. No PROD-side actions were attempted."

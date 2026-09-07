@@ -185,7 +185,6 @@
     "config": {
         "sort-packages": true,
         "store-auths": true,
-        "preferred-install": "source",
         "optimize-autoloader": true,
         "classmap-authoritative": true,
         "htaccess-protect": true,

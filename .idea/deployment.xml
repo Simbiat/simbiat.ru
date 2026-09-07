@@ -15,44 +15,6 @@
           <mappings>
             <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
           </mappings>
-          <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/.github" />
-            <excludedPath local="true" path="$PROJECT_DIR$/.idea" />
-            <excludedPath local="true" path="$PROJECT_DIR$/.gitattributes" />
-            <excludedPath local="true" path="$PROJECT_DIR$/.gitignore" />
-            <excludedPath local="true" path="$PROJECT_DIR$/.gitmodules" />
-            <excludedPath local="true" path="$PROJECT_DIR$/LICENSE" />
-            <excludedPath local="true" path="$PROJECT_DIR$/README.md" />
-            <excludedPath local="true" path="$PROJECT_DIR$/SECURITY.md" />
-            <excludedPath local="true" path="$PROJECT_DIR$/composer.json" />
-            <excludedPath local="true" path="$PROJECT_DIR$/config/eslint.config.mts" />
-            <excludedPath local="true" path="$PROJECT_DIR$/config/stylelint.config.ts" />
-            <excludedPath local="true" path="$PROJECT_DIR$/package.json" />
-            <excludedPath local="true" path="$PROJECT_DIR$/bun.lock" />
-            <excludedPath local="true" path="$PROJECT_DIR$/TODO.md" />
-            <excludedPath local="true" path="$PROJECT_DIR$/.aiignore" />
-            <excludedPath local="true" path="$PROJECT_DIR$/tests" />
-            <excludedPath local="true" path="$PROJECT_DIR$/tsconfig.json" />
-            <excludedPath local="true" path="$PROJECT_DIR$/.example.env" />
-            <excludedPath local="true" path="$PROJECT_DIR$/config/psalm.xml" />
-            <excludedPath local="true" path="$PROJECT_DIR$/config/phpcs.xml" />
-            <excludedPath local="true" path="$PROJECT_DIR$/config/phpstan.neon" />
-            <excludedPath local="true" path="$PROJECT_DIR$/config/phpunit.xml" />
-            <excludedPath local="true" path="$PROJECT_DIR$/build/docker/frankenphp/config" />
-            <excludedPath local="true" path="$PROJECT_DIR$/config/.eslintcache" />
-            <excludedPath local="true" path="$PROJECT_DIR$/compose.override.yaml" />
-            <excludedPath local="true" path="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer" />
-            <excludedPath local="true" path="$PROJECT_DIR$/vendor/slevomat/coding-standard" />
-            <excludedPath local="true" path="$PROJECT_DIR$/vendor/phpunit" />
-            <excludedPath local="true" path="$PROJECT_DIR$/vendor/phpstan" />
-            <excludedPath local="true" path="$PROJECT_DIR$/vendor/phpcompatibility" />
-            <excludedPath local="true" path="$PROJECT_DIR$/vendor/phpcsstandards" />
-            <excludedPath local="true" path="$PROJECT_DIR$/vendor/psalm" />
-            <excludedPath local="true" path="$PROJECT_DIR$/vendor/vimeo/psalm" />
-            <excludedPath local="true" path="$PROJECT_DIR$/vendor/dealerdirect" />
-            <excludedPath local="true" path="$PROJECT_DIR$/vendor/escapestudios" />
-            <excludedPath local="true" path="$PROJECT_DIR$/.editorconfig" />
-          </excludedPaths>
         </serverdata>
       </paths>
     </serverData>

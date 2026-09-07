@@ -57,26 +57,12 @@ RUN install-php-extensions \
     openssl \
     pcntl \
     igbinary \
-    xdebug \
-    pcov \
     opcache
 
 # Completely custom
 
-# libnss3-tools is recommended for Caddy (looks like), unzip and git are requried for Composer
-RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install libnss3-tools unzip git&&apt-get -y autoremove&&apt-get clean
-
-# Add composer
-ENV COMPOSER_HOME=/composer
-ENV COMPOSER_CACHE_DIR=/tmp/composer_cache
-ENV PATH="${COMPOSER_HOME}/vendor/bin:/app/vendor/bin:/app/bin:${PATH}"
-COPY --from=composer/composer /usr/bin/composer /usr/bin/composer
-RUN composer self-update
-
-# Symfony CLI
-#TODO: Update version when Symfony CLI has a new release
-COPY --link --from=ghcr.io/symfony-cli/symfony-cli:v5.20 /usr/local/bin/symfony /usr/local/bin/symfony
-RUN mkdir -p /etc/bash_completion.d && symfony completion bash | tee /etc/bash_completion.d/symfony
+# libnss3-tools is recommended for Caddy (looks like)
+RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install libnss3-tools&&apt-get -y autoremove&&apt-get clean
 
 # Default values
 ARG PUID=1000
@@ -102,5 +88,28 @@ COPY reset.php /built-in/reset.php
 HEALTHCHECK --start-period=30s --interval=10s --timeout=5s --retries=3 CMD ["curl", "-f", "http://localhost:2026"]
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+FROM base AS prod
+
+USER frankenphp
+
+FROM base AS dev
+
+# Extensions only for DEV
+RUN install-php-extensions xdebug pcov
+
+# unzip and git are requried for Composer
+RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install unzip git&&apt-get -y autoremove&&apt-get clean
+
+# Add composer
+ENV COMPOSER_HOME=/composer
+ENV COMPOSER_CACHE_DIR=/tmp/composer_cache
+ENV PATH="${COMPOSER_HOME}/vendor/bin:/app/vendor/bin:/app/bin:${PATH}"
+COPY --from=composer/composer /usr/bin/composer /usr/bin/composer
+
+# Symfony CLI
+#TODO: Update version when Symfony CLI has a new release
+COPY --link --from=ghcr.io/symfony-cli/symfony-cli:v5.20 /usr/local/bin/symfony /usr/local/bin/symfony
+RUN mkdir -p /etc/bash_completion.d && symfony completion bash | tee /etc/bash_completion.d/symfony
 
 USER frankenphp

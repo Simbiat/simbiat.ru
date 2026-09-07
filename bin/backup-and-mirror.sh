@@ -26,7 +26,7 @@ RETRY_DELAY=15   # seconds
 OVERALL_FAILED=0
 FAILED_STEPS=()
 
-RSYNC_FLAGS=(--recursive --checksum --times --force --prune-empty-dirs
+RSYNC_FLAGS=(--recursive -a --checksum --times --force --prune-empty-dirs
              --human-readable --progress --stats
              -e "ssh -o ServerAliveInterval=15 -o ServerAliveCountMax=3"
              --exclude=.gitignore --exclude=.git)
@@ -81,11 +81,11 @@ sudo find "$PROJECT_DIR/data/temp" -type d -regextype posix-extended -regex '.*/
 # archived logs, not something the live WSL2 project tree needs to hold.
 sync_retry "Syncing /var/log/" \
     rsync "${RSYNC_FLAGS[@]}" --remove-source-files \
-    --exclude=php.log --exclude=caddy.log --exclude='caddy*.log.gz' \
-    --exclude=bouncer.log --exclude='bouncer*.log.gz' --exclude='*.flag' \
-    --exclude='crowdsec*.gz' --exclude=mariadb.log --exclude=cron.log \
-    --exclude='access*.*' --exclude=crowdsec.log --exclude=crowdsec_api.log \
-    --exclude=.crowdsec.log.swp --exclude=mail.log \
+    --exclude=/php.log --exclude=/caddy.log --exclude='/caddy*.log.gz' \
+    --exclude=/bouncer.log --exclude='/bouncer*.log.gz' --exclude='/*.flag' \
+    --exclude='/crowdsec*.gz' --exclude=/mariadb.log --exclude=/cron.log \
+    --exclude='/access*.*' --exclude=/crowdsec.log --exclude=/crowdsec_api.log \
+    --exclude=/.crowdsec.log.swp --exclude=/mail.log \
     "${RSYNC_REMOTE}/var/log/" "${MIRROR_DIR}/var/log/"
 
 sync_retry "Syncing /data/uploaded/" \
@@ -114,21 +114,18 @@ mkdir -p "$DB_BCK_DIR"
 (
     sync_retry "Syncing /data/backups/" \
         rsync "${RSYNC_FLAGS[@]}" --partial --remove-source-files \
-        --include='*.7z' --exclude='*.sql' \
+        --include='/*.7z' --exclude='/**.sql' --exclude=/recommended_table_order.txt --exclude=/.gitignore \
         "${RSYNC_REMOTE}/data/backups/" "${DB_BCK_DIR}/"
 )
 
 # ---- Mirror project dir --
 sync_retry "Syncing project to mirror folder" \
-    rsync --recursive --checksum --times --force --prune-empty-dirs \
+    rsync --recursive -a --checksum --times --force --prune-empty-dirs \
             --human-readable --progress --stats --delete \
-    --exclude=vendor/ --exclude=node_modules/ --exclude=var/ \
-    --exclude=data/backups/ --exclude=data/ffstatistics/ --include=data/DDL \
-    --exclude=var/mergedcrests/ --exclude=var/sitemap/ --exclude=data/temp/ \
-    --include=data/backups/.gitignore --include=data/ffstatistics/.gitignore \
-    --include=var/mergedcrests/.gitignore --include=var/log/.gitignore \
-    --include=var/sitemap/.gitignore --include=logs/.gitignore \
-    --include=data/temp/.gitignore --include=data/temp/mariadb/.gitignore \
+            --include=/data/temp/.gitignore \
+            --exclude=/data/temp/** \
+            --include=/var/log/.gitignore \
+            --exclude=/var/log/** \
     "${PROJECT_DIR}/" "${MIRROR_DIR}/"
 
 cleanup_older_than "$DB_BCK_DIR" "*.sql"          1

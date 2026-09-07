@@ -7,6 +7,7 @@ services:
         PGID: ${HOST_GID}
       context: ../../../build/docker/frankenphp
       dockerfile: Dockerfile
+      target: prod
     cap_add:
       - NET_BIND_SERVICE
     cap_drop:
@@ -62,4 +63,4 @@ services:
       - ../../../data:/app/data:rw
       - ../../../public/assets/images/fftracker/icons:/app/public/assets/images/fftracker/icons:rw
       - ../../../public/assets/images/fftracker/crests-components:/app/public/assets/images/fftracker/crests-components:rw
-      - ../../../var/log:/app/var/log:rw
+      - ../../../var:/app/var:rw

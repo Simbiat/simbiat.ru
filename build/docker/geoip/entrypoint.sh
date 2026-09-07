@@ -3,7 +3,7 @@
 #Based on official script, but without automatic shutdown (can otherwise exceed daily limit),
 #and touch of the database files (required for CrowdSec, since otherwise it will map the files as directories)
 
-database_dir=/usr/share/GeoIP
+database_dir=/usr/local/share/GeoIP
 export GEOIPUPDATE_CONF_FILE=""
 
 if [ -z "$GEOIPUPDATE_DB_DIR" ]; then
@@ -25,9 +25,9 @@ if [ -z "$GEOIPUPDATE_EDITION_IDS" ]; then
     exit 1
 fi
 
-touch /usr/share/GeoIP/GeoLite2-City.mmdb
-touch /usr/share/GeoIP/GeoLite2-ASN.mmdb
-chmod 777 -R /usr/share/GeoIP/
+touch /usr/local/share/GeoIP/GeoLite2-City.mmdb
+touch /usr/local/share/GeoIP/GeoLite2-ASN.mmdb
+chmod 777 -R /usr/local/share/GeoIP/
 
 echo "# STATE: Running initial geoipupdate"
 /usr/bin/geoipupdate --output

@@ -5,6 +5,9 @@
 * * * * * /etc/supercronic/bin/cron-php.sh app:mailer
 * * * * * /etc/supercronic/bin/cron-php.sh app:cron
 
+* * * * * /etc/supercronic/bin/cron-php.sh app:crontod
+* * * * * /etc/supercronic/bin/cron-php.sh app:crontod
+
 # Healthchecks
 */10 * * * * /etc/supercronic/bin/health-space.sh
 * * * * * /etc/supercronic/bin/health-php-log.sh
