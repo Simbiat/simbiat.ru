@@ -145,6 +145,7 @@ dist
 /.env
 /.env.dev
 /.env.test
+/.env.*
 #CrowdSec credentials
 /config/crowdsec/online_api_credentials.yaml
 ###> symfony/framework-bundle ###
@@ -163,7 +164,7 @@ dist
 ###< phpunit/phpunit ###
 
 ###> symfony/asset-mapper ###
-/public/assets/
+#/public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
 

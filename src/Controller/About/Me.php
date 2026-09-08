@@ -28,7 +28,7 @@ class Me extends StaticPage
         '/assets/images/ogimages/bictracker.webp',
         '/assets/images/ogimages/fftracker.webp',
     ];
-    
+
     /**
      * Static pages have all the data in Twig templates, thus we usually return the empty array
      * @param array $path
@@ -353,6 +353,12 @@ class Me extends StaticPage
                     'position' => 'Senior R&D Support Engineer',
                     'responsibilities' => [
                         'Investigate, manage, and triage application incidents and service requests.',
+                    ],
+                    'achievements' => [
+                        '<a href="/resume/OHS_Basics.pdf" target="_blank">
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="" class="link_icon" width="481" height="481">
+                            <span>Occupational Healthcare & Safety Basics</span>
+                        </a>'
                     ],
                 ]
             ],
