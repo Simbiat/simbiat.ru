@@ -3,10 +3,8 @@
 * * * * * /etc/supercronic/bin/cron-php.sh app:clean:sessions
 * * * * * /etc/supercronic/bin/cron-php.sh app:clean:cookies
 * * * * * /etc/supercronic/bin/cron-php.sh app:mailer
-* * * * * /etc/supercronic/bin/cron-php.sh app:cron
-
-* * * * * /etc/supercronic/bin/cron-php.sh app:crontod
-* * * * * /etc/supercronic/bin/cron-php.sh app:crontod
+#This has to use a 7-elements format to properly run every 20 seconds. PHPStorm's plugin does not like the format, though.
+*/20 * * * * * * /etc/supercronic/bin/cron-php.sh app:cron
 
 # Healthchecks
 */10 * * * * /etc/supercronic/bin/health-space.sh

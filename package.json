@@ -20,6 +20,7 @@
     "files": [],
     "scripts": {
         "bundle": "bun ./build/js/dev/Prepare.mts",
+        "deploy": "bun generate:caddy && bun generate:css && bun prepare",
         "eslint": "eslint -c ./config/eslint.config.mts --no-config-lookup --color --report-unused-disable-directives-severity warn --report-unused-inline-configs warn --cache --cache-location ./data/temp/.eslintcache --cache-strategy content --concurrency auto",
         "generate:caddy": "bun ./build/js/dev/GenerateCaddyConfig.mts",
         "generate:config": "bun ./build/js/dev/GenerateSharedConfig.mts",

@@ -202,6 +202,7 @@ async function main(): Promise<void> {
                     grace_period: '30s',
                     shutdown_delay: '10s',
                     servers: {
+                        // Endpoint for custom health check, available only from inside the container
                         healthcheck: {
                             listen: [':2026'],
                             routes: [
@@ -233,6 +234,7 @@ async function main(): Promise<void> {
                                 },
                             ],
                         },
+                        // Endpoint for opcache reset, available only from inside the container
                         reset: {
                             listen: [':2027'],
                             routes: [

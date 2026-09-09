@@ -83,7 +83,7 @@
         "ext-zstd": "*",
         "doctrine/doctrine-bundle": "^3.3.1",
         "doctrine/doctrine-migrations-bundle": "^4.0.1",
-        "doctrine/orm": "^3.6.8",
+        "doctrine/orm": "^3.7.0",
         "geoip2/geoip2": "^3.4",
         "matomo/device-detector": "^6.5.1",
         "phpdocumentor/reflection-docblock": "^6.0.3",

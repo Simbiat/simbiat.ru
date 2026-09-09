@@ -1,27 +1,29 @@
 #!/usr/bin/env bash
 #
-# deploy.sh — expected location: ./bin/deploy.sh (one level below project root,
+# deploy.sh - expected location: ./bin/deploy.sh (one level below project root,
 # so that "../.env" below resolves to the project root's .env file).
 #
 # Workflow:
-#   0. If a pending-actions file exists from a previous incomplete run,
+#   1. Log everything to a timestamped file.
+#   2. If a pending-actions file exists from a previous incomplete run,
 #      offer to resume it (skip everything else) or discard it.
-#   1. Run the local Bun build scripts, one at a time.
-#   2. Dry-run rsync against PROD, using ./config/deploy/rsync-filter.txt.
-#   3. Classify changed paths into actions, using ./config/deploy/service-patterns.ini.
-#   4. Show a summary. Ask for confirmation. Default: cancel.
-#   5. Real rsync transfer.
-#   6. Write the action list to the pending-actions file, then run each
-#      action one at a time over its own SSH call, removing it from the
-#      file only once it succeeds.
-#   7. Log everything to a timestamped file.
+#   3. Run Bun build scripts, generate files with Composer and Symfony for PROD
+#   4. Dry-run rsync against PROD, using ./config/deploy/rsync-jobs.ini and
+#      ./config/deploy/rsync-filter.txt.
+#   5. Classify changed paths into actions, using ./config/deploy/service-patterns.ini.
+#   6. Show a summary, with the exact commands that will run. Ask for
+#      confirmation. Default: cancel.
+#   7. Set the maintenance flag, then the real rsync transfers.
+#   8. Write the action list (ending in removing the maintenance flag)
+#      to the pending-actions file, then run each action one at a time
+#      over its own SSH call, removing it from the file once it succeeds.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # ---------------------------------------------------------------------------
-# .env — RSYNC_REMOTE_HOST, RSYNC_REMOTE_USER, RSYNC_DEV_DIR, RSYNC_PROD_DIR
+# .env - RSYNC_REMOTE_HOST, RSYNC_REMOTE_USER, RSYNC_DEV_DIR, RSYNC_PROD_DIR
 # ---------------------------------------------------------------------------
 
 set -a; source "${SCRIPT_DIR}/../.env"; set +a
@@ -39,11 +41,12 @@ LOCAL_PROJECT_ROOT="${RSYNC_DEV_DIR}"
 cd "$LOCAL_PROJECT_ROOT"
 
 # ---------------------------------------------------------------------------
-# CONFIG — fill in for this project
+# CONFIG - fill in for this project
 # ---------------------------------------------------------------------------
 
 RSYNC_FILTER_FILE="${LOCAL_PROJECT_ROOT}/config/deploy/rsync-filter.txt"
 SERVICE_PATTERNS_FILE="${LOCAL_PROJECT_ROOT}/config/deploy/service-patterns.ini"
+RSYNC_JOBS_FILE="${LOCAL_PROJECT_ROOT}/config/deploy/rsync-jobs.ini"
 
 LOG_DIR="${LOCAL_PROJECT_ROOT}/var/log"
 TIMESTAMP="$(date +%Y-%m-%d_%H-%M-%S)"
@@ -51,44 +54,119 @@ LOG_FILE="${LOG_DIR}/deploy-${TIMESTAMP}.log"
 PENDING_FILE="${LOG_DIR}/deploy-pending.txt"
 
 SVC_FRANKENPHP="frankenphp"
-BUN_SERVICE="bun"
 
-# The 5 Bun build scripts, run in this order. Each entry is split on
-# whitespace into separate argv elements before being passed to
-# "docker compose run" — do not quote these when expanding below.
-BUN_BUILD_COMMANDS=(
-    "bun run generate:config"
-    "bun run generate:css"
-    "bun run generate:caddy"
-    "bun run generate:mime"
-    "bun run bundle"
-)
+# Isolated build output for PROD-targeted vendor/cache/importmap/env -
+# never mixed with DEV's own working copies of the same. Must be hidden
+# from the main project rsync (rsync-filter.txt: "H ./var/deploy/"),
+# since it's transferred separately below with its own source/destination
+# pairs, not via the main filter-driven sync.
+DEPLOY_ARTIFACTS_DIR="${LOCAL_PROJECT_ROOT}/var/deploy"
 
-MAINTENANCE_FLAG="/var/log/db_maintenance.flag"
+# Maintenance flag is seen by FrankenPHP and results in custom error pages
+# This is relative to PROD directory, not the system's `/var/log`, so `.` is important.
+MAINTENANCE_FLAG="./var/log/db_maintenance.flag"
+
 #TODO: replace with endpoint for worker mode reset, when migrating to worker mode
+# URL to call inside container to reset opcache
 OPCACHE_RESET_URL="http://localhost:2027/"
 
-PATTERN_COMPOSER='(^|/)composer\.(json|lock)$'
-# Changes to these files need to trigger Symfony rebuild.
-PATTERN_ENV_CONFIG='(^|/)\.env(\..+)?$|(^|/)config/(packages|routes)/|(^|/)config/(services|bundles|routes)\.ya?ml$|(^|/)config/(bundles|preload)\.php$'
-PATTERN_PHP='\.php$'
 PATTERN_ROOT_COMPOSE='^compose\.ya?ml$'
+
+RSYNC_COMMON_FLAGS=(--recursive --links --perms --executability --group --owner --devices --specials --delete-delay --delay-updates --checksum --omit-dir-times --itemize-changes)
+
+# ---------------------------------------------------------------------------
+# SYNC JOBS - loaded from ./config/deploy/rsync-jobs.ini (see that file
+# for the format). build_rsync_command() is the single place that
+# assembles a runnable command from these - used for the dry run, the
+# confirmation summary, and the real transfer, so all three always agree
+# on exactly what will run.
+# ---------------------------------------------------------------------------
+
+declare -a SYNC_LABELS=()
+declare -A SYNC_SOURCES=()
+declare -A SYNC_DESTS=()
+declare -A SYNC_FILTERS=()
+
+trim() { echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'; }
+
+load_sync_jobs() {
+    local current_section=""
+    local line
+    while IFS= read -r line; do
+        line="${line%%;*}"
+        line="$(trim "$line")"
+        [ -z "$line" ] && continue
+        [[ "$line" == \#* ]] && continue
+        if [[ "$line" =~ ^\[(.+)\]$ ]]; then
+            current_section="${BASH_REMATCH[1]}"
+            SYNC_LABELS+=("$current_section")
+            SYNC_SOURCES["$current_section"]=""
+            SYNC_DESTS["$current_section"]=""
+            SYNC_FILTERS["$current_section"]="false"
+            continue
+        fi
+        if [[ "$line" =~ ^source[[:space:]]*=[[:space:]]*(.*)$ ]]; then
+            SYNC_SOURCES["$current_section"]="$(trim "${BASH_REMATCH[1]}")"
+        elif [[ "$line" =~ ^destination[[:space:]]*=[[:space:]]*(.*)$ ]]; then
+            SYNC_DESTS["$current_section"]="$(trim "${BASH_REMATCH[1]}")"
+        elif [[ "$line" =~ ^filter[[:space:]]*=[[:space:]]*(.*)$ ]]; then
+            SYNC_FILTERS["$current_section"]="$(trim "${BASH_REMATCH[1]}")"
+        fi
+    done < "$RSYNC_JOBS_FILE"
+}
+
+# Builds one rsync command as a single string. $1 = job label (a section
+# name from rsync-jobs.ini). $2 = extra flags, e.g. "--dry-run", or "" for
+# a real run.
+build_rsync_command() {
+    local label="$1"
+    local extra_flags="$2"
+    local src="${LOCAL_PROJECT_ROOT}/${SYNC_SOURCES[$label]}"
+    local dst="${PROD_PATH}/${SYNC_DESTS[$label]}"
+    local cmd="rsync ${RSYNC_COMMON_FLAGS[*]}"
+    [ -n "$extra_flags" ] && cmd="${cmd} ${extra_flags}"
+    [ "${SYNC_FILTERS[$label]}" == "true" ] && cmd="${cmd} --filter=\"merge ${RSYNC_FILTER_FILE}\""
+    cmd="${cmd} \"${src}\" \"${PROD_HOST}:${dst}\""
+    echo "$cmd"
+}
 
 # ---------------------------------------------------------------------------
 # SETUP
 # ---------------------------------------------------------------------------
 
-mkdir -p "$LOG_DIR"
+# Only LOG_DIR (needed for the log redirection just below) and the bare
+# DEPLOY_ARTIFACTS_DIR (needed so the "touch" calls in STEP 1 don't fail
+# on a missing parent, on a genuinely first-ever run) are pre-created.
+mkdir -p "$LOG_DIR" "$DEPLOY_ARTIFACTS_DIR"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
-log()  { echo "[$(date +%H:%M:%S)] $*"; }
-fail() { log "ERROR: $*"; exit 1; }
+log()  {
+    echo "[$(date +%H:%M:%S)] $*";
+}
+clean_after() {
+    # This one is result of the file mount, so removing it
+    rm -f "${LOCAL_PROJECT_ROOT}/.env.local.php";
+    # This one is also part of the file mount, but created to avoid mounting failure due to "read-only system".
+    # The error itself seems a bit inconsistent: sometimes happens without this file, sometimes not.
+    rm -f "${LOCAL_PROJECT_ROOT}/.env.local.php"
+    # Removing to minimize potential of the file being modified before next run, and it' supposed to be empty
+    rm -f "${DEPLOY_ARTIFACTS_DIR}/empty.ini";
+}
+fail() {
+    log "ERROR: $*";
+    clean_after;
+    exit 1;
+}
 
 [ -f "$RSYNC_FILTER_FILE" ]      || fail "Filter file not found: $RSYNC_FILTER_FILE"
 [ -f "$SERVICE_PATTERNS_FILE" ]  || fail "Service pattern file not found: $SERVICE_PATTERNS_FILE"
+[ -f "$RSYNC_JOBS_FILE" ]        || fail "Rsync jobs file not found: $RSYNC_JOBS_FILE"
+
+load_sync_jobs
+[ "${#SYNC_LABELS[@]}" -gt 0 ] || fail "No sync jobs defined in ${RSYNC_JOBS_FILE}."
 
 # ---------------------------------------------------------------------------
-# STEP 0 — RESUME CHECK
+# STEP 0 - RESUME CHECK
 # ---------------------------------------------------------------------------
 
 run_remote_action() {
@@ -142,52 +220,58 @@ if [ -s "$PENDING_FILE" ]; then
 fi
 
 # ---------------------------------------------------------------------------
-# STEP 1 — LOCAL BUN BUILD (runs first, so output is part of the sync)
+# STEP 1 - LOCAL BUILD: BUN, THEN COMPOSER/SYMFONY
 # ---------------------------------------------------------------------------
 
 log "Running Bun build scripts..."
-for bun_cmd in "${BUN_BUILD_COMMANDS[@]}"; do
-    log "Bun: $bun_cmd"
-    # Split on whitespace into separate argv elements — do not quote
-    # "$bun_cmd" when passing it on, or Compose receives one argument
-    # instead of several and fails to find the binary.
-    read -ra bun_argv <<< "$bun_cmd"
-    if ! docker compose -f ./compose.yaml -f compose.override.yaml run --rm "$BUN_SERVICE" "${bun_argv[@]}"; then
-        read -r -p "Bun script '${bun_cmd}' failed. Continue with remaining Bun scripts and the deploy? [y/N]: " CONT
-        CONT="${CONT:-N}"
-        [[ "$CONT" =~ ^[Yy]$ ]] || fail "Stopped after Bun build failure."
+docker compose -f ./compose.yaml -f ./compose.override.yaml run --rm bun bun run deploy || fail "Failed to run Bun."
+
+log "Running Composer/Symfony..."
+touch "${DEPLOY_ARTIFACTS_DIR}/.env.local.php"
+touch "${LOCAL_PROJECT_ROOT}/.env.local.php"
+touch "${DEPLOY_ARTIFACTS_DIR}/empty.ini"
+# `update-ca-certificates` is required for importmap to work (otherwise there will be no certificates in the cert store due to tmpfs mount)
+docker compose -f ./compose.yaml -f ./compose.predeploy.yaml run --rm --no-deps \
+    --entrypoint="" "$SVC_FRANKENPHP" sh -c 'update-ca-certificates && composer install --no-dev --optimize-autoloader && ./bin/console dotenv:dump prod' \
+    || fail "PROD vendor/cache/importmap build failed on DEV."
+clean_after;
+
+# ---------------------------------------------------------------------------
+# STEP 2 - DRY RUN
+# ---------------------------------------------------------------------------
+
+declare -A DRY_RUN_OUTPUTS=()
+any_changes=false
+
+for label in "${SYNC_LABELS[@]}"; do
+    log "Dry run: ${label}..."
+    if ! output="$(eval "$(build_rsync_command "$label" "--dry-run")")"; then
+        fail "Dry run failed for '${label}' - source: ${LOCAL_PROJECT_ROOT}/${SYNC_SOURCES[$label]}
+If this is a build artifact job, check that STEP 1's build actually produced it."
     fi
+    DRY_RUN_OUTPUTS["$label"]="$output"
+    echo "--- ${label} ---"
+    echo "$output"
+    [ -n "$output" ] && any_changes=true
 done
 
-# ---------------------------------------------------------------------------
-# STEP 2 — DRY RUN
-# ---------------------------------------------------------------------------
-
-log "Running rsync dry run..."
-# DO *****NOT***** use `--delete-excluded` or it can result in data loss!
-DRY_RUN_OUTPUT="$(rsync -a --delete-delay --delay-updates --checksum --times --dry-run --itemize-changes \
-    --filter="merge ${RSYNC_FILTER_FILE}" \
-    "${LOCAL_PROJECT_ROOT}/" "${PROD_HOST}:${PROD_PATH}/")"
-
-if [ -z "$DRY_RUN_OUTPUT" ]; then
-    log "No changes detected. Nothing to deploy."
+if ! $any_changes; then
+    log "No changes detected across all sync jobs. Nothing to deploy."
     exit 0
 fi
 
-log "Dry run complete. Changed items:"
-echo "$DRY_RUN_OUTPUT"
-
-CHANGED_PATHS="$(echo "$DRY_RUN_OUTPUT" | sed -E 's/^[^ ]+ //')"
+CHANGED_PATHS=""
+for label in "${SYNC_LABELS[@]}"; do
+    CHANGED_PATHS="${CHANGED_PATHS}$(echo "${DRY_RUN_OUTPUTS[$label]}" | sed -E 's/^[^ ]+ //')"$'\n'
+done
 
 # ---------------------------------------------------------------------------
-# STEP 3 — LOAD SERVICE PATTERNS AND CLASSIFY
+# STEP 3 - LOAD SERVICE PATTERNS AND CLASSIFY
 # ---------------------------------------------------------------------------
 
 declare -a REBUILD_RULES=()   # "service|pattern"
 declare -a RESTART_RULES=()
 declare -A ALL_SERVICES_SEEN=()
-
-trim() { echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'; }
 
 current_section=""
 while IFS= read -r line; do
@@ -215,9 +299,6 @@ while IFS= read -r line; do
     fi
 done < "$SERVICE_PATTERNS_FILE"
 
-need_composer=false
-need_cache=false
-need_opcache=false
 root_compose_changed=false
 declare -A need_rebuild=()
 declare -A need_restart=()
@@ -225,11 +306,6 @@ declare -A need_restart=()
 while IFS= read -r path; do
     [ -z "$path" ] && continue
 
-    [[ "$path" =~ $PATTERN_COMPOSER ]] && need_composer=true
-    if [[ "$path" =~ $PATTERN_ENV_CONFIG ]] || [[ "$path" =~ $PATTERN_PHP ]] || [[ "$path" =~ $PATTERN_COMPOSER ]]; then
-        need_cache=true
-    fi
-    [[ "$path" =~ $PATTERN_PHP ]] && need_opcache=true
     [[ "$path" =~ $PATTERN_ROOT_COMPOSE ]] && root_compose_changed=true
 
     for rule in "${REBUILD_RULES[@]}"; do
@@ -243,7 +319,7 @@ while IFS= read -r path; do
 done <<< "$CHANGED_PATHS"
 
 # A service already flagged for rebuild does not also need a separate
-# restart-only entry — it gets recreated either way, see STEP 4.
+# restart-only entry - it gets recreated either way, see STEP 4.
 for svc in "${!need_rebuild[@]}"; do
     unset "need_restart[$svc]" 2>/dev/null || true
 done
@@ -264,7 +340,7 @@ if $root_compose_changed; then
 fi
 
 # ---------------------------------------------------------------------------
-# STEP 4 — BUILD ACTION LIST + SUMMARY + CONFIRMATION
+# STEP 4 - BUILD ACTION LIST + SUMMARY + CONFIRMATION
 # ---------------------------------------------------------------------------
 
 declare -a rebuild_svc_list=()
@@ -274,9 +350,8 @@ declare -a restart_svc_list=()
 for svc in "${!need_restart[@]}"; do restart_svc_list+=("$svc"); done
 
 # Rebuild-needing services AND restart-only services are recreated
-# together in one combined "up -d" call later, so Compose resolves
-# cross-service startup order via depends_on for the whole affected
-# set at once — this script does not hand-roll that ordering itself.
+# together in one combined "up -d" call, so Compose resolves cross-
+# service startup order via depends_on for the whole affected set.
 declare -a recreate_svc_list=("${rebuild_svc_list[@]}" "${restart_svc_list[@]}")
 
 frankenphp_recreated=false
@@ -286,56 +361,35 @@ done
 
 declare -a ACTIONS=()
 
-# Build first, before the maintenance flag goes up. This doesn't touch
-# the live containers or the shared project volume, so there's no
-# reason for it to sit inside the maintenance window.
+# Build first
 if [ "${#rebuild_svc_list[@]}" -gt 0 ]; then
-    ACTIONS+=("docker compose -f ./compose.yaml build ${rebuild_svc_list[*]}")
+    ACTIONS+=("sudo docker compose -f ./compose.yaml build ${rebuild_svc_list[*]}")
 fi
 
-if $need_composer || $need_cache; then
-    ACTIONS+=("touch ${MAINTENANCE_FLAG}")
-fi
-if $need_composer; then
-    # Uses the image built just above if frankenphp was rebuilt this
-    # deploy; otherwise the currently-live image, unchanged.
-    ACTIONS+=("docker compose -f ./compose.yaml run --rm ${SVC_FRANKENPHP} composer install --no-dev --optimize-autoloader")
-fi
-if $need_cache; then
-    ACTIONS+=("docker compose -f ./compose.yaml run --rm ${SVC_FRANKENPHP} bin/console cache:clear --env=prod --no-debug")
-    ACTIONS+=("docker compose -f ./compose.yaml run --rm ${SVC_FRANKENPHP} bin/console dotenv:dump prod")
-fi
-
-# Recreate phase — see the comment on recreate_svc_list above. Restart-
+# Recreate phase - see the comment on recreate_svc_list above. Restart-
 # only services get a full recreate here too, not a lighter "restart":
 # safe as long as their real state lives in a volume outside the
 # container, true for everything in service-patterns.ini today.
 if [ "${#recreate_svc_list[@]}" -gt 0 ]; then
-    ACTIONS+=("docker compose -f ./compose.yaml up -d --force-recreate ${recreate_svc_list[*]}")
+    ACTIONS+=("sudo docker compose -f ./compose.yaml up -d --force-recreate ${recreate_svc_list[*]}")
 fi
-
-if $need_composer || $need_cache; then
-    ACTIONS+=("rm -f ${MAINTENANCE_FLAG}")
+# Reset unless frankenphp itself was rebuilt/recreated above - a fresh
+# process already starts with an empty opcache.
+if ! $frankenphp_recreated; then
+    ACTIONS+=("sudo docker compose -f ./compose.yaml exec ${SVC_FRANKENPHP} curl -fsS ${OPCACHE_RESET_URL}")
 fi
-
-# Skip if frankenphp itself was rebuilt/recreated above — a fresh
-# process already starts with an empty opcache, and hitting the
-# endpoint right after recreation is redundant at best and can race a
-# container that isn't fully ready yet.
-if $need_opcache && ! $frankenphp_recreated; then
-    ACTIONS+=("docker compose -f ./compose.yaml exec ${SVC_FRANKENPHP} curl -fsS ${OPCACHE_RESET_URL}")
-fi
+# Remove maintenance flag
+ACTIONS+=("rm -f ${MAINTENANCE_FLAG}")
 
 echo ""
 echo "===== DEPLOY SUMMARY ====="
-echo "- Sync files to PROD (rsync, --delete-delay --delay-updates)"
-if [ "${#ACTIONS[@]}" -eq 0 ]; then
-    echo "- No PROD-side actions required"
-else
-    for a in "${ACTIONS[@]}"; do
-        echo "- $a"
-    done
-fi
+echo "- touch ${MAINTENANCE_FLAG}"
+for label in "${SYNC_LABELS[@]}"; do
+    echo "- $(build_rsync_command "$label" "")"
+done
+for a in "${ACTIONS[@]}"; do
+    echo "- $a"
+done
 echo "==========================="
 echo ""
 
@@ -347,24 +401,24 @@ if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
 fi
 
 # ---------------------------------------------------------------------------
-# STEP 5 — REAL RSYNC
+# STEP 5 - MAINTENANCE FLAG ON, THEN REAL RSYNC
 # ---------------------------------------------------------------------------
 
-log "Running real rsync transfer..."
-rsync -a --delete-delay --delay-updates --checksum --times --itemize-changes \
-    --filter="merge ${RSYNC_FILTER_FILE}" \
-    "${LOCAL_PROJECT_ROOT}/" "${PROD_HOST}:${PROD_PATH}/" \
-    || fail "rsync transfer failed. No PROD-side actions were attempted."
+log "Setting maintenance flag on PROD..."
+run_remote_action "touch ${MAINTENANCE_FLAG}" \
+    || fail "Could not set maintenance flag - aborting before touching PROD further."
+
+for label in "${SYNC_LABELS[@]}"; do
+    log "Syncing: ${label}..."
+    eval "$(build_rsync_command "$label" "")" \
+        || fail "${label} sync failed. Maintenance flag is still set on PROD."
+done
 
 # ---------------------------------------------------------------------------
-# STEP 6 — WRITE PENDING ACTIONS, THEN RUN ONE BY ONE
+# STEP 6 - WRITE PENDING ACTIONS, THEN RUN ONE BY ONE
 # ---------------------------------------------------------------------------
 
-if [ "${#ACTIONS[@]}" -gt 0 ]; then
-    printf '%s\n' "${ACTIONS[@]}" > "$PENDING_FILE"
-    execute_pending
-else
-    log "No PROD-side actions required. Sync only."
-fi
+printf '%s\n' "${ACTIONS[@]}" > "$PENDING_FILE"
+execute_pending
 
 log "Deploy complete."

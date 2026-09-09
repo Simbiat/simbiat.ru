@@ -25,7 +25,9 @@ H /.idea/
 + /assets/
 - /assets/vendor/
 + /bin/
+H /bin/backup-and-mirror.sh
 H /bin/deploy.sh
+H /bin/phpunit
 + /build/
 H /build/BIC/
 H /build/DDL/
@@ -61,14 +63,18 @@ P /data/mariadb/**
 + /data/uploaded/.gitignore
 # Has subfolders
 - /data/uploaded/**
-# Has subfolders
+P /data/uploaded/**
 + /data/uploadedimages/.gitignore
+# Has subfolders
 - /data/uploadedimages/**
+P /data/uploadedimages/**
 + /migrations/
 H /node_modules/
 + /packages/
 #TODO: will likely need to be updated once Symfony will start handling items through the `assets/` folder
 + /public/
+P /public/assets/images/fftracker/crests-components/**
+P /public/assets/images/fftracker/icons/**
 + /src/
 + /templates/
 H /tests/
@@ -78,6 +84,7 @@ H /tests/
 - /var/cache/prod/
 H /var/cache/dev/
 H /var/cache/test/
+H /var/deploy/
 + /var/log/.gitignore
 - /var/log/*
 + /var/mergedcrests/.gitignore
@@ -103,8 +110,8 @@ H /.gitignore
 H /.gitmodules
 H /bun.lock
 + /.compose.yaml
-- /.compose.override.yaml
 H /.compose.override.yaml
+H /.compose.predeploy.yaml
 + /.composer.json
 + /.composer.lock
 + /.importmap.php

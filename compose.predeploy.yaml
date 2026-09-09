@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
+services:
+  frankenphp:
+    build:
+      target: dev
+    environment:
+      APP_ENV: prod
+    volumes:
+      - ./var/deploy/vendor:/app/vendor:rw
+      - ./var/deploy/var-cache:/app/var/cache:rw
+      - ./var/deploy/assets-vendor:/app/assets/vendor:rw
+      - ./var/deploy/.env.local.php:/app/.env.local.php:rw
+      # Prevent DEV libraries from loading, potentially contaminating the production environment
+      - ./var/deploy/empty.ini:/usr/local/etc/php/conf.d/docker-php-ext-pcov.ini:ro
+      - ./var/deploy/empty.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:ro
