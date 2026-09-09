@@ -85,7 +85,7 @@ sync_retry "Syncing /var/log/" \
     --exclude=/bouncer.log --exclude='/bouncer*.log.gz' --exclude='/*.flag' \
     --exclude='/crowdsec*.gz' --exclude=/mariadb.log --exclude=/cron.log \
     --exclude='/access*.*' --exclude=/crowdsec.log --exclude=/crowdsec_api.log \
-    --exclude=/.crowdsec.log.swp --exclude=/mail.log \
+    --exclude=/.crowdsec.log.swp --exclude=/mail.log --exclude=/cron/ \
     "${RSYNC_REMOTE}/var/log/" "${MIRROR_DIR}/var/log/"
 
 sync_retry "Syncing /data/uploaded/" \
