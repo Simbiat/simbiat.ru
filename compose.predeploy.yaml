@@ -6,6 +6,7 @@ services:
     environment:
       APP_ENV: prod
     volumes:
+      # Mount folders that will be written by Composer/Symfony and later synced to PROD
       - ./var/deploy/vendor:/app/vendor:rw
       - ./var/deploy/var-cache:/app/var/cache:rw
       - ./var/deploy/assets-vendor:/app/assets/vendor:rw

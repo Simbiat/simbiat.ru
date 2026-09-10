@@ -141,8 +141,6 @@ Migrate existing page classes to Symfony Controllers. File-based routing via Sym
 - 🟡 S [Early Hints](https://github.com/Simbiat/simbiat.ru/issues/31) — consider Early Hints instead of HTTP/2 push; 🔗 DEP: 0.6 (HTTP20/issues/4)
 - 🟢 XS 🔧 [co-cache or private](https://github.com/Simbiat/simbiat.ru/issues/97) — verify no-cache/private on editor/user pages once Controller types are codified
 - [opening from other sites does not authenticate](https://github.com/Simbiat/simbiat.ru/issues/341) — likely resolved by Symfony request handling; verify here
-- 🟡 S [integrate array2table](https://github.com/Simbiat/simbiat.ru/issues/141) — use array2table in Twig where safe (server-generated output only;
-  `\|raw` permitted in those cases)
 - 🟢 XS 🔧 [game controls array](https://github.com/Simbiat/simbiat.ru/issues/234) — standardize controls display for 3 existing game pages; quick kill once Controllers exist
 
 ---

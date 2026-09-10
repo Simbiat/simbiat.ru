@@ -46,7 +46,7 @@ class Images
         }
         return false;
     }
-    
+
     /**
      * Function to merge images
      * @param array $images Array of images to merge
@@ -101,7 +101,7 @@ class Images
         }
         return $gd;
     }
-    
+
     /**
      * Convert image to webp format
      * @param string $image
@@ -153,7 +153,7 @@ class Images
         }
         return false;
     }
-    
+
     /**
      * Check if GIF is animated
      * Taken from https://stackoverflow.com/a/47907134/2992851
@@ -172,7 +172,7 @@ class Images
         // * a static 4-byte sequence (\x00\x21\xF9\x04)
         // * 4 variable bytes
         // * a static 2-byte sequence (\x00\x2C) (some variants may use \x00\x21 ?)
-        
+
         // We read through the file til we reach the end of the file, or we've found
         // at least 2 frame headers
         $chunk = false;
@@ -184,7 +184,7 @@ class Images
         \fclose($fh);
         return $count > 1;
     }
-    
+
     /**
      * Check if PNG is animated
      * Taken from https://stackoverflow.com/a/68618296/2992851
@@ -221,7 +221,7 @@ class Images
         }
         return false;
     }
-    
+
     /**
      * Open an image file. Suppression is used for warnings about incorrect color profiles
      *
@@ -256,7 +256,7 @@ class Images
             return false;
         }
     }
-    
+
     /**
      * Display an image for "no image" scenario
      * @return void
@@ -270,7 +270,7 @@ class Images
         \readfile($file);
         exit(0);
     }
-    
+
     /**
      * Display a red cross indicating an error
      * @return void
@@ -284,7 +284,7 @@ class Images
         \readfile($file);
         exit(0);
     }
-    
+
     /**
      * Display a green check mark indicating success
      * @return void
@@ -298,7 +298,7 @@ class Images
         \readfile($file);
         exit(0);
     }
-    
+
     /**
      * Function to generate data for og:image using provided file ID
      * @param string $file_id File ID to use
@@ -329,7 +329,12 @@ class Images
         if (!in_array($info['mime'], ['image/png', 'image/jpeg', 'image/webp'])) {
             return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }
-        [$info['width'], $info['height']] = \getimagesize($file);
+        $sizes = \getimagesize($file);
+        if ($sizes === false) {
+            return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
+        }
+        $info['width'] = $sizes[0];
+        $info['height'] = $sizes[1];
         if ($info['width'] < 1200 || $info['height'] < 630 || \round($info['width'] / $info['height'], 1) !== 1.9) {
             return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }

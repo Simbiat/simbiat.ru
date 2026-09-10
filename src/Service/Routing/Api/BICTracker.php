@@ -4,6 +4,9 @@ declare(strict_types = 1);
 namespace App\Service\Routing\Api;
 
 use App\Controller\Api\Api;
+use App\Controller\Api\BIC\Bic;
+use App\Controller\Api\BIC\DBUpdate;
+use App\Controller\Api\BIC\Keying;
 
 class BICTracker extends Api
 {
@@ -25,9 +28,9 @@ class BICTracker extends Api
     protected function genData(array $path): array
     {
         return match($path[0]){
-            'bics' => (new \App\Controller\Api\BIC\Bic)->getData(\array_slice($path, 1)),
-            'keying' => (new \App\Controller\Api\BIC\Keying)->getData(\array_slice($path, 1)),
-            'dbupdate' => (new \App\Controller\Api\BIC\DBUpdate)->getData(\array_slice($path, 1)),
+            'bics' => new Bic()->getData(\array_slice($path, 1)),
+            'keying' => new Keying()->getData(\array_slice($path, 1)),
+            'dbupdate' => new DBUpdate()->getData(\array_slice($path, 1)),
         };
     }
 }

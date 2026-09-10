@@ -3,11 +3,12 @@ declare(strict_types = 1);
 
 namespace App\Service\Routing\Api;
 
+use App\Controller\Api\Api;
 use App\Controller\Api\Talks\Posts;
 use App\Controller\Api\Talks\Sections;
 use App\Controller\Api\Talks\Threads;
 
-class Talks extends \App\Controller\Api\Api
+class Talks extends Api
 {
     #Supported edges
     protected array $sub_routes = [
@@ -27,9 +28,9 @@ class Talks extends \App\Controller\Api\Api
     protected function genData(array $path): array
     {
         return match($path[0]) {
-            'sections' => (new Sections())->route(\array_slice($path, 1)),
-            'threads' => (new Threads())->route(\array_slice($path, 1)),
-            'posts' => (new Posts())->route(\array_slice($path, 1)),
+            'sections' => new Sections()->route(\array_slice($path, 1)),
+            'threads' => new Threads()->route(\array_slice($path, 1)),
+            'posts' => new Posts()->route(\array_slice($path, 1)),
         };
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace App\Service\Routing\Api;
 
+use App\Controller\Api\Api;
 use App\Controller\Api\FFXIV\Achievement;
 use App\Controller\Api\FFXIV\Character;
 use App\Controller\Api\FFXIV\CrossworldLinkshell;
@@ -10,9 +11,8 @@ use App\Controller\Api\FFXIV\FreeCompany;
 use App\Controller\Api\FFXIV\Linkshell;
 use App\Controller\Api\FFXIV\MergeCrest;
 use App\Controller\Api\FFXIV\PvPTeam;
-use function array_slice;
 
-class FFTracker extends \App\Controller\Api\Api
+class FFTracker extends Api
 {
     #Supported edges
     protected array $sub_routes = [
@@ -32,17 +32,17 @@ class FFTracker extends \App\Controller\Api\Api
     protected bool $top_level = false;
     #Flag to indicate, that this is the lowest level
     protected bool $final_node = false;
-    
+
     protected function genData(array $path): array
     {
         return match($path[0]) {
-            'characters' => (new Character())->getData(array_slice($path, 1)),
-            'freecompanies' => (new FreeCompany())->getData(array_slice($path, 1)),
-            'linkshells' => (new Linkshell())->getData(array_slice($path, 1)),
-            'crossworld_linkshells' => (new CrossworldLinkshell())->getData(array_slice($path, 1)),
-            'pvpteams' => (new PvPTeam())->getData(array_slice($path, 1)),
-            'achievements' => (new Achievement())->getData(array_slice($path, 1)),
-            'merge_crest' => (new MergeCrest())->getData(array_slice($path, 1)),
+            'characters' => new Character()->getData(\array_slice($path, 1)),
+            'freecompanies' => new FreeCompany()->getData(\array_slice($path, 1)),
+            'linkshells' => new Linkshell()->getData(\array_slice($path, 1)),
+            'crossworld_linkshells' => new CrossworldLinkshell()->getData(\array_slice($path, 1)),
+            'pvpteams' => new PvPTeam()->getData(\array_slice($path, 1)),
+            'achievements' => new Achievement()->getData(\array_slice($path, 1)),
+            'merge_crest' => new MergeCrest()->getData(\array_slice($path, 1)),
         };
     }
 }

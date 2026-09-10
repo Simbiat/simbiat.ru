@@ -28,9 +28,9 @@ class Kernel extends BaseKernel
         parent::boot();
         if (!$this->app_bootstrapped) {
             $this->app_bootstrapped = true;
-            #Generate basic settings
+            // Generate basic settings
             new Config();
-            #Set error handling
+            // Set error handling
             \set_error_handler('\App\Service\Errors::error_handler');
             \set_exception_handler('\App\Service\Errors::error_log');
             \register_shutdown_function('\App\Service\Errors::shutdown');
