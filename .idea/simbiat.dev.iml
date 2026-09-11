@@ -68,6 +68,10 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/DDCIcons/icons" />
       <excludeFolder url="file://$MODULE_DIR$/var/cache" />
       <excludeFolder url="file://$MODULE_DIR$/var/log" />
+      <excludeFolder url="file://$MODULE_DIR$/var/deploy" />
+      <excludeFolder url="file://$MODULE_DIR$/var/mergedcrests" />
+      <excludeFolder url="file://$MODULE_DIR$/var/share" />
+      <excludeFolder url="file://$MODULE_DIR$/var/sitemap" />
       <excludePattern pattern="public\assets\app.*" />
     </content>
     <orderEntry type="inheritedJdk" />
