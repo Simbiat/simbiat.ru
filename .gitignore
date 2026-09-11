@@ -176,3 +176,12 @@ dist
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
+
+# Generated files:
+/config/caddy.json
+/config/mime.types
+/build/js/shared_with_php.json
+/public/assets/app.js*
+/public/assets/styles/app.css*
+/public/assets/styles/tinymce.css*
+/public/assets/styles/email.css*
