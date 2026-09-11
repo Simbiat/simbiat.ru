@@ -1,4 +1,4 @@
-ARG MARIADB_VERSION=12.3.3
+ARG MARIADB_VERSION
 
 FROM mariadb:${MARIADB_VERSION}
 #Copying files for initial restore. Only really needed in case no physical backup (from mariadb-backup or alternatives) is available
@@ -21,7 +21,6 @@ ENV MARIADB_AUTO_UPGRADE=true \
 # Need LZ4 compression plugin for MariaDB, and 7zip for backups compression
 RUN apt-get -y update && \
     apt-get -y --no-install-recommends upgrade && \
-    #TODO: Update version here \
     apt-get -y --no-install-recommends install mariadb-plugin-provider-lz4=${MARIADB_VERSION}* 7zip && \
     apt-get -y autoremove && \
     apt-get clean

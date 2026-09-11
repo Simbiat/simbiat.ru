@@ -3,6 +3,7 @@ services:
   mariadb:
     build:
       args:
+        MARIADB_VERSION: ${DATABASE_VERSION}
         PUID: ${HOST_UID}
         PGID: ${HOST_GID}
       context: ../../../build/docker/mariadb
