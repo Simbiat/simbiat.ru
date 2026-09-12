@@ -70,7 +70,7 @@ abstract class Page
     ];
     #List of images to H2 push, which are dependent on data grabbed by the page during generation
     protected array $h2_push_extra = [];
-    
+
     final public function __construct()
     {
         #Check that subclass has set appropriate properties
@@ -82,7 +82,7 @@ abstract class Page
         #Set last modified data
         $this->last_modified = \time();
     }
-    
+
     /**
      * Send common headers
      * @return void
@@ -95,15 +95,15 @@ abstract class Page
             \header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
             \header('Allow: GET, HEAD, OPTIONS');
             \header('Content-Type: text/html; charset=utf-8');
-            \header('SourceMap: /assets/'.\filemtime(Config::$js_dir.'/app.js').'.js.map', false);
-            \header('SourceMap: /assets/styles/'.\filemtime(Config::$css_dir.'/app.css').'.css.map', false);
+            \header('SourceMap: /assets/'.\filemtime(Config::$js_dir.'app.js').'.js.map', false);
+            \header('SourceMap: /assets/styles/'.\filemtime(Config::$css_dir.'app.css').'.css.map', false);
             \header('NEL: {"report_to":"default","max_age":31536000,"include_subdomains":true}');
             \header('feature-policy: accelerometer \'none\'; gyroscope \'none\'; magnetometer \'none\'; camera \'none\'; microphone \'none\'; midi \'none\'; usb \'none\'; encrypted-media \'self\'; publickey-credentials-get \'self\'; geolocation \'none\'; xr-spatial-tracking \'none\'; payment \'none\'; display-capture \'none\'; web-share \'none\'; sync-xhr \'none\'; autoplay \'none\'; fullscreen \'none\'; picture-in-picture \'none\'');
             \header('permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), cross-origin-isolated=(self), display-capture=(), document-domain=(), encrypted-media=(self), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(self), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(self), xr-spatial-tracking=(), clipboard-read=(self), clipboard-write=(self), gamepad=(self), speaker-selection=(), hid=(), idle-detection=(), interest-cohort=(), serial=()');
             \header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' https://img2.finalfantasyxiv.com; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\'; trusted-types dompurify default;');
         }
     }
-    
+
     /**
      * Get the page
      * @param array $path
@@ -207,7 +207,7 @@ abstract class Page
         }
         return $page;
     }
-    
+
     /**
      * Generate Last-Modified header
      * @param int|string|null $time
@@ -233,7 +233,7 @@ abstract class Page
         #Set the flag indicating, that header was sent, but we did not exit, so that the header will not be sent the 2nd time
         $this->header_sent = true;
     }
-    
+
     /**
      * Function to append a breadcrumb, which is based on the last crumb currently set
      * @param string $path  Current path node
@@ -250,7 +250,7 @@ abstract class Page
             'name' => $name,
         ];
     }
-    
+
     /**
      * Function to get last breadcrumb's href
      * @return string
@@ -259,7 +259,7 @@ abstract class Page
     {
         return $this->breadcrumb[\array_key_last($this->breadcrumb)]['href'];
     }
-    
+
     /**
      * Function to set og:desc
      * @param string $string
@@ -292,7 +292,7 @@ abstract class Page
             $this->og_desc = $new_description;
         }
     }
-    
+
     /**
      * Generation of the page data
      * @param array $path

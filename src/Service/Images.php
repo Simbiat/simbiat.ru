@@ -264,7 +264,7 @@ class Images
     #[NoReturn]
     public static function noImage(): void
     {
-        $file = Config::$img_dir.'/noimage.svg';
+        $file = Config::$img_dir.'noimage.svg';
         \header('Content-Type: image/svg+xml');
         \header('Content-Length: '.\filesize($file));
         \readfile($file);
@@ -278,7 +278,7 @@ class Images
     #[NoReturn]
     public static function errorImage(): void
     {
-        $file = Config::$img_dir.'/close.svg';
+        $file = Config::$img_dir.'close.svg';
         \header('Content-Type: image/svg+xml');
         \header('Content-Length: '.\filesize($file));
         \readfile($file);
@@ -292,7 +292,7 @@ class Images
     #[NoReturn]
     public static function successImage(): void
     {
-        $file = Config::$img_dir.'/check.svg';
+        $file = Config::$img_dir.'check.svg';
         \header('Content-Type: image/svg+xml');
         \header('Content-Length: '.\filesize($file));
         \readfile($file);
@@ -317,7 +317,7 @@ class Images
             $hash_tree = Sanitization::hashTree($file_id);
             #Use glob to get a real file path. We could simplify this by taking the extension from DB and using is_file,
             #but want to avoid reliance on DB here, especially since it won't provide that much of a speed boost, if any.
-            $file = \glob(Config::$uploaded_img.'/'.$hash_tree.'/'.$file_id.'.*');
+            $file = \glob(Config::$uploaded_img.$hash_tree.'/'.$file_id.'.*');
             if (empty($file)) {
                 return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
             }

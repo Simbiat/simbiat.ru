@@ -27,7 +27,7 @@ class Activation extends Page
     protected string $og_desc = 'Page used for user or email activation';
     #Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cache_strategy = 'private';
-    
+
     /**
      * Generation of the page data
      * @param array $path
@@ -58,7 +58,7 @@ class Activation extends Page
         }
         $output_array = [];
         #Check if the user requires activation
-        $output_array['activation'] = Query::query('SELECT `user_id` FROM `uc__user_to_group` WHERE `user_id`=:user_id AND `group_id`=:group_id', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::GROUP_IDS['Unverified'], 'int']], return: 'check');
+        $output_array['activation'] = Query::query('SELECT `user_id` FROM `uc__user_to_group` WHERE `user_id`=:user_id AND `group_id`=:group_id', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::$group_ids['Unverified'], 'int']], return: 'check');
         #Get a list of mails for the user with activation codes
         $emails = Query::query('SELECT `email` FROM `uc__emails` WHERE `user_id`=:user_id AND `activation` IS NOT NULL;', [':user_id' => [$user_id, 'int']], return: 'column');
         #Check if the provided activation code fits any of those mails

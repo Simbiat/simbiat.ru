@@ -1,0 +1,4 @@
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+parameters:
+    app.domain: 'simbiat.eu'
+    app.http_host: 'www.%app.domain%'

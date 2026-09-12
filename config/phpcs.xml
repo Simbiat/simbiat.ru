@@ -45,6 +45,7 @@
 
     <!-- PHP compatibility -->
     <rule ref="PHPCompatibility"/>
+    <config name="testVersion" value="8.5-"/>
 
     <!-- Slevomat quality rules -->
     <rule ref="SlevomatCodingStandard"/>
@@ -103,6 +104,11 @@
         <!-- Conflicts with SlevomatCodingStandard.Functions.RequireTrailingCommaInCall.MissingTrailingComma -->
         <exclude name="SlevomatCodingStandard.Functions.DisallowTrailingCommaInCall.DisallowedTrailingComma"/>
     </rule>
+    <rule ref="SlevomatCodingStandard.Functions.RequireMultiLineCall">
+        <properties>
+            <property name="minParametersCount" value="5"/>
+        </properties>
+    </rule>
 
     <!-- Control structures -->
     <rule ref="SlevomatCodingStandard.ControlStructures">
@@ -154,8 +160,7 @@
     <rule ref="Zend">
         <!-- Conflicts with project's conventions -->
         <exclude name="Zend.NamingConventions.ValidVariableName.NotCamelCaps"/>
-        <!-- Deprecated rule -->
-        <exclude name="Zend.Debug.CodeAnalyzer"/>
+        <exclude name="Zend.NamingConventions.ValidVariableName.MemberVarNotCamelCaps"/>
     </rule>
 
     <rule ref="Generic.Files.LineLength.MaxExceeded">

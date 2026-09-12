@@ -1,18 +1,4 @@
 {
-    "name": "simbiat/simbiat.ru",
-    "description": "Package for simbiat.eu",
-    "prefer-stable": true,
-    "version": "1.0.0",
-    "minimum-stability": "stable",
-    "license": "AGPL-3.0-or-later",
-    "authors": [
-        {
-            "name": "Dmitrii Kustov",
-            "email": "support@simbiat.eu",
-            "homepage": "https://www.simbiat.eu",
-            "role": "Developer"
-        }
-    ],
     "_comment": [
         "\"cache:clear\": \"symfony-cmd\" was replaced by a custom script that ensures that Xdebug is disabled when it's run, because otherwise it takes too long",
         "",
@@ -58,6 +44,52 @@
         "psr/link suggests:",
         "fig/link-util, since not using the library, as far as I know (not directly, at least)"
     ],
+    "authors": [
+        {
+            "name": "Dmitrii Kustov",
+            "email": "support@simbiat.eu",
+            "homepage": "https://www.simbiat.eu",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "./src"
+        },
+        "classmap": [
+            "./packages"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "store-auths": true,
+        "optimize-autoloader": true,
+        "classmap-authoritative": true,
+        "htaccess-protect": true,
+        "platform-check": true,
+        "process-timeout": 900,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "php-http/discovery": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
+        "bump-after-update": true
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "description": "Package for simbiat.eu",
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "8.*"
+        }
+    },
+    "license": "AGPL-3.0-or-later",
+    "minimum-stability": "stable",
+    "name": "simbiat/simbiat.ru",
+    "prefer-stable": true,
     "require": {
         "php": "^8.5",
         "ext-apcu": "*",
@@ -131,8 +163,8 @@
         "ext-pcov": "*",
         "ext-xdebug": "*",
         "dealerdirect/phpcodesniffer-composer-installer": "^1.2.1",
-        "escapestudios/symfony2-coding-standard": "^3.16",
-        "phpcompatibility/php-compatibility": "^9.3.5",
+        "escapestudios/symfony2-coding-standard": "^3.18",
+        "phpcompatibility/php-compatibility": "^10@dev",
         "phpcsstandards/phpcsextra": "^1.5.1",
         "phpstan/phpstan": "^2.2.13",
         "phpstan/phpstan-deprecation-rules": "^2.0.5",
@@ -143,23 +175,25 @@
         "psalm/plugin-phpunit": "^0",
         "psalm/plugin-symfony": "^5.3",
         "roave/security-advisories": "dev-latest",
-        "slevomat/coding-standard": "^8.22.1",
-        "squizlabs/php_codesniffer": "^3.13.6",
+        "slevomat/coding-standard": "^8.31.1",
+        "squizlabs/php_codesniffer": "^4.0.4",
         "symfony/browser-kit": "^8.1.5",
         "symfony/css-selector": "^8.1.6",
         "symfony/debug-bundle": "^8.1",
         "symfony/maker-bundle": "^1.67",
         "symfony/stopwatch": "^8.1",
         "symfony/web-profiler-bundle": "^8.1.5",
-        "vimeo/psalm": "^6.17.0"
-    },
-    "conflict": {
-        "symfony/symfony": "*"
+        "vimeo/psalm": "^6.17.1",
+        "friendsofphp/php-cs-fixer": "^3.95.25",
+        "phpmd/phpmd": "^3.0.0@dev",
+        "pdepend/pdepend": "^3.0.0@dev"
     },
     "scripts": {
         "phpstan": "phpstan analyse -c /app/config/phpstan.neon --memory-limit 1G",
         "psalm": "psalm --config=/app/config/psalm.xml --memory-limit=1G",
         "phpcs": "phpcs --standard=/app/config/phpcs.xml",
+        "php-cs-fixer": "php-cs-fixer fix --dry-run --config=/app/config/php-cs-fixer.php --using-cache=yes --cache-file=/app/data/temp/.php-cs-fixer.cache --verbose --allow-risky=yes --path-mode=intersection",
+        "phpmd": "phpmd analyze --cache --cache-file=/app/data/temp/.phpmd.result-cache.php --cache-strategy=content --ruleset=/app/config/phpmd.xml --threads=4 --jetbrains=simbiat.eu",
         "auto-scripts": {
             "php -d xdebug.mode=off bin/console cache:clear": "script",
             "assets:install %PUBLIC_DIR%": "symfony-cmd",
@@ -174,34 +208,5 @@
         ],
         "cache:clear_dev": "php -d xdebug.mode=off bin/console cache:clear --env=dev"
     },
-    "autoload": {
-        "psr-4": {
-            "App\\": "./src"
-        },
-        "classmap": [
-            "./packages"
-        ]
-    },
-    "config": {
-        "sort-packages": true,
-        "store-auths": true,
-        "optimize-autoloader": true,
-        "classmap-authoritative": true,
-        "htaccess-protect": true,
-        "platform-check": true,
-        "process-timeout": 900,
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "php-http/discovery": true,
-            "symfony/flex": true,
-            "symfony/runtime": true
-        },
-        "bump-after-update": true
-    },
-    "extra": {
-        "symfony": {
-            "allow-contrib": false,
-            "require": "8.*"
-        }
-    }
+    "version": "1.0.0"
 }

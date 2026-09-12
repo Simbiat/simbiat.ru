@@ -32,7 +32,7 @@ class Sessions extends Page
     protected string $cache_strategy = 'private';
     #Flag indicating that authentication is required
     protected bool $authentication_needed = true;
-    
+
     /**
      * Generation of the page data
      * @param array $path
@@ -92,7 +92,7 @@ class Sessions extends Page
                     $output_array[$type][$key]['client']['icon'] = null;
                 }
                 #Set country icon if a flag exists
-                if (!empty($output_array[$type][$key]['country']) && \is_file(Config::$img_dir.'/flags/'.$output_array[$type][$key]['country'].'.svg')) {
+                if (!empty($output_array[$type][$key]['country']) && \is_file(Config::$img_dir.'flags/'.$output_array[$type][$key]['country'].'.svg')) {
                     $output_array[$type][$key]['country_icon'] = '/assets/images/flags/'.$output_array[$type][$key]['country'].'.svg';
                 } else {
                     $output_array[$type][$key]['country_icon'] = null;

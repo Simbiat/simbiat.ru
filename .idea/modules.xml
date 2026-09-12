@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/simbiat.dev.iml" filepath="$PROJECT_DIR$/.idea/simbiat.dev.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/simbiat.eu.iml" filepath="$PROJECT_DIR$/.idea/simbiat.eu.iml" />
     </modules>
   </component>
 </project>

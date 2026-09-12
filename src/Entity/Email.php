@@ -32,7 +32,7 @@ final class Email extends Entity
     private ?string $subscribed = null;
     #Whether email is activated (when null)
     private ?string $activation = 'not yet activated';
-    
+
     /**
      * Overriding the standard function to use a standard email filter
      * @param string|int $id
@@ -54,7 +54,7 @@ final class Email extends Entity
         $this->getFromDB();
         return $this;
     }
-    
+
     /**
      * Function to get initial data from DB
      * @return array
@@ -77,7 +77,7 @@ final class Email extends Entity
         $this->banned = Query::query('SELECT `mail` FROM `uc__bad_mails` WHERE `mail`=:mail', [':mail' => $this->id], return: 'check');
         return [];
     }
-    
+
     /**
      * Function process database data
      *
@@ -89,7 +89,7 @@ final class Email extends Entity
     {
         Converters::arrayToProperties($this, $from_db);
     }
-    
+
     /**
      * Check if mail is either banned or used
      * @return bool
@@ -101,7 +101,7 @@ final class Email extends Entity
         }
         return ($this->banned || ($this->registered && !$this->anonymous && $this->activation === null));
     }
-    
+
     /**
      * Subscribe email to notifications
      * @return bool
@@ -137,7 +137,7 @@ final class Email extends Entity
         Security::log(LogType::UserDetailsChanged->value, 'Attempted to subscribe email', ['email' => $this->id, 'result' => $result]);
         return $result;
     }
-    
+
     /**
      * Unsubscribe email
      *
@@ -190,7 +190,7 @@ final class Email extends Entity
         Security::log(LogType::UserDetailsChanged->value, 'Attempted to unsubscribe email', ['email' => $this->id, 'result' => $result]);
         return ['response' => $result, 'email' => $this->id];
     }
-    
+
     /**
      * Check if it's safe to unsubscribe the email
      * @return bool
@@ -206,7 +206,7 @@ final class Email extends Entity
             $emails['emails'][$exists]['activation'] === null && $emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1
         );
     }
-    
+
     /**
      * Delete email
      * @return bool
@@ -225,7 +225,7 @@ final class Email extends Entity
         Security::log(LogType::UserDetailsChanged->value, 'Attempted to delete email', ['email' => $this->id, 'result' => $result]);
         return $result;
     }
-    
+
     /**
      * Check if it's safe to remove the email
      * @return bool
@@ -251,7 +251,7 @@ final class Email extends Entity
         }
         return true;
     }
-    
+
     /**
      * Add email
      *
@@ -293,7 +293,7 @@ final class Email extends Entity
         }
         return ['http_error' => 500, 'reason' => 'Failed to write email to database'];
     }
-    
+
     /**
      * Activate user
      *
@@ -316,9 +316,9 @@ final class Email extends Entity
             #Remove the code from DB
             ['UPDATE `uc__emails` SET `activation`=NULL WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$user_id, 'int'], ':email' => $this->id]],
             #Add user to register users
-            ['INSERT IGNORE INTO `uc__user_to_group`(`user_id`, `group_id`) VALUES (:user_id, :group_id)', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::GROUP_IDS['Users'], 'int']]],
+            ['INSERT IGNORE INTO `uc__user_to_group`(`user_id`, `group_id`) VALUES (:user_id, :group_id)', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::$group_ids['Users'], 'int']]],
             #Remove user from unverified users
-            ['DELETE FROM `uc__user_to_group` WHERE `user_id`=:user_id AND `group_id`=:group_id', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::GROUP_IDS['Unverified'], 'int']]],
+            ['DELETE FROM `uc__user_to_group` WHERE `user_id`=:user_id AND `group_id`=:group_id', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::$group_ids['Unverified'], 'int']]],
             #Claim Contact Form threads created while using the emai
             ['UPDATE `talks__threads` SET `author`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `author`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown->value, 'int']]],
             ['UPDATE `talks__threads` SET `editor`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `editor`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown->value, 'int']]],
@@ -342,7 +342,7 @@ final class Email extends Entity
         Security::log(LogType::UserDetailsChanged->value, 'Attempted to activate email', ['email' => $this->id, 'result' => $result]);
         return $result;
     }
-    
+
     /**
      * Confirm email
      *

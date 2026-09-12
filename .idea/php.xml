@@ -10,38 +10,56 @@
       </laravel_pint_by_interpreter>
     </laravel_pint_settings>
   </component>
+  <component name="LaravelPintOptionsConfiguration">
+    <option name="idleDelayMs" value="1000" />
+    <option name="minIntervalMs" value="1000" />
+    <option name="runMode" value="ON_THE_FLY" />
+  </component>
   <component name="MessDetector">
     <phpmd_settings>
-      <phpmd_by_interpreter asDefaultInterpreter="true" interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" timeout="30000" />
+      <phpmd_by_interpreter interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" tool_path="phpmd" timeout="30000" />
+      <phpmd_by_interpreter asDefaultInterpreter="true" deletedFromTheList="true" interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" tool_path="phpmd" timeout="30000" />
+      <MessDetectorConfiguration deletedFromTheList="true" tool_path="$PROJECT_DIR$/vendor/bin/phpmd" />
     </phpmd_settings>
   </component>
   <component name="MessDetectorOptionsConfiguration">
+    <option name="idleDelayMs" value="1000" />
+    <option name="minIntervalMs" value="1000" />
+    <option name="runMode" value="ON_THE_FLY" />
     <option name="transferred" value="true" />
   </component>
   <component name="PHPCSFixerOptionsConfiguration">
     <option name="allowRiskyRules" value="true" />
     <option name="codingStandard" value="Custom" />
-    <option name="rulesetPath" value="/opt/project/build/docker/frankenphp/.php-cs-fixer.php" />
+    <option name="idleDelayMs" value="1000" />
+    <option name="minIntervalMs" value="1000" />
+    <option name="runMode" value="ON_THE_FLY" />
+    <option name="rulesetPath" value="/app/config/php-cs-fixer.php" />
     <option name="transferred" value="true" />
   </component>
   <component name="PHPCodeSnifferOptionsConfiguration">
     <option name="codingStandard" value="Custom" />
     <option name="customRuleset" value="/app/config/phpcs.xml" />
+    <option name="extensions" value="php,inc" />
     <option name="installedPaths" value="$PROJECT_DIR$/vendor/escapestudios/symfony2-coding-standard" />
+    <option name="idleDelayMs" value="1000" />
+    <option name="minIntervalMs" value="1000" />
+    <option name="runMode" value="ON_THE_FLY" />
     <option name="showSniffs" value="true" />
     <option name="transferred" value="true" />
   </component>
   <component name="PhpCSFixer">
     <phpcsfixer_settings>
+      <phpcs_fixer_by_interpreter interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" tool_path="php-cs-fixer" timeout="30000" />
+      <phpcs_fixer_by_interpreter asDefaultInterpreter="true" deletedFromTheList="true" interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" standards="DoctrineAnnotation;PER;PER-CS;PER-CS1.0;PER-CS1x0;PER-CS2.0;PER-CS2x0;PER-CS3.0;PER-CS3x0;PHP54Migration;PHP56Migration;PHP5x4Migration;PHP5x6Migration;PHP70Migration;PHP71Migration;PHP73Migration;PHP74Migration;PHP7x0Migration;PHP7x1Migration;PHP7x3Migration;PHP7x4Migration;PHP80Migration;PHP81Migration;PHP82Migration;PHP83Migration;PHP84Migration;PHP85Migration;PHP8x0Migration;PHP8x1Migration;PHP8x2Migration;PHP8x3Migration;PHP8x4Migration;PHP8x5Migration;PHPUnit100Migration;PHPUnit10x0Migration;PHPUnit11x0Migration;PHPUnit30Migration;PHPUnit32Migration;PHPUnit35Migration;PHPUnit3x0Migration;PHPUnit3x2Migration;PHPUnit3x5Migration;PHPUnit43Migration;PHPUnit48Migration;PHPUnit4x3Migration;PHPUnit4x8Migration;PHPUnit50Migration;PHPUnit52Migration;PHPUnit54Migration;PHPUnit55Migration;PHPUnit56Migration;PHPUnit57Migration;PHPUnit5x0Migration;PHPUnit5x2Migration;PHPUnit5x4Migration;PHPUnit5x5Migration;PHPUnit5x6Migration;PHPUnit5x7Migration;PHPUnit60Migration;PHPUnit6x0Migration;PHPUnit75Migration;PHPUnit7x5Migration;PHPUnit84Migration;PHPUnit8x4Migration;PHPUnit91Migration;PHPUnit9x1Migration;PSR1;PSR12;PSR2;PhpCsFixer;Symfony;auto;autoPHPMigration;autoPHPUnitMigration" tool_path="php-cs-fixer" timeout="30000" />
       <PhpCSFixerConfiguration deletedFromTheList="true" tool_path="/root/.composer/vendor/bin/php-cs-fixer" />
-      <phpcs_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" standards="PSR1;PSR2;Symfony;DoctrineAnnotation;PHP70Migration;PHP71Migration" tool_path="\root\.composer\vendor\bin\php-cs-fixer" timeout="30000" />
     </phpcsfixer_settings>
   </component>
   <component name="PhpCodeSniffer">
     <phpcs_settings>
       <phpcs_by_interpreter interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" beautifier_path="phpcbf" tool_path="phpcs" timeout="30000" />
+      <phpcs_by_interpreter asDefaultInterpreter="true" deletedFromTheList="true" interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" beautifier_path="phpcbf" standards="Modernize;NormalizedArrays;PEAR;PHPCSUtils;PHPCompatibility;PSR1;PSR12;PSR2;SlevomatCodingStandard;Squiz;Symfony;Universal;Zend" tool_path="phpcs" timeout="30000" />
       <PhpCSConfiguration deletedFromTheList="true" beautifier_path="$PROJECT_DIR$/vendor/bin/phpcbf" tool_path="$PROJECT_DIR$/vendor/bin/phpcs" />
-      <phpcs_by_interpreter asDefaultInterpreter="true" deletedFromTheList="true" interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" beautifier_path="phpcbf" standards="Modernize;MySource;NormalizedArrays;PEAR;PHPCSUtils;PHPCompatibility;PSR1;PSR12;PSR2;SlevomatCodingStandard;Squiz;Symfony;Universal;Zend" tool_path="phpcs" timeout="30000" />
     </phpcs_settings>
   </component>
   <component name="PhpIncludePathManager">
@@ -225,6 +243,22 @@
       <path value="$PROJECT_DIR$/vendor/symfony/html-sanitizer" />
       <path value="$PROJECT_DIR$/vendor/symfony/web-link" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php86" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/file-filter" />
+      <path value="$PROJECT_DIR$/vendor/react/child-process" />
+      <path value="$PROJECT_DIR$/vendor/react/stream" />
+      <path value="$PROJECT_DIR$/vendor/react/dns" />
+      <path value="$PROJECT_DIR$/vendor/react/promise" />
+      <path value="$PROJECT_DIR$/vendor/react/socket" />
+      <path value="$PROJECT_DIR$/vendor/react/event-loop" />
+      <path value="$PROJECT_DIR$/vendor/phpmd/phpmd" />
+      <path value="$PROJECT_DIR$/vendor/react/cache" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php81" />
+      <path value="$PROJECT_DIR$/vendor/pdepend/pdepend" />
+      <path value="$PROJECT_DIR$/vendor/evenement/evenement" />
+      <path value="$PROJECT_DIR$/vendor/clue/ndjson-react" />
+      <path value="$PROJECT_DIR$/vendor/ergebnis/agent-detector" />
+      <path value="$PROJECT_DIR$/vendor/friendsofphp/php-cs-fixer" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -422,12 +456,15 @@
   <component name="PhpStan">
     <PhpStan_settings>
       <phpstan_by_interpreter interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" tool_path="phpstan" timeout="60000" />
-      <PhpStanConfiguration deletedFromTheList="true" tool_path="/root/.composer/vendor/bin/phpstan" />
       <phpstan_by_interpreter asDefaultInterpreter="true" deletedFromTheList="true" interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" tool_path="phpstan" timeout="60000" />
+      <PhpStanConfiguration deletedFromTheList="true" tool_path="/root/.composer/vendor/bin/phpstan" />
     </PhpStan_settings>
   </component>
   <component name="PhpStanOptionsConfiguration">
     <option name="config" value="/app/config/phpstan.neon" />
+    <option name="idleDelayMs" value="1000" />
+    <option name="minIntervalMs" value="1000" />
+    <option name="runMode" value="ON_THE_FLY" />
     <option name="transferred" value="true" />
   </component>
   <component name="PhpUnit">
@@ -439,12 +476,15 @@
   <component name="Psalm">
     <Psalm_settings>
       <psalm_fixer_by_interpreter interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" tool_path="psalm" timeout="60000" />
-      <PsalmConfiguration deletedFromTheList="true" tool_path="/root/.composer/vendor/bin/psalm" />
       <psalm_fixer_by_interpreter asDefaultInterpreter="true" deletedFromTheList="true" interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" tool_path="psalm" timeout="60000" />
+      <PsalmConfiguration deletedFromTheList="true" tool_path="/root/.composer/vendor/bin/psalm" />
     </Psalm_settings>
   </component>
   <component name="PsalmOptionsConfiguration">
     <option name="config" value="/app/config/psalm.xml" />
+    <option name="idleDelayMs" value="1000" />
+    <option name="minIntervalMs" value="1000" />
+    <option name="runMode" value="ON_THE_FLY" />
     <option name="transferred" value="true" />
   </component>
   <component name="TwigDebugConfiguration">

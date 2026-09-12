@@ -49,7 +49,7 @@ final class Healthcheck
         }
         // Connect to DB
         Config::dbConnect();
-        if (Config::$prod && !Config::$dbup) {
+        if (Config::$environment === 'prod' && !Config::$dbup) {
             // Do not do anything if mail has already been sent
             if (!\is_file($no_db_flag)) {
                 // Send mail

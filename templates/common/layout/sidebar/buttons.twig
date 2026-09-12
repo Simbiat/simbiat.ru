@@ -14,7 +14,7 @@
 <side-show>
     {{ include('CustomElements/WebShare.twig', with_context = false) }}
 </side-show>
-{% if is_prod == false %}
+{% if is_prod != 'prod' %}
     <side-show id="prod_link" class="sepia_100">
         <button type="button">
             <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="Open Prod version" src="/assets/images/newtab.svg" width="735" height="735">

@@ -440,17 +440,17 @@ abstract class Notification extends Entity
         $mailer = new Mailer(Transport::fromDsn($_ENV['MAILER_DSN'], $event_dispatcher), null, $event_dispatcher);
         #Create basic email
         $email = new TemplatedEmail()
-            ->from(new Address(Config::$from_email, Config::SITE_NAME))
-            ->replyTo(new Address(Config::$from_email, Config::SITE_NAME));
+            ->from(new Address(Config::$from_email, Config::$site_name))
+            ->replyTo(new Address(Config::$from_email, Config::$site_name));
         #Add receiver
-        if (Config::$prod) {
+        if (Config::$environment === 'prod') {
             $email = $email->addTo(new Address($this->email, $username));
         } else {
             #On test always use admin mail
             $email = $email->addTo(Config::$admin_email);
         }
         #Set priority
-        if (Config::$prod) {
+        if (Config::$environment === 'prod') {
             if ($this::PRIORITY > 1) {
                 $email->getHeaders()->addTextHeader('Priority', 'Urgent')->addTextHeader('Importance', 'High');
             } elseif ($this::PRIORITY < 1) {
@@ -463,9 +463,9 @@ abstract class Notification extends Entity
         }
         try {
             #Add content
-            $email->subject((Config::$prod ? '' : '[Test] ').$this::SUBJECT)
+            $email->subject((Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT)
                 ->htmlTemplate('email.twig')
-                ->context(['subject' => (Config::$prod ? '' : '[Test] ').$this::SUBJECT, 'username' => $username, 'unsubscribe_all' => $subscribed, 'text' => $this->text, 'tracker' => $this->id, 'created' => $this->created, 'sent' => \time()]);
+                ->context(['subject' => (Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT, 'username' => $username, 'unsubscribe_all' => $subscribed, 'text' => $this->text, 'tracker' => $this->id, 'created' => $this->created, 'sent' => \time()]);
             try {
                 Query::query('UPDATE `sys__notifications` SET `attempts`=`attempts`+1, `last_attempt`=CURRENT_TIMESTAMP(6) WHERE `uuid` = :uuid;', [':uuid' => $this->id]);
             } catch (\Throwable $exception) {

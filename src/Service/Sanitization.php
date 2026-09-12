@@ -15,15 +15,15 @@ use function in_array;
  */
 class Sanitization
 {
-    
+
     #Static sanitizer configs for a little bit of performance
     private(set) static array $sanitizer_config = ['body' => null, 'head' => null, 'timeline' => null];
-    
+
     /**
      * Elements names, that can be used for sanitization
      */
     public const array SANITIZATION_ELEMENT_NAMES = ['body', 'head', 'timeline'];
-    
+
     /**
      * Sanitize HTML string
      *
@@ -55,7 +55,7 @@ class Sanitization
         #TODO add loading="lazy" decoding="async" to all images
         return $string;
     }
-    
+
     /**
      * Helper function to generate HtmlSanitizerConfig if it's not created yet
      *
@@ -115,7 +115,7 @@ class Sanitization
         self::$sanitizer_config[$for] = $config;
         return $config;
     }
-    
+
     /**
      * Remove controls characters from strings and arrays.
      * @param string $string    String to sanitize. Arrays are also accepted, but it's expected that they will have string values only.
@@ -130,7 +130,7 @@ class Sanitization
         }
         return \preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/iu', '', $string) ?? '';
     }
-    
+
     /**
      * Remove control characters from strings in an array.
      * @param array $array     Array to sanitize
@@ -146,7 +146,7 @@ class Sanitization
             }
         }
     }
-    
+
     /**
      * Function to convert checkbox values to boolean.
      * Using reference to "simulate" isset()/empty() behavior (as per https://stackoverflow.com/questions/55060/php-function-argument-error-suppression-empty-isset-emulation)
@@ -168,7 +168,7 @@ class Sanitization
         }
         return (bool)$checkbox;
     }
-    
+
     /**
      * Function to sanitize time for creating scheduled section/threads/posts
      * @param string|int|null $time
@@ -198,7 +198,7 @@ class Sanitization
         }
         return $time;
     }
-    
+
     /**
      * Function to generate a "hash tree" from string
      * @param string $string
@@ -209,7 +209,7 @@ class Sanitization
     {
         return mb_substr($string, 0, 2, 'UTF-8').'/'.mb_substr($string, 2, 2, 'UTF-8').'/'.mb_substr($string, 4, 2, 'UTF-8');
     }
-    
+
     /**
      * Get a link for the uploaded file based on its filename (ID + extension)
      *
@@ -222,10 +222,10 @@ class Sanitization
         #Get hash tree
         $hash_tree = self::hashTree($filename);
         #Check if the file exists in images
-        if (\file_exists(Config::$uploaded_img.'/'.$hash_tree.'/'.$filename)) {
+        if (\file_exists(Config::$uploaded_img.$hash_tree.'/'.$filename)) {
             return '/assets/images/uploaded/'.$hash_tree.'/'.$filename;
         }
-        if (\file_exists(Config::$uploaded.'/'.$hash_tree.'/'.$filename)) {
+        if (\file_exists(Config::$uploaded.$hash_tree.'/'.$filename)) {
             return '/assets/uploaded/'.$hash_tree.'/'.$filename;
         }
         return '/assets/images/noimage.svg';

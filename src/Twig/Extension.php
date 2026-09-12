@@ -46,14 +46,14 @@ final class Extension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('uploadedLink', [$runtime, 'uploadedLink']),
         ];
     }
-    
+
     /**
      * @return array<string, mixed>
      */
     public function getGlobals(): array
     {
         $defaults = [
-            'site_name' => Config::SITE_NAME,
+            'site_name' => Config::$site_name,
             'domain' => Config::$base_url,
             'canonical' => Config::$canonical,
             'url' => mb_rtrim(Config::$base_url.($_SERVER['REQUEST_URI'] ?? ''), '/', 'UTF-8'),
@@ -76,11 +76,11 @@ final class Extension extends AbstractExtension implements GlobalsInterface
         }
         return \array_merge($defaults, [
             #PROD flag
-            'is_prod' => Config::$prod,
+            'is_prod' => Config::$environment === 'prod',
             #List of LINK tags
             'link_tags' => Config::$links,
             #Time used as a version of the JS file for cache busting
-            'js_version' => \filemtime(Config::$js_dir.'/app.js'),
+            'js_version' => \filemtime(Config::$js_dir.'app.js'),
             #Save data flag
             'save_data' => $save_data,
             'unsupported' => false,

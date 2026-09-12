@@ -97,7 +97,7 @@ final class User extends Entity
     public ?string $current_avatar = null;
     #Number of strikes
     public int $strikes = 0;
-    
+
     /**
      * Function to get initial data from DB
      *
@@ -105,7 +105,7 @@ final class User extends Entity
      */
     protected function getFromDB(): array
     {
-        
+
         $db_data = Query::query('SELECT `username`, `system`, `strikes`, `ff_token`, `registered`, `updated`, `parent_id`, (IF(`parent_id` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `user_id`=:user_id))) AS `parentname`, `birthday`, `first_name`, `last_name`, `middle_name`, `father_name`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`user_id`=`uc__user_to_section`.`user_id` WHERE `uc__users`.`user_id`=:user_id', ['user_id' => [$this->id, 'int']], return: 'row');
         if (empty($db_data)) {
             return [];
@@ -121,12 +121,12 @@ final class User extends Entity
             #System users need to be treated as not activated
             $db_data['activated'] = false;
         } else {
-            $db_data['activated'] = !in_array(Config::GROUP_IDS['Unverified'], $db_data['groups'], true);
+            $db_data['activated'] = !in_array(Config::$group_ids['Unverified'], $db_data['groups'], true);
         }
         $db_data['current_avatar'] = $this->getAvatar();
         return $db_data;
     }
-    
+
     /**
      * Function process database data
      *
@@ -163,7 +163,7 @@ final class User extends Entity
         #Populate the rest properties
         Converters::arrayToProperties($this, $from_db);
     }
-    
+
     /**
      * Get user permissions
      *
@@ -183,7 +183,7 @@ final class User extends Entity
             return [];
         }
     }
-    
+
     /**
      * Get user email addresses
      *
@@ -204,7 +204,7 @@ final class User extends Entity
             return [];
         }
     }
-    
+
     /**
      * Get current avatar
      *
@@ -222,7 +222,7 @@ final class User extends Entity
         }
         return $avatar;
     }
-    
+
     /**
      * Get all avatars
      *
@@ -238,7 +238,7 @@ final class User extends Entity
             return [];
         }
     }
-    
+
     /**
      * Add avatar
      *
@@ -300,7 +300,7 @@ final class User extends Entity
         }
         return ['location' => $upload['location'], 'response' => true];
     }
-    
+
     /**
      * Remove avatar
      *
@@ -318,7 +318,7 @@ final class User extends Entity
         Query::query('DELETE FROM `uc__avatars` WHERE `user_id`=:user_id AND `file_id`=:file_id AND `current`=0;', [':user_id' => [$this->id, 'int'], ':file_id' => $file_id]);
         return ['location' => $this->getAvatar(), 'response' => true];
     }
-    
+
     /**
      * Set current avatar
      *
@@ -344,7 +344,7 @@ final class User extends Entity
         ]);
         return ['location' => $this->getAvatar(), 'response' => true];
     }
-    
+
     /**
      * Get owned FFXIV entities
      *
@@ -373,7 +373,7 @@ final class User extends Entity
         }
         return $output_array;
     }
-    
+
     /**
      * Change username
      *
@@ -416,7 +416,7 @@ final class User extends Entity
             return ['http_error' => 500, 'reason' => 'Failed to change the username'];
         }
     }
-    
+
     /**
      * Update user profile data
      *
@@ -549,7 +549,7 @@ final class User extends Entity
         Security::log(LogType::UserDetailsChanged->value, 'Changed details', $log);
         return ['response' => $result];
     }
-    
+
     /**
      * Function to check if a name is already used
      *
@@ -566,7 +566,7 @@ final class User extends Entity
             return false;
         }
     }
-    
+
     /**
      * Function to check whether a name is banned
      *
@@ -587,7 +587,7 @@ final class User extends Entity
             return false;
         }
     }
-    
+
     /**
      * Login to the system
      *
@@ -673,7 +673,7 @@ final class User extends Entity
         new LoginSuccess()->save($this->id)->send();
         return ['response' => true];
     }
-    
+
     /**
      * Initiate password reset through email
      *
@@ -720,7 +720,7 @@ final class User extends Entity
         }
         return ['response' => true];
     }
-    
+
     /**
      * Setting cookie for remembering user
      *
@@ -797,7 +797,7 @@ final class User extends Entity
             #Do nothing, since not critical
         }
     }
-    
+
     /**
      * Function to validate password
      *
@@ -840,7 +840,7 @@ final class User extends Entity
             return false;
         }
     }
-    
+
     /**
      * Function to change the password
      *
@@ -873,7 +873,7 @@ final class User extends Entity
         }
         return $result;
     }
-    
+
     /**
      * Reset number of failed logins
      *
@@ -894,7 +894,7 @@ final class User extends Entity
             ]
         );
     }
-    
+
     /**
      * Delete cookie
      *
@@ -922,7 +922,7 @@ final class User extends Entity
         }
         return true;
     }
-    
+
     /**
      * Delete session
      *
@@ -948,7 +948,7 @@ final class User extends Entity
         }
         return true;
     }
-    
+
     /**
      * Get threads created by a user
      *
@@ -983,7 +983,7 @@ final class User extends Entity
         /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         return $threads['entities'];
     }
-    
+
     /**
      * Get posts created by the user
      *
@@ -1007,7 +1007,7 @@ final class User extends Entity
         /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         return $posts['entities'];
     }
-    
+
     /**
      * Similar to getPosts(), but only gets posts, that are the first posts in threads
      *
@@ -1072,7 +1072,7 @@ final class User extends Entity
         }
         return [];
     }
-    
+
     /**
      * Function to log the user out
      *
@@ -1101,7 +1101,7 @@ final class User extends Entity
         }
         return $result;
     }
-    
+
     /**
      * @return array
      */
@@ -1184,7 +1184,7 @@ final class User extends Entity
                     'INSERT INTO `uc__user_to_group` (`user_id`, `group_id`) VALUES ((SELECT `user_id` FROM `uc__users` WHERE `username`=:username), :group_id)',
                     [
                         ':username' => $_POST['signinup']['username'],
-                        ':group_id' => [Config::GROUP_IDS['Unverified'], 'int'],
+                        ':group_id' => [Config::$group_ids['Unverified'], 'int'],
                     ]
                 ],
             ];
@@ -1196,7 +1196,7 @@ final class User extends Entity
             return ['http_error' => 500, 'reason' => 'Registration failed'];
         }
     }
-    
+
     /**
      * Function to remove the user
      * In case of errors, we return simple `false`. I think malicious actors may abuse different error messages here.
@@ -1283,7 +1283,7 @@ final class User extends Entity
                         'INSERT INTO `uc__user_to_group` (`user_id`, `group_id`) VALUES (:user_id, :group_id);',
                         [
                             ':user_id' => [$this->id, 'int'],
-                            ':group_id' => [Config::GROUP_IDS['Deleted'], 'int'],
+                            ':group_id' => [Config::$group_ids['Deleted'], 'int'],
                         ]
                     ],
                 ];

@@ -1,10 +1,13 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 use App\Kernel;
 
-require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
+// Suppressing the inspection, since this is a path from container
+/** @noinspection PhpIncludeInspection */
+require_once '/app/vendor/autoload_runtime.php';
 
 return static function (array $context) {
-    return new Kernel($context['APP_ENV'], (bool)$context['APP_DEBUG']);
+    return new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
 };

@@ -53,7 +53,7 @@ class Feeds
                 if ($format === 'atom') {
                     $settings = [
                         'authors' => [[
-                            'name' => Config::ADMIN_NAME,
+                            'name' => Config::$admin_name,
                             'email' => Config::$admin_email,
                             'uri' => Config::$base_url.'/',
                         ]],
@@ -106,9 +106,9 @@ class Feeds
                 #Generate the feed
                 if (!empty($query)) {
                     if ($format === 'atom') {
-                        Atom::atom(Config::SITE_NAME.': '.$title, Query::query($query, [':base_url' => Config::$base_url.'/bictracker/bics/'], return: 'all'), feed_settings: $settings);
+                        Atom::atom(Config::$site_name.': '.$title, Query::query($query, [':base_url' => Config::$base_url.'/bictracker/bics/'], return: 'all'), feed_settings: $settings);
                     } elseif ($format === 'rss') {
-                        RSS::rss(Config::SITE_NAME.': '.$title, Query::query($query, return: 'all'), feed_settings: $settings);
+                        RSS::rss(Config::$site_name.': '.$title, Query::query($query, return: 'all'), feed_settings: $settings);
                     }
                 }
             }

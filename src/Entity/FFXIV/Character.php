@@ -37,7 +37,7 @@ class Character extends AbstractEntity
     public array $following = [];
     public int $achievement_points = 0;
     public array $owned = [];
-    
+
     /**
      * Function to get initial data from DB
      * @throws \Exception
@@ -92,7 +92,7 @@ class Character extends AbstractEntity
         }
         return $data;
     }
-    
+
     /**
      * Get character data from Lodestone
      *
@@ -159,7 +159,7 @@ class Character extends AbstractEntity
         $data['404'] = false;
         return $data;
     }
-    
+
     /**
      * Function to process data from DB
      *
@@ -246,7 +246,7 @@ class Character extends AbstractEntity
         $this->achievement_points = $from_db['achievement_points'] ?? 0;
         $this->jobs = $from_db['jobs'] ?? [];
     }
-    
+
     /**
      * Function to update the entity
      *
@@ -540,7 +540,7 @@ class Character extends AbstractEntity
             return false;
         }
     }
-    
+
     /**
      * Function to mark character as private
      * @return bool
@@ -573,7 +573,7 @@ class Character extends AbstractEntity
             return false;
         }
     }
-    
+
     /**
      * Extracted function to update server and name of the character
      * @param array $queries
@@ -601,7 +601,7 @@ class Character extends AbstractEntity
             ],
         ];
     }
-    
+
     /**
      * Function to update the entity
      *
@@ -667,7 +667,7 @@ class Character extends AbstractEntity
             return false;
         }
     }
-    
+
     /**
      * Link user to character
      *
@@ -707,7 +707,7 @@ class Character extends AbstractEntity
             #Link character to user
             $result = Query::query([
                 'INSERT IGNORE INTO `uc__user_to_ff_character` (`user_id`, `character_id`) VALUES (:user_id, :character_id);', [':user_id' => $_SESSION['user_id'], ':character_id' => $this->id],
-                'INSERT IGNORE INTO `uc__user_to_group` (`user_id`, `group_id`) VALUES (:user_id, :group_id);', [':user_id' => $_SESSION['user_id'], ':group_id' => [Config::GROUP_IDS['Linked to FF'], 'int']],
+                'INSERT IGNORE INTO `uc__user_to_group` (`user_id`, `group_id`) VALUES (:user_id, :group_id);', [':user_id' => $_SESSION['user_id'], ':group_id' => [Config::$group_ids['Linked to FF'], 'int']],
             ]);
             Security::log(LogType::UserDetailsChanged->value, 'Attempted to link FFXIV character', ['id' => $this->id, 'result' => $result]);
             #Download avatar

@@ -37,17 +37,6 @@ class HomePage
     private(set) static ?array $http_error = [];
     #User agent details from
     private(set) static array $user_agent = [];
-    /**
-     * Default session shape, so that code relying on it would run properly without warnings.
-     */
-    private const array SESSION_SHAPE = [
-        'user_id' => SystemUser::Unknown->value,
-        'permissions' => Config::DEFAULT_PERMISSIONS,
-        'csrf' => null,
-        'prev_page' => null,
-        'banned' => false,
-        'timezone' => 'UTC',
-    ];
 
     public function __construct()
     {
@@ -83,7 +72,18 @@ class HomePage
         #exit(0);
 
         #Set default Session shape
-        $_SESSION = self::SESSION_SHAPE;
+        $_SESSION = [
+            'user_id' => SystemUser::Unknown->value,
+            'permissions' => [
+                'view_bic',
+                'view_ff',
+                'view_posts',
+            ],
+            'csrf' => null,
+            'prev_page' => null,
+            'banned' => false,
+            'timezone' => 'UTC',
+        ];
         try {
             #Maybe a client is using HTTP1.0, and there is little to worry about, but maybe there is.
             if (empty($_SERVER['HTTP_HOST'])) {
@@ -301,7 +301,7 @@ class HomePage
                 \session_write_close();
             }
             #Cache page if cache age is set up, no errors, GET method is used, and we are on PROD
-            if (Config::$prod && !empty($twig_vars['cache_age']) && \is_numeric($twig_vars['cache_age']) && empty($twig_vars['http_error']) && self::$method === 'GET') {
+            if (Config::$environment === 'prod' && !empty($twig_vars['cache_age']) && \is_numeric($twig_vars['cache_age']) && empty($twig_vars['http_error']) && self::$method === 'GET') {
                 self::$data_cache->write($twig_vars, age: (int)$twig_vars['cache_age']);
             }
             if (self::$stale_return) {

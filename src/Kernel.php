@@ -29,7 +29,7 @@ class Kernel extends BaseKernel
         if (!$this->app_bootstrapped) {
             $this->app_bootstrapped = true;
             // Generate basic settings
-            new Config();
+            new Config($this->getContainer());
             // Set error handling
             \set_error_handler('\App\Service\Errors::error_handler');
             \set_exception_handler('\App\Service\Errors::error_log');

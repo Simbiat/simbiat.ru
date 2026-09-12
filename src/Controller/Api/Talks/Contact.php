@@ -20,11 +20,11 @@ class Contact extends Api
     protected bool $authentication_needed = false;
     #Flag to indicate need to validate CSRF
     protected bool $csrf = false;
-    
+
     protected function genData(array $path): array
     {
-        #Only creation of new threads
-        $_POST['thread_data']['parent_id'] = Config::SUPPORT_SECTION;
+        #Only creation of new threads. 26 is the static ID of the forum where the threads go
+        $_POST['thread_data']['parent_id'] = 26;
         #contact_form_email
         #Generate ticket ID
         $ticket = Security::genToken(8);

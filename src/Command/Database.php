@@ -68,7 +68,7 @@ final class Database
         $output->writeln(Errors::logfmt('Generating DDLs...'));
         try {
             #Run only ony DEV
-            if (Config::$prod) {
+            if (Config::$environment === 'prod') {
 
                 return Command::SUCCESS;
             }
@@ -81,7 +81,7 @@ final class Database
                 #Clean up SQL files but do not touch manually maintained files with prefixes `000` and `999`
                 \array_map(
                     '\unlink',
-                    \preg_grep('/\/(000|999)[^\/]*\.sql$/u', \glob(Config::$ddl_dir.'/*.sql'), \PREG_GREP_INVERT)
+                    \preg_grep('/\/(000|999)[^\/]*\.sql$/u', \glob(Config::$ddl_dir.'*.sql'), \PREG_GREP_INVERT)
                 );
                 #Get tables in order
                 foreach (Manage::showOrderedTables($_ENV['DATABASE_NAME']) as $order => $table) {
@@ -92,7 +92,7 @@ final class Database
                     }
                     #Get DDL statement
                     if (\preg_match('/^(cron|maintainer)__/ui', $table['table']) !== 1) {
-                        \file_put_contents(Config::$ddl_dir.'/'.mb_str_pad((string)($order + 1), 3, '0', \STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', mb_trim($create, null, 'UTF-8'));
+                        \file_put_contents(Config::$ddl_dir.mb_str_pad((string)($order + 1), 3, '0', \STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', mb_trim($create, null, 'UTF-8'));
                     }
                 }
             }

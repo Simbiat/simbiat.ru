@@ -10,6 +10,58 @@ parameters:
     .container.dumper.inline_factories: true
     debug.container.dump: false
 
+    # Mail for admin of the service
+    app.admin_email: "%env(ADMIN_EMAIL)%"
+    # Name of the admin
+    app.admin_name: "Dmitrii Kustov"
+    # Name of the website
+    app.site_name: "Simbiat Software"
+    # Mail to use to send emails from
+    app.from_email: "%env(PROTON_USER)%"
+    app.security_settings: "%kernel.project_dir%/data/security.json"
+    app.base_url: 'https://%app.http_host%'
+    # Section ID to be used for the contact form
+    app.support_section: 26
+    # List of system group IDs
+    app.group_ids:
+        Administrators: 1
+        Unverified: 2
+        Users: 3
+        Deleted: 4
+        Banned: 5
+        Linked to FF: 6
+        Bots: 7
+    app.cookie_settings:
+        path: '/'
+        domain: '%app.domain%'
+        secure: true
+        httponly: true
+        samesite: 'Strict'
+        partitioned: true
+
+    # Common directories. Use a trailing slash.
+    app.directories.sitemap: "%kernel.project_dir%/var/sitemap/"
+    # Path where JS files are stored
+    app.directories.js: "%kernel.project_dir%/public/assets/"
+    # Path where CSS files are stored
+    app.directories.css: "%kernel.project_dir%/public/assets/styles/"
+    # Path where images stored
+    app.directories.images: "%kernel.project_dir%/public/assets/images/"
+    # Path to uploaded files
+    app.directories.uploaded: "%kernel.project_dir%/data/uploaded/"
+    # Path to uploaded images
+    app.directories.uploaded_images: "%kernel.project_dir%/data/uploadedimages/"
+    # Folder to dump DDLs to
+    app.directories.ddl: "%kernel.project_dir%/build/DDL/"
+    app.directories.html_cache: "%kernel.project_dir%/data/temp/html/"
+    app.directories.geoip: "/geoip/"
+
+    # FFXIV directories. Use a trailing slash.
+    app.directories.ffxiv.crests.components: "%kernel.project_dir%/public/assets/images/fftracker/crests-components/"
+    app.directories.ffxiv.crests.cache: "%kernel.project_dir%/var/mergedcrests/"
+    app.directories.ffxiv.icons: "%kernel.project_dir%/public/assets/images/fftracker/icons/"
+    app.directories.ffxiv.statistics: "%kernel.project_dir%/data/ffstatistics/"
+
 services:
     # default configuration for services in *this* file
     _defaults:

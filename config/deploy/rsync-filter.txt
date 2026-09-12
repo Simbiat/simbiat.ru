@@ -39,9 +39,13 @@ H /build/useful.cmd
 + /config/
 H /config/crowdsec/online_api_credentials.example.yaml
 H /config/deploy/
+H /config/packages/dev/
+H /config/packages/test/
 H /config/eslint.config.mts
+H /config/php-cs-fixer.php
 H /config/php_dev.ini
 H /config/phpcs.xml
+H /config/phpmd.xml
 H /config/phpstan.neon
 H /config/phpunit.xml
 H /config/psalm.xml
