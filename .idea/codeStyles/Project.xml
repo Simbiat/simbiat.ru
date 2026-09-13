@@ -142,6 +142,7 @@
     </codeStyleSettings>
     <codeStyleSettings language="PHP">
       <option name="RIGHT_MARGIN" value="240" />
+      <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
       <option name="SPACE_AFTER_TYPE_CAST" value="true" />
     </codeStyleSettings>
     <codeStyleSettings language="SASS">

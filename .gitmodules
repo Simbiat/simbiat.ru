@@ -82,3 +82,6 @@
 [submodule "build/js/dev/StylelintPlugin"]
 	path = build/js/dev/StylelintPlugin
 	url = https://github.com/Simbiat/stylelint-plugin-simbiat
+[submodule "packages/Argon"]
+	path = packages/Argon
+	url = https://github.com/Simbiat/argon-calc

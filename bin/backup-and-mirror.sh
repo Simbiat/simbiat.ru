@@ -75,7 +75,7 @@ exec > >(tee -a "$LOG_FILE") 2>&1
 log "=== Run started: $(date) ==="
 
 # PHPStorm launches the PHP tools under root and leaves a lot of crap behind. Since script runs under non-root user need to user sudo here.
-sudo find "$PROJECT_DIR/data/temp" -type d -regextype posix-extended -regex '.*/(PHP_CodeSniffertemp_|PHPStantemp_|Psalmtemp_)[^/]*' -exec rm -rf {} +
+sudo find "$PROJECT_DIR/data/temp" -type d -regextype posix-extended -regex '.*/(PHP_CodeSniffer|PHPStan|Psalm|PHP CS Fixer|Mess Detector)temp_[^/]*' -exec rm -rf {} +
 
 # Pulled straight into the mirror, not into $ROOT_DIR first - these are PROD's
 # archived logs, not something the live WSL2 project tree needs to hold.

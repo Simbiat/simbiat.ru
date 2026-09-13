@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection DevelopmentDependenciesUsageInspection */
+
 declare(strict_types=1);
 
 use PhpCsFixer\Config;
@@ -15,14 +17,14 @@ return new Config()
         '@PhpCsFixer' => true,
         '@PhpCsFixer:risky' => true,
         '@DoctrineAnnotation' => true,
-        #Overrides SymfonyRisky
+        // Overrides SymfonyRisky
         'declare_strict_types' => ['strategy' => 'enforce'],
         'native_constant_invocation' => ['strict' => true],
-        #Extra for PHPUnit
+        // Extra for PHPUnit
         'php_unit_strict' => true,
         'php_unit_data_provider_name' => true,
         'php_unit_data_provider_return_type' => true,
-        #Custom
+        // Custom
         'assign_null_coalescing_to_coalesce_equal' => true,
         'attribute_empty_parentheses' => true,
         'combine_consecutive_issets' => true,
@@ -52,7 +54,7 @@ return new Config()
         'ternary_to_null_coalescing' => true,
         'use_arrow_functions' => true,
         'yoda_style' => ['equal' => false, 'identical' => false, 'less_and_greater' => false],
-        #Tentative, need to observe behavior
+        // Tentative, need to observe behavior
         'comment_to_phpdoc' => true,
         'date_time_create_from_format_call' => true,
         'date_time_immutable' => true,
@@ -75,8 +77,12 @@ return new Config()
         'simplified_null_return' => true,
         'void_return' => true,
         'yield_from_array_to_yields' => true,
-        #This one especially
+        // This one especially
         'static_private_method' => true,
+        // Overrides
+        'native_function_invocation' => ['include' => ['@internal', '@compiler_optimized'], 'scope' => 'namespaced', 'strict' => true],
+        // Conflicts other SAT
+        'array_indentation' => false,
     ])
     ->setFinder(
         new Finder()

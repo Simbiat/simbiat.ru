@@ -55,7 +55,7 @@ final class Extension extends AbstractExtension implements GlobalsInterface
         $defaults = [
             'site_name' => Config::$site_name,
             'domain' => Config::$base_url,
-            'canonical' => Config::$canonical,
+            'canonical' => HomePage::$canonical,
             'url' => mb_rtrim(Config::$base_url.($_SERVER['REQUEST_URI'] ?? ''), '/', 'UTF-8'),
             'maintenance' => 1,
             'registration' => 0,
@@ -78,7 +78,7 @@ final class Extension extends AbstractExtension implements GlobalsInterface
             #PROD flag
             'is_prod' => Config::$environment === 'prod',
             #List of LINK tags
-            'link_tags' => Config::$links,
+            'link_tags' => HomePage::$links,
             #Time used as a version of the JS file for cache busting
             'js_version' => \filemtime(Config::$js_dir.'app.js'),
             #Save data flag
@@ -89,8 +89,9 @@ final class Extension extends AbstractExtension implements GlobalsInterface
             'http_method' => HomePage::$method,
             #System users' IDs
             'system_users' => SystemUser::getSystemUsers(),
+            'tracking_query_parameters' => Config::$tracking_query_parameters ?? [],
             #Supported browsers for Teapot page:
-            'teapot_browsers' => Config::$shared_with_js['teapot_browsers'] ?? [],
+            'teapot_browsers' => Config::$teapot_browsers ?? [],
         ]);
     }
 }

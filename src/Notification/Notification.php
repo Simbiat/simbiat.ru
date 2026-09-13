@@ -437,7 +437,7 @@ abstract class Notification extends Entity
         $event_dispatcher = new EventDispatcher();
         $event_dispatcher->addSubscriber($message_listener);
         #Create transport
-        $mailer = new Mailer(Transport::fromDsn($_ENV['MAILER_DSN'], $event_dispatcher), null, $event_dispatcher);
+        $mailer = new Mailer(Transport::fromDsn(Config::$mailer_dsn, $event_dispatcher), null, $event_dispatcher);
         #Create basic email
         $email = new TemplatedEmail()
             ->from(new Address(Config::$from_email, Config::$site_name))

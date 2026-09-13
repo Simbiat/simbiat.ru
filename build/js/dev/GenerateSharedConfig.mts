@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /**
- * @file Generate settings that are shared with PHP.
+ * @file Generate settings that are shared with PHP in one way or another.
  */
 import browserslist from 'browserslist';
 // eslint-disable-next-line import/no-nodejs-modules
@@ -29,116 +29,6 @@ const browser_map: Record<string, string> = {
     samsung: 'Samsung Browser',
 };
 
-const tracking_query_parameters = [
-    '__hsfp',
-    '__hssc',
-    '__hstc',
-    '__s',
-    '_hsenc',
-    '_openstat',
-    '_reqid',
-    '_trkparms',
-    'ad_bucket',
-    'ad_size',
-    'ad_slot',
-    'ad_type',
-    'adid',
-    'adserverid',
-    'adserveroptimizerid',
-    'adtype',
-    'adurl',
-    'aff_id',
-    'affiliate',
-    'AffiliateGuid',
-    'aid',
-    'bid',
-    'bdref',
-    'bstk',
-    'campaign_id',
-    'campaignid',
-    'cid',
-    'clickid',
-    'client_id',
-    'clkurlenc',
-    'data',
-    'dclid',
-    'documentref',
-    'exitPop',
-    'fb',
-    'fb_source',
-    'fb_ref',
-    'fbclid',
-    'first_visit',
-    'flash',
-    'ga_campaign',
-    'ga_content',
-    'ga_fc',
-    'ga_hid',
-    'ga_medium',
-    'ga_place',
-    'ga_sid',
-    'ga_source',
-    'ga_term',
-    'ga_vid',
-    'gclid',
-    'hsCtaTracking',
-    'ImpressionGuid',
-    'matchid',
-    'mc_eid',
-    'mediadataid',
-    'minbid',
-    'mkt_tok',
-    'ml_subscriber',
-    'ml_subscriber_hash',
-    'msclkid',
-    'num_ads',
-    'oly_anon_id',
-    'oly_enc_id',
-    'origin',
-    'page_referrer',
-    'payload',
-    'pid',
-    'piggiebackcookie',
-    'pk_campaign',
-    'providerid',
-    'pubclick',
-    'pubid',
-    'rb_clickid',
-    'rcm',
-    'ref',
-    'ref_',
-    'referrer',
-    'reftype',
-    'rev',
-    'revmod',
-    'rid',
-    'rurl',
-    's_cid',
-    'sid',
-    'site',
-    'siteid',
-    'sourceid',
-    'src',
-    'tldid',
-    'trackid',
-    'tracking',
-    'uid',
-    'usegapi',
-    'utm_campaign',
-    'utm_cid',
-    'utm_content',
-    'utm_medium',
-    'utm_name',
-    'utm_reader',
-    'utm_source',
-    'utm_term',
-    'vero_conv',
-    'vero_id',
-    'wickedid',
-    'yclid',
-    'zoneid',
-];
-
 type BrowserMap = Record<string, string[]>;
 const collected: BrowserMap = {};
 
@@ -148,7 +38,7 @@ for (const entry of browsers) {
         continue;
     }
     // eslint-disable-next-line security/detect-object-injection
-    const browser = browser_map[raw_browser] ?? raw_browser;
+    const browser = browser_map[raw_browser] ?? raw_browser.replace(/[\n"\\]/gv, '');
     const version = semver.coerce(raw_version)
                           ?.toString();
     if (typeof version === 'undefined' || version === '') {
@@ -178,12 +68,14 @@ if (typeof minimums['Chrome'] !== 'undefined' && minimums['Chrome'] !== null) {
     minimums['Chrome Mobile'] = minimums['Chrome'];
 }
 
+const yaml_lines: string[] = ['parameters:', '    app.teapot_browsers:'];
+for (const [browser, version] of Object.entries(minimums)) {
+    yaml_lines.push(`        "${browser}": "${version}"`);
+}
+
 fs.writeFileSync(
-    './build/js/shared_with_php.json',
-    JSON.stringify({
-        tracking_query_parameters,
-        teapot_browsers: minimums,
-    }, null, 2),
+    './config/packages/teapot_browsers.yaml',
+    `${yaml_lines.join('\n')}\n`,
     'utf-8',
 );
-console.log('✅ Config generated');
+console.log('✅ Teapot browsers list generated');

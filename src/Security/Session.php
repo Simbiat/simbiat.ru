@@ -40,7 +40,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             \ini_set('session.use_only_cookies', true);
         }
     }
-    
+
     ##########################
     #\SessionHandlerInterface#
     ##########################
@@ -60,7 +60,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         #If the controller was initialized - session is ready
         return Query::$dbh !== null;
     }
-    
+
     /**
      * Close the session
      * @link  https://php.net/manual/en/sessionhandlerinterface.close.php
@@ -75,7 +75,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         #No need to do anything at this point
         return true;
     }
-    
+
     /**
      * Read session data
      *
@@ -111,7 +111,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         $this->dataRefresh($data);
         return \serialize($data);
     }
-    
+
     /**
      * Write session data
      *
@@ -246,7 +246,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             return false;
         }
     }
-    
+
     /**
      * Custom function to refresh data, which needs refreshing on every session (IP for tracking, groups for access control, names for rendering, etc.)
      * @param array $data Main array with the data
@@ -263,12 +263,12 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         #Add previous and current pages to attempt to determine if this is a page refresh or a new visit
         $data['new_view'] = false;
         if (empty($data['prev_page']) && empty($data['cur_page'])) {
-            $data['cur_page'] = Config::$canonical;
+            $data['cur_page'] = HomePage::$canonical;
             $data['prev_page'] = null;
             $data['new_view'] = true;
-        } elseif ($data['cur_page'] !== Config::$canonical) {
+        } elseif ($data['cur_page'] !== HomePage::$canonical) {
             $data['prev_page'] = $data['cur_page'];
-            $data['cur_page'] = Config::$canonical;
+            $data['cur_page'] = HomePage::$canonical;
             $data['new_view'] = true;
         }
         try {
@@ -322,7 +322,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             $data['banned'] = false;
         }
     }
-    
+
     /**
      * Function to return IP, country and city
      */
@@ -356,7 +356,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         }
         $data['ip'] = $ip ?? null;
     }
-    
+
     /**
      * Attempt to log in using a cookie
      * @return array
@@ -408,7 +408,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             return [];
         }
     }
-    
+
     /**
      * Destroy a session
      * @link  https://php.net/manual/en/sessionhandlerinterface.destroy.php
@@ -428,7 +428,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             return false;
         }
     }
-    
+
     /**
      * Cleanup old sessions
      * @link  https://php.net/manual/en/sessionhandlerinterface.gc.php
@@ -454,7 +454,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             return false;
         }
     }
-    
+
     #####################
     #\SessionIdInterface#
     #####################
@@ -469,7 +469,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     {
         return \session_create_id();
     }
-    
+
     #########################################
     #\SessionUpdateTimestampHandlerInterface#
     #########################################
@@ -498,7 +498,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         #Validate session id using hash_equals to mitigate timing attacks
         return \hash_equals($session_id, $id);
     }
-    
+
     /**
      * Update the timestamp of a session
      * @link https://www.php.net/manual/sessionupdatetimestamphandlerinterface.updatetimestamp.php

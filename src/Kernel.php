@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace App;
 
+use App\Enum\SystemUser;
 use App\Service\Config;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
@@ -28,6 +29,13 @@ class Kernel extends BaseKernel
         parent::boot();
         if (!$this->app_bootstrapped) {
             $this->app_bootstrapped = true;
+            // Check if we are in CLI
+            if (\preg_match('/^cli(-server)?$/iu', \PHP_SAPI) === 1) {
+                // Impersonate system user
+                $_SESSION['user_id'] = SystemUser::System->value;
+                $_SESSION['username'] = 'System user';
+                $_SESSION['permissions'] = ['close_own_threads', 'close_others_threads'];
+            }
             // Generate basic settings
             new Config($this->getContainer());
             // Set error handling

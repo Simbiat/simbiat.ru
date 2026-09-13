@@ -197,10 +197,10 @@ abstract class Page
         $page['og_desc'] = mb_substr($page['og_desc'], 0, 120, 'UTF-8');
         #Generate a link for cache reset if page uses cache
         if ($this->cache_age > 0 && !$this->static) {
-            $query = IRI::parseUri(Config::$canonical);
+            $query = IRI::parseUri(HomePage::$canonical);
             if (\is_array($query)) {
                 /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-                $page['cache_reset'] = Config::$canonical.(empty($query['query']) ? '?cache_reset=true' : '&cache_reset=true');
+                $page['cache_reset'] = HomePage::$canonical.(empty($query['query']) ? '?cache_reset=true' : '&cache_reset=true');
             } else {
                 $page['cache_reset'] = '';
             }

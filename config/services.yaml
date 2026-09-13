@@ -18,6 +18,12 @@ parameters:
     app.site_name: "Simbiat Software"
     # Mail to use to send emails from
     app.from_email: "%env(PROTON_USER)%"
+    # Main database name
+    app.database_name: "%env(DATABASE_NAME)%"
+    # Mailer DSN. Possibly temporary until fully migrated to Symfony's Mailer
+    app.mailer_dsn: "%env(MAILER_DSN)%"
+    # Passphrase for 2-way encryption. Possibly temporary until fully migrated to Symfony's Security
+    app.encryption_passphrase: "%env(ENCRYPTION_PASSPHRASE)%"
     app.security_settings: "%kernel.project_dir%/data/security.json"
     app.base_url: 'https://%app.http_host%'
     # Section ID to be used for the contact form
@@ -38,6 +44,12 @@ parameters:
         httponly: true
         samesite: 'Strict'
         partitioned: true
+    # Argon settings. Temporary until fully migrated to Symfony's Security
+    app.argon_settings:
+        threads: 1
+        memory_cost: 47104
+        time_cost: 5
+    app.tracking_query_parameters: [ '__hsfp', '__hssc', '__hstc', '__s', '_hsenc', '_openstat', '_reqid', '_trkparms', 'ad_bucket', 'ad_size', 'ad_slot', 'ad_type', 'adid', 'adserverid', 'adserveroptimizerid', 'adtype', 'adurl', 'aff_id', 'affiliate', 'AffiliateGuid', 'aid', 'bid', 'bdref', 'bstk', 'campaign_id', 'campaignid', 'cid', 'clickid', 'client_id', 'clkurlenc', 'data', 'dclid', 'documentref', 'exitPop', 'fb', 'fb_source', 'fb_ref', 'fbclid', 'first_visit', 'flash', 'ga_campaign', 'ga_content', 'ga_fc', 'ga_hid', 'ga_medium', 'ga_place', 'ga_sid', 'ga_source', 'ga_term', 'ga_vid', 'gclid', 'hsCtaTracking', 'ImpressionGuid', 'matchid', 'mc_eid', 'mediadataid', 'minbid', 'mkt_tok', 'ml_subscriber', 'ml_subscriber_hash', 'msclkid', 'num_ads', 'oly_anon_id', 'oly_enc_id', 'origin', 'page_referrer', 'payload', 'pid', 'piggiebackcookie', 'pk_campaign', 'providerid', 'pubclick', 'pubid', 'rb_clickid', 'rcm', 'ref', 'ref_', 'referrer', 'reftype', 'rev', 'revmod', 'rid', 'rurl', 's_cid', 'sid', 'site', 'siteid', 'sourceid', 'src', 'tldid', 'trackid', 'tracking', 'uid', 'usegapi', 'utm_campaign', 'utm_cid', 'utm_content', 'utm_medium', 'utm_name', 'utm_reader', 'utm_source', 'utm_term', 'vero_conv', 'vero_id', 'wickedid', 'yclid', 'zoneid' ]
 
     # Common directories. Use a trailing slash.
     app.directories.sitemap: "%kernel.project_dir%/var/sitemap/"

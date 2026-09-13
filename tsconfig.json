@@ -63,7 +63,6 @@
         "sourceRoot": "./build/js/",
     },
     "files": [
-        "./build/js/shared_with_php.json",
         "./vendor/tinymce/tinymce/tinymce.d.ts",
         "./config/eslint.config.mts",
         "./config/stylelint.config.ts"

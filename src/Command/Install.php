@@ -38,12 +38,6 @@ final class Install
             #TODO: Need to figure out a way to prevent run for the 2nd time
             return Command::SUCCESS;
 
-            // Set Argon settings
-            if (\count(Security::argonCalc(true)) === 0) {
-                $output->writeln(Errors::logfmt('Failed to set Argon settings'));
-
-                return Command::FAILURE;
-            }
             // Connect to DB
             Config::dbConnect();
             // Install CRON
@@ -67,7 +61,7 @@ final class Install
             }
             // Install the Maintainer library. This *SHOULD* be the last operation, so that all tables are added in the initial update.
             if (new \Simbiat\Database\Maintainer\Installer()->install()) {
-                new Analyzer()->updateTables($_ENV['DATABASE_NAME']);
+                new Analyzer()->updateTables(Config::$database_name);
             }
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);

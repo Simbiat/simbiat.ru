@@ -35,7 +35,7 @@ final class Database
             if (Config::$dbup) {
                 $dump_order = '';
                 #Get tables in order
-                foreach (Manage::showOrderedTables($_ENV['DATABASE_NAME']) as $table) {
+                foreach (Manage::showOrderedTables(Config::$database_name) as $table) {
                     #Get DDL statement
                     $create = Manage::showCreateTable($table['schema'], $table['table'], if_not_exist: true, add_use: true);
                     if ($create === null) {
@@ -84,7 +84,7 @@ final class Database
                     \preg_grep('/\/(000|999)[^\/]*\.sql$/u', \glob(Config::$ddl_dir.'*.sql'), \PREG_GREP_INVERT)
                 );
                 #Get tables in order
-                foreach (Manage::showOrderedTables($_ENV['DATABASE_NAME']) as $order => $table) {
+                foreach (Manage::showOrderedTables(Config::$database_name) as $order => $table) {
                     #Get DDL statement
                     $create = Manage::showCreateTable($table['schema'], $table['table'], if_not_exist: true, add_use: true);
                     if ($create === null) {
@@ -123,18 +123,18 @@ final class Database
                 $analyzer = new Analyzer();
                 $settings = new Settings();
                 #Ensure we have all tables, even though we end up doing this twice
-                $analyzer->updateTables($_ENV['DATABASE_NAME']);
+                $analyzer->updateTables(Config::$database_name);
                 #Ensure settings are set to what we want
-                $settings->setTableFineTune($_ENV['DATABASE_NAME'], [], 'analyze_histogram', true)
-                    ->setTableFineTune($_ENV['DATABASE_NAME'], [], 'analyze_histogram_auto', true)
-                    ->setThresholdFragmentation($_ENV['DATABASE_NAME'], [], 5.0)
-                    ->setRun($_ENV['DATABASE_NAME'], [], 'check', true)
-                    ->setRun($_ENV['DATABASE_NAME'], [], 'fulltext_rebuild', true)
+                $settings->setTableFineTune(Config::$database_name, [], 'analyze_histogram', true)
+                    ->setTableFineTune(Config::$database_name, [], 'analyze_histogram_auto', true)
+                    ->setThresholdFragmentation(Config::$database_name, [], 5.0)
+                    ->setRun(Config::$database_name, [], 'check', true)
+                    ->setRun(Config::$database_name, [], 'fulltext_rebuild', true)
                     ->setGlobalFineTune('prefer_compressed', true)
                     ->setGlobalFineTune('prefer_extended', true)
                     ->setGlobalFineTune('compress_auto_run', true)
                     ->setGlobalFineTune('use_flush', true);
-                $analyzer->writeCommandsToFiles(Config::$work_dir.'/data/backups/optimization', $_ENV['DATABASE_NAME'], [], true);
+                $analyzer->writeCommandsToFiles(Config::$work_dir.'/data/backups/optimization', Config::$database_name, [], true);
             }
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);

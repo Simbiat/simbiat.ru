@@ -4,18 +4,11 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Enum\SystemUser;
 use App\Security\Security;
-use DeviceDetector\Cache\PSR6Bridge;
-use DeviceDetector\DeviceDetector;
-use DeviceDetector\Parser\AbstractParser;
-use DeviceDetector\Parser\Device\AbstractDeviceParser;
-use DeviceDetector\Yaml\Pecl;
 use Pdo\Mysql;
 use Simbiat\Database\Connection;
 use Simbiat\Database\Pool;
 use Simbiat\Database\Query;
-use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -48,19 +41,12 @@ final class Config
     public private(set) static string $statistics = '';
     public private(set) static array $cookie_settings = [];
     public private(set) static array $group_ids = [];
-
-    // Set of general LINKs to be sent both in HTML and in HEADER
-    public private(set) static array $links = [];
-
-    // Device detector object
-    public private(set) static ?DeviceDetector $device_detector = null;
+    public private(set) static array $tracking_query_parameters = [];
+    public private(set) static array $teapot_browsers = [];
+    public private(set) static string $mailer_dsn = '';
+    public private(set) static string $database_name = '';
+    public private(set) static string $encryption_passphrase = '';
     public private(set) static array $argon_settings = [];
-
-    // Flag indicating whether we are in CLI
-    public private(set) static bool $cli = false;
-
-    // Allow access to canonical value of the host
-    public private(set) static string $canonical = '';
 
     // Track if the DB connection is up
     public private(set) static bool $dbup = false;
@@ -68,25 +54,8 @@ final class Config
     // Maintenance flag
     public private(set) static bool $db_update = false;
 
-    // Settings shared by PHP and JS code
-    public private(set) static array $shared_with_js = [];
-
     public function __construct(ContainerInterface $container)
     {
-        // Check if we are in CLI
-        if (\preg_match('/^cli(-server)?$/iu', \PHP_SAPI) === 1) {
-            self::$cli = true;
-        } else {
-            self::$cli = false;
-        }
-        // Database settings
-        if (empty($_ENV['DATABASE_USER']) || empty($_ENV['DATABASE_PASSWORD']) || empty($_ENV['DATABASE_NAME']) || empty($_ENV['DATABASE_SOCKET'])) {
-            throw new \RuntimeException('Missing database configuration');
-        }
-        if (empty($_ENV['MAILER_DSN']) || empty($_ENV['ENCRYPTION_PASSPHRASE'])) {
-            throw new \RuntimeException('Missing important setting');
-        }
-
         self::$work_dir = $container->getParameter('kernel.project_dir');
         self::$environment = $container->getParameter('kernel.environment');
         self::$admin_email = $container->getParameter('app.admin_email');
@@ -95,9 +64,14 @@ final class Config
         self::$http_host = $container->getParameter('app.http_host');
         self::$base_url = $container->getParameter('app.base_url');
         self::$cookie_settings = $container->getParameter('app.cookie_settings');
-
         self::$admin_name = $container->getParameter('app.admin_name');
         self::$site_name = $container->getParameter('app.site_name');
+        self::$tracking_query_parameters = $container->getParameter('app.tracking_query_parameters');
+        self::$teapot_browsers = $container->getParameter('app.teapot_browsers');
+        self::$argon_settings = $container->getParameter('app.argon_settings');
+        self::$mailer_dsn = $container->getParameter('app.mailer_dsn');
+        self::$database_name = $container->getParameter('app.database_name');
+        self::$encryption_passphrase = $container->getParameter('app.encryption_passphrase');
         // Set directories
         self::$sitemap = $container->getParameter('app.directories.sitemap');
         self::$geoip = $container->getParameter('app.directories.geoip');
@@ -113,92 +87,10 @@ final class Config
         self::$statistics = $container->getParameter('app.directories.ffxiv.statistics');
         self::$html_cache = $container->getParameter('app.directories.html_cache');
         self::$group_ids = $container->getParameter('app.group_ids');
-
-        // Generate Argon settings
-        if (\count(self::$argon_settings) === 0) {
-            self::$argon_settings = Security::argonCalc();
-        }
-        if (self::$cli) {
-            // Impersonate system user
-            $_SESSION['user_id'] = SystemUser::System->value;
-            $_SESSION['username'] = 'System user';
-            $_SESSION['permissions'] = ['close_own_threads', 'close_others_threads'];
-        } else {
-            // These are required only if we are outside CLI mode
-            $this->canonical();
-            $this->nonApiLinks();
-        }
-        // Load shared config
-        try {
-            self::$shared_with_js = \json_decode(\file_get_contents(self::$work_dir.'/build/js/shared_with_php.json'), true, 512, \JSON_THROW_ON_ERROR);
-        } catch (\Throwable $exception) {
-            // For now just logging, at the moment of writing there should not be anything critical here
-            Errors::error_log($exception);
-        }
-        // Initiate device detector
-        // Force full string versions
-        AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
-        self::$device_detector = new DeviceDetector();
-        self::$device_detector->setYamlParser(new Pecl());
-        self::$device_detector->setCache(new PSR6Bridge(new ApcuAdapter('Matomo')));
     }
 
     /**
-     * Generate a canonical link
-     *
-     * @return void
-     */
-    private function canonical(): void
-    {
-        // Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
-        self::$canonical = \mb_strtolower(\rawurldecode(mb_trim(mb_trim(mb_trim(\preg_replace('/(.*)(\?.*$)/u', '$1', $_SERVER['REQUEST_URI'] ?? ''), null, 'UTF-8'), '/', 'UTF-8'), null, 'UTF-8')), 'UTF-8');
-        // Remove bad UTF
-        self::$canonical = \mb_scrub(self::$canonical, 'UTF-8');
-        // Remove the "friendly" portion of the links but exclude API
-        self::$canonical = \preg_replace('/(^(?!api).*)(\/(bic|characters|freecompanies|pvpteams|linkshells|crossworldlinkshells|crossworld_linkshells|achievements|sections|threads|users)\/)([a-zA-Z\d]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
-        // Update REQUEST_URI to ensure the data returned will be consistent
-        // For canonical, though, we need to ensure that it does have a trailing slash
-        if (\preg_match('/\/\?/u', self::$canonical) !== 1) {
-            self::$canonical = \preg_replace('/([^\/])$/u', '$1/', self::$canonical);
-        }
-        // Also return some of the GET parameters that we do support
-        self::$canonical .= '?'.\http_build_query([
-                // Do not add the 1st page as a query (since it is excessive)
-                'page' => empty($_GET['page']) || $_GET['page'] === '1' ? null : $_GET['page'],
-                'search' => $_GET['search'] ?? null,
-            ], encoding_type: \PHP_QUERY_RFC3986);
-        // Trim the excessive question mark, in case no query was attached
-        self::$canonical = mb_rtrim(self::$canonical, '?', 'UTF-8');
-        // Trim trailing slashes if any
-        self::$canonical = mb_rtrim(self::$canonical, '/', 'UTF-8');
-        // Set a canonical link that may be used in the future
-        self::$canonical = 'httpss://'.(\preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', self::$http_host) === 1 ? 'www.' : '').self::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
-        // Update the list with dynamic values
-        self::$links[] = ['rel' => 'canonical', 'href' => self::$canonical];
-    }
-
-    /**
-     * Add CSS and JS preload links, if not using API
-     * @return void
-     */
-    private function nonApiLinks(): void
-    {
-        if (\preg_match('/^\/api(\/|$)/ui', $_SERVER['REQUEST_URI']) === 0) {
-            \array_push(self::$links,
-                ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.\filemtime(self::$css_dir.'app.css').'.css', 'as' => 'style'],
-                ['rel' => 'preload', 'href' => '/assets/app.'.\filemtime(self::$js_dir.'app.js').'.js', 'as' => 'script'],
-                ['rel' => 'manifest', 'href' => '/manifest.webmanifest', 'type' => 'application/manifest+json'],
-                ['rel' => 'privacy-policy', 'href' => '/about/privacy'],
-                ['rel' => 'terms-of-service', 'href' => '/about/tos'],
-                ['rel' => 'help', 'href' => '/talks/sections/8', 'title' => 'Knowledgebase'],
-                ['rel' => 'help', 'href' => '/about/contacts', 'title' => 'Contacts'],
-            );
-        }
-    }
-
-    /**
-     * Database connection
-     * @return bool
+     * Database connection.
      */
     public static function dbConnect(): bool
     {
@@ -206,6 +98,7 @@ final class Config
         if (\is_file('/app/var/log/db_maintenance.flag')) {
             self::$dbup = false;
             self::$db_update = true;
+
             return false;
         }
         // Check in case we accidentally call this for the 2nd time
@@ -218,15 +111,23 @@ final class Config
                         ->setPassword($_ENV['DATABASE_PASSWORD'])
                         ->setDB($_ENV['DATABASE_NAME'])
                         ->setOption(Mysql::ATTR_FOUND_ROWS, true)
-                        ->setOption(Mysql::ATTR_INIT_COMMAND, 'SET SESSION character_set_client = \'utf8mb4\',
-                                                                                    SESSION collation_connection = \'utf8mb4_0900_as_cs\',
-                                                                                    SESSION character_set_connection = \'utf8mb4\',
-                                                                                    SESSION character_set_database = \'utf8mb4\',
-                                                                                    SESSION character_set_results = \'utf8mb4\',
-                                                                                    SESSION character_set_server = \'utf8mb4\',
-                                                                                    SESSION time_zone=\'+00:00\';')
-                        ->setOption(\PDO::ATTR_TIMEOUT, 1), max_tries: 5));
+                        ->setOption(
+                            Mysql::ATTR_INIT_COMMAND,
+                            <<<'EOD'
+                                SET SESSION character_set_client = 'utf8mb4',
+                                SESSION collation_connection = 'utf8mb4_0900_as_cs',
+                                SESSION character_set_connection = 'utf8mb4',
+                                SESSION character_set_database = 'utf8mb4',
+                                SESSION character_set_results = 'utf8mb4',
+                                SESSION character_set_server = 'utf8mb4',
+                                SESSION time_zone='+00:00';
+                                EOD
+                        )
+                        ->setOption(\PDO::ATTR_TIMEOUT, 1),
+                    max_tries: 5
+                ));
                 self::$dbup = true;
+
                 // Check for maintenance
                 try {
                     self::$db_update = (bool) Query::query('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'', return: 'value');
@@ -243,9 +144,12 @@ final class Config
                     Errors::error_log($exception);
                 }
                 self::$dbup = false;
+
                 return false;
             }
         }
+
         return true;
     }
+
 }

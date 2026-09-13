@@ -28,7 +28,7 @@ class Caching
             $this->cache_dir .= '/';
         }
     }
-    
+
     /**
      * Write cache to file
      * @param array|string $data Data to write
@@ -82,7 +82,7 @@ class Caching
         }
         return true;
     }
-    
+
     /**
      * Read from cache
      * @param string $key
@@ -118,7 +118,7 @@ class Caching
         unset($data['X-CSRF-Token']);
         return $data;
     }
-    
+
     /**
      * Generate key
      * @param string $key
@@ -128,13 +128,13 @@ class Caching
     public function key(string $key): string
     {
         if ($key === '') {
-            $key = \hash('sha3-512', (empty(HomePage::$user_agent['bot']) ? '' : 'bot_').Config::$canonical);
+            $key = \hash('sha3-512', (empty(HomePage::$user_agent['bot']) ? '' : 'bot_').HomePage::$canonical);
         } else {
             $key = \hash('sha3-512', $key);
         }
         return $key;
     }
-    
+
     /**
      * Gets JSON decoded array from a file
      * @param string $cache_path

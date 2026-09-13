@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace App\Controller\UserControl;
 
 use App\Controller\Abstracts\Page;
+use App\HomePage;
 use App\Service\Config;
 use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
@@ -73,13 +74,13 @@ class Sessions extends Page
                     $output_array[$type][$key]['country'] = '';
                     $output_array[$type][$key]['city'] = '';
                 }
-                Config::$device_detector->setUserAgent((string)$item['user_agent']);
-                Config::$device_detector->setClientHints();
-                Config::$device_detector->parse();
+                HomePage::$device_detector->setUserAgent((string)$item['user_agent']);
+                HomePage::$device_detector->setClientHints();
+                HomePage::$device_detector->parse();
                 #Get OS
-                $output_array[$type][$key]['os'] = Config::$device_detector->getOs();
+                $output_array[$type][$key]['os'] = HomePage::$device_detector->getOs();
                 #Get client
-                $output_array[$type][$key]['client'] = Config::$device_detector->getClient();
+                $output_array[$type][$key]['client'] = HomePage::$device_detector->getClient();
                 #Set OS and client icon if they exist
                 if (!empty($output_array[$type][$key]['os'])) {
                     $output_array[$type][$key]['os']['icon'] = DDCIcons::getOS($output_array[$type][$key]['os']['name'], $output_array[$type][$key]['os']['family']);

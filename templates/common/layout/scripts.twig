@@ -1,3 +1,8 @@
+<script id="tracking_query_parameters" type="application/json">
+    {# Need to be raw otherwise it gets HTML encoded and breaks processing #}
+    {{ tracking_query_parameters|json_encode|raw }}
+</script>
+
 {# Main JavaScript file #}
 <script src="/assets/app.{{ js_version }}.js" crossorigin="anonymous" defer></script>
 

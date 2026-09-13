@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace App\Controller\Abstracts;
 
-use App\Service\Config;
+use App\HomePage;
 use App\Service\Sanitization;
 use Simbiat\http20\Headers;
 use function sprintf;
@@ -27,7 +27,7 @@ class Search extends Page
     protected string $full_title = 'Search for `%s`';
     #Search value
     protected string $search_for = '';
-    
+
     /**
      * Generation of the page data
      * @param array $path
@@ -41,7 +41,7 @@ class Search extends Page
         #Check if we got some old link (before GET implementation)
         if (empty($_GET['search']) && !empty($path[0])) {
             #Redirect to a proper version using GET value
-            Headers::redirect(\preg_replace('/(.*)(?>\/([^\/]+)\/?$)/u', '$1/?search=$2', Config::$canonical));
+            Headers::redirect(\preg_replace('/(.*)(?>\/([^\/]+)\/?$)/u', '$1/?search=$2', HomePage::$canonical));
         }
         #Sanitize search value
         if (!$this->sanitize($_GET['search'] ?? '')) {
@@ -73,7 +73,7 @@ class Search extends Page
         #Merge with extra fields and return the result
         return \array_merge($output_array, $this->extras());
     }
-    
+
     /**
      * Check if types are properly set
      * @return void
@@ -91,7 +91,7 @@ class Search extends Page
             }
         }
     }
-    
+
     /**
      * Get date from results
      * @param array $results
@@ -112,7 +112,7 @@ class Search extends Page
         }
         return \max($dates);
     }
-    
+
     /**
      * @param string $term
      *
@@ -136,7 +136,7 @@ class Search extends Page
         }
         return true;
     }
-    
+
     /**
      * Add any extra fields, if required by overriding this function
      * @return array
