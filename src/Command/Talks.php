@@ -9,7 +9,6 @@ use App\Entity\User;
 use App\Enum\LogType;
 use App\Enum\TalkType;
 use App\Security\Security;
-use App\Security\Session;
 use App\Service\Config;
 use App\Service\Errors;
 use Simbiat\Database\Query;

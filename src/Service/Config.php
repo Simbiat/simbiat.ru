@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Security\Security;
-use Pdo\Mysql;
-use Simbiat\Database\Connection;
-use Simbiat\Database\Pool;
 use Simbiat\Database\Query;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -54,8 +50,12 @@ final class Config
     // Maintenance flag
     public private(set) static bool $db_update = false;
 
+    private static ContainerInterface $container;
+    public static ?\PDO $PDO = null;
+
     public function __construct(ContainerInterface $container)
     {
+        self::$container = $container;
         self::$work_dir = $container->getParameter('kernel.project_dir');
         self::$environment = $container->getParameter('kernel.environment');
         self::$admin_email = $container->getParameter('app.admin_email');
@@ -104,38 +104,9 @@ final class Config
         // Check in case we accidentally call this for the 2nd time
         if (!self::$dbup) {
             try {
-                new Query(Pool::openConnection(
-                    new Connection()
-                        ->setHost(socket: $_ENV['DATABASE_SOCKET'])
-                        ->setUser($_ENV['DATABASE_USER'])
-                        ->setPassword($_ENV['DATABASE_PASSWORD'])
-                        ->setDB($_ENV['DATABASE_NAME'])
-                        ->setOption(Mysql::ATTR_FOUND_ROWS, true)
-                        ->setOption(
-                            Mysql::ATTR_INIT_COMMAND,
-                            <<<'EOD'
-                                SET SESSION character_set_client = 'utf8mb4',
-                                SESSION collation_connection = 'utf8mb4_0900_as_cs',
-                                SESSION character_set_connection = 'utf8mb4',
-                                SESSION character_set_database = 'utf8mb4',
-                                SESSION character_set_results = 'utf8mb4',
-                                SESSION character_set_server = 'utf8mb4',
-                                SESSION time_zone='+00:00';
-                                EOD
-                        )
-                        ->setOption(\PDO::ATTR_TIMEOUT, 1),
-                    max_tries: 5
-                ));
+                self::$PDO = self::$container->get('doctrine.dbal.default_connection')->getNativeConnection();
+                new Query(self::$PDO);
                 self::$dbup = true;
-
-                // Check for maintenance
-                try {
-                    self::$db_update = (bool) Query::query('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'', return: 'value');
-                } catch (\Throwable $exception) {
-                    // The most likely cause of the maintenance check to fail is if the table does not exist. If it does not, consider that we are under maintenance.
-                    self::$db_update = true;
-                    Errors::error_log($exception);
-                }
             } catch (\Throwable $exception) {
                 // 2002 error code means server is not listening on port
                 // 2006 error code means server has gone away

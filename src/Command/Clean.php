@@ -16,7 +16,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Run every-minute maintenance tasks
+ * Different cleaning tasks
  */
 final class Clean
 {
@@ -34,12 +34,11 @@ final class Clean
         try {
             // Connect to DB
             Config::dbConnect();
-            if (Config::$dbup) {
-                new Session()->gc();
+            if (Config::$dbup && !new Session()->gc()) {
+                return Command::FAILURE;
             }
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
-
             return Command::FAILURE;
         }
 

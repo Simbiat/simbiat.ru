@@ -1037,16 +1037,16 @@
         },
         {
             "name": "doctrine/orm",
-            "version": "3.7.0",
+            "version": "3.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/orm.git",
-                "reference": "f25c5e5385d3a0bca2dc364d556d3b83a06559ed"
+                "reference": "037807a39697890dcede8b766c5efe8a1b4855fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/orm/zipball/f25c5e5385d3a0bca2dc364d556d3b83a06559ed",
-                "reference": "f25c5e5385d3a0bca2dc364d556d3b83a06559ed",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/037807a39697890dcede8b766c5efe8a1b4855fe",
+                "reference": "037807a39697890dcede8b766c5efe8a1b4855fe",
                 "shasum": ""
             },
             "require": {
@@ -1121,9 +1121,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/orm/issues",
-                "source": "https://github.com/doctrine/orm/tree/3.7.0"
+                "source": "https://github.com/doctrine/orm/tree/3.7.1"
             },
-            "time": "2026-09-07T19:35:17+00:00"
+            "time": "2026-09-14T05:45:59+00:00"
         },
         {
             "name": "doctrine/persistence",
@@ -10818,16 +10818,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.8.0",
+            "version": "v5.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "044a6a392ff8ad0d61f14370a5fbbd0a0107152f"
+                "reference": "9e33da9553fe7786f0962b35f4e4ecf01be89def"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/044a6a392ff8ad0d61f14370a5fbbd0a0107152f",
-                "reference": "044a6a392ff8ad0d61f14370a5fbbd0a0107152f",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/9e33da9553fe7786f0962b35f4e4ecf01be89def",
+                "reference": "9e33da9553fe7786f0962b35f4e4ecf01be89def",
                 "shasum": ""
             },
             "require": {
@@ -10869,9 +10869,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.8.0"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.9.0"
             },
-            "time": "2026-07-04T14:30:18+00:00"
+            "time": "2026-09-13T18:51:52+00:00"
         },
         {
             "name": "pdepend/pdepend",
@@ -10879,12 +10879,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pdepend/pdepend.git",
-                "reference": "d9f193a9f8457fd8c05cb4478216f3da606449da"
+                "reference": "2de6092b15671f7f10e765fba1d6cf5e0703be59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/d9f193a9f8457fd8c05cb4478216f3da606449da",
-                "reference": "d9f193a9f8457fd8c05cb4478216f3da606449da",
+                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/2de6092b15671f7f10e765fba1d6cf5e0703be59",
+                "reference": "2de6092b15671f7f10e765fba1d6cf5e0703be59",
                 "shasum": ""
             },
             "require": {
@@ -10946,7 +10946,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-12T09:27:40+00:00"
+            "time": "2026-09-14T12:10:53+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -11337,12 +11337,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpmd/phpmd.git",
-                "reference": "7a50693bcdf184e3c31164688fde4e1d55623213"
+                "reference": "1351e0bb4e2b85fcfe3c61c35317b13df0d61eeb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/7a50693bcdf184e3c31164688fde4e1d55623213",
-                "reference": "7a50693bcdf184e3c31164688fde4e1d55623213",
+                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/1351e0bb4e2b85fcfe3c61c35317b13df0d61eeb",
+                "reference": "1351e0bb4e2b85fcfe3c61c35317b13df0d61eeb",
                 "shasum": ""
             },
             "require": {
@@ -11418,7 +11418,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-13T00:00:08+00:00"
+            "time": "2026-09-14T11:34:32+00:00"
         },
         {
             "name": "phpstan/phpstan",

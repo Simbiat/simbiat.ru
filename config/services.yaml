@@ -20,9 +20,9 @@ parameters:
     app.from_email: "%env(PROTON_USER)%"
     # Main database name
     app.database_name: "%env(DATABASE_NAME)%"
-    # Mailer DSN. Possibly temporary until fully migrated to Symfony's Mailer
+    #TODO: Mailer DSN. Possibly temporary until fully migrated to Symfony's Mailer
     app.mailer_dsn: "%env(MAILER_DSN)%"
-    # Passphrase for 2-way encryption. Possibly temporary until fully migrated to Symfony's Security
+    #TODO: Passphrase for 2-way encryption. Possibly temporary until fully migrated to Symfony's Security
     app.encryption_passphrase: "%env(ENCRYPTION_PASSPHRASE)%"
     app.security_settings: "%kernel.project_dir%/data/security.json"
     app.base_url: 'https://%app.http_host%'

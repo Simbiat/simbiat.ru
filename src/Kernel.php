@@ -1,10 +1,12 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App;
 
 use App\Enum\SystemUser;
 use App\Service\Config;
+use Simbiat\Database\Query;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 

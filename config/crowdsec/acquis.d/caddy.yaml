@@ -1,4 +1,4 @@
 filenames:
-  - /usr/local/logs/access.log
+    - /usr/local/logs/access.log
 labels:
-  type: caddy
+    type: caddy

@@ -9,7 +9,6 @@ use App\Notification\DatabaseDown;
 use App\Notification\DatabaseUp;
 use App\Service\Config;
 use App\Service\Errors;
-use Simbiat\Database\Pool;
 use Simbiat\Database\Query;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -55,7 +54,8 @@ final class Healthcheck
                 // Send mail
                 new DatabaseDown()->save(
                     SystemUser::Owner->value,
-                    ['errors' => \print_r(Pool::$errors, true)],
+                    #TODO: Ideally get proper error text, but most likely need to change the way the check is done.
+                    ['errors' => \print_r('N/A', true)],
                     true,
                     false,
                     Config::$admin_email,
@@ -71,7 +71,6 @@ final class Healthcheck
             try {
                 /** @var bool $result */
                 $result = Query::query([
-                    'UPDATE `sys__settings` SET `value`=0 WHERE `setting` = \'maintenance\';',
                     // Reset any potentially hanged cron jobs (if any)
                     'UPDATE cron__schedule SET `run_by`=NULL, `status`=0 WHERE `run_by` IS NOT NULL;',
                 ]);

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Service\BICLibrary;
 use App\Service\Config;
 use App\Service\Errors;
 use Symfony\Component\Console\Attribute\AsCommand;

@@ -36,7 +36,7 @@ final class FFTracker
             // Connect to DB
             Config::dbConnect();
             if (Config::$dbup) {
-                $cron = new TaskInstance();
+                $cron = new TaskInstance(dbh: Config::$PDO);
                 // Try to register new characters
                 $max_id = Query::query(
                     'SELECT MAX(`character_id`) as `character_id` FROM `ffxiv__character`;',
@@ -77,7 +77,7 @@ final class FFTracker
             // Connect to DB
             Config::dbConnect();
             if (Config::$dbup) {
-                $cron_agent = new Agent();
+                $cron_agent = new Agent(Config::$PDO);
                 foreach (['raw', 'characters', 'groups', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
                     $cron_agent->log('Updating FFXIV '.$type.' statistics...', EventTypes::CustomInformation);
                     new FFXIVStatistics()->update($type);

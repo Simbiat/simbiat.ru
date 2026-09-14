@@ -32,7 +32,7 @@ final class Cron
             // Run cron
             if (Config::$dbup && !Config::$db_update) {
                 $output->writeln(Errors::logfmt('Processing CRON tasks from DB...'));
-                new Agent()->process(50);
+                new Agent(Config::$PDO)->process(50);
             } else {
                 $output->writeln(Errors::logfmt('DB is down, skipping...'));
             }

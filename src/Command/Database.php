@@ -35,6 +35,7 @@ final class Database
             if (Config::$dbup) {
                 $dump_order = '';
                 #Get tables in order
+                new Manage(Config::$PDO);
                 foreach (Manage::showOrderedTables(Config::$database_name) as $table) {
                     #Get DDL statement
                     $create = Manage::showCreateTable($table['schema'], $table['table'], if_not_exist: true, add_use: true);
@@ -84,6 +85,7 @@ final class Database
                     \preg_grep('/\/(000|999)[^\/]*\.sql$/u', \glob(Config::$ddl_dir.'*.sql'), \PREG_GREP_INVERT)
                 );
                 #Get tables in order
+                new Manage(Config::$PDO);
                 foreach (Manage::showOrderedTables(Config::$database_name) as $order => $table) {
                     #Get DDL statement
                     $create = Manage::showCreateTable($table['schema'], $table['table'], if_not_exist: true, add_use: true);
@@ -120,8 +122,8 @@ final class Database
             // Connect to DB
             Config::dbConnect();
             if (Config::$dbup) {
-                $analyzer = new Analyzer();
-                $settings = new Settings();
+                $analyzer = new Analyzer(Config::$PDO);
+                $settings = new Settings(Config::$PDO);
                 #Ensure we have all tables, even though we end up doing this twice
                 $analyzer->updateTables(Config::$database_name);
                 #Ensure settings are set to what we want
