@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Service\Config;
 use App\Service\Errors;
 use App\Service\FFXIVStatistics;
+use Doctrine\DBAL\Connection;
 use Simbiat\Cron\Agent;
 use Simbiat\Cron\EventTypes;
 use Simbiat\Cron\TaskInstance;
@@ -22,6 +22,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class FFTracker
 {
     /**
+     * @param \Doctrine\DBAL\Connection $connection
+     */
+    public function __construct(
+        /** @noinspection InterfacesAsConstructorDependenciesInspection */
+        private Connection $connection,
+    ) {}
+
+    /**
      * Generate tasks to attempt to register new characters
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
@@ -33,24 +41,23 @@ final class FFTracker
     {
         $output->writeln(Errors::logfmt('Registering new FFXIV characters...'));
         try {
-            // Connect to DB
-            Config::dbConnect();
-            if (Config::$dbup) {
-                $cron = new TaskInstance(dbh: Config::$PDO);
-                // Try to register new characters
-                $max_id = Query::query(
-                    'SELECT MAX(`character_id`) as `character_id` FROM `ffxiv__character`;',
-                    return: 'value',
-                );
-                // We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
-                $new_max_id = \min($max_id + 500, 4294967295);
-                if ((int) $max_id < (int) $new_max_id) {
-                    for ($character = ($max_id + 1); (int) $character <= (int) $new_max_id; $character++) {
-                        $extra_for_error = 'character ID '.$character;
-                        $cron->settingsFromArray(
-                            ['task' => 'ff_update_entity', 'arguments' => [(string) $character, 'character'], 'message' => 'Updating character with ID '.$character],
-                        )->add();
-                    }
+            /* @var \PDO $pdo IDE complains due to more generic object */
+            $pdo = $this->connection->getNativeConnection();
+            $cron = new TaskInstance(dbh: $pdo);
+            // Try to register new characters
+            new Query($pdo);
+            $max_id = Query::query(
+                'SELECT MAX(`character_id`) as `character_id` FROM `ffxiv__character`;',
+                return: 'value',
+            );
+            // We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
+            $new_max_id = \min($max_id + 500, 4294967295);
+            if ((int) $max_id < (int) $new_max_id) {
+                for ($character = ($max_id + 1); (int) $character <= (int) $new_max_id; $character++) {
+                    $extra_for_error = 'character ID '.$character;
+                    $cron->settingsFromArray(
+                        ['task' => 'ff_update_entity', 'arguments' => [(string) $character, 'character'], 'message' => 'Updating character with ID '.$character],
+                    )->add();
                 }
             }
         } catch (\Throwable $throwable) {
@@ -74,14 +81,12 @@ final class FFTracker
     {
         $output->writeln(Errors::logfmt('Updating FFXIV statistics...'));
         try {
-            // Connect to DB
-            Config::dbConnect();
-            if (Config::$dbup) {
-                $cron_agent = new Agent(Config::$PDO);
-                foreach (['raw', 'characters', 'groups', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
-                    $cron_agent->log('Updating FFXIV '.$type.' statistics...', EventTypes::CustomInformation);
-                    new FFXIVStatistics()->update($type);
-                }
+            /* @var \PDO $pdo IDE complains due to more generic object */
+            $pdo = $this->connection->getNativeConnection();
+            $cron_agent = new Agent($pdo);
+            foreach (['raw', 'characters', 'groups', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
+                $cron_agent->log('Updating FFXIV '.$type.' statistics...', EventTypes::CustomInformation);
+                new FFXIVStatistics()->update($type);
             }
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
@@ -104,24 +109,23 @@ final class FFTracker
     {
         $output->writeln(Errors::logfmt('Updating FFXIV servers...'));
         try {
-            // Connect to DB
-            Config::dbConnect();
-            if (Config::$dbup) {
-                $lodestone = (new Lodestone());
-                #Get server
-                $worlds = $lodestone->getWorldStatus()->getResult()['worlds'];
-                #Prepare queries
-                $queries = [];
-                foreach ($worlds as $data_center => $servers) {
-                    foreach ($servers as $server => $status) {
-                        $queries[] = [
-                            'INSERT IGNORE INTO `ffxiv__server` (`server`, `data_center`) VALUES (:server, :data_center)',
-                            [':server' => $server, ':data_center' => $data_center],
-                        ];
-                    }
+            /* @var \PDO $pdo IDE complains due to more generic object */
+            $pdo = $this->connection->getNativeConnection();
+            $lodestone = (new Lodestone());
+            #Get server
+            $worlds = $lodestone->getWorldStatus()->getResult()['worlds'];
+            #Prepare queries
+            $queries = [];
+            foreach ($worlds as $data_center => $servers) {
+                foreach ($servers as $server => $status) {
+                    $queries[] = [
+                        'INSERT IGNORE INTO `ffxiv__server` (`server`, `data_center`) VALUES (:server, :data_center)',
+                        [':server' => $server, ':data_center' => $data_center],
+                    ];
                 }
-                Query::query($queries);
             }
+            new Query($pdo);
+            Query::query($queries);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
 
