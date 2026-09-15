@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace App\Service\Routing;
 
 use App\Controller\About\Homepage;
-use App\Controller\Redirects\BICTracker\Legacy;
 use App\Service\Feeds;
 use function array_slice;
 
@@ -38,7 +37,7 @@ class MainRouter extends Router
     protected array $breadcrumb = [
         ['href' => '/', 'name' => 'Home page'],
     ];
-    
+
     /**
      * @throws \Exception
      */
@@ -58,7 +57,6 @@ class MainRouter extends Router
             #Pages routing
             'about' => new About()->route(array_slice($path, 1)),
             'bictracker' => new BICTracker()->route(array_slice($path, 1)),
-            'bic' => new Legacy()->get(array_slice($path, 1)),
             'fftracker' => new FFTracker()->route(array_slice($path, 1)),
             'uc' => new UserControl()->route(array_slice($path, 1)),
             'tests' => new Tests()->route(array_slice($path, 1)),
@@ -77,7 +75,7 @@ class MainRouter extends Router
             default => $this->error(['404']),
         };
     }
-    
+
     /**
      * Function to help route error pages on frontend
      * @param array $uri

@@ -1,0 +1,664 @@
+// Some redirects
+{
+    "handler": "subroute",
+    "routes": [
+        //No trailing slash with no query
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "^(.+?)/$",
+                        "name": "noTrailSlash"
+                    },
+                    "query": {}
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "{http.regexp.noTrailSlash.1}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        //No trailing slash with a query
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "^(.+?)/$",
+                        "name": "noTrailSlashQuery"
+                    },
+                    "not": [
+                        {
+                            "query": {}
+                        }
+                    ]
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "{http.regexp.noTrailSlashQuery.1}?{http.request.uri.query}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        //Sitemap with format (legacy)
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/sitemap/(xml|txt|html)(.*)",
+                        "name": "sitemapFormat"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/sitemap{http.regexp.sitemapFormat.2}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        //Sitemap without a file specified
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/sitemap/?$",
+                        "name": "sitemapNoFile"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/sitemap/index.xml"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        //Sitemap without .xml
+        {
+            "match": [
+                {
+                    //A negative look behind does not seem to work here
+                    //Thrown "invalid named capture" error, so using "not", too
+                    "path_regexp": {
+                        "pattern": "/sitemap/(.+)$",
+                        "name": "sitemapNoExtension"
+                    },
+                    "not": [
+                        {
+                            "path": [
+                                "*.xml"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/sitemap/{http.regexp.sitemapNoExtension.1}.xml"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/about/resume/?$"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/about/me"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/about/website/?$"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/about/tech"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/bic/?$"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/bictracker/search"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/bic/(.+)$",
+                        "name": "bicLegacy"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/bictracker/search?search={http.regexp.bicLegacy.1}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/bictracker/bic/?$"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/bictracker/bics"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/bictracker/bic/(.+)$",
+                        "name": "bicSingular"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/bictracker/bics/{http.regexp.bicSingular.1}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/games/anti/?$"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/games/radicalresonance"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/achievement/?$"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/achievements"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/achievement/(.+)$",
+                        "name": "achievementSingular"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/achievements/{http.regexp.achievementSingular.1}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/character/?$"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/characters"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/character/(.+)$",
+                        "name": "characterSingular"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/characters/{http.regexp.characterSingular.1}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/linkshell/?$"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/linkshells"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/linkshell/(.+)$",
+                        "name": "linkshellSingular"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/linkshells/{http.regexp.linkshellSingular.1}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/pvpteam/?$"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/pvpteams"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/pvpteam/(.+)$",
+                        "name": "pvpteamSingular"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/pvpteams/{http.regexp.pvpteamSingular.1}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/freecompany/?$"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/freecompanies"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/freecompany/(.+)$",
+                        "name": "freecompanySingular"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/freecompanies/{http.regexp.freecompanySingular.1}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/crossworld_?linkshell/?$"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/crossworld_linkshells"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/crossworld_?linkshell/(.+)$",
+                        "name": "crossLinkshellSingular"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/crossworld_linkshells/{http.regexp.crossLinkshellSingular.1}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/crossworldlinkshells/?$"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/crossworld_linkshells"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/fftracker/crossworldlinkshells/(.+)$",
+                        "name": "crossLinkshellUnderscore"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/fftracker/crossworld_linkshells/{http.regexp.crossLinkshellUnderscore.1}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        }
+    ]
+}

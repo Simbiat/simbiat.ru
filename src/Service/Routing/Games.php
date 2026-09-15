@@ -6,7 +6,6 @@ namespace App\Service\Routing;
 use App\Controller\Games\DDEN;
 use App\Controller\Games\Jiangshi;
 use App\Controller\Games\RadicalResonance;
-use App\Controller\Redirects\Games\Anti;
 use function array_slice;
 
 class Games extends Router
@@ -29,7 +28,6 @@ class Games extends Router
             'jiangshi' => new Jiangshi()->get(array_slice($path, 1)),
             'dden' => (new DDEN())->get(array_slice($path, 1)),
             'radicalresonance' => (new RadicalResonance())->get(array_slice($path, 1)),
-            'anti' => (new Anti())->get(array_slice($path, 1)),
             default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.\implode('`, `', $this->sub_routes).'`.'],
         };
     }

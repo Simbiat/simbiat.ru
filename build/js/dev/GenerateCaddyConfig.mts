@@ -6,27 +6,27 @@
 
 /* eslint-disable no-console */
 
-import hosts from '../../docker/frankenphp/config/hosts.jsonc';
-import logs from '../../docker/frankenphp/config/logs.jsonc';
-import crowdsec from '../../docker/frankenphp/config/crowdsec.jsonc';
-import https from '../../docker/frankenphp/config/https.jsonc';
-import hsts from '../../docker/frankenphp/config/hsts.jsonc';
-import headers_remove from '../../docker/frankenphp/config/headers_remove.jsonc';
-import headers_add from '../../docker/frankenphp/config/headers_add.jsonc';
-import headers_deny from '../../docker/frankenphp/config/headers_deny.jsonc';
-import headers_access_control from '../../docker/frankenphp/config/headers_access_control.jsonc';
-import headers_cache_control from '../../docker/frankenphp/config/headers_cache_control.jsonc';
-import headers_path_based from '../../docker/frankenphp/config/headers_path_based.jsonc';
-import headers_cross_origin from '../../docker/frankenphp/config/headers_cross_origin.jsonc';
-import headers_vary from '../../docker/frankenphp/config/headers_vary.jsonc';
-import headers_utf from '../../docker/frankenphp/config/headers_utf.jsonc';
-import headers_compression from '../../docker/frankenphp/config/headers_compression.jsonc';
-import internal_redirects from '../../docker/frankenphp/config/internal_redirects.jsonc';
-import domain_redirects from '../../docker/frankenphp/config/domain_redirects.jsonc';
-import rewrites from '../../docker/frankenphp/config/rewrites.jsonc';
-import php from '../../docker/frankenphp/config/php.jsonc';
-import hotlinks from '../../docker/frankenphp/config/hotlinks.jsonc';
-import rate_limit from '../../docker/frankenphp/config/rate_limit.jsonc';
+import hosts from '../../../config/Caddy/hosts.jsonc';
+import logs from '../../../config/Caddy/logs.jsonc';
+import crowdsec from '../../../config/Caddy/crowdsec.jsonc';
+import https from '../../../config/Caddy/https.jsonc';
+import hsts from '../../../config/Caddy/hsts.jsonc';
+import headers_remove from '../../../config/Caddy/headers/remove.jsonc';
+import headers_add from '../../../config/Caddy/headers/add.jsonc';
+import headers_deny from '../../../config/Caddy/headers/deny.jsonc';
+import headers_access_control from '../../../config/Caddy/headers/access_control.jsonc';
+import headers_cache_control from '../../../config/Caddy/headers/cache_control.jsonc';
+import headers_path_based from '../../../config/Caddy/headers/path_based.jsonc';
+import headers_cross_origin from '../../../config/Caddy/headers/cross_origin.jsonc';
+import headers_vary from '../../../config/Caddy/headers/vary.jsonc';
+import headers_utf from '../../../config/Caddy/headers/utf.jsonc';
+import headers_compression from '../../../config/Caddy/headers/compression.jsonc';
+import internal_redirects from '../../../config/Caddy/redirects/internal.jsonc';
+import domain_redirects from '../../../config/Caddy/redirects/domain.jsonc';
+import rewrites from '../../../config/Caddy/rewrites.jsonc';
+import php from '../../../config/Caddy/php.jsonc';
+import hotlinks from '../../../config/Caddy/hotlinks.jsonc';
+import rate_limit from '../../../config/Caddy/rate_limit.jsonc';
 
 // The following 3 interfaces are just to help with suppressing type-related errors
 interface HostMatch {

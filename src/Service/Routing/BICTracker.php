@@ -7,7 +7,6 @@ use App\Controller\BIC\Bic;
 use App\Controller\BIC\Keying;
 use App\Controller\BIC\Listing;
 use App\Controller\BIC\Search;
-use App\Controller\Redirects\BICTracker\ToBics;
 use function array_slice;
 
 class BICTracker extends Router
@@ -29,7 +28,6 @@ class BICTracker extends Router
     {
         return match ($path[0]) {
             'bics' => new Bic()->get(array_slice($path, 1)),
-            'bic' => new ToBics()->get(array_slice($path, 1)),
             'search' => new Search()->get(array_slice($path, 1)),
             'keying' => new Keying()->get(array_slice($path, 1)),
             'openbics', 'closedbics' => new Listing()->get($path),
