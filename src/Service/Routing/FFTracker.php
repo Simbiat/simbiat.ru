@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service\Routing;
 
@@ -17,11 +18,11 @@ use function array_slice;
 
 class FFTracker extends Router
 {
-    #List supported "paths". Basic ones only, some extra validation may be required further
+    // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'crossworldlinkshells', 'achievements', 'statistics', 'crests', 'track', 'points',
-        #legacy singular nodes
+        // legacy singular nodes
         'character', 'freecompany', 'pvpteam', 'linkshell', 'crossworld_linkshell', 'crossworldlinkshell', 'achievement'];
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/fftracker/', 'name' => 'FFXIV Tracker']
     ];
@@ -31,7 +32,7 @@ class FFTracker extends Router
     protected string $og_image = '/ogimages/fftracker.webp';
     protected string $service_name = 'fftracker';
 
-    #This is the actual page generation based on further details of the $path
+    // This is the actual page generation based on further details of the $path
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {

@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Notification;
 
@@ -20,7 +21,7 @@ final class Test extends Notification
      * Whether to send to all emails registered for the user
      */
     protected const bool ALL_EMAILS = true;
-    
+
     /**
      * Generate text for message
      *

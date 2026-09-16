@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\BIC;
 
@@ -8,26 +9,26 @@ use Simbiat\BIC\AccountKeying;
 
 class Keying extends Page
 {
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/bictracker/keying', 'name' => 'Ключевание']
     ];
-    #Sub service name
+    // Sub service name
     protected string $subservice_name = 'keying';
-    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $title = 'Ключевание счёта';
-    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'Ключевание счёта';
-    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'Проверка корректности контрольного символа в номере счёта против номера банковского идентификационного кода';
-    #Language override, to be sent in header (if present)
+    // Language override, to be sent in header (if present)
     protected string $language = 'ru-RU';
-    #Flag to indicate this is a static page
+    // Flag to indicate this is a static page
     protected bool $static = true;
-    #List of permissions, from which at least 1 is required to have access to the page
+    // List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = ['view_bic'];
-    
-    #This is actual page generation based on further details of the $path
+
+    // This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
         $output_array['check_result'] = null;

@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\Abstracts;
 
@@ -8,11 +9,11 @@ namespace App\Controller\Abstracts;
  */
 class StaticPage extends Page
 {
-    #Flag to indicate this is a static page
+    // Flag to indicate this is a static page
     protected bool $static = true;
-    #Cache strategy: aggressive, private, live, month, week, day, hour
+    // Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cache_strategy = 'week';
-    
+
     /**
      * Static pages have all the data in Twig templates, thus we usually return an empty array
      * @param array $path

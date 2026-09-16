@@ -111,7 +111,7 @@ final class Clean
             Config::dbConnect();
             if (Config::$dbup) {
                 $queries = [];
-                #Clean audit logs
+                // Clean audit logs
                 $queries[] = 'DELETE FROM `sys__logs` WHERE `time`<= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 YEAR)';
                 Query::query($queries);
             }
@@ -140,9 +140,9 @@ final class Clean
             Config::dbConnect();
             if (Config::$dbup) {
                 $queries = [];
-                #Remove pages that have not been viewed in 2 years
+                // Remove pages that have not been viewed in 2 years
                 $queries[] = 'DELETE FROM `seo__pageviews` WHERE `last`<= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 2 YEAR);';
-                #Remove visitors who have not come in 2 years
+                // Remove visitors who have not come in 2 years
                 $queries[] = 'DELETE FROM `seo__visitors` WHERE `last`<= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 2 YEAR);';
                 Query::query($queries);
             }
@@ -170,7 +170,7 @@ final class Clean
             // Connect to DB
             Config::dbConnect();
             if (Config::$dbup) {
-                #TODO https://github.com/Simbiat/simbiat.ru/issues/96
+                // TODO https://github.com/Simbiat/simbiat.ru/issues/96
 
                 return Command::SUCCESS;
             }
@@ -203,7 +203,7 @@ final class Clean
                 $db_files = Query::query('SELECT `file_id`, `extension`, `mime`, `sys__files`.`user_id`, IF(`file_id` IN (SELECT `file_id` FROM `talks__attachments`), 1, 0) as `attachment`, IF(`file_id` IN (SELECT `og_image` FROM `talks__threads`), 1, 0) as `og_image`, IF(`file_id` IN (SELECT `file_id` FROM `uc__avatars`), 1, 0) as `avatar`, IF(`file_id` IN (SELECT `icon` FROM `talks__sections`), 1, 0) as `section`, IF(`file_id` IN (SELECT `icon` FROM `talks__types`), 1, 0) as `section_defaults` FROM `sys__files` WHERE `added` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) HAVING `attachment`+`og_image`+`avatar`+`section`+`section_defaults`=0;', return: 'all');
                 // Iterate through the list
                 foreach ($db_files as $file) {
-                    #Get the expected full path of the file
+                    // Get the expected full path of the file
                     if (\preg_match('/^image\/.+$/ui', $file['mime']) === 1) {
                         $full_path = Config::$uploaded_img;
                     } else {
@@ -212,29 +212,29 @@ final class Clean
                     $full_path .= '/'.mb_substr($file['file_id'], 0, 2, 'UTF-8').'/'.mb_substr($file['file_id'], 2, 2, 'UTF-8').'/'.mb_substr($file['file_id'], 4, 2, 'UTF-8').'/'.$file['file_id'].'.'.$file['extension'];
                     // Log the removal
                     Security::log(LogType::FileUpload->value, 'Automatically deleted file', $file['file_id'].'.'.$file['extension'], user_id: $file['user_id']);
-                    #Remove from DB
+                    // Remove from DB
                     Query::query('DELETE FROM `sys__files` WHERE `file_id`=:file_id;', [':file_id' => $file['file_id']]);
-                    #Remove from drive
+                    // Remove from drive
                     /** @noinspection PhpUsageOfSilenceOperatorInspection */
                     @\unlink($full_path);
                 }
-                #Get all files from the drive
+                // Get all files from the drive
                 $all_files = new \AppendIterator();
                 $all_files->append(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(Config::$uploaded, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST));
                 $all_files->append(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(Config::$uploaded_img, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST));
-                #Now get only the file IDs from DB. We need to do it a 2nd time in the function and AFTER directory iterators, to minimize the chances of removing a file that is in the process of being uploaded
+                // Now get only the file IDs from DB. We need to do it a 2nd time in the function and AFTER directory iterators, to minimize the chances of removing a file that is in the process of being uploaded
                 $db_files = Query::query('SELECT `file_id` FROM `sys__files`;', return: 'column');
                 foreach ($all_files as $file) {
-                    #Ignore directories and .gitignore and check if the file's ID is present in a database
+                    // Ignore directories and .gitignore and check if the file's ID is present in a database
                     if (!\is_dir($file) && \preg_match('/\.gitignore$/ui', $file) !== 1 && !\in_array(\pathinfo($file, \PATHINFO_FILENAME), $db_files, true)) {
-                        #Get a directory tree for the file
+                        // Get a directory tree for the file
                         $dirs = [dirname($file), dirname($file, 2), dirname($file, 3)];
-                        #Log the removal
+                        // Log the removal
                         Security::log(LogType::FileUpload->value, 'Automatically deleted file', \basename($file), user_id: SystemUser::System->value);
-                        #Remove the file
+                        // Remove the file
                         /** @noinspection PhpUsageOfSilenceOperatorInspection */
                         @\unlink($file);
-                        #Remove a directory tree, if empty
+                        // Remove a directory tree, if empty
                         foreach ($dirs as $dir) {
                             if (!new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS)->valid()) {
                                 /** @noinspection PhpUsageOfSilenceOperatorInspection */

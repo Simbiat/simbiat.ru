@@ -1,7 +1,8 @@
 <?php
-declare(strict_types = 1);
 
-#TODO: Consider moving this to `/app/tests`
+declare(strict_types=1);
+
+// TODO: Consider moving this to `/app/tests`
 namespace App\Service;
 
 use JetBrains\PhpStorm\FileReference;
@@ -11,16 +12,16 @@ use Simbiat\http20\Sharing;
 
 class Tests
 {
-    #Function to test Lodestone
-    #Incorporate below ones, when and if required
-    #$data = $lodestone->searchLinkshell()->getResult();
-    #$data = $lodestone->searchDatabase('duty', 2)->getResult();
-    #$data = $lodestone->searchDatabase('achievement', 0, 0, 'hit the floor')->getResult();
-    #$data = $lodestone->getCharacterAchievements('6691027', false, 39, true, false)->getResult();
-    #$data = $lodestone->getWorldStatus(true)->getResult();
-    #$data = $lodestone->getDeepDungeon(2, '', '', '')->getResult();
-    
-    #Function to test file upload using PUT
+    // Function to test Lodestone
+    // Incorporate below ones, when and if required
+    // $data = $lodestone->searchLinkshell()->getResult();
+    // $data = $lodestone->searchDatabase('duty', 2)->getResult();
+    // $data = $lodestone->searchDatabase('achievement', 0, 0, 'hit the floor')->getResult();
+    // $data = $lodestone->getCharacterAchievements('6691027', false, 39, true, false)->getResult();
+    // $data = $lodestone->getWorldStatus(true)->getResult();
+    // $data = $lodestone->getDeepDungeon(2, '', '', '')->getResult();
+
+    // Function to test file upload using PUT
     #[NoReturn] public function uploadPut(#[FileReference] string $filepath): void
     {
         $curl = (new Curl)::$curl_handle;
@@ -34,8 +35,8 @@ class Tests
         Errors::dump(\curl_exec($curl));
         exit(0);
     }
-    
-    #Function to test file upload using POST
+
+    // Function to test file upload using POST
     public function uploadPost(#[FileReference] string $upload_path, int $max_file_size = 300000000): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -59,8 +60,8 @@ class Tests
         }
         exit(0);
     }
-    
-    #Function to test download
+
+    // Function to test download
     #[NoReturn] public function downloadTest(#[FileReference] string $filepath, string $bytes = ''): void
     {
         if (!empty($bytes)) {

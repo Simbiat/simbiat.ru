@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\Api\Talks;
 
@@ -10,23 +11,23 @@ use App\Service\Config;
 
 class Contact extends Api
 {
-    #Flag to indicate, that this is the lowest level
+    // Flag to indicate, that this is the lowest level
     protected bool $final_node = true;
-    #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ''];
-    #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+    // Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = ['add' => 'Submit support request'];
-    #Flag indicating that authentication is required
+    // Flag indicating that authentication is required
     protected bool $authentication_needed = false;
-    #Flag to indicate need to validate CSRF
+    // Flag to indicate need to validate CSRF
     protected bool $csrf = false;
 
     protected function genData(array $path): array
     {
-        #Only creation of new threads. 26 is the static ID of the forum where the threads go
+        // Only creation of new threads. 26 is the static ID of the forum where the threads go
         $_POST['thread_data']['parent_id'] = 26;
-        #contact_form_email
-        #Generate ticket ID
+        // contact_form_email
+        // Generate ticket ID
         $ticket = Security::genToken(8);
         $_POST['thread_data']['name'] = '[Contact form] '.$ticket;
         $_SESSION['permissions'] = ['can_post'];

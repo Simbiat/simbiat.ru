@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\Api\UserControl;
 
@@ -14,13 +15,13 @@ use Simbiat\Database\Query;
  */
 class Password extends Api
 {
-    #Flag to indicate that this is the lowest level
+    // Flag to indicate that this is the lowest level
     protected bool $final_node = true;
-    #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['PATCH' => ''];
-    #Flag to indicate need to validate CSRF
+    // Flag to indicate need to validate CSRF
     protected bool $csrf = true;
-    
+
     /**
      * @param array $path
      *
@@ -47,7 +48,7 @@ class Password extends Api
         }
         $user = (new User($id));
         if (empty($_POST['pass_reset'])) {
-            #Get password
+            // Get password
             try {
                 $password = Query::query('SELECT `password` FROM `uc__users` WHERE `user_id`=:user_id',
                     [':user_id' => $id], return: 'value'
@@ -58,12 +59,12 @@ class Password extends Api
             if (empty($password)) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
-            #Validate current password
+            // Validate current password
             if (!$user->passValid($_POST['current_password'], $password)) {
                 return ['http_error' => 403, 'reason' => 'Bad password'];
             }
         } else {
-            #Get activation code
+            // Get activation code
             try {
                 $pw_reset = Query::query('SELECT `password_reset` FROM `uc__users` WHERE `user_id`=:user_id',
                     [':user_id' => $id], return: 'value'
@@ -74,13 +75,13 @@ class Password extends Api
             if (empty($pw_reset)) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
-            #Validate token
+            // Validate token
             if (!\password_verify($_POST['pass_reset'], $pw_reset)) {
                 return ['http_error' => 403, 'reason' => 'Bad password reset token'];
             }
         }
         Security::session_regenerate_id(true);
-        #Change password
+        // Change password
         if ($user->passChange($_POST['new_password'])) {
             return ['response' => true];
         }

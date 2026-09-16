@@ -1,20 +1,21 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\FFXIV\Statistics;
 
 class Other extends General
 {
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/fftracker/statistics/other', 'name' => 'Other']
     ];
-    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $title = 'Other';
-    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'Other';
-    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'FFXIV Statistics: Other Category';
-    #List of JSOn files, that we need to try to ingest
+    // List of JSOn files, that we need to try to ingest
     protected string $json_to_ingest = 'other';
 }

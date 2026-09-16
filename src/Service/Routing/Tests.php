@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service\Routing;
 
@@ -10,9 +11,9 @@ use App\Service\Errors;
 
 class Tests extends Router
 {
-    #List supported "paths". Basic ones only, some extra validation may be required further
+    // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['mail', 'styling'];
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/tests/', 'name' => 'Tests']
     ];
@@ -29,7 +30,7 @@ class Tests extends Router
     protected function pageGen(array $path): array
     {
         $output_array = [];
-        #Forbid if on PROD
+        // Forbid if on PROD
         if (!empty($path[0]) && $path[0] !== 'styling') {
             if (Config::$environment === 'prod' || \count($path) === 0) {
                 $output_array['http_error'] = 403;

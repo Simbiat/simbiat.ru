@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\FFXIV;
 
@@ -7,42 +8,42 @@ use App\Controller\Abstracts\Page;
 
 class Linkshell extends Page
 {
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/fftracker/linkshells', 'name' => 'Linkshells']
     ];
-    #Sub service name
+    // Sub service name
     protected string $subservice_name = 'linkshell';
-    #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Linkshell';
-    #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Linkshell';
-    #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Linkshell';
     protected const CROSSWORLD = false;
-    #List of permissions, from which at least 1 is required to have access to the page
+    // List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = ['view_ff'];
-    
-    #This is the actual page generation based on further details of the $path
+
+    // This is the actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        #Sanitize ID
+        // Sanitize ID
         $id = $path[0] ?? '';
-        #Try to get details
+        // Try to get details
         if ($this::CROSSWORLD) {
             $entity = new \App\Entity\FFXIV\CrossworldLinkshell($id);
         } else {
             $entity = new \App\Entity\FFXIV\Linkshell($id);
         }
         $output_array['linkshell'] = $entity->getArray();
-        #Check if ID was found
+        // Check if ID was found
         if (empty($output_array['linkshell']['id'])) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
         $output_array['linkshell']['crossworld'] = $this::CROSSWORLD;
-        #Try to exit early based on the modification date
+        // Try to exit early based on the modification date
         $this->lastModified($output_array['linkshell']['dates']['updated']);
-        #Check if linked to the current user
+        // Check if linked to the current user
         if ($_SESSION['user_id'] !== 1 && \in_array($_SESSION['user_id'], \array_column($output_array['linkshell']['members'], 'user_id'), true)) {
             $output_array['linkshell']['linked'] = true;
         } else {
@@ -62,13 +63,13 @@ class Linkshell extends Page
         } else {
             $output_array['linkshell']['can_refresh'] = false;
         }
-        #Continue breadcrumbs
+        // Continue breadcrumbs
         $this->breadcrumb[] = ['href' => '/fftracker/'.($this::CROSSWORLD ? 'crossworld_' : '').'linkshells/'.$id, 'name' => $output_array['linkshell']['name']];
-        #Update meta
+        // Update meta
         $this->title = $output_array['linkshell']['name'];
         $this->h1 = $this->title;
         $this->og_desc = $output_array['linkshell']['name'].' on FFXIV Tracker';
-        #Link header/tag for API
+        // Link header/tag for API
         $this->alt_links = [
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/'.($this::CROSSWORLD ? 'crossworld_' : '').'linkshells/'.$id],
         ];

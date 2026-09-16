@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Twig;
 
@@ -27,7 +28,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     {
         return Sanitization::getUploadedFileLink($filename);
     }
-    
+
     /**
      * Format numeric as bytes
      * @param int|string|float $bytes
@@ -38,7 +39,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     {
         return CuteBytes::bytes($bytes);
     }
-    
+
     /**
      * Generate breadcrumbs
      * @param array $items
@@ -49,7 +50,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     {
         return HTML::breadcrumbs($items);
     }
-    
+
     /**
      * Generate timeline
      * @param array $items    Array of items
@@ -61,7 +62,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     {
         return Sanitization::sanitizeHTML(HTML::timeline($items, br_limit: $br_limit), 'timeline');
     }
-    
+
     /**
      * Generate pagination
      * @param int    $current Current page
@@ -74,7 +75,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     {
         return HTML::pagination($current, $total, 7, prefix: $prefix, tooltip: 'data-tooltip');
     }
-    
+
     /**
      * PHP's basename function
      * @param string $string
@@ -85,7 +86,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     {
         return \basename($string);
     }
-    
+
     /**
      * PHP's is_numeric function
      *
@@ -98,7 +99,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     {
         return \is_numeric($string);
     }
-    
+
     /**
      * Sanitize HTML string
      * @param string $string
@@ -110,7 +111,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     {
         return Sanitization::sanitizeHTML($string, $head ? 'head' : 'body');
     }
-    
+
     /**
      * Generate `<time>` tag
      * @param int|string $string
@@ -122,17 +123,17 @@ final class RuntimeExtension implements RuntimeExtensionInterface
      */
     public function timeTag(int|string $string, string $format = 'd/m/Y H:i', string $classes = ''): string
     {
-        #Set time zone
+        // Set time zone
         $timezone = $_SESSION['timezone'] ?? 'UTC';
         if (!\in_array($timezone, \timezone_identifiers_list(), true)) {
             $timezone = 'UTC';
         }
-        #Create DateTime object while converting the time
+        // Create DateTime object while converting the time
         $datetime = SandClock::convertTimezone($string, 'UTC', $timezone);
         $datetime->setTimezone(new \DateTimeZone($timezone));
         return '<time datetime="'.$datetime->format('c').'"'.(empty($classes) ? '' : 'class="'.$classes.'"').'>'.$datetime->format($format).'</time>';
     }
-    
+
     /**
      * Generate `<link>` tags
      * @param array  $links
@@ -144,7 +145,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     {
         return Links::links($links, $type, true);
     }
-    
+
     /**
      * Prettify URL
      * @param string $string

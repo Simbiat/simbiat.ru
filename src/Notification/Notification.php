@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Notification;
 
@@ -28,7 +29,7 @@ use Symfony\Component\Mime\Address;
  */
 abstract class Notification extends Entity
 {
-    #Format for IDs
+    // Format for IDs
     protected string $id_format = '/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/mui';
     /**
      * Subject for email
@@ -58,23 +59,23 @@ abstract class Notification extends Entity
      * Maximum attempts for sending notifications over email
      */
     final public const int MAX_ATTEMPTS = 10;
-    #ID of the user the notification belongs to
+    // ID of the user the notification belongs to
     protected ?int $user = null;
-    #Whether notification is supposed to be sent via email (if a valid email)
+    // Whether notification is supposed to be sent via email (if a valid email)
     protected(set) ?string $email = null;
-    #Whether notification is supposed to be sent via push
+    // Whether notification is supposed to be sent via push
     protected(set) bool $push = true;
-    #When the notification was created
+    // When the notification was created
     protected(set) ?int $created = null;
-    #When notification was sent
+    // When notification was sent
     protected(set) ?int $sent = null;
-    #When notification was read
+    // When notification was read
     protected(set) ?int $is_read = null;
-    #Number of attempts so far
+    // Number of attempts so far
     protected(set) int $attempts = 0;
-    #WHen was the last attempt
+    // WHen was the last attempt
     protected(set) ?int $last_attempt = null;
-    #Notification text
+    // Notification text
     protected(set) ?string $text = null;
 
     /**
@@ -110,7 +111,7 @@ abstract class Notification extends Entity
             try {
                 $result = Query::query('UPDATE `sys__notifications` SET `is_read`=CURRENT_TIMESTAMP(6) WHERE `uuid`=:id AND `is_read` IS NULL;', [':id' => $uuid]);
             } catch (\Throwable $throwable) {
-                #Do nothing
+                // Do nothing
                 Errors::error_log($throwable);
             }
         }
@@ -214,15 +215,15 @@ abstract class Notification extends Entity
                 }
             }
         }
-        #If DB is not required, then we are ok with not saving to the database
+        // If DB is not required, then we are ok with not saving to the database
         if ($this->user === null && !$this::ALWAYS_SEND) {
             throw new \UnexpectedValueException('No user is set for notification');
         }
-        #If email override is provided, but not a valid email - nullify it
+        // If email override is provided, but not a valid email - nullify it
         if ($email_override !== null && \filter_var($email_override, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
             $email_override = null;
         }
-        #Get email
+        // Get email
         if ($email) {
             if ($email_override === null) {
                 if ($this->user !== null) {
@@ -248,7 +249,7 @@ abstract class Notification extends Entity
         } else {
             $emails = [];
         }
-        #Add some sessional data
+        // Add some sessional data
         if ($this::SECURITY_ALERT) {
             $session_details = [
                 'ip' => $_SESSION['ip'] ?? null,
@@ -270,7 +271,7 @@ abstract class Notification extends Entity
             }
             $twig_vars['session_details'] = $session_details;
         }
-        #If Twig variables are required but not provided, we do not do anything
+        // If Twig variables are required but not provided, we do not do anything
         if ($this::TWIG_REQUIRED && \count($twig_vars) === 0) {
             $this->text = null;
         } else {
@@ -287,12 +288,12 @@ abstract class Notification extends Entity
         $type = NotificationType::{$constant_name}->value;
         $result = false;
         try {
-            #Try to save to database only if user ID is set
+            // Try to save to database only if user ID is set
             if ($this->user !== null) {
                 if ($email) {
-                    #Go through all emails in list. If there are multiple, then and a `send` is called afterward, then the last would be sent, and the rest should be picked up by Cron
+                    // Go through all emails in list. If there are multiple, then and a `send` is called afterward, then the last would be sent, and the rest should be picked up by Cron
                     foreach ($emails as $address) {
-                        #Ignore bad email addresses
+                        // Ignore bad email addresses
                         if (\filter_var($address, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
                             continue;
                         }
@@ -332,7 +333,7 @@ abstract class Notification extends Entity
                 $result = true;
             }
         } catch (\Throwable $exception) {
-            #If database is not required, it means we do not need to save
+            // If database is not required, it means we do not need to save
             if ($this::ALWAYS_SEND) {
                 $result = true;
             } else {
@@ -358,7 +359,7 @@ abstract class Notification extends Entity
     final public function send(bool $debug = false): bool
     {
         if ($this->attempts >= 10) {
-            #Don't do anything if we already tried to send the message too many times
+            // Don't do anything if we already tried to send the message too many times
             return false;
         }
         if (Sanitize::whiteString($this->text ?? '')) {
@@ -368,15 +369,15 @@ abstract class Notification extends Entity
             throw new \UnexpectedValueException('Sending of a notification is only possible for those that have been saved');
         }
         if ($this->sent !== null) {
-            #If notification is already sent - no need to send it again
+            // If notification is already sent - no need to send it again
             return true;
         }
         if ($this->is_read !== null) {
-            #If already read, disable email type to avoid further attempts
+            // If already read, disable email type to avoid further attempts
             try {
                 Query::query('UPDATE `sys__notifications` SET `email`=NULL WHERE `uuid` = :uuid;', [':uuid' => $this->id]);
             } catch (\Throwable $exception) {
-                #Do nothing, since not critical, will be retried later
+                // Do nothing, since not critical, will be retried later
                 Errors::error_log($exception);
             }
             return true;
@@ -385,7 +386,7 @@ abstract class Notification extends Entity
             $this->email = null;
         }
         if ($this->email === null) {
-            #Disable email flag for this notification and return true
+            // Disable email flag for this notification and return true
             try {
                 Query::query('UPDATE `sys__notifications` SET `email`=NULL WHERE `uuid` = :uuid;', [':uuid' => $this->id]);
             } catch (\Throwable $throwable) {
@@ -405,28 +406,28 @@ abstract class Notification extends Entity
             } catch (\Throwable $throwable) {
                 Errors::error_log($throwable);
                 if (!$this::ALWAYS_SEND) {
-                    #Just exit, let it be retried later, unless we are forcing the notification and do not care for this anyway
+                    // Just exit, let it be retried later, unless we are forcing the notification and do not care for this anyway
                     return false;
                 }
             }
         }
-        #If we are not forcing, and email is not subscribed - disable email sending for this notification
+        // If we are not forcing, and email is not subscribed - disable email sending for this notification
         if ($subscribed === null && !$this::ALWAYS_SEND) {
             if ($this->id !== null) {
                 try {
                     Query::query('UPDATE `sys__notifications` SET `email`=NULL WHERE `uuid` = :uuid;', [':uuid' => $this->id]);
                 } catch (\Throwable $exception) {
-                    #Do nothing, since not critical, will be retried later
+                    // Do nothing, since not critical, will be retried later
                     Errors::error_log($exception);
                 }
             }
-            #Consider this being "success", but do not set the time
+            // Consider this being "success", but do not set the time
             return true;
         }
         if ($subscribed === null && !$this::ALWAYS_SEND) {
             throw new \UnexpectedValueException('No subscribed email found and no override email provided');
         }
-        #Prepare message listener with Twig renderer
+        // Prepare message listener with Twig renderer
         try {
             $renderer = new BodyRenderer(EnvironmentGenerator::getTwig());
             $message_listener = new MessageListener(null, $renderer);
@@ -436,20 +437,20 @@ abstract class Notification extends Entity
         }
         $event_dispatcher = new EventDispatcher();
         $event_dispatcher->addSubscriber($message_listener);
-        #Create transport
+        // Create transport
         $mailer = new Mailer(Transport::fromDsn(Config::$mailer_dsn, $event_dispatcher), null, $event_dispatcher);
-        #Create basic email
+        // Create basic email
         $email = new TemplatedEmail()
             ->from(new Address(Config::$from_email, Config::$site_name))
             ->replyTo(new Address(Config::$from_email, Config::$site_name));
-        #Add receiver
+        // Add receiver
         if (Config::$environment === 'prod') {
             $email = $email->addTo(new Address($this->email, $username));
         } else {
-            #On test always use admin mail
+            // On test always use admin mail
             $email = $email->addTo(Config::$admin_email);
         }
-        #Set priority
+        // Set priority
         if (Config::$environment === 'prod') {
             if ($this::PRIORITY > 1) {
                 $email->getHeaders()->addTextHeader('Priority', 'Urgent')->addTextHeader('Importance', 'High');
@@ -462,7 +463,7 @@ abstract class Notification extends Entity
             $email->getHeaders()->addTextHeader('Priority', 'Non-Urgent')->addTextHeader('Importance', 'Low');
         }
         try {
-            #Add content
+            // Add content
             $email->subject((Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT)
                 ->htmlTemplate('email.twig')
                 ->context(['subject' => (Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT, 'username' => $username, 'unsubscribe_all' => $subscribed, 'text' => $this->text, 'tracker' => $this->id, 'created' => $this->created, 'sent' => \time()]);
@@ -475,9 +476,9 @@ abstract class Notification extends Entity
                 }
             }
             if ($debug) {
-                #For some reason using `getHtmlBody` right after send does not work, and returns `null`, so have to render it again. Not critical, since this is for testing only.
+                // For some reason using `getHtmlBody` right after send does not work, and returns `null`, so have to render it again. Not critical, since this is for testing only.
                 $renderer->render($email);
-                #Need to include the CSS file, since embedded does not seem to apply properly in browser. It's not exactly the same as when email is sent, but close enough.
+                // Need to include the CSS file, since embedded does not seem to apply properly in browser. It's not exactly the same as when email is sent, but close enough.
                 Common::zEcho('<link href="/assets/styles/1234567890.css" rel="stylesheet preload" type="text/css" as="style">'.$email->getHtmlBody(), 'live', false);
                 exit(0);
             }
@@ -491,7 +492,7 @@ abstract class Notification extends Entity
                 Query::query('UPDATE `sys__notifications` SET `sent`=CURRENT_TIMESTAMP(6) WHERE `uuid`=:uuid;', [':uuid' => $this->id]);
             } catch (\Throwable $exception) {
                 if (!$this::ALWAYS_SEND) {
-                    #Not critical, in worse case it will just be sent out again. But still log to the file, just in case.
+                    // Not critical, in worse case it will just be sent out again. But still log to the file, just in case.
                     Errors::error_log($exception);
                 }
             }

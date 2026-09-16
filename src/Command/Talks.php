@@ -37,13 +37,13 @@ final class Talks
             Config::dbConnect();
             if (Config::$dbup) {
                 $limit = User::AVATAR_LIMIT;
-                #Get users with more than 10 unused avatars
+                // Get users with more than 10 unused avatars
                 $users = Query::query('SELECT `user_id`, COUNT(*) as `count` FROM `uc__avatars` WHERE `current`=0 GROUP BY `user_id` HAVING `count`>:limit;', [':limit' => [$limit, 'int']], return: 'pair');
-                #Iterate over the list
+                // Iterate over the list
                 foreach ($users as $user => $count) {
-                    #Count how many avatars are excessive
+                    // Count how many avatars are excessive
                     $excess = $count - $limit;
-                    #Get the IDs of the avatars to remove
+                    // Get the IDs of the avatars to remove
                     $to_delete = Query::query(
                         'SELECT `uc__avatars`.`file_id` FROM `uc__avatars` INNER JOIN `sys__files` ON `uc__avatars`.`file_id`=`sys__files`.`file_id` WHERE `uc__avatars`.`user_id`=:user_id AND `current`=0 ORDER BY `size` DESC, `added` LIMIT :limit;',
                         [
@@ -51,9 +51,9 @@ final class Talks
                             ':limit' => [$excess, 'int'],
                         ], return: 'column'
                     );
-                    #Log the change
+                    // Log the change
                     Security::log(LogType::Avatar->value, 'Automatically deleted avatars', $to_delete, user_id: $user);
-                    #Delete from DB
+                    // Delete from DB
                     Query::query(
                         'DELETE FROM `uc__avatars` WHERE `user_id`=:user_id AND `current`=0 AND `file_id` IN (:toDelete);',
                         [

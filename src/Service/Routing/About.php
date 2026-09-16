@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service\Routing;
 
@@ -13,9 +14,9 @@ use function array_slice;
 
 class About extends Router
 {
-    #List supported "paths". Basic ones only, some extra validation may be required further
+    // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['tech', 'tos', 'privacy', 'security', 'website', 'me', 'resume', 'contacts'];
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/about/', 'name' => 'About']
     ];

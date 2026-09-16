@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App;
 
@@ -32,17 +33,17 @@ use function in_array;
  */
 class HomePage
 {
-    #Cache object
+    // Cache object
     private(set) static ?Caching $data_cache = null;
-    #HTTP headers object
+    // HTTP headers object
     private(set) static ?Headers $headers = null;
-    #Flag indicating that cached view has been served already
+    // Flag indicating that cached view has been served already
     private(set) static bool $stale_return = false;
-    #HTTP method being used
+    // HTTP method being used
     public static ?string $method = null;
-    #Array that can contain variables indicating common HTTP errors
+    // Array that can contain variables indicating common HTTP errors
     private(set) static ?array $http_error = [];
-    #User agent details from
+    // User agent details from
     private(set) static array $user_agent = [];
     public static array $links = [];
     public static string $canonical = '';
@@ -50,10 +51,10 @@ class HomePage
 
     public function __construct()
     {
-        #Cache headers object
+        // Cache headers object
         self::$headers = new Headers();
         self::$data_cache ??= new Caching();
-        #Set method
+        // Set method
         self::$method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] ?? $_SERVER['REQUEST_METHOD'] ?? null;
         // Initiate device detector
         // Force full string versions
@@ -61,13 +62,13 @@ class HomePage
         self::$device_detector = new DeviceDetector();
         self::$device_detector->setYamlParser(new Pecl());
         self::$device_detector->setCache(new PSR6Bridge(new ApcuAdapter('Matomo')));
-        #Parse multipart/form-data for PUT/DELETE/PATCH methods (if any)
+        // Parse multipart/form-data for PUT/DELETE/PATCH methods (if any)
         Headers::multiPartFormParse();
         if (in_array(self::$method, ['PUT', 'DELETE', 'PATCH'], true)) {
             $_POST = \array_change_key_case(Headers::$_PUT ?: Headers::$_DELETE ?: Headers::$_PATCH ?: []);
             $_FILES = Headers::$_FILES;
         }
-        #Get all POST and GET keys to the lower case
+        // Get all POST and GET keys to the lower case
         $_POST = \array_change_key_case($_POST);
         Sanitization::carefulArraySanitization($_POST);
         $_GET = \array_change_key_case($_GET);
@@ -82,12 +83,12 @@ class HomePage
      */
     private function init(): void
     {
-        #\Simbiat\Translit\Unicode::whatIsTransliterated();
-        #\Simbiat\Website\Errors::dump(\Simbiat\Translit\Convert::caseVariations('OSDATA'));
-        #echo 'here';
-        #exit(0);
+        // \Simbiat\Translit\Unicode::whatIsTransliterated();
+        // \Simbiat\Website\Errors::dump(\Simbiat\Translit\Convert::caseVariations('OSDATA'));
+        // echo 'here';
+        // exit(0);
 
-        #Set default Session shape
+        // Set default Session shape
         $_SESSION = [
             'user_id' => SystemUser::Unknown->value,
             'permissions' => [
@@ -101,31 +102,31 @@ class HomePage
             'timezone' => 'UTC',
         ];
         try {
-            #Maybe a client is using HTTP1.0, and there is little to worry about, but maybe there is.
+            // Maybe a client is using HTTP1.0, and there is little to worry about, but maybe there is.
             if (empty($_SERVER['HTTP_HOST'])) {
                 Headers::clientReturn(403);
             }
             self::canonical();
             self::nonApiLinks();
-            #Redirect if the page number is set and is less than 1
+            // Redirect if the page number is set and is less than 1
             if (\array_key_exists('page', $_GET) && (int)$_GET['page'] < 1) {
-                #Remove page (since we ignore page=1 in canonical)
+                // Remove page (since we ignore page=1 in canonical)
                 Headers::redirect(\preg_replace('/\\?page=-?\d+/ui', '', self::$canonical));
             }
-            #Process requests to file or cache
+            // Process requests to file or cache
             $this->filesRequests();
-            #Exploding further processing
+            // Exploding further processing
             /* @noinspection NotOptimalRegularExpressionsInspection False positive, since does not know what can be in the string */
             $uri = \explode('/', \preg_replace('/^(\/)([^?]*)(\?'.(\preg_quote($_SERVER['QUERY_STRING'] ?? '', '/')).')?/ui', '$2', $_SERVER['REQUEST_URI']));
-            #Check if there was an internal redirect to a custom error page.
-            #If there was no Caddy error, then the value of the variable will be `{http.error.status_code}`. Otherwise - it will be a numeric HTTP code.
+            // Check if there was an internal redirect to a custom error page.
+            // If there was no Caddy error, then the value of the variable will be `{http.error.status_code}`. Otherwise - it will be a numeric HTTP code.
             if (!empty($_SERVER['CADDY_HTTP_ERROR']) && \is_numeric($_SERVER['CADDY_HTTP_ERROR'])) {
                 self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR'], 'reason' => $_SERVER['CADDY_HTTP_ERROR_MSG'] ?? ''];
             }
-            #Suppress inspection, since we only need headers to be sent
+            // Suppress inspection, since we only need headers to be sent
             /** @noinspection UnusedFunctionResultInspection */
             Links::links(self::$links, force_cross_origin: true);
-            #Send standard headers
+            // Send standard headers
             if ($uri[0] === 'api') {
                 Api::headers();
             } else {
@@ -135,40 +136,40 @@ class HomePage
                 $vars = self::$http_error;
             } else {
                 try {
-                    #Connect to DB
+                    // Connect to DB
                     Config::dbConnect();
                     if (Config::$db_update) {
-                        #Show an error page if maintenance is running
+                        // Show an error page if maintenance is running
                         self::$http_error = ['http_error' => 503, 'reason' => 'Site is under maintenance and temporary unavailable'];
                     } elseif (!Config::$dbup) {
-                        #Show an error page if DB is down
+                        // Show an error page if DB is down
                         self::$http_error = ['http_error' => 503, 'reason' => 'Failed to connect to database'];
                     }
-                    #Get user agent details
+                    // Get user agent details
                     self::$user_agent = self::getUA();
-                    #Show that the client is unsupported
+                    // Show that the client is unsupported
                     if (self::$user_agent['unsupported'] === true) {
                         self::$http_error = ['client' => self::$user_agent['client'] ?? 'Teapot', 'http_error' => 418, 'reason' => 'Teapot'];
                     }
-                    #Clear POST data if bot was detected to prevent potential abuse
+                    // Clear POST data if bot was detected to prevent potential abuse
                     if (!empty(self::$user_agent['bot'])) {
                         $_POST = [];
                     }
-                    #Block some bots, in case they somehow got through CrowdSec, but were detected by Matomo (unlikely to happen, this is precaution)
-                    #Also block any bot known as AI one
+                    // Block some bots, in case they somehow got through CrowdSec, but were detected by Matomo (unlikely to happen, this is precaution)
+                    // Also block any bot known as AI one
                     if (
                         !empty(self::$user_agent['bot']) &&
                         (\array_key_exists('ai', self::$user_agent) && self::$user_agent['ai'] === true)
                     ) {
                         self::$http_error = ['http_error' => 403, 'reason' => 'Bad bot'];
                     }
-                    #Handle Sec-Fetch. Use strict mode if the request is not from a known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
+                    // Handle Sec-Fetch. Use strict mode if the request is not from a known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
                     Headers::secFetch(strict: (empty(self::$user_agent['bot']) && self::$user_agent['browser']));
-                    #Try to start a session if it's not started yet and DB is up. Do not do it if the cache is being returned, if an error has been detected already or if a bot was detected
+                    // Try to start a session if it's not started yet and DB is up. Do not do it if the cache is being returned, if an error has been detected already or if a bot was detected
                     if (empty(self::$user_agent['bot']) && (self::$http_error === null || self::$http_error === []) && Config::$dbup && !Config::$db_update && !self::$stale_return && \session_status() === \PHP_SESSION_NONE) {
                         session_set_save_handler(new Session(), true);
                         if (\session_start()) {
-                            #Check if banned IP
+                            // Check if banned IP
                             if (!empty($_SESSION['banned_ip'])) {
                                 self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
                             }
@@ -179,9 +180,9 @@ class HomePage
                             throw new \RunTimeException('Failed to start session');
                         }
                     }
-                    #Check if we have cached the results already
+                    // Check if we have cached the results already
                     self::$stale_return = $this->twigProc(self::$data_cache->read(), true, $uri[0] === 'api');
-                    #We go to router in any case, since error checks will happen in Page class
+                    // We go to router in any case, since error checks will happen in Page class
                     $vars = new MainRouter()->route($uri);
                 } catch (\Throwable $exception) {
                     Errors::error_log($exception);
@@ -194,7 +195,7 @@ class HomePage
             if ($uri[0] === 'api' && empty($vars['json_ready'])) {
                 $vars['json_ready'] = null;
             }
-            #Generate page
+            // Generate page
             $this->twigProc(\array_merge($vars, ['request_from_bot' => self::$user_agent['bot'] ?? null]), false, $uri[0] === 'api');
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
@@ -208,10 +209,10 @@ class HomePage
      */
     public function filesRequests(): void
     {
-        #Remove query string, if present (that is everything after ?)
+        // Remove query string, if present (that is everything after ?)
         $request = \preg_replace('/^(.*)(\?.*)?$/u', '$1', $_SERVER['REQUEST_URI']);
         if (\preg_match('/^\/\.well-known\/security\.txt$/iu', $request) === 1) {
-            #Send headers that will identify this as an actual file
+            // Send headers that will identify this as an actual file
             if (!\headers_sent()) {
                 \header('Content-Type: text/plain; charset=utf-8');
                 \header('Content-Disposition: inline; filename="security.txt"');
@@ -240,7 +241,7 @@ class HomePage
         if ($cache && ($twig_vars === [] || self::$method !== 'GET' || \array_key_exists('cachereset', $_GET) || \array_key_exists('cachereset', $_POST))) {
             return false;
         }
-        #Update CSRF token
+        // Update CSRF token
         if (!$api && \session_status() === \PHP_SESSION_ACTIVE) {
             $_SESSION['csrf'] = Security::genToken();
             if (!\headers_sent()) {
@@ -257,7 +258,7 @@ class HomePage
                 \ignore_user_abort(true);
                 \ob_start();
                 $output = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.twig', $twig_vars);
-                #Output data
+                // Output data
                 Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', false);
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
                 @\ob_end_flush();
@@ -272,18 +273,18 @@ class HomePage
                 return false;
             }
         } else {
-            #TODO: Needs to be cleaned up during refactor of pages
-            #Handling strict variables
+            // TODO: Needs to be cleaned up during refactor of pages
+            // Handling strict variables
             foreach ([
-                         #common/layout/metatags.twig
+                         // common/layout/metatags.twig
                          'og_image', 'ogtype', 'ogextra', 'favicon', 'service_name', 'title', 'error_page', 'static_page', 'cached_page', 'construction', 'suggested_link',
-                         #index.twig
+                         // index.twig
                          'link_extra', 'http_error', 'reason', 'pagination',
-                         #common/layout/navigation.twig
+                         // common/layout/navigation.twig
                          'type', 'detailed_type', 'section_id', 'subservice_name', 'breadcrumbs',
-                         #common/layout/header.twig
+                         // common/layout/header.twig
                          'cache_reset',
-                         #talks/forms/thread.twig
+                         // talks/forms/thread.twig
                          'contact_form',
                      ] as $variable) {
                 if (!\array_key_exists($variable, $twig_vars)) {
@@ -297,16 +298,16 @@ class HomePage
                 Errors::error_log($exception);
                 Headers::clientReturn(500, false);
                 try {
-                    #TODO: Needs to be cleaned up during refactor of pages
+                    // TODO: Needs to be cleaned up during refactor of pages
                     $output = EnvironmentGenerator::getTwig()->render('index.twig', [
                         'http_error' => 500, 'reason' => (\preg_match('/(Variable "[^"]+" does not exist)|(Key "[^"]+" does not exist as the sequence)|(Key "[^"]+" for sequence\/mapping with keys "[^"]+" does not exist)/ui', $exception->getMessage()) === 1 ? $exception->getMessage() : 'Twig failure'), 'session_data' => $_SESSION ?? null, 'error_page' => 500,
-                        #common/layout/metatags.twig
+                        // common/layout/metatags.twig
                         'og_image' => null, 'ogtype' => null, 'ogextra' => null, 'favicon' => null, 'service_name' => null, 'title' => null, 'request_from_bot' => null,
-                        #index.twig
+                        // index.twig
                         'link_extra' => null, 'pagination' => null, 'static_page' => false, 'cached_page' => false, 'construction' => false,
-                        #common/layout/navigation.twig
+                        // common/layout/navigation.twig
                         'type' => null, 'detailed_type' => null, 'section_id' => null, 'subservice_name' => null, 'breadcrumbs' => [],
-                        #common/layout/header.twig
+                        // common/layout/header.twig
                         'cache_reset' => null,
                     ]);
                 } catch (\Throwable $twig_error) {
@@ -314,11 +315,11 @@ class HomePage
                     $output = 'Complete twig failure';
                 }
             }
-            #Close session
+            // Close session
             if (\session_status() === \PHP_SESSION_ACTIVE) {
                 \session_write_close();
             }
-            #Cache page if cache age is set up, no errors, GET method is used, and we are on PROD
+            // Cache page if cache age is set up, no errors, GET method is used, and we are on PROD
             if (Config::$environment === 'prod' && !empty($twig_vars['cache_age']) && \is_numeric($twig_vars['cache_age']) && empty($twig_vars['http_error']) && self::$method === 'GET') {
                 self::$data_cache->write($twig_vars, age: (int)$twig_vars['cache_age']);
             }
@@ -326,7 +327,7 @@ class HomePage
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
                 @\ob_end_clean();
             } else {
-                #Output data
+                // Output data
                 Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', false);
             }
             exit(0);
@@ -340,34 +341,34 @@ class HomePage
      */
     public static function getUA(): array
     {
-        #Check if User Agent is present
+        // Check if User Agent is present
         if (empty($_SERVER['HTTP_USER_AGENT'])) {
-            #Something is fishy, so let's 418 this
+            // Something is fishy, so let's 418 this
             return ['unsupported' => true, 'browser' => false, 'bot' => null];
         }
-        #Parse user agent
+        // Parse user agent
         self::$device_detector->setUserAgent($_SERVER['HTTP_USER_AGENT']);
         self::$device_detector->setClientHints(ClientHints::factory($_SERVER));
         self::$device_detector->parse();
-        #Get bot name
+        // Get bot name
         $bot = self::$device_detector->getBot();
         if (is_array($bot)) {
-            #Do not waste resources on bots
+            // Do not waste resources on bots
             /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             return ['bot' => mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => null, 'client' => null, 'unsupported' => false, 'browser' => false, 'ai' => \strncasecmp($bot['category'] ?? '', 'ai', 2) === 0];
         }
-        #Get OS
+        // Get OS
         $os = self::$device_detector->getOs();
-        #Concat OS and version
+        // Concat OS and version
         $os = mb_trim(($os['name'] ?? '').' '.($os['version'] ?? ''), null, 'UTF-8');
-        #Force OS to be NULL if it's empty
+        // Force OS to be NULL if it's empty
         if (empty($os)) {
             $os = null;
         }
-        #Get client
+        // Get client
         $browser = self::$device_detector->isBrowser();
         $client = self::$device_detector->getClient();
-        #Check if a client is supported
+        // Check if a client is supported
         if (
             \preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser)/ui', $client['name'] ?? '') === 1 ||
             (
@@ -382,9 +383,9 @@ class HomePage
         } else {
             $unsupported = false;
         }
-        #Concat client and version
+        // Concat client and version
         $client = mb_trim(($client['name'] ?? '').' '.($client['version'] ?? ''), null, 'UTF-8');
-        #Force the client to be NULL if it's empty
+        // Force the client to be NULL if it's empty
         if (empty($client)) {
             $client = null;
         }

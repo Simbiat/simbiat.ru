@@ -1,17 +1,18 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\Api\FFXIV;
 
 class CrossworldLinkshell extends General
 {
-    #Entity class name
+    // Entity class name
     protected string $entity_class = \App\Entity\FFXIV\CrossworldLinkshell::class;
-    #Name to show in errors
+    // Name to show in errors
     protected string $name_for_errors = 'Crossworld Linkshell';
-    #Name for links
+    // Name for links
     protected string $name_for_links = 'crossworld_linkshell';
-    #Description of the node
+    // Description of the node
     protected array $description = [
         'description' => 'JSON representation of Final Fantasy XIV Crossworld Linkshell',
         'ID_regexp' => '/^[a-z0-9]{40}$/m',

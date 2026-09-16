@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\About;
 
@@ -10,17 +11,17 @@ use App\Controller\Abstracts\StaticPage;
  */
 class Me extends StaticPage
 {
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/about/me', 'name' => 'me']
     ];
-    #Sub service name
+    // Sub service name
     protected string $subservice_name = 'me';
-    #Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    // Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $h1 = 'About me';
-    #Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    // Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $og_desc = 'About owner of Simbiat Software';
-    #List of images to H2 push
+    // List of images to H2 push
     protected array $h2_push_extra = [
         '/assets/images/ogimages/jiangshi.webp',
         '/assets/images/ogimages/dden.webp',

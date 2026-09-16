@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Security;
 
@@ -27,9 +28,9 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             $this->session_life = 300;
         }
         if (!\headers_sent()) {
-            #Set the session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
+            // Set the session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
             \session_name('__Host-session_'.\preg_replace('/[^a-zA-Z\d\-_]/', '', Config::$http_host ?? 'simbiat'));
-            #Set session cookie parameters
+            // Set session cookie parameters
             \ini_set('session.cookie_lifetime', $this->session_life);
             \ini_set('session.cookie_secure', Config::$cookie_settings['secure']);
             \ini_set('session.cookie_partitioned', Config::$cookie_settings['partitioned']);
@@ -41,9 +42,9 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         }
     }
 
-    ##########################
-    #\SessionHandlerInterface#
-    ##########################
+    // #########################
+    // \SessionHandlerInterface#
+    // #########################
     /**
      * Initialize session
      * @link  https://php.net/manual/en/sessionhandlerinterface.open.php
@@ -57,7 +58,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
      */
     public function open(string $path, string $name): bool
     {
-        #If the controller was initialized - session is ready
+        // If the controller was initialized - session is ready
         return Query::$dbh !== null;
     }
 
@@ -72,7 +73,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
      */
     public function close(): bool
     {
-        #No need to do anything at this point
+        // No need to do anything at this point
         return true;
     }
 
@@ -92,21 +93,21 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
      */
     public function read(string $id): string
     {
-        #Get session data
+        // Get session data
         try {
             $data = Query::query('SELECT `data` FROM `uc__sessions` WHERE `session_id` = :id AND `time` >= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->session_life, 'int']], return: 'value');
         } catch (\Throwable) {
             $data = '';
         }
         if (!empty($data)) {
-            #Decrypt data
+            // Decrypt data
             $data = Security::decrypt($data);
-            #Deserialize to check if UserAgent data is present
+            // Deserialize to check if UserAgent data is present
             $data = \unserialize($data, [false]);
         } else {
             $data = [];
         }
-        #Login through cookie if it is present
+        // Login through cookie if it is present
         $data = \array_merge($data, $this->cookieLogin());
         $this->dataRefresh($data);
         return \serialize($data);
@@ -135,20 +136,20 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
      */
     public function write(string $id, string $data): bool
     {
-        #Deserialize to check if UserAgent data is present
+        // Deserialize to check if UserAgent data is present
         $data = \unserialize($data, [false]);
-        #Prepare an empty array
+        // Prepare an empty array
         $queries = [];
-        #Update SEO-related tables if this was determined to be a new page view
+        // Update SEO-related tables if this was determined to be a new page view
         if (empty($data['useragent']['bot'])) {
-            #TODO: Below is commented out to not collect IPs inline with current privacy policy. Needs to be updated when working on https://github.com/Simbiat/simbiat.ru/issues/142
+            // TODO: Below is commented out to not collect IPs inline with current privacy policy. Needs to be updated when working on https://github.com/Simbiat/simbiat.ru/issues/142
             /*
             if (!empty($data['ip']) && $data['new_view']) {
-                #Update unique visitors
+                // Update unique visitors
                 $queries[] = [
                     'INSERT INTO `seo__visitors` SET `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
                     [
-                        #Data that makes this visitor unique
+                        // Data that makes this visitor unique
                         ':ip' => [$data['ip'], 'string'],
                         ':os' => [
                             (empty($data['useragent']['os']) ? '' : $data['useragent']['os']),
@@ -160,7 +161,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                         ],
                     ],
                 ];
-                #Update page views
+                // Update page views
                 $page = mb_substr(\preg_replace('/^.*:\/\/[^\/]*\//u', '', Config::$canonical), 0, 256, 'UTF-8');
                 if (empty($page)) {
                     $page = 'index.php';
@@ -168,14 +169,14 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                 $queries[] = [
                     'INSERT INTO `seo__pageviews` SET `page`=:page, `referer`=:referer, `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
                     [
-                        #What page is being viewed
+                        // What page is being viewed
                         ':page' => $page,
-                        #Optional referer (if sent from other sources)
+                        // Optional referer (if sent from other sources)
                         ':referer' => [
                             (empty($_SERVER['HTTP_REFERER']) ? '' : mb_substr($_SERVER['HTTP_REFERER'], 0, 256, 'UTF-8')),
                             'string',
                         ],
-                        #Data that identify this visit as unique
+                        // Data that identify this visit as unique
                         ':ip' => [$data['ip'], 'string'],
                         ':os' => [
                             (empty($data['useragent']['os']) ? '' : $data['useragent']['os']),
@@ -189,12 +190,12 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                 ];
             }
             */
-            #Write session data
+            // Write session data
             $queries[] = [
                 'INSERT INTO `uc__sessions` SET `session_id`=:id, `cookie_id`=:cookie_id, `user_id`=:user_id, `ip`=:ip, `user_agent`=:user_agent, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=CURRENT_TIMESTAMP(6), `user_id`=:user_id, `ip`=:ip, `user_agent`=:user_agent, `page`=:page, `data`=:data;',
                 [
                     ':id' => $id,
-                    #Whether a cookie is associated with this session
+                    // Whether a cookie is associated with this session
                     ':cookie_id' => [
                         (empty($data['cookie_id']) ? NULL : $data['cookie_id']),
                         (empty($data['cookie_id']) ? 'null' : 'string'),
@@ -203,22 +204,22 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                         (empty($data['ip']) ? NULL : $data['ip']),
                         (empty($data['ip']) ? 'null' : 'string'),
                     ],
-                    #user_agent details only for logged-in users for the ability to review active sessions
+                    // user_agent details only for logged-in users for the ability to review active sessions
                     ':user_agent' => [
                         (empty($data['useragent']['full']) ? NULL : $data['useragent']['full']),
                         (empty($data['useragent']['full']) ? 'null' : 'string'),
                     ],
                     ':user_id' => [$data['user_id'], 'int'],
-                    #What page is being viewed
+                    // What page is being viewed
                     ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : mb_substr(\mb_ltrim($_SERVER['REQUEST_URI'], '/', 'UTF-8'), 0, 256, 'UTF-8')),
-                    #Actual session data
+                    // Actual session data
                     ':data' => [
                         (empty($data) ? '' : Security::encrypt(\serialize($data))),
                         'string',
                     ],
                 ],
             ];
-            #Try to update client information for cookie
+            // Try to update client information for cookie
             if (!empty($data['cookie_id'])) {
                 $queries[] = [
                     'UPDATE `uc__cookies` SET `ip`=:ip, `user_agent`=:user_agent WHERE `cookie_id`=:cookie;',
@@ -256,11 +257,11 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     private function dataRefresh(array &$data): void
     {
         $data['wants_privacy'] = Headers::isDNT() || Headers::isGPC();
-        #Add UserAgent data
+        // Add UserAgent data
         $data['useragent'] = HomePage::$user_agent;
-        #Add IP data
+        // Add IP data
         $this->getIP($data);
-        #Add previous and current pages to attempt to determine if this is a page refresh or a new visit
+        // Add previous and current pages to attempt to determine if this is a page refresh or a new visit
         $data['new_view'] = false;
         if (empty($data['prev_page']) && empty($data['cur_page'])) {
             $data['cur_page'] = HomePage::$canonical;
@@ -272,7 +273,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             $data['new_view'] = true;
         }
         try {
-            #Check if IP is banned
+            // Check if IP is banned
             if (!empty($data['ip'])) {
                 try {
                     $data['banned_ip'] = Query::query('SELECT `ip` FROM `sys__bad_ips` WHERE `ip`=:ip', [':ip' => $data['ip']], return: 'check');
@@ -280,7 +281,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                     $data['banned_ip'] = false;
                 }
             }
-            #Add CSRF token, if missing
+            // Add CSRF token, if missing
             if (empty($data['csrf'])) {
                 $data['csrf'] = Security::genToken();
                 if (!\headers_sent()) {
@@ -300,7 +301,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                 $data['banned'] = false;
             } else {
                 $user = new User($data['user_id'])->get();
-                #Assign some data to the session
+                // Assign some data to the session
                 if ($user->id) {
                     $data['username'] = $user->username;
                     $data['timezone'] = $user->timezone;
@@ -329,28 +330,28 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     private function getIP(array &$data): void
     {
         $ip = null;
-        #Get real visitor IP if behind CloudFlare network
+        // Get real visitor IP if behind CloudFlare network
         if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
             $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
-        #Check if behind proxy
+        // Check if behind proxy
         $forwarded = $_SERVER['HTTP_X_FORWARDED'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_FORWARDED'] ?? $_SERVER['HTTP_FORWARDED_FOR'] ?? '';
         if (!empty($forwarded)) {
-            #Get a list of IPs that do validate as proper IP
+            // Get a list of IPs that do validate as proper IP
             $ips = \array_filter(\array_map('\trim', \explode(',', $forwarded)), static function ($value) {
                 return \filter_var($value, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6);
             });
-            #Check if any are left
+            // Check if any are left
             if (!empty($ips)) {
-                #Get the right-most IP
+                // Get the right-most IP
                 $ip = \array_pop($ips);
             }
         }
-        #Check if REMOTE_ADDR is set (it's more appropriate and secure to use it)
+        // Check if REMOTE_ADDR is set (it's more appropriate and secure to use it)
         if (empty($ip) && !empty($_SERVER['REMOTE_ADDR'])) {
             $ip = \filter_var($_SERVER['REMOTE_ADDR'], \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6);
         }
-        #Check if Client-IP is set. Can be easily spoofed, but it's not like we have a choice at this moment
+        // Check if Client-IP is set. Can be easily spoofed, but it's not like we have a choice at this moment
         if (empty($ip) && !empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip = \filter_var($_SERVER['HTTP_CLIENT_IP'], \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6);
         }
@@ -367,38 +368,38 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         if (!\is_string($cookie_name)) {
             return [];
         }
-        #Check if a cookie exists
+        // Check if a cookie exists
         if (empty($_COOKIE[$cookie_name])) {
             return [];
         }
-        #Validate cookie
+        // Validate cookie
         try {
-            #Decode data
+            // Decode data
             $data = \json_decode($_COOKIE[$cookie_name], true, flags: \JSON_THROW_ON_ERROR);
             if (empty($data['cookie_id']) || empty($data['pass'])) {
-                #No expected data found
+                // No expected data found
                 return [];
             }
-            #Cache Security object
+            // Cache Security object
             $data['cookie_id'] = Security::decrypt($data['cookie_id']);
             $data['pass'] = Security::decrypt($data['pass']);
-            #Get user data
+            // Get user data
             $saved_data = Query::query('SELECT `validator`, `user_id` FROM `uc__cookies` WHERE `uc__cookies`.`cookie_id`=:id',
                 [':id' => $data['cookie_id']], return: 'row'
             );
             if (empty($saved_data) || empty($saved_data['validator'])) {
-                #No cookie found or no password present
+                // No cookie found or no password present
                 return [];
             }
-            #Validate cookie password
+            // Validate cookie password
             if (!\password_verify($data['pass'], $saved_data['validator'])) {
-                #Wrong password
+                // Wrong password
                 return [];
             }
             $user = (new User($saved_data['user_id']));
-            #Reset strikes if any
+            // Reset strikes if any
             $user->resetStrikes();
-            #Update cookie
+            // Update cookie
             $user->rememberMe($data['cookie_id']);
             $saved_data['cookie_id'] = $data['cookie_id'];
             unset($saved_data['validator']);
@@ -447,7 +448,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         try {
             return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND) OR `user_id` IN (:system_user_id, :deleted_user_id);', [':life' => [$max_lifetime, 'int'], ':system_user_id' => [SystemUser::System->value, 'int'], ':deleted_user_id' => [SystemUser::Deleted->value, 'int']], return: 'affected');
         } catch (\Throwable $throwable) {
-            #Ignore deadlocks
+            // Ignore deadlocks
             if (mb_stripos($throwable->getMessage(), 'Deadlock', 0, 'UTF-8') === false) {
                 Errors::error_log($throwable);
             }
@@ -455,9 +456,9 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         }
     }
 
-    #####################
-    #\SessionIdInterface#
-    #####################
+    // ####################
+    // \SessionIdInterface#
+    // ####################
     /**
      * Create session ID
      * @link https://php.net/manual/en/sessionidinterface.create-sid.php
@@ -470,9 +471,9 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         return \session_create_id();
     }
 
-    #########################################
-    #\SessionUpdateTimestampHandlerInterface#
-    #########################################
+    // ########################################
+    // \SessionUpdateTimestampHandlerInterface#
+    // ########################################
     /**
      * Validate session id
      * @link https://www.php.net/manual/sessionupdatetimestamphandlerinterface.validateid
@@ -483,19 +484,19 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
      */
     public function validateId(string $id): bool
     {
-        #Get ID
+        // Get ID
         try {
             $session_id = Query::query('SELECT `session_id` FROM `uc__sessions` WHERE `session_id` = :id;', [':id' => $id], return: 'value');
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
         }
-        #Check if it was returned
+        // Check if it was returned
         if (empty($session_id)) {
-            #No such session exists
+            // No such session exists
             return false;
         }
-        #Validate session id using hash_equals to mitigate timing attacks
+        // Validate session id using hash_equals to mitigate timing attacks
         return \hash_equals($session_id, $id);
     }
 

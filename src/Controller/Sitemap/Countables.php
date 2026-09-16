@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\Sitemap;
 
@@ -11,23 +12,23 @@ use Simbiat\Database\Query;
  */
 class Countables extends Page
 {
-    #Cache age, in case we prefer the generated page to be cached
+    // Cache age, in case we prefer the generated page to be cached
     protected int $cache_age = 1440;
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/sitemap/', 'name' => 'Sitemap: ']
     ];
-    #Sub service name
+    // Sub service name
     protected string $subservice_name = 'sitemap';
-    #Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    // Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $title = 'Sitemap: ';
-    #Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    // Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $h1 = 'Sitemap: ';
-    #Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    // Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $og_desc = 'Sitemap: ';
-    #Max elements per sitemap page
+    // Max elements per sitemap page
     protected int $max_elements = 50000;
-    
+
     /**
      * Generation of the page data
      * @param array $path
@@ -40,21 +41,21 @@ class Countables extends Page
             $this->max_elements = 50000;
         }
         $this->h2_push = [];
-        #Remove potential file extension at the end of a path
+        // Remove potential file extension at the end of a path
         if (!empty($path[1])) {
             $path[1] = \preg_replace('/\.xml$/ui', '', $path[1]);
         }
-        #Get page
+        // Get page
         if (empty($path[1]) || !\is_numeric($path[1]) || $path[1] < 1) {
             $path[1] = 1;
         } else {
             $path[1] = (int)$path[1];
         }
-        #Update the link of breadcrumb
+        // Update the link of breadcrumb
         $this->breadcrumb[0]['href'] .= $path[0].'/';
-        #Set the starting position for the query
+        // Set the starting position for the query
         $start = ($path[1] - 1) * $this->max_elements;
-        #Set values based on the route
+        // Set values based on the route
         switch ($path[0]) {
             case 'bics':
                 $this->breadcrumb[0]['name'] = 'Russian Banks';
@@ -89,13 +90,13 @@ class Countables extends Page
                 $query = 'SELECT CONCAT(\'talks/users/\', `user_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `username` as `name` FROM `uc__users` WHERE `user_id` NOT IN (SELECT `user_id` FROM `uc__users` WHERE `system`=1) ORDER BY `name` LIMIT :limit_start, :limit_max;';
                 break;
         }
-        #Update name of breadcrumb
+        // Update name of breadcrumb
         $this->breadcrumb[0]['name'] .= ', Page '.$path[1];
-        #Update title and description
+        // Update title and description
         $this->og_desc = 'Sitemap: '.$this->breadcrumb[0]['name'];
         $this->h1 = $this->og_desc;
         $this->title = $this->og_desc;
-        #Get actual links
+        // Get actual links
         if (!empty($query)) {
             try {
                 $links = Query::query($query, [':limit_start' => [$start, 'int'], ':limit_max' => [$this->max_elements, 'int']], return: 'all');

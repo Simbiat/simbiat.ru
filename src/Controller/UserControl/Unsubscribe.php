@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\UserControl;
 
@@ -11,21 +12,21 @@ use App\Entity\Email;
  */
 class Unsubscribe extends Page
 {
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/uc/unsubscribe', 'name' => 'Unsubscribe']
     ];
-    #Sub service name
+    // Sub service name
     protected string $subservice_name = 'unsubscribe';
-    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $title = 'Unsubscribing';
-    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'Unsubscribing';
-    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'Page used unsubscribing an email from notifications';
-    #Cache strategy: aggressive, private, live, month, week, day, hour
+    // Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cache_strategy = 'private';
-    
+
     /**
      * Actual page generation based on further details of the $path
      * @param array $path URL path

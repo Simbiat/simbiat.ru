@@ -54,7 +54,7 @@ final class Healthcheck
                 // Send mail
                 new DatabaseDown()->save(
                     SystemUser::Owner->value,
-                    #TODO: Ideally get proper error text, but most likely need to change the way the check is done.
+                    // TODO: Ideally get proper error text, but most likely need to change the way the check is done.
                     ['errors' => \print_r('N/A', true)],
                     true,
                     false,

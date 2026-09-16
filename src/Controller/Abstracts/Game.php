@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\Abstracts;
 
@@ -8,19 +9,19 @@ namespace App\Controller\Abstracts;
  */
 class Game extends Page
 {
-    #Flag to indicate this is a static page
+    // Flag to indicate this is a static page
     protected bool $static = true;
-    #Cache age set to 0 by default, because there is normally no need to cache static pages
+    // Cache age set to 0 by default, because there is normally no need to cache static pages
     protected int $cache_age = 0;
-    #Cache strategy: aggressive, private, live, month, week, day, hour
+    // Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cache_strategy = 'week';
-    #Path to game's JS file
+    // Path to game's JS file
     protected string $gamemaker_js = '';
-    #Flag to indicate the game has sound
+    // Flag to indicate the game has sound
     protected bool $has_sound = false;
-    #Flag to indicate the game has music
+    // Flag to indicate the game has music
     protected bool $has_music = false;
-    
+
     /**
      * Generation of the page data
      * @param array $path
@@ -29,7 +30,7 @@ class Game extends Page
      */
     protected function generate(array $path): array
     {
-        #Allow `data:`
+        // Allow `data:`
         @\header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' https://img2.finalfantasyxiv.com; manifest-src \'self\'; media-src \'self\' data:; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\'; trusted-types dompurify default;');
         if (empty($this->gamemaker_js)) {
             return ['http_error' => 500, 'reason' => 'No game script file setup'];

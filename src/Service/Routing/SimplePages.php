@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service\Routing;
 
@@ -7,9 +8,9 @@ use App\Controller\DeviceDetector;
 
 class SimplePages extends Router
 {
-    #List supported "paths". Basic ones only, some extra validation may be required further
+    // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['devicedetector'];
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/simplepages/', 'name' => 'Simple Pages']
     ];
@@ -17,8 +18,8 @@ class SimplePages extends Router
     protected string $h1 = 'Simple Pages';
     protected string $og_desc = 'Various simple pages hosted by Simbiat Software';
     protected string $service_name = 'simplepages';
-    
-    #This is actual page generation based on further details of the $path
+
+    // This is actual page generation based on further details of the $path
     protected function pageGen(array $path): array
     {
         return match($path[0]) {

@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service\Cron;
 
@@ -55,7 +56,7 @@ class FFXIV
      */
     public function updateOld(int $limit = 1, int $instance = 1): bool|string
     {
-        #Sanitize entities number
+        // Sanitize entities number
         if ($limit < 1) {
             $limit = 1;
         }
@@ -84,7 +85,7 @@ class FFXIV
                 $cron_agent->log('Updating '.$extra_for_error.'...', EventTypes::CustomInformation);
                 $result = $this->updateEntity($entity['id'], $entity['type']);
                 if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement', false, true], true)) {
-                    #If we were throttled, sleep an extra minute, and then do an early return to reduce throttling chance on other jobs. Do not treat this as failure, though
+                    // If we were throttled, sleep an extra minute, and then do an early return to reduce throttling chance on other jobs. Do not treat this as failure, though
                     if (\preg_match('/Request throttled by Lodestone/', $result) === 1) {
                         $cron_agent->log('Throttled on '.$extra_for_error.'. Sleeping...', EventTypes::CustomNotice);
                         \sleep(60);
@@ -92,7 +93,7 @@ class FFXIV
                     }
                     return $result;
                 }
-                #Remove the cron task if it's present
+                // Remove the cron task if it's present
                 new TaskInstance('ff_update_entity', [(string)$entity['id'], $entity['type']])->delete();
             }
             return true;
@@ -112,70 +113,70 @@ class FFXIV
         try {
             $lodestone = (new Lodestone());
             $cron = new TaskInstance();
-            #Generate a list of worlds for linkshells
+            // Generate a list of worlds for linkshells
             $worlds = Query::query(
                 'SELECT `server` AS `world`, \'linkshell\' AS `entity` FROM `ffxiv__server`
                             UNION ALL
                             SELECT UNIQUE(`data_center`) AS `world`, \'crossworldlinkshell\' AS `entity` FROM `ffxiv__server`;', return: 'all'
             );
-            #Get cache
+            // Get cache
             $cache_path = Config::$statistics.'linkshellPages.json';
             $json = new Caching()->getArrayFromFile($cache_path);
             $cron_agent = new Agent();
-            #Loop through the servers
+            // Loop through the servers
             $pages_parsed = 0;
             foreach ($worlds as $world) {
-                #Loop through order filter
+                // Loop through order filter
                 foreach (['1', '2', '3', '4'] as $order) {
-                    #Loop through the number of member's filter
+                    // Loop through the number of member's filter
                     foreach ([10, 30, 50, 51] as $count) {
-                        #Loop through pages
+                        // Loop through pages
                         $cron_agent->log('Parsing '.$world['entity'].'s on '.$world['world'].' (pages for count '.$count.', order '.$order.')...', EventTypes::CustomInformation);
                         for ($page = 1; $page <= 20; $page++) {
                             if (!\array_key_exists($page, $json[$world['entity']][$world['world']][$order][$count]) ||
-                                #Count of 0 may mean that the last attempt failed (rate limit or maintenance)
+                                // Count of 0 may mean that the last attempt failed (rate limit or maintenance)
                                 $json[$world['entity']][$world['world']][$order][$count][$page]['count'] === 0 ||
-                                #Cycle through everything every 5 days. At the time of writing, there should be less than 30000 pages, with 500 pages per hourly scan; the full cycle finishes in less than 3 days
+                                // Cycle through everything every 5 days. At the time of writing, there should be less than 30000 pages, with 500 pages per hourly scan; the full cycle finishes in less than 3 days
                                 \time() - $json[$world['entity']][$world['world']][$order][$count][$page]['date'] > 432000
                             ) {
                                 $pages_parsed++;
-                                #Get linkshells
+                                // Get linkshells
                                 try {
                                     $lodestone->searchLinkshell('', $world['world'], $count, $order, $page, $world['entity'] === 'crossworldlinkshell');
                                 } catch (\Throwable $exception) {
-                                    #If we were throttled, sleep an extra minute, and then do an early return to reduce throttling chance on other jobs. Do not treat this as failure, though
+                                    // If we were throttled, sleep an extra minute, and then do an early return to reduce throttling chance on other jobs. Do not treat this as failure, though
                                     if (\preg_match('/Lodestone has throttled the request/ui', $exception->getMessage()) === 1) {
                                         \sleep(60);
                                         return true;
                                     }
                                 }
-                                #Get data
+                                // Get data
                                 $data = $lodestone->getResult();
                                 $page_total = (int)($data['linkshells']['page_total'] ?? 0);
                                 if ($page_total === 0) {
                                     continue 2;
                                 }
-                                #Reset Lodestone
+                                // Reset Lodestone
                                 $lodestone->resetResult();
                                 if (!empty($data['linkshells'])) {
-                                    #Clean data
+                                    // Clean data
                                     unset($data['linkshells']['page_current'], $data['linkshells']['page_total'], $data['linkshells']['total']);
-                                    #Get IDs
+                                    // Get IDs
                                     $data = \array_keys($data['linkshells']);
-                                    #Iterrate through found items
+                                    // Iterrate through found items
                                     foreach ($data as $linkshell) {
                                         $extra_for_error = 'linkshell ID '.$linkshell;
-                                        #Check if Linkshell exists in DB
+                                        // Check if Linkshell exists in DB
                                         if (!Query::query('SELECT `ls_id` FROM `ffxiv__linkshell` WHERE `ls_id`=:id;', [':id' => [$linkshell, 'string']], return: 'check')) {
                                             $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$linkshell, $world['entity']], 'message' => 'Updating '.$world['entity'].' with ID '.$linkshell])->add();
                                         }
                                     }
-                                    #Attempt to update cache
+                                    // Attempt to update cache
                                     $json[$world['entity']][$world['world']][$order][$count][$page] = ['date' => \time(), 'count' => \count($data)];
                                     \file_put_contents($cache_path, \json_encode($json, \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR | \JSON_PRESERVE_ZERO_FRACTION | \JSON_PRETTY_PRINT));
                                 }
                                 if ($pages_parsed === 500) {
-                                    #Do not parse more than 500 pages at a time
+                                    // Do not parse more than 500 pages at a time
                                     return true;
                                 }
                                 if ($page === $page_total) {

@@ -41,7 +41,7 @@ final class Update
             return Command::FAILURE;
         }
 
-        #TODO: Need to figure out a way to prevent run for the 2nd time, if 1st run reaches this part. Or migrations needs to be used, if it fits better.
+        // TODO: Need to figure out a way to prevent run for the 2nd time, if 1st run reaches this part. Or migrations needs to be used, if it fits better.
         return Command::SUCCESS;
     }
 }

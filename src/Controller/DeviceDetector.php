@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -7,20 +8,20 @@ use App\Controller\Abstracts\FileListing;
 
 class DeviceDetector extends FileListing
 {
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/simplepages/devicedetector', 'name' => 'Device Detector']
     ];
-    #Sub service name
+    // Sub service name
     protected string $subservice_name = 'devicedetector';
-    #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Device Detector Icons';
-    #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Device Detector Icons';
-    #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Icons or logos of operating systems, browsers and other applications based on respective items detectable by matomo-org/device-detector library';
     protected string $og_image = '/ogimages/devicedetector.webp';
-    #Directories relative to working dir
+    // Directories relative to working dir
     protected array $dirs = [
         'bottype' => ['path' => '/packages/DDCIcons/icons/bot/category', 'name' => 'Bot Types'],
         'bot' => ['path' => '/packages/DDCIcons/icons/bot', 'name' => 'Bots'],
@@ -38,7 +39,7 @@ class DeviceDetector extends FileListing
         'devicetype' => ['path' => '/packages/DDCIcons/icons/device/type', 'name' => 'Device Types'],
         'brand' => ['path' => '/packages/DDCIcons/icons/device/brand', 'name' => 'Device Brands'],
     ];
-    
+
     protected function extra(array &$file_details): void
     {
         $file_details['name'] = match($file_details['basename']) {

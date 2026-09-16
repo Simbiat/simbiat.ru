@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service\Routing;
 
@@ -29,11 +30,11 @@ use function array_slice;
 
 class SupOps extends Router
 {
-    #List supported "paths". Basic ones only, some extra validation may be required further
+    // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['pitch', 'glossary', 'problem', 'solution', 'flow', 'metrics', 'resolution', 'interoperability', 'scale', 'comparison', 'needs',
         'facts', 'feedback', 'automation', 'collaboration', 'transparency', 'sustainability',
         'l0', 'l1', 'l2', 'l3', 'l4',];
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/supops/', 'name' => 'SupOps']
     ];
@@ -42,7 +43,7 @@ class SupOps extends Router
     protected string $og_desc = 'SupOps: inspired by DevOps to reduce your customers\' frustrations with tech support';
     protected string $service_name = 'supops';
     protected string $og_image = '/supops/logo/ogimage.webp';
-    
+
     /**
      * This is the actual page generation based on further details of the $path
      * @param array $path

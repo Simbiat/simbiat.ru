@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service\Routing;
 
@@ -9,11 +10,11 @@ use function array_slice;
 
 class Api extends \App\Controller\Api\Api
 {
-    #Supported edges
+    // Supported edges
     protected array $sub_routes = [
         'fftracker', 'bictracker', 'uc', 'upload', 'talks', 'contact',
     ];
-    #Description of the nodes (need to be in the same order)
+    // Description of the nodes (need to be in the same order)
     protected array $routes_description = [
         'Endpoints related to Final Fantasy XIV Tracker',
         'Endpoints related to BIC Tracker',
@@ -22,9 +23,9 @@ class Api extends \App\Controller\Api\Api
         'Endpoint for managing forums',
         'Endpoint to submit support requests'
     ];
-    #Flag to indicate that this is a top level node (false by default)
+    // Flag to indicate that this is a top level node (false by default)
     protected bool $top_level = true;
-    
+
     /**
      * This is an actual API response generation based on further details of the $path
      * @param array $path
@@ -38,9 +39,9 @@ class Api extends \App\Controller\Api\Api
             'bictracker' => new \App\Service\Routing\Api\BICTracker()->route(array_slice($path, 1)),
             'uc' => new \App\Service\Routing\Api\UserControl()->route(array_slice($path, 1)),
             'talks' => new \App\Service\Routing\Api\Talks()->route(array_slice($path, 1)),
-            #Upload does not require any further paths
+            // Upload does not require any further paths
             'upload' => new Upload()->route([]),
-            #Contact does not require any further paths
+            // Contact does not require any further paths
             'contact' => new Contact()->route([]),
         };
     }

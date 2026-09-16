@@ -1,7 +1,8 @@
 <?php
-declare(strict_types = 1);
 
-#TODO: Consider moving this to `/app/src/EventSubscriber` and potentially utilizing Symfony's tools (possibly even as replacement for the class)
+declare(strict_types=1);
+
+// TODO: Consider moving this to `/app/src/EventSubscriber` and potentially utilizing Symfony's tools (possibly even as replacement for the class)
 namespace App\Service;
 
 use JetBrains\PhpStorm\ExpectedValues;
@@ -42,14 +43,14 @@ final class Errors
      */
     public static function error_log(\Throwable $error, mixed $context = '', bool $debug = false): false
     {
-        #Generate message
+        // Generate message
         $message = self::genLogEntry(\get_class($error).' Exception', $error->getFile(), $error->getLine(), $error->getMessage(), $error->getTraceAsString(), $error->getPrevious(), $context);
-        #Write to log
+        // Write to log
         if ($debug) {
             echo '<pre>'.$message.'</pre>';
             exit(0);
         }
-        #Write to file
+        // Write to file
         self::write($message);
         return false;
     }
@@ -69,7 +70,7 @@ final class Errors
      */
     private static function genLogEntry(string $type, string $file, string|int $line, string $message, string $trace = '', null|\Throwable $previous = null, mixed $context = ''): string
     {
-        #Determine page link
+        // Determine page link
         $page = self::getRequest();
         $previous_throw = '';
         if ($previous !== null) {
@@ -80,7 +81,7 @@ final class Errors
                 'Message: '.$previous->getMessage()."\r\n".
                 ($previous_trace === '' ? '' : "\t\t".'Trace: '.$previous_trace."\r\n");
         }
-        #Prepare context
+        // Prepare context
         if (!\is_string($context)) {
             try {
                 $context = \json_encode($context, \JSON_THROW_ON_ERROR);
@@ -109,22 +110,22 @@ final class Errors
      */
     public static function error_handler(int $level, string $message, string $file, int $line): bool
     {
-        #Checking if @ was used to suppress error reporting
+        // Checking if @ was used to suppress error reporting
         if (!(\error_reporting() & $level)) {
             return false;
         }
-        #Excluding some warnings from processing
+        // Excluding some warnings from processing
         if (
-            #Exclude Twig cache
+            // Exclude Twig cache
             ($level === \E_DEPRECATED && \preg_match('/twig[\\\\\/]cache/i', $file) === 1) ||
-            #Exclude GD color profile warning
+            // Exclude GD color profile warning
             ($level === \E_WARNING && \preg_match('/known incorrect sRGB profile/i', $file) === 1)
         ) {
             return false;
         }
-        #Generate message
+        // Generate message
         $message = self::genLogEntry(self::PHP_ERROR_TYPES[$level], $file, $line, $message);
-        #Write to file
+        // Write to file
         self::write($message);
         return true;
     }
@@ -135,16 +136,16 @@ final class Errors
      */
     public static function shutdown(): void
     {
-        #Get error
+        // Get error
         $error = \error_get_last();
-        #Log only time and memory exhaustion to avoid duplicates
+        // Log only time and memory exhaustion to avoid duplicates
         if ($error !== null && $error !== [] && $error['type'] === \E_ERROR && \preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1) {
-            #Generate message
+            // Generate message
             $message = self::genLogEntry(self::PHP_ERROR_TYPES[$error['type']], $error['file'], $error['line'], $error['message']);
-            #Write to file
+            // Write to file
             self::write($message);
         }
-        #Rollback if there was an open transaction
+        // Rollback if there was an open transaction
         if (Query::$dbh !== null && Query::$dbh->inTransaction()) {
             Query::$dbh->rollBack();
         }

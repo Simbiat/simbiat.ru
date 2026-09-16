@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\Api\FFXIV;
 
@@ -9,22 +10,22 @@ use Simbiat\http20\Headers;
 
 abstract class General extends Api
 {
-    #Flag to indicate that this is the lowest level
+    // Flag to indicate that this is the lowest level
     protected bool $final_node = true;
-    #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['GET' => '', 'PATCH' => 'update', 'POST' => 'register'];
-    #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+    // Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = ['update' => 'Attempt updating entity', 'register' => 'Attempt to register entity to tracker', 'lodestone' => 'Show data grabbed directly from Lodestone'];
-    #Entity class name
+    // Entity class name
     protected string $entity_class = '';
-    #Name to show in errors
+    // Name to show in errors
     protected string $name_for_errors = '';
-    #Name for links
+    // Name for links
     protected string $name_for_links = '';
-    
+
     protected function genData(array $path): array
     {
-        #Reset verb for consistency if it's not set
+        // Reset verb for consistency if it's not set
         if (empty($path[1])) {
             $path[1] = '';
         }
@@ -33,7 +34,7 @@ abstract class General extends Api
                 return ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
             }
             if ($path[1] === 'lodestone' && (empty($_SESSION['user_id']) || $_SESSION['user_id'] === 1)) {
-                #User is not authenticated. Abuse of Lodestone can slow down automated updates, and Update requires authentication either way
+                // User is not authenticated. Abuse of Lodestone can slow down automated updates, and Update requires authentication either way
                 return ['http_error' => 403, 'reason' => 'Authentication required'];
             }
             if ($this->name_for_links === 'achievement') {
@@ -56,7 +57,7 @@ abstract class General extends Api
             Errors::error_log($exception);
             return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         }
-        #Check for errors
+        // Check for errors
         if (!empty($data['http_error'])) {
             return $data;
         }
@@ -88,12 +89,12 @@ abstract class General extends Api
             Headers::lastModified($data['dates']['updated'], true);
         }
         $result = ['response' => $data];
-        #Return 201 if we were registering an entity
+        // Return 201 if we were registering an entity
         if ($path[1] === 'register' && $data === true) {
             $result['location'] = '/fftracker/'.($this->name_for_links === 'freecompany' ? 'freecompanies' : $this->name_for_links.'s').'/'.$path[0];
             $result['status'] = 201;
         }
-        #Link header/tag for API
+        // Link header/tag for API
         $result['alt_links'] = [
             ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/fftracker/'.($this->name_for_links === 'freecompany' ? 'freecompanies' : $this->name_for_links.'s').'/'.$path[0]],
         ];

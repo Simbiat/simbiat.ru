@@ -44,13 +44,13 @@ class Security
         if (empty($data)) {
             return '';
         }
-        #Generate IV
+        // Generate IV
         $iv = \random_bytes(\openssl_cipher_iv_length('AES-256-GCM'));
-        #This is where OpenSSL will write the tag
+        // This is where OpenSSL will write the tag
         $tag = '';
-        #Encrypt and als get the tag
+        // Encrypt and als get the tag
         $encrypted = \openssl_encrypt($data, 'AES-256-GCM', \hex2bin(Config::$encryption_passphrase), \OPENSSL_RAW_DATA, $iv, $tag);
-        #Encrypt and prepend IV and tag
+        // Encrypt and prepend IV and tag
         return Encode::base64url($iv.$tag.$encrypted);
     }
 
@@ -67,13 +67,13 @@ class Security
         if (empty($data)) {
             return '';
         }
-        #Decode
+        // Decode
         $data = Decode::base64url($data);
-        #Get IV
+        // Get IV
         $iv = \substr($data, 0, 12);
-        #Get tag
+        // Get tag
         $tag = \substr($data, 12, 16);
-        #Strip them from data
+        // Strip them from data
         $data = \substr($data, 28);
         return \openssl_decrypt($data, 'AES-256-GCM', \hex2bin(Config::$encryption_passphrase), \OPENSSL_RAW_DATA, $iv, $tag);
     }
@@ -130,13 +130,13 @@ class Security
         } else {
             $extras = null;
         }
-        #Get IP
+        // Get IP
         $ip = $_SESSION['ip'] ?? null;
-        #Get username
+        // Get username
         if ($user_id === null) {
             $user_id = (int) ($_SESSION['user_id'] ?? SystemUser::Unknown->value);
         }
-        #Get User Agent
+        // Get User Agent
         $ua = $_SESSION['useragent']['full'] ?? null;
         try {
             Query::query(
@@ -161,7 +161,7 @@ class Security
             );
             return true;
         } catch (\Throwable $exception) {
-            #Log to the file. Generally we do not lose much if this fails
+            // Log to the file. Generally we do not lose much if this fails
             Errors::error_log($exception);
             return false;
         }
@@ -175,31 +175,31 @@ class Security
      */
     public static function sanitizeURL(string $url): string
     {
-        #First, normalize the string
+        // First, normalize the string
         $url = \Normalizer::normalize($url, \Normalizer::FORM_C);
-        #Check if valid IRI
+        // Check if valid IRI
         if (!IRI::isValidIri($url, 'https')) {
             return '';
         }
-        #Attempt to parse it
+        // Attempt to parse it
         $parsed_url = IRI::parseUri($url);
-        #Ignore failed strings
+        // Ignore failed strings
         if (!\is_array($parsed_url)) {
             return '';
         }
-        #Parse the query string into an associative array
+        // Parse the query string into an associative array
         /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         \parse_str($parsed_url['query'] ?? '', $query_params);
-        #Remove tracking parameters
+        // Remove tracking parameters
         foreach ($query_params as $param => $value) {
             if (\in_array($param, Config::$tracking_query_parameters, true)) {
                 unset($query_params[$param]);
             }
         }
-        #Rebuild the query string
+        // Rebuild the query string
         /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         $parsed_url['query'] = IRI::rawBuildQuery($query_params);
-        #Reconstruct the full URL
+        // Reconstruct the full URL
         return IRI::restoreUri($parsed_url);
     }
 

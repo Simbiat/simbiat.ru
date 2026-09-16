@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\Sitemap;
 
@@ -11,25 +12,25 @@ use Simbiat\Database\Query;
  */
 class Index extends Page
 {
-    #Cache age, in case we prefer the generated page to be cached
+    // Cache age, in case we prefer the generated page to be cached
     protected int $cache_age = 1440;
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/sitemap/index.xml', 'name' => 'Index']
     ];
-    #Sub service name
+    // Sub service name
     protected string $subservice_name = 'sitemap';
-    #Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    // Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $title = 'Sitemap Index';
-    #Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    // Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $h1 = 'Sitemap Index';
-    #Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    // Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $og_desc = 'Sitemap Index';
-    #Max elements per sitemap page
+    // Max elements per sitemap page
     protected int $max_elements = 50000;
-    #Flag indicating the main index file (index.xml)
+    // Flag indicating the main index file (index.xml)
     protected bool $main_index = true;
-    #Query for countables
+    // Query for countables
     protected string $query = '
                     SELECT \'threads\' AS `link`, \'Forum Threads\' AS `name`, COUNT(*) AS `count` FROM `talks__threads` WHERE `private`=0 AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6)
                     UNION ALL
@@ -37,7 +38,7 @@ class Index extends Page
                     UNION ALL
                     SELECT \'bics\' AS `link`, \'Russian Bank Codes\' AS `name`, COUNT(*) AS `count` FROM `bic__list`
                 ';
-    
+
     /**
      * Generation of the page data
      * @param array $path
@@ -50,7 +51,7 @@ class Index extends Page
             $this->max_elements = 50000;
         }
         $this->h2_push = [];
-        #Sitemap for general links (non-countable)
+        // Sitemap for general links (non-countable)
         if ($this->main_index) {
             $links = [
                 ['loc' => 'general.xml', 'name' => 'General links'],
@@ -58,13 +59,13 @@ class Index extends Page
         } else {
             $links = [];
         }
-        #Get countable links
+        // Get countable links
         try {
             $counts = Query::query($this->query, return: 'all');
         } catch (\Throwable) {
             $counts = [];
         }
-        #Generate links
+        // Generate links
         foreach ($counts as $link_type) {
             if ($link_type['count'] <= $this->max_elements) {
                 $links[] = ['loc' => $link_type['link'].'.xml', 'name' => $link_type['name']];

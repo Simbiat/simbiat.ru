@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Enum;
 
@@ -12,7 +13,7 @@ enum SystemUser: int
     case System = 2;
     case Deleted = 3;
     case Owner = 4;
-    
+
     /**
      * Get system users' IDs
      * @return array

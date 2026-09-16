@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\FFXIV;
 
@@ -8,37 +9,37 @@ use App\Entity\FFXIV\AbstractEntity;
 
 class FreeCompany extends Page
 {
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/fftracker/freecompanies', 'name' => 'Free Companies']
     ];
-    #Sub service name
+    // Sub service name
     protected string $subservice_name = 'freecompany';
-    #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Free Company';
-    #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Free Company';
-    #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Free Company';
-    #List of permissions, from which at least 1 is required to have access to the page
+    // List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = ['view_ff'];
-    
-    #This is the actual page generation based on further details of the $path
+
+    // This is the actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        #Sanitize ID
+        // Sanitize ID
         $id = $path[0] ?? '';
-        #Try to get details
+        // Try to get details
         $entity = new \App\Entity\FFXIV\FreeCompany($id);
         $output_array['freecompany'] = $entity->getArray();
-        #Check if ID was found
+        // Check if ID was found
         if (empty($output_array['freecompany']['id'])) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
-        #Try to exit early based on the modification date
+        // Try to exit early based on the modification date
         $this->lastModified($output_array['freecompany']['dates']['updated']);
         $output_array['freecompany']['dates']['scheduled'] = $entity->scheduleUpdate();
-        #Check if linked to the current user
+        // Check if linked to the current user
         if ($_SESSION['user_id'] !== 1 && \in_array($_SESSION['user_id'], \array_column($output_array['freecompany']['members'], 'user_id'), true)) {
             $output_array['freecompany']['linked'] = true;
         } else {
@@ -57,13 +58,13 @@ class FreeCompany extends Page
         } else {
             $output_array['freecompany']['can_refresh'] = false;
         }
-        #Continue breadcrumbs
+        // Continue breadcrumbs
         $this->breadcrumb[] = ['href' => '/fftracker/freecompanies/'.$id, 'name' => $output_array['freecompany']['name']];
-        #Update meta
+        // Update meta
         $this->title = $output_array['freecompany']['name'];
         $this->h1 = $this->title;
         $this->og_desc = $output_array['freecompany']['name'].' on FFXIV Tracker';
-        #Link header/tag for API
+        // Link header/tag for API
         $this->alt_links = [
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/freecompanies/'.$id],
         ];
@@ -78,7 +79,7 @@ class FreeCompany extends Page
         } else {
             $output_array['freecompany']['lodestone_url'] = null;
         }
-        #Merge crest and update favicon
+        // Merge crest and update favicon
         $output_array['freecompany']['crest'] = AbstractEntity::crestToFavicon($output_array['freecompany']['crest']);
         $output_array['favicon'] = $output_array['freecompany']['crest'];
         return $output_array;

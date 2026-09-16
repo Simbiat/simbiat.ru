@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service\Routing;
 
@@ -15,9 +16,9 @@ use App\Controller\UserControl\Unsubscribe;
 
 class UserControl extends Router
 {
-    #List supported "paths". Basic ones only, some extra validation may be required further
+    // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['activate', 'register', 'emails', 'unsubscribe', 'profile', 'password', 'removal', 'sessions', 'fftracker', 'avatars'];
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/uc/', 'name' => 'User Cabinet']
     ];
@@ -27,7 +28,7 @@ class UserControl extends Router
     protected string $service_name = 'uc';
     protected string $redirect_main = '/uc/profile/';
 
-    #This is actual page generation based on further details of the $path
+    // This is actual page generation based on further details of the $path
     protected function pageGen(array $path): array
     {
         return match($path[0]) {

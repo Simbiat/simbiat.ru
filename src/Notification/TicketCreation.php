@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Notification;
 
@@ -27,7 +28,7 @@ final class TicketCreation extends Notification
      * Whether to send to email even if some details fail to be retrieved
      */
     protected const bool ALWAYS_SEND = true;
-    
+
     /**
      * Generate text for message
      *
@@ -37,7 +38,7 @@ final class TicketCreation extends Notification
      */
     protected function setText(array $twig_vars = []): self
     {
-        #If Twig variables are required, but not provided - do not do anything. This will result in failure on save and send.
+        // If Twig variables are required, but not provided - do not do anything. This will result in failure on save and send.
         if (self::TWIG_REQUIRED && \count($twig_vars) === 0) {
             $this->text = null;
             return $this;

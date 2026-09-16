@@ -1,7 +1,8 @@
 <?php
-declare(strict_types = 1);
 
-#TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
+declare(strict_types=1);
+
+// TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
 namespace App\Entity;
 
 use App\Enum\LogType;
@@ -18,19 +19,19 @@ use Simbiat\StringHelpers\Sanitize;
  */
 final class Email extends Entity
 {
-    #Whether mail is registered
+    // Whether mail is registered
     private(set) bool $registered = false;
-    #User id that the email is linked to
+    // User id that the email is linked to
     private(set) ?int $user_id = null;
-    #Username linked to the email
+    // Username linked to the email
     private(set) ?string $username = null;
-    #Whether this is anonymous user
+    // Whether this is anonymous user
     private(set) bool $anonymous = true;
-    #Whether mail is banned
+    // Whether mail is banned
     private(set) bool $banned = false;
-    #Whether email is subscribed to notifications (when not null)
+    // Whether email is subscribed to notifications (when not null)
     private ?string $subscribed = null;
-    #Whether email is activated (when null)
+    // Whether email is activated (when null)
     private ?string $activation = 'not yet activated';
 
     /**
@@ -42,11 +43,11 @@ final class Email extends Entity
     #[\Override]
     public function setId(#[\SensitiveParameter] string|int $id): self
     {
-        #Convert to string for consistency
+        // Convert to string for consistency
         $id = (string)$id;
-        #Validate that string is email
+        // Validate that string is email
         if (\filter_var($id, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
-            #Not an email, something is wrong, protect ourselves
+            // Not an email, something is wrong, protect ourselves
             throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.\get_class($this).'` has incorrect format.');
         }
         $this->id = $id;
@@ -108,13 +109,13 @@ final class Email extends Entity
      */
     public function subscribe(): bool
     {
-        #Ensure we have latest data
+        // Ensure we have latest data
         if ($this->username === null) {
             $this->setId($this->id);
         }
         $subscribed = \bin2hex(\gzdeflate(mb_str_pad($this->id, 100, "\0", encoding: 'UTF-8')."\n".Security::genToken()));
         $queries = [];
-        #If this is an anonymous mail, then we do not "reset" other subscriptions, since we use that user to collect all emails, that may be used by different actual people
+        // If this is an anonymous mail, then we do not "reset" other subscriptions, since we use that user to collect all emails, that may be used by different actual people
         if (!$this->anonymous) {
             $queries[] = [
                 'UPDATE `uc__emails` SET `subscribed`=NULL WHERE `user_id`=:user_id AND `subscribed` IS NOT NULL;',
@@ -162,16 +163,16 @@ final class Email extends Entity
             return ['http_error' => 400, 'reason' => 'Token provided looks malformed'];
         }
         try {
-            #Get the details for email
+            // Get the details for email
             $this->setId($email);
         } catch (\Throwable) {
             return ['http_error' => 400, 'reason' => 'Token provided does not represent a valid email'];
         }
-        #If this is an anonymous email - remove it completely
+        // If this is an anonymous email - remove it completely
         if ($this->anonymous) {
             return ['response' => $this->delete(), 'email' => $this->id];
         }
-        #If we are not subscribed - return true. Detailed checks may be abused here, so doing only this
+        // If we are not subscribed - return true. Detailed checks may be abused here, so doing only this
         if ($this->subscribed === null) {
             return ['response' => true, 'email' => $this->id];
         }
@@ -200,9 +201,9 @@ final class Email extends Entity
         $emails = new User($_SESSION['user_id'])->getEmails();
         $exists = \array_search($this->id, \array_column($emails['emails'], 'email'), true);
         return !(
-            #Safe to unsubscribe if mail does not exist for the user
+            // Safe to unsubscribe if mail does not exist for the user
             $exists !== false &&
-            #Safe to unsubscribe only if there are other emails that are subscribed
+            // Safe to unsubscribe only if there are other emails that are subscribed
             $emails['emails'][$exists]['activation'] === null && $emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1
         );
     }
@@ -213,7 +214,7 @@ final class Email extends Entity
      */
     public function delete(): bool
     {
-        #Ensure we have latest data
+        // Ensure we have latest data
         if ($this->username === null) {
             $this->setId($this->id);
         }
@@ -236,17 +237,17 @@ final class Email extends Entity
         $exists = \array_search($this->id, \array_column($emails['emails'], 'email'), true);
         if ($exists !== false) {
             if (
-                #Safe to delete if it's not activated
+                // Safe to delete if it's not activated
                 $emails['emails'][$exists]['activation'] !== null ||
-                #Safe to delete if it is activated, but not the only one
+                // Safe to delete if it is activated, but not the only one
                 $emails['count_activated'] === 1 ||
-                #Safe to delete if it's not the only one subscribed
+                // Safe to delete if it's not the only one subscribed
                 ($emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1)
             ) {
                 return false;
             }
         } else {
-            #Emails is not in the list, so nothing to remove
+            // Emails is not in the list, so nothing to remove
             return true;
         }
         return true;
@@ -261,21 +262,21 @@ final class Email extends Entity
      */
     public function add(bool $confirm = false): array
     {
-        #Ensure we have latest data
+        // Ensure we have latest data
         if ($this->username === null) {
             $this->setId($this->id);
         }
-        #Check if mail is banned or in use
+        // Check if mail is banned or in use
         if ($this->isBad()) {
-            #Do not provide details on why exactly it failed to avoid email spoofing
+            // Do not provide details on why exactly it failed to avoid email spoofing
             return ['http_error' => 403, 'reason' => 'Bad email provided'];
         }
-        #Add email
+        // Add email
         if ($this->registered) {
             if ($this->anonymous || $this->activation !== null) {
                 $result = Query::query('UPDATE `uc__emails` SET `user_id`=:user_id, `subscribed`=DEFAULT, `activation`=DEFAULT WHERE `email`=:email;', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
             } else {
-                #Should not get here, but still return an error at this point
+                // Should not get here, but still return an error at this point
                 return ['http_error' => 403, 'reason' => 'Bad email provided'];
             }
         } else {
@@ -304,7 +305,7 @@ final class Email extends Entity
      */
     public function activate(int $user_id, #[\SensitiveParameter] string $activation): bool
     {
-        #Ensure we have latest data
+        // Ensure we have latest data
         if ($this->username === null) {
             $this->setId($this->id);
         }
@@ -313,25 +314,25 @@ final class Email extends Entity
         }
         $emails = new User($user_id)->getEmails();
         $queries = [
-            #Remove the code from DB
+            // Remove the code from DB
             ['UPDATE `uc__emails` SET `activation`=NULL WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$user_id, 'int'], ':email' => $this->id]],
-            #Add user to register users
+            // Add user to register users
             ['INSERT IGNORE INTO `uc__user_to_group`(`user_id`, `group_id`) VALUES (:user_id, :group_id)', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::$group_ids['Users'], 'int']]],
-            #Remove user from unverified users
+            // Remove user from unverified users
             ['DELETE FROM `uc__user_to_group` WHERE `user_id`=:user_id AND `group_id`=:group_id', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::$group_ids['Unverified'], 'int']]],
-            #Claim Contact Form threads created while using the emai
+            // Claim Contact Form threads created while using the emai
             ['UPDATE `talks__threads` SET `author`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `author`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown->value, 'int']]],
             ['UPDATE `talks__threads` SET `editor`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `editor`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown->value, 'int']]],
-            #Claim respective posts and their history as well
+            // Claim respective posts and their history as well
             ['UPDATE `talks__posts` SET `author`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `author`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown->value, 'int']]],
             ['UPDATE `talks__posts` SET `editor`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `editor`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown->value, 'int']]],
             ['UPDATE `talks__posts_history` SET `user_id`=:user_id WHERE `post_id` IN (SELECT `post_id` FROM `talks__posts` WHERE `author`=:user_id) AND `user_id`=:anonymous', [':user_id' => [$user_id, 'int'], ':anonymous' => [SystemUser::Unknown->value, 'int']]],
-            #Remove the access token for respective Contact Form threads
+            // Remove the access token for respective Contact Form threads
             ['DELETE FROM `talks__contact_form` WHERE `email`=:email;', [':email' => $this->id,]],
         ];
         try {
             $result = Query::query($queries);
-            #Subscribe the email if it's the only one for the user
+            // Subscribe the email if it's the only one for the user
             if ($result && !$this->anonymous && $emails['count_subscribed'] === 0) {
                 $this->setId($this->id);
                 $this->subscribe();
@@ -350,13 +351,13 @@ final class Email extends Entity
      */
     public function confirm(): bool
     {
-        #Ensure we have latest data
+        // Ensure we have latest data
         if ($this->username === null) {
             $this->setId($this->id);
         }
-        #Generate activation code
+        // Generate activation code
         $activation = Security::genToken();
-        #Insert into mails database
+        // Insert into mails database
         try {
             Query::query(
                 'UPDATE `uc__emails` SET `activation`=:activation WHERE `user_id`=:user_id AND `email`=:mail',

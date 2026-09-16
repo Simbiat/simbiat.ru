@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -39,7 +40,7 @@ class Feeds
      */
     private function feed(array $uri, string $format = 'atom'): array
     {
-        #Check if empty
+        // Check if empty
         if (!empty($uri[0])) {
             $title = match ($uri[0]) {
                 'bicchanged' => 'Изменения банков',
@@ -47,9 +48,9 @@ class Feeds
                 default => '',
             };
             $settings = [];
-            #Check that type is supported based on the existence of the title
+            // Check that type is supported based on the existence of the title
             if (!empty($title)) {
-                #Set general settings first for feeds. Using one array for both types of feeds
+                // Set general settings first for feeds. Using one array for both types of feeds
                 if ($format === 'atom') {
                     $settings = [
                         'authors' => [[
@@ -73,13 +74,13 @@ class Feeds
                         ],
                     ];
                 }
-                #Set description
+                // Set description
                 $description = match ($uri[0]) {
                     'bicchanged' => 'Последние 25 изменений банков',
                     'bicdeleted' => 'Последние 25 удаленных банков',
                     default => '',
                 };
-                #Add it to settings
+                // Add it to settings
                 if (!empty($description)) {
                     if ($format === 'atom') {
                         $settings['subtitle'] = $description;
@@ -87,11 +88,11 @@ class Feeds
                         $settings['description'] = $description;
                     }
                 }
-                #Change language for BICs
+                // Change language for BICs
                 if ($format === 'rss' && \in_array($uri[0], ['bicchanged', 'bicdeleted'])) {
                     $settings['language'] = 'ru-ru';
                 }
-                #Set a query for the feed
+                // Set a query for the feed
                 if ($format === 'atom') {
                     $query = match ($uri[0]) {
                         'bicchanged' => 'SELECT CONCAT(:base_url, `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
@@ -103,7 +104,7 @@ class Feeds
                         'bicdeleted' => 'SELECT CONCAT(:base_url, `BIC`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25',
                     };
                 }
-                #Generate the feed
+                // Generate the feed
                 if (!empty($query)) {
                     if ($format === 'atom') {
                         Atom::atom(Config::$site_name.': '.$title, Query::query($query, [':base_url' => Config::$base_url.'/bictracker/bics/'], return: 'all'), feed_settings: $settings);
@@ -113,7 +114,7 @@ class Feeds
                 }
             }
         }
-        #If we reach here, it means, the requested page does not exist
+        // If we reach here, it means, the requested page does not exist
         return ['http_error' => 404];
     }
 }

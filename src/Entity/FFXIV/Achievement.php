@@ -1,7 +1,8 @@
 <?php
-declare(strict_types = 1);
 
-#TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
+declare(strict_types=1);
+
+// TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
 namespace App\Entity\FFXIV;
 
 use App\Service\Config;
@@ -16,7 +17,7 @@ use Simbiat\FFXIV\Lodestone;
  */
 class Achievement extends AbstractEntity
 {
-    #Custom properties
+    // Custom properties
     protected const string ENTITY_TYPE = 'achievement';
     public int $updated;
     public int $registered;
@@ -27,7 +28,7 @@ class Achievement extends AbstractEntity
     public ?string $db_id = null;
     public array $rewards = [];
     public array $characters = [];
-    
+
     /**
      * Function to get initial data from DB
      *
@@ -37,13 +38,13 @@ class Achievement extends AbstractEntity
      */
     protected function getFromDB(bool $non_private = false): array
     {
-        #Get general information
+        // Get general information
         $data = Query::query('SELECT * FROM `ffxiv__achievement` WHERE `ffxiv__achievement`.`achievement_id` = :id', [':id' => $this->id], return: 'row');
-        #Return empty if nothing was found
+        // Return empty if nothing was found
         if ($data === []) {
             return [];
         }
-        #Get last characters with this achievement
+        // Get last characters with this achievement
         $data['characters'] = Query::query('SELECT
                                                         \'character\' AS `type`,
                                                         c.`character_id` AS `id`,
@@ -64,7 +65,7 @@ class Achievement extends AbstractEntity
             [':id' => $this->id], return: 'all');
         return $data;
     }
-    
+
     /**
      * Get data from Lodestone
      *
@@ -79,20 +80,20 @@ class Achievement extends AbstractEntity
         if (empty($achievement['name'])) {
             return ['404' => true, 'reason' => 'Achievement with ID `'.$this->id.'` is not found on Tracker'];
         }
-        #Cache Lodestone
+        // Cache Lodestone
         $lodestone = new Lodestone();
-        #If we do not have db_id already - try to get one
+        // If we do not have db_id already - try to get one
         if (empty($achievement['db_id'])) {
             $achievement['db_id'] = $this->getDBID($achievement['name']);
         }
-        #Somewhat simpler and faster processing if we have db_id already
+        // Somewhat simpler and faster processing if we have db_id already
         if (!empty($achievement['db_id'])) {
             try {
                 $data = $lodestone->getAchievementFromDB($achievement['db_id'])->getResult();
             } catch (\Throwable $exception) {
                 if (\preg_match('/Lodestone has throttled the request/ui', $exception->getMessage()) === 1) {
                     if ($allow_sleep) {
-                        #Take a pause if we were throttled, and pause is allowed
+                        // Take a pause if we were throttled, and pause is allowed
                         \sleep(60);
                     }
                     return 'Request throttled by Lodestone';
@@ -101,7 +102,7 @@ class Achievement extends AbstractEntity
                     Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
                 }
             }
-            #Most likely temporary unavailability of the Lodestone page
+            // Most likely temporary unavailability of the Lodestone page
             if (empty($data['database']['achievement'][$achievement['db_id']])) {
                 return ['404' => true];
             }
@@ -114,7 +115,7 @@ class Achievement extends AbstractEntity
         if (empty($achievement['characters'])) {
             return ['404' => true];
         }
-        #Iterrate list
+        // Iterrate list
         $achievement['characters'] = [['id' => 1]];
         foreach ($achievement['characters'] as $char) {
             try {
@@ -122,7 +123,7 @@ class Achievement extends AbstractEntity
             } catch (\Throwable $exception) {
                 if (\preg_match('/Lodestone has throttled the request/ui', $exception->getMessage()) === 1) {
                     if ($allow_sleep) {
-                        #Take a pause if we were throttled, and pause is allowed
+                        // Take a pause if we were throttled, and pause is allowed
                         \sleep(60);
                     }
                     return 'Request throttled by Lodestone';
@@ -133,7 +134,7 @@ class Achievement extends AbstractEntity
                 return $exception->getMessage();
             }
             if (\array_key_exists('private', $data['characters'][$char['id']]['achievements']) && $data['characters'][$char['id']]['achievements']['private']) {
-                #Mark character as having private achievements
+                // Mark character as having private achievements
                 try {
                     Query::query('UPDATE `ffxiv__character` SET `hidden_achievements`=CURRENT_TIMESTAMP(6) WHERE `character_id`=:id;', [':id' => $char['id']]);
                 } catch (\Throwable $exception) {
@@ -142,9 +143,9 @@ class Achievement extends AbstractEntity
                 continue;
             }
             if (!empty($data['characters'][$char['id']]['achievements'][$this->id]) && \is_array($data['characters'][$char['id']]['achievements'][$this->id])) {
-                #Try to get achievement ID as seen in Lodestone database (play guide)
+                // Try to get achievement ID as seen in Lodestone database (play guide)
                 $data['characters'][$char['id']]['achievements'][$this->id]['db_id'] = $this->getDBID($data['characters'][$char['id']]['achievements'][$this->id]['name']);
-                #Remove time
+                // Remove time
                 unset($data['characters'][$char['id']]['achievements'][$this->id]['time']);
                 $data = $data['characters'][$char['id']]['achievements'][$this->id];
                 $data['id'] = $this->id;
@@ -153,7 +154,7 @@ class Achievement extends AbstractEntity
         }
         return ['404' => true];
     }
-    
+
     /**
      * Helper function to get db_id from Lodestone based on the achievement name
      * @param string $search_for
@@ -167,19 +168,19 @@ class Achievement extends AbstractEntity
         } catch (\Throwable) {
             return null;
         }
-        #Remove counts elements from achievement database
+        // Remove counts elements from achievement database
         unset($db_search_result['database']['achievement']['page_current'], $db_search_result['database']['achievement']['page_total'], $db_search_result['database']['achievement']['total']);
         if (\count($db_search_result) === 0) {
             return null;
         }
-        #Flip the array of achievements (if any) to ease searching for the right element
+        // Flip the array of achievements (if any) to ease searching for the right element
         $db_search_result['database']['achievement'] = \array_flip(\array_combine(\array_keys($db_search_result['database']['achievement']), \array_column($db_search_result['database']['achievement'], 'name')));
         if (!empty($db_search_result['database']['achievement'][$search_for])) {
             return $db_search_result['database']['achievement'][$search_for];
         }
         return null;
     }
-    
+
     /**
      * Function to do processing of DB data
      *
@@ -211,20 +212,20 @@ class Achievement extends AbstractEntity
             'last' => $from_db['characters'],
         ];
     }
-    
+
     /**
      * Function to update the entity in DB
      * @return bool
      */
     protected function updateDB(): bool
     {
-        
-        #Prepare bindings for actual update
+
+        // Prepare bindings for actual update
         $bindings = [];
         $bindings[':achievement_id'] = $this->id;
         $bindings[':name'] = $this->lodestone['name'];
         $bindings[':icon'] = self::removeLodestoneDomain($this->lodestone['icon']);
-        #Download icon
+        // Download icon
         $webp = Images::download($this->lodestone['icon'], Config::$icons.$bindings[':icon']);
         if ($webp) {
             $bindings[':icon'] = \str_replace('.png', '.webp', $bindings[':icon']);
@@ -251,7 +252,7 @@ class Achievement extends AbstractEntity
             $bindings[':item_icon'] = [NULL, 'null'];
         } else {
             $bindings[':item_icon'] = self::removeLodestoneDomain($this->lodestone['item']['icon']);
-            #Download icon
+            // Download icon
             $webp = Images::download($this->lodestone['item']['icon'], Config::$icons.$bindings[':item_icon']);
             if ($webp) {
                 $bindings[':item_icon'] = \str_replace('.png', '.webp', $bindings[':item_icon']);

@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\Abstracts;
 
@@ -12,9 +13,9 @@ use Simbiat\http20\Headers;
 class Redirect extends StaticPage
 {
     protected string $subservice_name = 'redirect';
-    #Regex match pattern with / and flags
+    // Regex match pattern with / and flags
     protected string $search_for = '';
-    #Regex replace pattern
+    // Regex replace pattern
     protected string $replace_with = '';
 
     /**

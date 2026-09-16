@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Notification;
 
@@ -27,7 +28,7 @@ final class LoginSuccess extends Notification
      * Whether this is a security alert, and we need to collect session details and pass them to Twig
      */
     protected const bool SECURITY_ALERT = true;
-    
+
     /**
      * Generate text for message
      *

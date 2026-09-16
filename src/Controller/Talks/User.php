@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\Talks;
 
@@ -11,20 +12,20 @@ use Simbiat\http20\Headers;
 
 class User extends Page
 {
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/talks/users/', 'name' => 'Users']
     ];
-    #Sub service name
+    // Sub service name
     protected string $subservice_name = 'user';
-    #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'User profile';
-    #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'User profile';
-    #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'User profile';
-    
-    #This is the actual page generation based on further details of the $path
+
+    // This is the actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
         if (empty($path[0])) {
@@ -37,20 +38,20 @@ class User extends Page
             return ['http_error' => 404, 'reason' => 'User does not exist'];
         }
         if (!\in_array((int)$user->id, SystemUser::getSystemUsers(), true)) {
-            #Get FF characters
+            // Get FF characters
             $output_array['fftracker'] = $user->getFF();
-            #Get last posts and threads
+            // Get last posts and threads
             $output_array['threads'] = $user->getThreads();
             $output_array['posts'] = $user->getPosts();
             foreach($output_array['posts'] as $post_id => $post) {
                 $output_array['posts'][$post_id]['text'] = Cut::cut($post['text'], 250, 3, '<a href="/talks/threads/'.$post['thread_id'].'">…</a>');
             }
         }
-        #Update meta
+        // Update meta
         $this->title = $output_array['user_data']['username'];
         $this->h1 = $this->title;
         $this->og_desc = 'Public profile of '.$output_array['user_data']['username'];
-        #Setup OG profile for characters
+        // Setup OG profile for characters
         $output_array['ogtype'] = 'profile';
         $output_array['ogextra'] =
             '<meta property="profile:username" content="'.\htmlspecialchars($output_array['user_data']['username'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />'.

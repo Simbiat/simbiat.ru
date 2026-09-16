@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service\Routing\Api;
 
@@ -21,11 +22,11 @@ use App\Controller\Api\UserControl\Username;
 
 class UserControl extends Api
 {
-    #Supported edges
+    // Supported edges
     protected array $sub_routes = [
         'register', 'login', 'remind', 'logout', 'emails', 'notifications', 'password', 'username', 'profile', 'fflink', 'avatars', 'cookies', 'sessions', 'remove'
     ];
-    #Description of the nodes (need to be in same order)
+    // Description of the nodes (need to be in same order)
     protected array $routes_description = [
         'Register on the website',
         'Login to the website',
@@ -42,9 +43,9 @@ class UserControl extends Api
         'Delete sessions',
         'Remove the user',
     ];
-    #Flag to indicate, that this is a top level node (false by default)
+    // Flag to indicate, that this is a top level node (false by default)
     protected bool $top_level = false;
-    
+
     protected function genData(array $path): array
     {
         return match($path[0]) {

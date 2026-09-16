@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service\Routing;
 
@@ -11,9 +12,9 @@ use function array_slice;
 
 class Talks extends Router
 {
-    #List supported "paths". Basic ones only, some extra validation may be required further
+    // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['sections', 'threads', 'posts', 'users', 'edit'];
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/talks/', 'name' => 'Talks']
     ];
@@ -22,8 +23,8 @@ class Talks extends Router
     protected string $og_desc = 'Talks';
     protected string $service_name = 'talks';
     protected string $redirect_main = '/talks/sections/';
-    
-    #This is actual page generation based on further details of the $path
+
+    // This is actual page generation based on further details of the $path
     protected function pageGen(array $path): array
     {
         return match($path[0]) {

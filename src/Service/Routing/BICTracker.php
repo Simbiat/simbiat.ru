@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service\Routing;
 
@@ -11,9 +12,9 @@ use function array_slice;
 
 class BICTracker extends Router
 {
-    #List supported "paths". Basic ones only, some extra validation may be required further
+    // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['keying', 'search', 'bics', 'openbics', 'closedbics', 'bic'];
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/bictracker/', 'name' => 'БИК Трекер']
     ];
@@ -22,8 +23,8 @@ class BICTracker extends Router
     protected string $og_desc = 'Трекер БИК предоставляемых Центральным Банком Российской Федерации';
     protected string $og_image = '/ogimages/bictracker.webp';
     protected string $service_name = 'bictracker';
-    
-    #This is the actual page generation based on further details of the $path
+
+    // This is the actual page generation based on further details of the $path
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {
@@ -33,6 +34,6 @@ class BICTracker extends Router
             'openbics', 'closedbics' => new Listing()->get($path),
             default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.\implode('`, `', $this->sub_routes).'`.'],
         };
-        #}
+        // }
     }
 }

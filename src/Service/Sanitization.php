@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -16,7 +17,7 @@ use function in_array;
 class Sanitization
 {
 
-    #Static sanitizer configs for a little bit of performance
+    // Static sanitizer configs for a little bit of performance
     private(set) static array $sanitizer_config = ['body' => null, 'head' => null, 'timeline' => null];
 
     /**
@@ -37,22 +38,22 @@ class Sanitization
         if (!in_array($for, self::SANITIZATION_ELEMENT_NAMES, true)) {
             return '';
         }
-        #Check if config has been created already
+        // Check if config has been created already
         if (self::$sanitizer_config[$for]) {
             $config = self::$sanitizer_config[$for];
         } else {
             $config = self::initSanitizer($for);
         }
-        #Remove excessive new lines
+        // Remove excessive new lines
         $string = \preg_replace(['/(\s*<br \/>\s*){5,}/mi', '/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi'], ['<br>', ''], $string);
-        #Run the sanitizer
+        // Run the sanitizer
         $sanitizer = new HtmlSanitizer($config);
         if ($for === 'head') {
             $string = $sanitizer->sanitizeFor('head', $string);
         } else {
             $string = $sanitizer->sanitize($string);
         }
-        #TODO add loading="lazy" decoding="async" to all images
+        // TODO add loading="lazy" decoding="async" to all images
         return $string;
     }
 
@@ -68,28 +69,28 @@ class Sanitization
         $config = new HtmlSanitizerConfig()->withMaxInputLength(-1)->allowSafeElements()
             ->allowRelativeLinks()->allowMediaHosts([Config::$http_host])->allowRelativeMedias()
             ->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
-        #Block some extra elements
+        // Block some extra elements
         foreach (['acronym', 'applet', 'area', 'aside', 'base', 'basefont', 'bgsound', 'big', 'blink', 'body', 'button', 'canvas', 'center', 'content', 'datalist',
                      'dialog', 'dir', 'embed', 'fieldset', 'figure', 'figcaption', 'font', 'footer', 'form', 'frame', 'frameset', 'head', 'header', 'hgroup', 'html',
                      'iframe', 'input', 'image', 'keygen', 'legend', 'link', 'main', 'map', 'marquee', 'menuitem', 'meter', 'nav', 'nobr', 'noembed', 'noframes',
                      'noscript', 'object', 'optgroup', 'option', 'param', 'picture', 'plaintext', 'portal', 'pre', 'progress', 'rb', 'rp', 'rt', 'rtc', 'ruby', 'script',
                      'select', 'selectmenu', 'shadow', 'slot', 'strike', 'style', 'spacer', 'template', 'textarea', 'title', 'tt', 'xmp']
                  as $element) {
-            #Need to update the original, because a clone is returned, instead of the same instance.
+            // Need to update the original, because a clone is returned, instead of the same instance.
             $config = $config->blockElement($element);
         }
-        #Allow timeline elements
+        // Allow timeline elements
         if ($for === 'timeline') {
             $config = $config->allowElement('time-line');
             $config = $config->allowElement('time-line-shortcut');
         }
-        #Allow some property attributes for meta-tags
+        // Allow some property attributes for meta-tags
         if ($for === 'head') {
             $config = $config->allowAttribute('property', 'meta');
         }
-        #Allow class attribute
+        // Allow class attribute
         $config = $config->allowAttribute('class', '*');
-        #Allow ARIA attributes
+        // Allow ARIA attributes
         foreach (['aria-activedescendant', 'aria-atomic', 'aria-atomic', 'aria-autocomplete', 'aria-busy', 'aria-busy', 'aria-checked', 'aria-colcount', 'aria-colindex',
                      'aria-colspan', 'aria-controls', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-describedby', 'aria-description', 'aria-description',
                      'aria-details', 'aria-details', 'aria-disabled', 'aria-disabled', 'aria-dropeffect', 'aria-dropeffect', 'aria-errormessage', 'aria-errormessage',
@@ -101,17 +102,17 @@ class Sanitization
                  as $attribute) {
             $config = $config->allowAttribute($attribute, '*');
         }
-        #Allow data-* attributes in blockquotes, code and samp
+        // Allow data-* attributes in blockquotes, code and samp
         $config = $config->allowAttribute('data-author', 'blockquote');
         $config = $config->allowAttribute('data-description', ['code', 'samp']);
         $config = $config->allowAttribute('data-source', ['blockquote', 'code', 'samp']);
-        #Allow tooltips
+        // Allow tooltips
         $config = $config->allowAttribute('data-tooltip', '*');
-        #Drop the title element, since it will create a tooltip using the browser's engine, which can create an inconsistent experience
+        // Drop the title element, since it will create a tooltip using the browser's engine, which can create an inconsistent experience
         $config = $config->dropAttribute('title', '*');
-        #TinyMCE adds the `border` attribute to tables, which we do not use, so dropping it for cleaner code
+        // TinyMCE adds the `border` attribute to tables, which we do not use, so dropping it for cleaner code
         $config = $config->dropAttribute('border', '*');
-        #Save config to static for future reuse
+        // Save config to static for future reuse
         self::$sanitizer_config[$for] = $config;
         return $config;
     }
@@ -188,7 +189,7 @@ class Sanitization
                 $datetime = SandClock::convertTimezone($time, $_SESSION['timezone'] ?? $timezone);
                 $time = $datetime->getTimestamp();
                 $cur_time = \time();
-                #Do not allow past, unless respective permission is present
+                // Do not allow past, unless respective permission is present
                 if ($time < $cur_time && !in_array('post_backlog', $_SESSION['permissions'], true)) {
                     $time = $cur_time;
                 }
@@ -219,9 +220,9 @@ class Sanitization
      */
     #[Pure(true)] public static function getUploadedFileLink(string $filename): string
     {
-        #Get hash tree
+        // Get hash tree
         $hash_tree = self::hashTree($filename);
-        #Check if the file exists in images
+        // Check if the file exists in images
         if (\file_exists(Config::$uploaded_img.$hash_tree.'/'.$filename)) {
             return '/assets/images/uploaded/'.$hash_tree.'/'.$filename;
         }

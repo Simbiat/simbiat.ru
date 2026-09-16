@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -29,7 +30,7 @@ final class LegacyController
     {
         new HomePage();
 
-        #Unreachable: HomePage::twigProc() always calls exit(0).
+        // Unreachable: HomePage::twigProc() always calls exit(0).
         return new Response();
     }
 }

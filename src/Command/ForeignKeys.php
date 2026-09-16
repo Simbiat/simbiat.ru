@@ -39,13 +39,13 @@ final class ForeignKeys
             // Connect to DB
             Config::dbConnect();
             if (Config::$dbup) {
-                #TODO Actually write queries for this
-                #Logs
+                // TODO Actually write queries for this
+                // Logs
                 Query::query('DELETE FROM `sys__logs` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(LogType::class), 'in', 'int']]);
                 Query::query('UPDATE `sys__logs` SET `user_id`=:user_id WHERE `user_id` NOT IN (SELECT `user_id` FROM `uc__users`);', [':user_id' => SystemUser::Unknown->value]);
-                #Notification types
+                // Notification types
                 Query::query('DELETE FROM `sys__notifications` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(NotificationType::class), 'in', 'int']]);
-                #Unsupported section types
+                // Unsupported section types
                 Query::query('DELETE FROM `talks__sections` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(TalkType::class), 'in', 'int']]);
             }
         } catch (\Throwable $throwable) {

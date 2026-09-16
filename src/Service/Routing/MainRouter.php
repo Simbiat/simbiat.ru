@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Service\Routing;
 
@@ -12,28 +13,28 @@ use function array_slice;
  */
 class MainRouter extends Router
 {
-    #Supported
+    // Supported
     protected array $sub_routes = [
-        #Empty string implies homepage
+        // Empty string implies homepage
         '',
         'api',
         'tests',
-        #Forums, blogs, etc.
+        // Forums, blogs, etc.
         'talks',
-        #Pages routing
+        // Pages routing
         'about', 'fftracker', 'bictracker', 'uc', 'bic',
-        #Simple pages
+        // Simple pages
         'simplepages',
-        #SupOps
+        // SupOps
         'supops',
-        #Games
+        // Games
         'games',
-        #Feeds
+        // Feeds
         'sitemap', 'rss', 'atom',
-        #Errors
+        // Errors
         'error', 'errors', 'httperror', 'httperrors'
     ];
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/', 'name' => 'Home page'],
     ];
@@ -44,7 +45,7 @@ class MainRouter extends Router
     protected function pageGen(array $path): array
     {
         if ($path[0] === 'sitemap') {
-            #We want to handle sitemap links equally regardless of trailing .xml extension
+            // We want to handle sitemap links equally regardless of trailing .xml extension
             $path[\array_key_last($path)] = \str_replace('.xml', '', $path[\array_key_last($path)]);
         }
         if ($path[0] === 'supops' && !\array_key_exists(1, $path)) {
@@ -52,24 +53,24 @@ class MainRouter extends Router
         }
         return match ($path[0]) {
             'api' => \array_merge(['template_override' => 'common/pages/api.twig'], new Api()->route(array_slice($path, 1))),
-            #Forum/Articles
+            // Forum/Articles
             'talks' => new Talks()->route(array_slice($path, 1)),
-            #Pages routing
+            // Pages routing
             'about' => new About()->route(array_slice($path, 1)),
             'bictracker' => new BICTracker()->route(array_slice($path, 1)),
             'fftracker' => new FFTracker()->route(array_slice($path, 1)),
             'uc' => new UserControl()->route(array_slice($path, 1)),
             'tests' => new Tests()->route(array_slice($path, 1)),
-            #Simple pages
+            // Simple pages
             'simplepages' => new SimplePages()->route(array_slice($path, 1)),
-            #SupOps
+            // SupOps
             'supops' => new SupOps()->route(array_slice($path, 1)),
-            #Games
+            // Games
             'games' => new Games()->route(array_slice($path, 1)),
-            #Feeds
+            // Feeds
             'sitemap' => new Sitemap()->route(array_slice($path, 1)),
             'rss', 'atom' => new Feeds()->uriParse($path),
-            #Errors
+            // Errors
             'error', 'errors', 'httperror', 'httperrors' => $this->error(array_slice($path, 1)),
             '' => new Homepage()->get([]),
             default => $this->error(['404']),

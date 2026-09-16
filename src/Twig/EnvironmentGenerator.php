@@ -1,10 +1,11 @@
 <?php
-declare(strict_types = 1);
 
-#TODO: need to either be absorbed into config/packages/twig.yaml or become a service.
+declare(strict_types=1);
+
+// TODO: need to either be absorbed into config/packages/twig.yaml or become a service.
 namespace App\Twig;
 
-#Twig environment
+// Twig environment
 use App\Service\Config;
 use Twig\Environment;
 use Twig\Extension\CoreExtension;
@@ -17,7 +18,7 @@ use Twig\Loader\FilesystemLoader;
 final class EnvironmentGenerator
 {
     private static ?Environment $environment = null;
-    
+
     /**
      * Function to get the actual Twig environment object
      *
@@ -28,7 +29,7 @@ final class EnvironmentGenerator
     {
         if (!self::$environment) {
             $templates_dir = Config::$work_dir.'/templates/';
-            #Initiate Twig
+            // Initiate Twig
             $loader = new FilesystemLoader($templates_dir);
             $loader->addPath(Config::$work_dir.'/public/assets/images/', 'images'); // this creates the @images namespace
             $loader->addPath(Config::$work_dir.'/public/assets/styles/', 'styles'); // this creates the @styles namespace

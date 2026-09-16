@@ -43,15 +43,15 @@ final class Database
             /* @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
             $dump_order = '';
-            #Get tables in order
+            // Get tables in order
             new Manage($pdo);
             foreach (Manage::showOrderedTables(Config::$database_name) as $table) {
-                #Get DDL statement
+                // Get DDL statement
                 $create = Manage::showCreateTable($table['schema'], $table['table'], if_not_exist: true, add_use: true);
                 if ($create === null) {
                     throw new \UnexpectedValueException('Failed to get CREATE statement for table `'.$table['table'].'`;');
                 }
-                #Add item to the file with dump order
+                // Add item to the file with dump order
                 $dump_order .= $table['table'].' ';
             }
             \file_put_contents(Config::$work_dir.'/data/backups/recommended_table_order.txt', $dump_order);
@@ -76,7 +76,7 @@ final class Database
     {
         $output->writeln(Errors::logfmt('Generating DDLs...'));
         try {
-            #Run only ony DEV
+            // Run only ony DEV
             if (Config::$environment !== 'dev') {
 
                 return Command::SUCCESS;
@@ -86,20 +86,20 @@ final class Database
             if (!\is_dir(Config::$ddl_dir) && !\mkdir(Config::$ddl_dir, recursive: true) && !\is_dir(Config::$ddl_dir)) {
                 Errors::error_log(new \RuntimeException('Failed to create DDL directory'));
             }
-            #Clean up SQL files but do not touch manually maintained files with prefixes `000` and `999`
+            // Clean up SQL files but do not touch manually maintained files with prefixes `000` and `999`
             \array_map(
                 '\unlink',
                 \preg_grep('/\/(000|999)[^\/]*\.sql$/u', \glob(Config::$ddl_dir.'*.sql'), \PREG_GREP_INVERT)
             );
-            #Get tables in order
+            // Get tables in order
             new Manage($pdo);
             foreach (Manage::showOrderedTables(Config::$database_name) as $order => $table) {
-                #Get DDL statement
+                // Get DDL statement
                 $create = Manage::showCreateTable($table['schema'], $table['table'], if_not_exist: true, add_use: true);
                 if ($create === null) {
                     throw new \UnexpectedValueException('Failed to get CREATE statement for table `'.$table['table'].'`;');
                 }
-                #Get DDL statement
+                // Get DDL statement
                 if (\preg_match('/^(cron|maintainer)__/ui', $table['table']) !== 1) {
                     \file_put_contents(Config::$ddl_dir.mb_str_pad((string)($order + 1), 3, '0', \STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', mb_trim($create, null, 'UTF-8'));
                 }
@@ -129,9 +129,9 @@ final class Database
             $pdo = $this->connection->getNativeConnection();
             $analyzer = new Analyzer($pdo);
             $settings = new Settings($pdo);
-            #Ensure we have all tables, even though we end up doing this twice
+            // Ensure we have all tables, even though we end up doing this twice
             $analyzer->updateTables(Config::$database_name);
-            #Ensure settings are set to what we want
+            // Ensure settings are set to what we want
             $settings->setTableFineTune(Config::$database_name, [], 'analyze_histogram', true)
                      ->setTableFineTune(Config::$database_name, [], 'analyze_histogram_auto', true)
                      ->setThresholdFragmentation(Config::$database_name, [], 5.0)

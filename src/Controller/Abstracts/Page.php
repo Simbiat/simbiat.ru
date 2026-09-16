@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\Abstracts;
 
@@ -19,41 +20,41 @@ use function in_array;
  */
 abstract class Page
 {
-    #Current breadcrumb for navigation
+    // Current breadcrumb for navigation
     protected array $breadcrumb = [];
-    #Alternative representations of the content
+    // Alternative representations of the content
     protected array $alt_links = [];
-    #Sub service name
+    // Sub service name
     protected string $subservice_name = '';
-    #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = '';
-    #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = '';
-    #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = '';
-    #Page's banner. Defaults to website's banner. Needs to be inside /assets/images directory and start with /
+    // Page's banner. Defaults to website's banner. Needs to be inside /assets/images directory and start with /
     protected string $og_image = '';
-    #Cache age, in case we prefer the generated page to be cached
+    // Cache age, in case we prefer the generated page to be cached
     protected int $cache_age = 0;
-    #Time of last data modification (defaults to current time on initialization)
+    // Time of last data modification (defaults to current time on initialization)
     protected int $last_modified = 0;
-    #Flag to check if the Last Modified header was sent already
+    // Flag to check if the Last Modified header was sent already
     protected bool $header_sent = false;
-    #Language override, to be sent in header (if present)
+    // Language override, to be sent in header (if present)
     protected string $language = '';
-    #Flag to indicate this is a static page
+    // Flag to indicate this is a static page
     protected bool $static = false;
-    #Flag to indicate that session data change is possible on this page
+    // Flag to indicate that session data change is possible on this page
     protected bool $session_change = false;
-    #Allowed methods
+    // Allowed methods
     protected array $methods = ['GET', 'POST', 'HEAD', 'OPTIONS'];
-    #Cache strategy: aggressive, private, none, live, month, week, day, hour
+    // Cache strategy: aggressive, private, none, live, month, week, day, hour
     protected string $cache_strategy = 'hour';
-    #Flag indicating that authentication is required
+    // Flag indicating that authentication is required
     protected bool $authentication_needed = false;
-    #List of permissions, from which at least 1 is required to have access to the page
+    // List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = [];
-    #Static list of images to H2 push, which are common for the page type
+    // Static list of images to H2 push, which are common for the page type
     protected array $h2_push = [
         '/assets/images/logo.svg',
         '/assets/images/menu.svg',
@@ -68,18 +69,18 @@ abstract class Page
         '/assets/images/navigation/gamepad.svg',
         '/assets/images/supops/logo/square_navigation.svg'
     ];
-    #List of images to H2 push, which are dependent on data grabbed by the page during generation
+    // List of images to H2 push, which are dependent on data grabbed by the page during generation
     protected array $h2_push_extra = [];
 
     final public function __construct()
     {
-        #Check that subclass has set appropriate properties
+        // Check that subclass has set appropriate properties
         foreach (['subservice_name', 'breadcrumb'] as $property) {
             if (empty($this->{$property})) {
                 throw new \LogicException(\get_class($this).' must have a non-empty `'.$property.'` property.');
             }
         }
-        #Set last modified data
+        // Set last modified data
         $this->last_modified = \time();
     }
 
@@ -89,7 +90,7 @@ abstract class Page
      */
     public static function headers(): void
     {
-        #Send headers
+        // Send headers
         if (!\headers_sent()) {
             \header('X-Dns-Prefetch-Control: off');
             \header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
@@ -112,30 +113,30 @@ abstract class Page
      */
     final public function get(array $path): array
     {
-        #Send page language
+        // Send page language
         if ($this->language !== '' && !\headers_sent()) {
             \header('Content-Language: '.$this->language);
         }
-        #Check if user has required permission
+        // Check if user has required permission
         if (\count($this->required_permission) > 0 && \count(\array_intersect($this->required_permission, $_SESSION['permissions'] ?? [])) === 0) {
             $page = ['http_error' => 403, 'reason' => 'No `'.\implode('` or `', $this->required_permission).'` permission'];
         } elseif (HomePage::$http_error === [] || HomePage::$http_error === null || $this->static) {
-            #Generate the page only if no prior errors detected
-            #Generate a list of allowed methods
+            // Generate the page only if no prior errors detected
+            // Generate a list of allowed methods
             $allowed_methods = \array_unique(\array_merge(['HEAD', 'OPTIONS', 'GET'], $this->methods));
-            #Send headers
+            // Send headers
             if (!\headers_sent()) {
                 \header('Access-Control-Allow-Methods: '.\implode(', ', $allowed_methods));
                 \header('Allow: '.\implode(', ', $allowed_methods));
             }
-            #Check if allowed method is used
+            // Check if allowed method is used
             if (!in_array(HomePage::$method, $allowed_methods, true)) {
                 $page = ['http_error' => 405];
-                #Check that user is authenticated
+                // Check that user is authenticated
             } elseif ($this->authentication_needed && $_SESSION['user_id'] === 1) {
                 $page = ['http_error' => 403, 'reason' => 'Authentication required'];
             } else {
-                #Generate the page
+                // Generate the page
                 try {
                     $page = $this->generate($path);
                 } catch (\Throwable $exception) {
@@ -146,7 +147,7 @@ abstract class Page
                         $page = ['http_error' => 500, 'reason' => 'Unknown error occurred'];
                     }
                 }
-                #Send Last Modified header to potentially allow earlier exit
+                // Send Last Modified header to potentially allow earlier exit
                 if (!$this->header_sent) {
                     $this->lastModified($this->last_modified);
                 }
@@ -155,7 +156,7 @@ abstract class Page
         } else {
             $page = HomePage::$http_error;
         }
-        #Ensure properties are included
+        // Ensure properties are included
         $page['http_method'] = HomePage::$method;
         $page['breadcrumbs'] = $this->breadcrumb;
         $page['subservice_name'] = $this->subservice_name;
@@ -169,23 +170,23 @@ abstract class Page
         $page['cache_strategy'] = $this->cache_strategy;
         if (!empty($this->h2_push) || !empty($this->h2_push_extra)) {
             $this->h2_push = \array_merge($this->h2_push, $this->h2_push_extra);
-            #Prepare a set of images to push
+            // Prepare a set of images to push
             foreach ($this->h2_push as $key => $image) {
                 $this->h2_push[$key] = ['href' => $image, 'rel' => 'preload', 'as' => 'image'];
             }
             Links::links($this->h2_push, force_cross_origin: true);
         }
         if (!empty($this->alt_links)) {
-            #Send HTTP header
+            // Send HTTP header
             if (!HomePage::$stale_return) {
                 Links::links($this->alt_links, force_cross_origin: true);
             }
-            #Add a link to HTML
+            // Add a link to HTML
             $page['link_extra'] = $this->alt_links;
         }
-        #Check if we are loading a static page
+        // Check if we are loading a static page
         $page['static_page'] = $this->static;
-        #Set error for Twig
+        // Set error for Twig
         if (!empty($page['http_error'])) {
             if (in_array($page['http_error'], ['database', 'maintenance'])) {
                 Headers::clientReturn(503, false);
@@ -193,9 +194,9 @@ abstract class Page
                 Headers::clientReturn($page['http_error'], false);
             }
         }
-        #Limit Ogdesc to 120 characters
+        // Limit Ogdesc to 120 characters
         $page['og_desc'] = mb_substr($page['og_desc'], 0, 120, 'UTF-8');
-        #Generate a link for cache reset if page uses cache
+        // Generate a link for cache reset if page uses cache
         if ($this->cache_age > 0 && !$this->static) {
             $query = IRI::parseUri(HomePage::$canonical);
             if (\is_array($query)) {
@@ -216,21 +217,21 @@ abstract class Page
      */
     final protected function lastModified(int|string|null $time = null): void
     {
-        #Convert string to int
+        // Convert string to int
         if (\is_string($time)) {
             $time = \strtotime($time);
         }
-        #If time is less than 0, use the Last Modified set initially
+        // If time is less than 0, use the Last Modified set initially
         if ($time === null || $time <= 0) {
             $time = $this->last_modified;
         }
-        #Set Last Modified to the time
+        // Set Last Modified to the time
         $this->last_modified = $time;
-        #Send the header
+        // Send the header
         if (!HomePage::$stale_return) {
             Headers::lastModified($this->last_modified, true);
         }
-        #Set the flag indicating, that header was sent, but we did not exit, so that the header will not be sent the 2nd time
+        // Set the flag indicating, that header was sent, but we did not exit, so that the header will not be sent the 2nd time
         $this->header_sent = true;
     }
 
@@ -244,7 +245,7 @@ abstract class Page
      */
     final protected function attachCrumb(string $path, string $name, bool $query = false): void
     {
-        #Add a path to breadcrumbs
+        // Add a path to breadcrumbs
         $this->breadcrumb[] = [
             'href' => $this->breadcrumb[\array_key_last($this->breadcrumb)]['href'].($query ? '&' : '/').$path,
             'name' => $name,
@@ -268,26 +269,26 @@ abstract class Page
      */
     final protected function setOgDesc(string $string): void
     {
-        #Remove <details> to avoid spoilers and generally complex items
+        // Remove <details> to avoid spoilers and generally complex items
         $string = '<html>'.$string.'</html>';
         /** @noinspection DuplicatedCode */
         $html = new \DOMDocument(encoding: 'UTF-8');
-        #`mb_encode_numericentity` is done as per workaround for UTF-8 loss/corruption on loading from https://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly
-        #LIBXML_HTML_NOIMPLIED and LIBXML_HTML_NOTED to avoid adding wrappers (html, body, DTD). This will also allow fewer issues in case string has both regular HTML and some regular text (outside any tags). LIBXML_NOBLANKS to remove empty tags if any. LIBXML_PARSEHUGE to allow processing of larger strings. LIBXML_COMPACT for some potential optimization. LIBXML_NOWARNING and LIBXML_NOERROR to suppress warning in case of malformed HTML. LIBXML_NONET to protect from unsolicited connections to external sources.
+        // `mb_encode_numericentity` is done as per workaround for UTF-8 loss/corruption on loading from https://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly
+        // LIBXML_HTML_NOIMPLIED and LIBXML_HTML_NOTED to avoid adding wrappers (html, body, DTD). This will also allow fewer issues in case string has both regular HTML and some regular text (outside any tags). LIBXML_NOBLANKS to remove empty tags if any. LIBXML_PARSEHUGE to allow processing of larger strings. LIBXML_COMPACT for some potential optimization. LIBXML_NOWARNING and LIBXML_NOERROR to suppress warning in case of malformed HTML. LIBXML_NONET to protect from unsolicited connections to external sources.
         $html->loadHTML(mb_encode_numericentity($string, [0x80, 0x10FFFF, 0, 0x1FFFFF], 'UTF-8'), \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD | \LIBXML_NOBLANKS | \LIBXML_PARSEHUGE | \LIBXML_COMPACT | \LIBXML_NOWARNING | \LIBXML_NOERROR | \LIBXML_NONET);
         $html->preserveWhiteSpace = true;
         $html->formatOutput = true;
         $html->normalizeDocument();
-        #Remove the elements
+        // Remove the elements
         foreach (new \DOMXPath($html)->query('//details') as $element) {
             $element->parentNode->removeChild($element);
         }
-        #Get the cleaned HTML
+        // Get the cleaned HTML
         $cleaned_html = $html->saveHTML();
-        #Strip the excessive HTML tags if we added them
+        // Strip the excessive HTML tags if we added them
         $cleaned_html = \preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleaned_html);
         $new_description = \strip_tags(Cut::cut($cleaned_html, 160, 1));
-        #Update description only if it's not empty
+        // Update description only if it's not empty
         if (!Sanitize::whiteString($new_description)) {
             $this->og_desc = $new_description;
         }

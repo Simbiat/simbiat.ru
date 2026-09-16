@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\Api\FFXIV;
 
@@ -9,16 +10,16 @@ use App\Service\Config;
 
 class MergeCrest extends Api
 {
-    #Flag to indicate, that this is the lowest level
+    // Flag to indicate, that this is the lowest level
     protected bool $final_node = true;
-    #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => 'merge'];
-    #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+    // Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = ['merge' => 'Merge crest components into a single file'];
 
     protected function genData(array $path): array
     {
-        #Check components' values and files' existence
+        // Check components' values and files' existence
         if (empty($_POST['crest_emblem'])) {
             return ['http_error' => 400, 'reason' => 'Emblem can\'t be empty'];
         }

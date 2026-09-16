@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Controller\Api\BIC;
 
@@ -8,13 +9,13 @@ use Simbiat\BIC\AccountKeying;
 
 class Keying extends Api
 {
-    #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ''];
-    #Flag to indicate, that this is the lowest level
+    // Flag to indicate, that this is the lowest level
     protected bool $final_node = true;
-    #Flag to indicate, that no database is required for this node
+    // Flag to indicate, that no database is required for this node
     protected bool $static = true;
-    #Description of the node
+    // Description of the node
     protected array $description = [
         'description' => 'Node for checking Russian account keying against a Russian Bank Identification Code',
         'POST' => [
@@ -29,7 +30,7 @@ class Keying extends Api
     {
         $bic = $_POST['bic_key'] ?? null;
         $acc = $_POST['account_key'] ?? null;
-        #Validate values
+        // Validate values
         if (empty($bic)) {
             return ['http_error' => 400, 'reason' => 'No BIC provided'];
         }
@@ -41,7 +42,7 @@ class Keying extends Api
             return ['http_error' => 400, 'reason' => 'Wrong format of either BIC or Account'];
         }
         $result = ['response' => $data];
-        #Link header/tag for API
+        // Link header/tag for API
         $result['alt_links'] = [
             ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/bictracker/keying/' . $bic.'/'.$acc],
         ];

@@ -1,7 +1,8 @@
 <?php
-declare(strict_types = 1);
 
-#TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
+declare(strict_types=1);
+
+// TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
 namespace App\Entity\FFXIV;
 
 use App\Service\Errors;
@@ -16,7 +17,7 @@ use function count;
  */
 class FreeCompany extends AbstractEntity
 {
-    #Custom properties
+    // Custom properties
     protected const string ENTITY_TYPE = 'freecompany';
     public array $dates = [];
     public ?string $tag = null;
@@ -34,30 +35,30 @@ class FreeCompany extends AbstractEntity
     public array $ranking = [];
     public array $members = [];
     public array $past_members = [];
-    
+
     /**
      * Function to get initial data from DB
      * @throws \Exception
      */
     protected function getFromDB(): array
     {
-        #Get general information
+        // Get general information
         $data = Query::query('SELECT * FROM `ffxiv__freecompany` LEFT JOIN `ffxiv__server` ON `ffxiv__freecompany`.`server_id`=`ffxiv__server`.`server_id` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__freecompany`.`gc_id`=`ffxiv__grandcompany`.`gc_id` LEFT JOIN `ffxiv__timeactive` ON `ffxiv__freecompany`.`active_id`=`ffxiv__timeactive`.`active_id` LEFT JOIN `ffxiv__estate` ON `ffxiv__freecompany`.`estate_id`=`ffxiv__estate`.`estate_id` LEFT JOIN `ffxiv__city` ON `ffxiv__estate`.`city_id`=`ffxiv__city`.`city_id` WHERE `fc_id`=:id', [':id' => $this->id], return: 'row');
-        #Return empty if nothing was found
+        // Return empty if nothing was found
         if ($data === []) {
             return [];
         }
-        #Get old names
+        // Get old names
         $data['old_names'] = Query::query('SELECT `name` FROM `ffxiv__freecompany_names` WHERE `fc_id`=:id AND `name`!=:name', [':id' => $this->id, ':name' => $data['name']], return: 'column');
-        #Get members
+        // Get members
         $data['members'] = Query::query('SELECT \'character\' AS `type`, `ffxiv__freecompany_character`.`character_id` AS `id`, `ffxiv__freecompany_rank`.`rank_id`, `rankname` AS `rank`, `name`, `current`, `ffxiv__character`.`avatar` AS `icon`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE uc__user_to_ff_character.`character_id`=`ffxiv__freecompany_character`.`character_id`) AS `user_id` FROM `ffxiv__freecompany_character`LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`rank_id`=`ffxiv__freecompany_character`.`rank_id` AND `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany_character`.`fc_id` LEFT JOIN `ffxiv__character` ON `ffxiv__character`.`character_id`=`ffxiv__freecompany_character`.`character_id` LEFT JOIN (SELECT `rank_id`, COUNT(*) AS `total` FROM `ffxiv__freecompany_character` WHERE `ffxiv__freecompany_character`.`fc_id`=:id GROUP BY `rank_id`) `ranklist` ON `ranklist`.`rank_id` = `ffxiv__freecompany_character`.`rank_id` WHERE `ffxiv__freecompany_character`.`fc_id`=:id ORDER BY `ranklist`.`total`, `ranklist`.`rank_id` , `ffxiv__character`.`name`;', [':id' => $this->id], return: 'all');
-        #History of ranks. Ensuring that we get only the freshest 100 entries sorted from latest to newest
+        // History of ranks. Ensuring that we get only the freshest 100 entries sorted from latest to newest
         $data['ranks_history'] = Query::query('SELECT `date`, `weekly`, `monthly`, `members` FROM `ffxiv__freecompany_ranking` WHERE `fc_id`=:id ORDER BY `date` DESC LIMIT 100;', [':id' => $this->id], return: 'all');
-        #Clean up the data from unnecessary (technical) clutter
+        // Clean up the data from unnecessary (technical) clutter
         unset($data['gc_id'], $data['estate_id'], $data['gc_icon'], $data['active_id'], $data['city_id'], $data['left'], $data['top'], $data['city_icon']);
         return $data;
     }
-    
+
     /**
      * Get data from Lodestone
      *
@@ -73,7 +74,7 @@ class FreeCompany extends AbstractEntity
         } catch (\Throwable $exception) {
             if (\preg_match('/Lodestone has throttled the request/ui', $exception->getMessage()) === 1) {
                 if ($allow_sleep) {
-                    #Take a pause if we were throttled, and pause is allowed
+                    // Take a pause if we were throttled, and pause is allowed
                     \sleep(60);
                 }
                 return 'Request throttled by Lodestone';
@@ -100,7 +101,7 @@ class FreeCompany extends AbstractEntity
         $data['404'] = false;
         return $data;
     }
-    
+
     /**
      * Function to process data from DB
      *
@@ -163,7 +164,7 @@ class FreeCompany extends AbstractEntity
         ];
         $this->old_names = $from_db['old_names'];
         $this->ranking = $from_db['ranks_history'];
-        #Adjust types for ranking
+        // Adjust types for ranking
         foreach ($this->ranking as $key => $rank) {
             $this->ranking[$key]['date'] = \strtotime($rank['date']);
             $this->ranking[$key]['weekly'] = (int)$rank['weekly'];
@@ -174,7 +175,7 @@ class FreeCompany extends AbstractEntity
         $this->members = $members[1] ?? [];
         $this->past_members = $members[0] ?? [];
     }
-    
+
     /**
      * Function to update the free company
      *
@@ -183,12 +184,12 @@ class FreeCompany extends AbstractEntity
     protected function updateDB(): bool
     {
         try {
-            #Download crest components
+            // Download crest components
             $this->downloadCrestComponents($this->lodestone['crest']);
             if ($this->lodestone['active'] === 'Not specified') {
                 $this->lodestone['active'] = null;
             }
-            #Main query to insert or update a Free Company
+            // Main query to insert or update a Free Company
             $queries[] = [
                 'INSERT INTO `ffxiv__freecompany` (
                     `fc_id`, `name`, `server_id`, `formed`, `registered`, `updated`, `deleted`, `gc_id`, `tag`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `rank`, `slogan`, `active_id`, `recruitment`, `community_id`, `estate_zone`, `estate_id`, `estate_message`, `role_playing`, `leveling`, `casual`, `hardcore`, `dungeons`, `guildhests`, `trials`, `raids`, `pvp`, `tank`, `healer`, `dps`, `crafter`, `gatherer`
@@ -259,7 +260,7 @@ class FreeCompany extends AbstractEntity
                     ],
                 ],
             ];
-            #Register the Free Company name if it's not registered already
+            // Register the Free Company name if it's not registered already
             $queries[] = [
                 'INSERT IGNORE INTO `ffxiv__freecompany_names`(`fc_id`, `name`) VALUES (:fc_id, :name);',
                 [
@@ -267,7 +268,7 @@ class FreeCompany extends AbstractEntity
                     ':name' => $this->lodestone['name'],
                 ],
             ];
-            #Adding ranking
+            // Adding ranking
             if (!empty($this->lodestone['members']) && !empty($this->lodestone['weekly_rank']) && !empty($this->lodestone['monthly_rank'])) {
                 $queries[] = [
                     'INSERT IGNORE INTO `ffxiv__freecompany_ranking` (`fc_id`, `date`, `weekly`, `monthly`, `members`) SELECT * FROM (SELECT :fc_id AS `fc_id`, CURRENT_DATE() AS `date`, :weekly AS `weekly`, :monthly AS `monthly`, :members AS `members` FROM DUAL WHERE :fc_id NOT IN (SELECT `fc_id` FROM (SELECT * FROM `ffxiv__freecompany_ranking` WHERE `fc_id`=:fc_id ORDER BY `date` DESC LIMIT 1) `lastrecord` WHERE `weekly`=:weekly AND `monthly`=:monthly) LIMIT 1) `actualinsert`;',
@@ -279,13 +280,13 @@ class FreeCompany extends AbstractEntity
                     ],
                 ];
             }
-            #Get members as registered on the tracker
+            // Get members as registered on the tracker
             $track_members = Query::query('SELECT `character_id` FROM `ffxiv__freecompany_character` WHERE `fc_id`=:fc_id AND `current`=1;', [':fc_id' => $this->id], return: 'column');
-            #Process members that left the company
+            // Process members that left the company
             foreach ($track_members as $member) {
-                #Check if member from tracker is present in a Lodestone list
+                // Check if member from tracker is present in a Lodestone list
                 if (!\array_key_exists('members', $this->lodestone) || !\array_key_exists($member, $this->lodestone['members'])) {
-                    #Update status for the character
+                    // Update status for the character
                     $queries[] = [
                         'UPDATE `ffxiv__freecompany_character` SET `current`=0 WHERE `fc_id`=:fc_id AND `character_id`=:character_id;',
                         [
@@ -295,10 +296,10 @@ class FreeCompany extends AbstractEntity
                     ];
                 }
             }
-            #Process Lodestone members
+            // Process Lodestone members
             if (!empty($this->lodestone['members'])) {
                 foreach ($this->lodestone['members'] as $member => $details) {
-                    #Register or update rank name
+                    // Register or update rank name
                     $queries[] = [
                         'INSERT INTO `ffxiv__freecompany_rank` (`fc_id`, `rank_id`, `rankname`) VALUE (:fc_id, :rank_id, :rank_name) ON DUPLICATE KEY UPDATE `rankname`=:rank_name',
                         [
@@ -308,7 +309,7 @@ class FreeCompany extends AbstractEntity
                         ],
                     ];
                     $this->charQuickRegister($member, $this->lodestone['members'], $queries);
-                    #Link the character to the company
+                    // Link the character to the company
                     $queries[] = [
                         'INSERT INTO `ffxiv__freecompany_character` (`fc_id`, `character_id`, `rank_id`, `current`) VALUES (:fc_id, :character_id, :rank_id, 1) ON DUPLICATE KEY UPDATE `current`=1, `rank_id`=:rank_id;',
                         [
@@ -319,9 +320,9 @@ class FreeCompany extends AbstractEntity
                     ];
                 }
             }
-            #Running the queries we've accumulated
+            // Running the queries we've accumulated
             Query::query($queries);
-            #Schedule the proper update of any newly added characters
+            // Schedule the proper update of any newly added characters
             if (!empty($this->lodestone['members'])) {
                 $this->charMassCron($this->lodestone['members']);
             }
@@ -331,7 +332,7 @@ class FreeCompany extends AbstractEntity
             return false;
         }
     }
-    
+
     /** Delete free company
      * @return bool
      */
@@ -339,12 +340,12 @@ class FreeCompany extends AbstractEntity
     {
         try {
             $queries = [];
-            #Remove characters from the group
+            // Remove characters from the group
             $queries[] = [
                 'UPDATE `ffxiv__freecompany_character` SET `current`=0 WHERE `fc_id`=:group_id;',
                 [':group_id' => $this->id,]
             ];
-            #Update Free Company
+            // Update Free Company
             $queries[] = [
                 'UPDATE `ffxiv__freecompany` SET `deleted` = COALESCE(`deleted`, CURRENT_TIMESTAMP(6)), `updated`=CURRENT_TIMESTAMP(6) WHERE `fc_id` = :id',
                 [':id' => $this->id],
