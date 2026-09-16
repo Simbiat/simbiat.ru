@@ -1,4 +1,5 @@
-ARG MARIADB_VERSION
+#TODO: Update the value in doctrine.yaml as well
+ARG MARIADB_VERSION=13.0.2
 
 FROM mariadb:${MARIADB_VERSION}
 #Copying files for initial restore. Only really needed in case no physical backup (from mariadb-backup or alternatives) is available

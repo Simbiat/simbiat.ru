@@ -6,6 +6,7 @@ doctrine:
                 # either here or in the DATABASE_URL env var (see .env file)
                 #server_version: '16'
                 url: '%env(resolve:DATABASE_URL)%'
+                server_version: 13.0.2-MariaDB
                 options:
                     !php/const Pdo\Mysql::ATTR_FOUND_ROWS: true
                     !php/const PDO::ATTR_TIMEOUT: 1
