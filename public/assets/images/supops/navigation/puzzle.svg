@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg version="1.1" id="Uploaded to svgrepo.com" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-	 width="800px" height="800px" viewBox="0 0 32 32" xml:space="preserve">
+
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg version="1.1" id="Uploaded to svgrepo.com" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="800px" height="800px" viewBox="0 0 32 32" xml:space="preserve">
 <style type="text/css">
 	.cubies_zesentwintig{fill:#65C3AB;}
 	.cubies_tweeentwintig{fill:#D97360;}
@@ -30,15 +32,15 @@
 	.st18{fill:#D1DE8B;}
 	.st19{fill:#E8E8B5;}
 </style>
-<g>
+    <g>
 	<path class="cubies_dertien" d="M29,0L3,0C1.343,0,0,1.343,0,3l0,13h32V3C32,1.343,30.657,0,29,0z"/>
-	<path class="cubies_negentien" d="M29,32H3c-1.657,0-3-1.343-3-3V16h32v13C32,30.657,30.657,32,29,32z"/>
-	<path class="cubies_veertien" d="M30,16H0V3c0-1.657,1.343-3,3-3h24c1.657,0,3,1.343,3,3V16z"/>
-	<path class="cubies_twintig" d="M15,16v16h12c1.657,0,3-1.343,3-3V16h-6v-2c0.552,0,1-0.448,1-1v-1c0-0.552-0.448-1-1-1h-3
+        <path class="cubies_negentien" d="M29,32H3c-1.657,0-3-1.343-3-3V16h32v13C32,30.657,30.657,32,29,32z"/>
+        <path class="cubies_veertien" d="M30,16H0V3c0-1.657,1.343-3,3-3h24c1.657,0,3,1.343,3,3V16z"/>
+        <path class="cubies_twintig" d="M15,16v16h12c1.657,0,3-1.343,3-3V16h-6v-2c0.552,0,1-0.448,1-1v-1c0-0.552-0.448-1-1-1h-3
 		c-0.552,0-1,0.448-1,1v1c0,0.552,0.448,1,1,1v2H15z"/>
-	<path class="cubies_zesentwintig" d="M15,16H0l0,13c0,1.657,1.343,3,3,3h12v-7h2c0,0.552,0.448,1,1,1h1c0.552,0,1-0.448,1-1v-3
+        <path class="cubies_zesentwintig" d="M15,16H0l0,13c0,1.657,1.343,3,3,3h12v-7h2c0,0.552,0.448,1,1,1h1c0.552,0,1-0.448,1-1v-3
 		c0-0.552-0.448-1-1-1h-1c-0.552,0-1,0.448-1,1h-2V16z"/>
-	<path class="cubies_tweeentwintig" d="M15,16v-6h-2c0,0.552-0.448,1-1,1h-1c-0.552,0-1-0.448-1-1V7c0-0.552,0.448-1,1-1h1
+        <path class="cubies_tweeentwintig" d="M15,16v-6h-2c0,0.552-0.448,1-1,1h-1c-0.552,0-1-0.448-1-1V7c0-0.552,0.448-1,1-1h1
 		c0.552,0,1,0.448,1,1h2V0H3C1.343,0,0,1.343,0,3v13h6v2c-0.552,0-1,0.448-1,1v1c0,0.552,0.448,1,1,1h3c0.552,0,1-0.448,1-1v-1
 		c0-0.552-0.448-1-1-1v-2H15z"/>
 </g>

@@ -47,14 +47,14 @@ final class Sitemap
                     $dom_document = new \DOMDocument();
                     $dom_document->preserveWhiteSpace = false;
                     $dom_document->loadXML($index[$index_file]);
-                    foreach($dom_document->getElementsByTagName('loc') as $url) {
+                    foreach ($dom_document->getElementsByTagName('loc') as $url) {
                         $links[] = $url->nodeValue;
                     }
                 }
-                $xml_files = \array_merge(\glob( Config::$sitemap.'*.xml'), \glob( Config::$sitemap.'*/*.xml'), \glob( Config::$sitemap.'*/*/*.xml'));
+                $xml_files = \array_merge(\glob(Config::$sitemap.'*.xml'), \glob(Config::$sitemap.'*/*.xml'), \glob(Config::$sitemap.'*/*/*.xml'));
                 // Remove XML files, which no longer exist as per new index
                 foreach ($xml_files as $file) {
-                    if (!\in_array(\basename($file, '.xml'), $this->index_files, true) && !\in_array(\str_replace('.xml', '',Config::$base_url.'/sitemap/'.\str_replace(Config::$sitemap, '', $file)), $links, true)) {
+                    if (!\in_array(\basename($file, '.xml'), $this->index_files, true) && !\in_array(\str_replace('.xml', '', Config::$base_url.'/sitemap/'.\str_replace(Config::$sitemap, '', $file)), $links, true)) {
                         @\unlink($file);
                     }
                 }
@@ -62,11 +62,11 @@ final class Sitemap
                 foreach ($links as $link) {
                     if (!empty($link)) {
                         // Get path to use for router function (without format)
-                        $path = \explode('/', mb_trim(\str_replace(Config::$base_url.'/sitemap/', '', $link), '/', 'UTF-8'));
+                        $path = \explode('/', \mb_trim(\str_replace(Config::$base_url.'/sitemap/', '', $link), '/', 'UTF-8'));
                         // Strip trailing .xml extension
                         $path[\array_key_last($path)] = \str_replace('.xml', '', $path[\array_key_last($path)]);
                         // Get filepath and filename
-                        $file_path = mb_rtrim(Config::$sitemap.\implode('/', \array_slice($path, 0, -1)), '/', 'UTF-8');
+                        $file_path = \mb_rtrim(Config::$sitemap.\implode('/', \array_slice($path, 0, -1)), '/', 'UTF-8');
                         $file_name = \implode('/', \array_slice($path, -1));
                         // Create folder if it does not exist
                         if (!@\mkdir($file_path) && !\is_dir($file_path)) {

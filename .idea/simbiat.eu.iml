@@ -72,6 +72,11 @@
       <excludeFolder url="file://$MODULE_DIR$/var/mergedcrests" />
       <excludeFolder url="file://$MODULE_DIR$/var/share" />
       <excludeFolder url="file://$MODULE_DIR$/var/sitemap" />
+      <excludeFolder url="file://$MODULE_DIR$/config/caddy.json" />
+      <excludeFolder url="file://$MODULE_DIR$/config/mime.types" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/http20/mime.json" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/app.js" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/app.js.map" />
       <excludePattern pattern="public\assets\app.*" />
     </content>
     <orderEntry type="inheritedJdk" />

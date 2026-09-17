@@ -2,7 +2,7 @@
 /**
  * Custom PHPMyAdmin settings that differ from defaults. Explanations at https://docs.phpmyadmin.net/
  */
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * Disallow editing of binary fields

@@ -211,7 +211,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                     ],
                     ':user_id' => [$data['user_id'], 'int'],
                     // What page is being viewed
-                    ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : mb_substr(\mb_ltrim($_SERVER['REQUEST_URI'], '/', 'UTF-8'), 0, 256, 'UTF-8')),
+                    ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : \mb_substr(\mb_ltrim($_SERVER['REQUEST_URI'], '/', 'UTF-8'), 0, 256, 'UTF-8')),
                     // Actual session data
                     ':data' => [
                         (empty($data) ? '' : Security::encrypt(\serialize($data))),
@@ -449,7 +449,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND) OR `user_id` IN (:system_user_id, :deleted_user_id);', [':life' => [$max_lifetime, 'int'], ':system_user_id' => [SystemUser::System->value, 'int'], ':deleted_user_id' => [SystemUser::Deleted->value, 'int']], return: 'affected');
         } catch (\Throwable $throwable) {
             // Ignore deadlocks
-            if (mb_stripos($throwable->getMessage(), 'Deadlock', 0, 'UTF-8') === false) {
+            if (\mb_stripos($throwable->getMessage(), 'Deadlock', 0, 'UTF-8') === false) {
                 Errors::error_log($throwable);
             }
             return false;

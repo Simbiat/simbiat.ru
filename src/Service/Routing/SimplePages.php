@@ -12,7 +12,7 @@ class SimplePages extends Router
     protected array $sub_routes = ['devicedetector'];
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/simplepages/', 'name' => 'Simple Pages']
+        ['href' => '/simplepages/', 'name' => 'Simple Pages'],
     ];
     protected string $title = 'Simple Pages';
     protected string $h1 = 'Simple Pages';
@@ -22,7 +22,7 @@ class SimplePages extends Router
     // This is actual page generation based on further details of the $path
     protected function pageGen(array $path): array
     {
-        return match($path[0]) {
+        return match ($path[0]) {
             'devicedetector' => (new DeviceDetector())->get(\array_slice($path, 1)),
         };
     }

@@ -61,13 +61,13 @@ class Search extends Page
         }
         if (!empty($this->search_for)) {
             // Continue breadcrumbs
-            $this->attachCrumb('?search='.\rawurlencode($this->search_for), sprintf($this->short_title, $this->search_for));
+            $this->attachCrumb('?search='.\rawurlencode($this->search_for), \sprintf($this->short_title, $this->search_for));
             // Set search value, if available
             $output_array['search_value'] = $this->search_for;
             // Set titles
-            $this->title = sprintf($this->short_title, $this->search_for);
+            $this->title = \sprintf($this->short_title, $this->search_for);
             $this->h1 = $this->title;
-            $this->og_desc = sprintf($this->full_title, $this->search_for);
+            $this->og_desc = \sprintf($this->full_title, $this->search_for);
         } else {
             $output_array['search_value'] = null;
         }

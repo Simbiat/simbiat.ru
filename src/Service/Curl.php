@@ -107,7 +107,7 @@ class Curl
         if ($http_code !== 200) {
             return $http_code;
         }
-        return mb_substr($response, \curl_getinfo(self::$curl_handle, \CURLINFO_HEADER_SIZE), encoding: 'UTF-8');
+        return \mb_substr($response, \curl_getinfo(self::$curl_handle, \CURLINFO_HEADER_SIZE), encoding: 'UTF-8');
     }
 
     /**
@@ -171,7 +171,7 @@ class Curl
         // Get a response
         $response = \curl_exec(self::$curl_handle);
         $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
-        return !($response === false || !in_array($http_code, [200, 201, 202, 203, 204, 205, 206, 207, 208, 226], true));
+        return !($response === false || !\in_array($http_code, [200, 201, 202, 203, 204, 205, 206, 207, 208, 226], true));
     }
 
     /**
@@ -203,7 +203,7 @@ class Curl
     public function addHeader(string $header): self
     {
         // Check if the header is already present
-        if (!in_array(mb_strtolower($header, 'UTF-8'), \array_map('\strtolower', self::$headers), true)) {
+        if (!\in_array(\mb_strtolower($header, 'UTF-8'), \array_map('\strtolower', self::$headers), true)) {
             // Add it, if not
             self::$headers[] = $header;
             \curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers);
@@ -220,7 +220,7 @@ class Curl
     public function removeHeader(string $header): self
     {
         // Check if the header is already present
-        $key = \array_search(mb_strtolower($header, 'UTF-8'), \array_map('\strtolower', self::$headers), true);
+        $key = \array_search(\mb_strtolower($header, 'UTF-8'), \array_map('\strtolower', self::$headers), true);
         if ($key !== false) {
             // Remove it, if yes
             unset(self::$headers[$key]);
@@ -256,7 +256,7 @@ class Curl
         // Initialize cUrl
         \curl_setopt(self::$curl_handle, \CURLOPT_NOBODY, true);
         \curl_setopt(self::$curl_handle, \CURLOPT_URL, $remote_file);
-        (void)\curl_exec(self::$curl_handle);
+        (void) \curl_exec(self::$curl_handle);
         $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
         // Check code
         return $http_code === 200;
@@ -277,7 +277,7 @@ class Curl
             if (Query::$dbh === null) {
                 return ['http_error' => 503, 'reason' => 'Database unavailable'];
             }
-            Security::log(LogType::FileUpload->value, 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], (int)($_SESSION['user_id'] ?? SystemUser::System->value));
+            Security::log(LogType::FileUpload->value, 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], (int) ($_SESSION['user_id'] ?? SystemUser::System->value));
             if (!empty($link)) {
                 $upload = $this->getFile($link);
                 if ($upload === false) {
@@ -309,7 +309,7 @@ class Curl
                 $upload = $upload[0];
             }
             // Check if a file is one of the allowed types
-            if (!in_array($upload['type'], self::ALLOWED_MIME, true)) {
+            if (!\in_array($upload['type'], self::ALLOWED_MIME, true)) {
                 @\unlink($upload['server_path'].'/'.$upload['server_name']);
                 return ['http_error' => 400, 'reason' => 'Unsupported file type provided'];
             }
@@ -345,7 +345,7 @@ class Curl
             // Get extension
             $upload['extension'] = \pathinfo($upload['server_path'].'/'.$upload['server_name'], \PATHINFO_EXTENSION);
             // Get a path for hash-tree structure
-            $upload['hash_tree'] = mb_substr($upload['hash'], 0, 2, 'UTF-8').'/'.mb_substr($upload['hash'], 2, 2, 'UTF-8').'/'.mb_substr($upload['hash'], 4, 2, 'UTF-8').'/';
+            $upload['hash_tree'] = \mb_substr($upload['hash'], 0, 2, 'UTF-8').'/'.\mb_substr($upload['hash'], 2, 2, 'UTF-8').'/'.\mb_substr($upload['hash'], 4, 2, 'UTF-8').'/';
             if (!\is_dir($upload['new_path'].'/'.$upload['hash_tree']) && !\mkdir($upload['new_path'].'/'.$upload['hash_tree'], recursive: true) && !\is_dir($upload['new_path'].'/'.$upload['hash_tree'])) {
                 throw new \RuntimeException(\sprintf('Directory "%s" was not created', $upload['new_path'].'/'.$upload['hash_tree']));
             }
@@ -364,7 +364,7 @@ class Curl
                 'INSERT IGNORE INTO `sys__files`(`file_id`, `user_id`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :user_id, :filename, :extension, :mime, :size);',
                 [
                     ':hash' => $upload['hash'],
-                    ':user_id' => [(int)($_SESSION['user_id'] ?? SystemUser::System->value), 'int'],
+                    ':user_id' => [(int) ($_SESSION['user_id'] ?? SystemUser::System->value), 'int'],
                     ':filename' => $upload['user_name'],
                     ':extension' => $upload['extension'],
                     ':mime' => $upload['type'],

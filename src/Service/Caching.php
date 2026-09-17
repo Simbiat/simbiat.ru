@@ -61,7 +61,7 @@ class Caching
             // Generate key
             $key = $this->key($key);
             // Generate subdirectory name
-            $sub_dir = mb_substr($key, 0, 2, 'UTF-8').'/'.mb_substr($key, 2, 2, 'UTF-8').'/'.mb_substr($key, 4, 2, 'UTF-8').'/';
+            $sub_dir = \mb_substr($key, 0, 2, 'UTF-8').'/'.\mb_substr($key, 2, 2, 'UTF-8').'/'.\mb_substr($key, 4, 2, 'UTF-8').'/';
             // Create the folder if missing. Silencing operator because of potential concurrency
             /** @noinspection PhpUsageOfSilenceOperatorInspection */
             if (!\is_dir($this->cache_dir.$sub_dir) && !@\mkdir($this->cache_dir.$sub_dir, recursive: true) && !\is_dir($this->cache_dir.$sub_dir)) {
@@ -95,7 +95,7 @@ class Caching
         // Generate key
         $key = $this->key($key);
         // Generate file name
-        $file = $this->cache_dir.mb_substr($key, 0, 2, 'UTF-8').'/'.mb_substr($key, 2, 2, 'UTF-8').'/'.mb_substr($key, 4, 2, 'UTF-8').'/'.$key.'.json';
+        $file = $this->cache_dir.\mb_substr($key, 0, 2, 'UTF-8').'/'.\mb_substr($key, 2, 2, 'UTF-8').'/'.\mb_substr($key, 4, 2, 'UTF-8').'/'.$key.'.json';
         $data = $this->getArrayFromFile($file);
         if (\count($data) === 0) {
             if (\headers_sent()) {

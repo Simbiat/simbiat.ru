@@ -10,7 +10,7 @@ class Removal extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/uc/removal', 'name' => 'Removal']
+        ['href' => '/uc/removal', 'name' => 'Removal'],
     ];
     // Sub service name
     protected string $subservice_name = 'removal';
@@ -24,6 +24,7 @@ class Removal extends Page
     protected string $cache_strategy = 'private';
     // Flag indicating that authentication is required
     protected bool $authentication_needed = true;
+
     // This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {

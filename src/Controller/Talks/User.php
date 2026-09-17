@@ -14,7 +14,7 @@ class User extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/talks/users/', 'name' => 'Users']
+        ['href' => '/talks/users/', 'name' => 'Users'],
     ];
     // Sub service name
     protected string $subservice_name = 'user';
@@ -37,13 +37,13 @@ class User extends Page
         if (empty($output_array['user_data']['id'])) {
             return ['http_error' => 404, 'reason' => 'User does not exist'];
         }
-        if (!\in_array((int)$user->id, SystemUser::getSystemUsers(), true)) {
+        if (!\in_array((int) $user->id, SystemUser::getSystemUsers(), true)) {
             // Get FF characters
             $output_array['fftracker'] = $user->getFF();
             // Get last posts and threads
             $output_array['threads'] = $user->getThreads();
             $output_array['posts'] = $user->getPosts();
-            foreach($output_array['posts'] as $post_id => $post) {
+            foreach ($output_array['posts'] as $post_id => $post) {
                 $output_array['posts'][$post_id]['text'] = Cut::cut($post['text'], 250, 3, '<a href="/talks/threads/'.$post['thread_id'].'">…</a>');
             }
         }

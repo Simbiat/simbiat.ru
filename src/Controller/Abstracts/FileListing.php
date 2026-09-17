@@ -44,7 +44,7 @@ class FileListing extends StaticPage
     {
         $output_array = [];
         // Set the page number
-        $this->page = (int)($_GET['page'] ?? 1);
+        $this->page = (int) ($_GET['page'] ?? 1);
         $this->search_for = Convert::safeFileName($_GET['search'] ?? '', true, true);
         if (empty($this->dirs)) {
             return ['http_error' => 503, 'reason' => 'No directories are setup for this endpoint'];
@@ -79,18 +79,18 @@ class FileListing extends StaticPage
                 }
                 // Update breadcrumbs
                 $this->attachCrumb($path[0], $this->dirs[$path[0]]['name']);
-                $sub_dir = $this->getRealSubDirPath(Config::$work_dir.$this->dirs[$path[0]]['path'], array_slice($path, 1));
+                $sub_dir = $this->getRealSubDirPath(Config::$work_dir.$this->dirs[$path[0]]['path'], \array_slice($path, 1));
                 if (!$sub_dir) {
-                    return ['http_error' => 404, 'reason' => 'Directory `'.$this->dirs[$path[0]]['path'].'/'.\implode('/', array_slice($path, 1)).'` does not exist.', 'suggested_link' => $this->getLastCrumb()];
+                    return ['http_error' => 404, 'reason' => 'Directory `'.$this->dirs[$path[0]]['path'].'/'.\implode('/', \array_slice($path, 1)).'` does not exist.', 'suggested_link' => $this->getLastCrumb()];
                 }
-                if (count($path) - 1 > $this->dirs[$path[0]]['depth']) {
+                if (\count($path) - 1 > $this->dirs[$path[0]]['depth']) {
                     return ['http_error' => 400, 'reason' => 'You\'ve gone too deep.', 'suggested_link' => $this->getLastCrumb()];
                 }
                 // Update breadcrumbs with subfolders
-                foreach (array_slice($path, 1) as $sub_path) {
+                foreach (\array_slice($path, 1) as $sub_path) {
                     $this->attachCrumb($sub_path, $sub_path);
                 }
-                if (count($path) - 1 === $this->dirs[$path[0]]['depth']) {
+                if (\count($path) - 1 === $this->dirs[$path[0]]['depth']) {
                     // Get files, since we are on the last allowed level
                     $output_array = $this->listFiles($path[0], $sub_dir);
                     $output_array['files'][$path[0]]['dirs'] = [];
@@ -100,7 +100,7 @@ class FileListing extends StaticPage
                     $output_array['files'][$path[0]]['files'] = [];
                 }
                 $output_array['files'][$path[0]]['name'] = $this->dirs[$path[0]]['name'];
-                $output_array['files'][$path[0]]['parent'] = array_slice($this->breadcrumb, -2, 1)[0];
+                $output_array['files'][$path[0]]['parent'] = \array_slice($this->breadcrumb, -2, 1)[0];
             }
         }
         $output_array['path'] = $path[0] ?? null;
@@ -146,7 +146,7 @@ class FileListing extends StaticPage
     {
         $output_array['files'][$path] = $this->getFiles(Config::$work_dir.$this->dirs[$path]['path'].$sub_dir);
         // Process pagination
-        $total_pages = (int)\ceil($output_array['files'][$path]['count'] / $this->list_items);
+        $total_pages = (int) \ceil($output_array['files'][$path]['count'] / $this->list_items);
         if ($total_pages > 0 && $this->page > $total_pages) {
             // Redirect to last page
             Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').$this->getLastCrumb().'/'.(!empty($this->search_for) ? '?search='.\rawurlencode($this->search_for).'&page='.$total_pages : '?page='.$total_pages), false);
@@ -155,7 +155,7 @@ class FileListing extends StaticPage
             // Generate pagination data
             $output_array['pagination'] = ['current' => $this->page, 'total' => $total_pages, 'prefix' => '?page=', 'per' => $this->list_items];
             // Update the list of files by slicing
-            $output_array['files'][$path]['files'] = array_slice($output_array['files'][$path]['files'], ($this->page - 1) * $this->list_items, $this->list_items);
+            $output_array['files'][$path]['files'] = \array_slice($output_array['files'][$path]['files'], ($this->page - 1) * $this->list_items, $this->list_items);
         }
         // Get the freshest date
         if (!empty($output_array['files'][$path]['files'])) {
@@ -211,7 +211,7 @@ class FileListing extends StaticPage
             $result['count'] = \iterator_count($iterator);
         } else {
             foreach ($iterator as $key => $file) {
-                if (!in_array($key, $this->exclude, true)) {
+                if (!\in_array($key, $this->exclude, true)) {
                     $file_details = [
                         'dirname' => $file->getFilename(),
                         // Path relative to the working directory
@@ -221,7 +221,7 @@ class FileListing extends StaticPage
                     $result['dirs'][] = $file_details;
                 }
             }
-            $result['count'] = count($result['dirs']);
+            $result['count'] = \count($result['dirs']);
         }
         return $result;
     }
@@ -257,7 +257,7 @@ class FileListing extends StaticPage
         } else {
             $id = 1;
             foreach ($iterator as $key => $file) {
-                if (!in_array($key, $this->exclude, true) && (empty($this->search_for) || mb_stripos($key, $this->search_for, 0, 'UTF-8') !== false)) {
+                if (!\in_array($key, $this->exclude, true) && (empty($this->search_for) || \mb_stripos($key, $this->search_for, 0, 'UTF-8') !== false)) {
                     if ($id >= ((($this->page - 1) * $this->list_items) + 1) && $id <= ($this->page * $this->list_items)) {
                         $file_details = [
                             'filename' => $file->getFilename(),
@@ -279,7 +279,7 @@ class FileListing extends StaticPage
                     $result['files'][] = $file_details;
                 }
             }
-            $result['count'] = count($result['files']);
+            $result['count'] = \count($result['files']);
         }
         return $result;
     }

@@ -22,7 +22,8 @@ class Tests
     // $data = $lodestone->getDeepDungeon(2, '', '', '')->getResult();
 
     // Function to test file upload using PUT
-    #[NoReturn] public function uploadPut(#[FileReference] string $filepath): void
+    #[NoReturn]
+    public function uploadPut(#[FileReference] string $filepath): void
     {
         $curl = (new Curl)::$curl_handle;
         \curl_setopt($curl, \CURLOPT_URL, \App\Service\Config::$base_url);
@@ -62,7 +63,8 @@ class Tests
     }
 
     // Function to test download
-    #[NoReturn] public function downloadTest(#[FileReference] string $filepath, string $bytes = ''): void
+    #[NoReturn]
+    public function downloadTest(#[FileReference] string $filepath, string $bytes = ''): void
     {
         if (!empty($bytes)) {
             $_SERVER['HTTP_RANGE'] = 'bytes='.$bytes;

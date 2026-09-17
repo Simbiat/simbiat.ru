@@ -130,7 +130,7 @@ abstract class Page
                 \header('Allow: '.\implode(', ', $allowed_methods));
             }
             // Check if allowed method is used
-            if (!in_array(HomePage::$method, $allowed_methods, true)) {
+            if (!\in_array(HomePage::$method, $allowed_methods, true)) {
                 $page = ['http_error' => 405];
                 // Check that user is authenticated
             } elseif ($this->authentication_needed && $_SESSION['user_id'] === 1) {
@@ -188,14 +188,14 @@ abstract class Page
         $page['static_page'] = $this->static;
         // Set error for Twig
         if (!empty($page['http_error'])) {
-            if (in_array($page['http_error'], ['database', 'maintenance'])) {
+            if (\in_array($page['http_error'], ['database', 'maintenance'])) {
                 Headers::clientReturn(503, false);
             } else {
                 Headers::clientReturn($page['http_error'], false);
             }
         }
         // Limit Ogdesc to 120 characters
-        $page['og_desc'] = mb_substr($page['og_desc'], 0, 120, 'UTF-8');
+        $page['og_desc'] = \mb_substr($page['og_desc'], 0, 120, 'UTF-8');
         // Generate a link for cache reset if page uses cache
         if ($this->cache_age > 0 && !$this->static) {
             $query = IRI::parseUri(HomePage::$canonical);
@@ -275,7 +275,7 @@ abstract class Page
         $html = new \DOMDocument(encoding: 'UTF-8');
         // `mb_encode_numericentity` is done as per workaround for UTF-8 loss/corruption on loading from https://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly
         // LIBXML_HTML_NOIMPLIED and LIBXML_HTML_NOTED to avoid adding wrappers (html, body, DTD). This will also allow fewer issues in case string has both regular HTML and some regular text (outside any tags). LIBXML_NOBLANKS to remove empty tags if any. LIBXML_PARSEHUGE to allow processing of larger strings. LIBXML_COMPACT for some potential optimization. LIBXML_NOWARNING and LIBXML_NOERROR to suppress warning in case of malformed HTML. LIBXML_NONET to protect from unsolicited connections to external sources.
-        $html->loadHTML(mb_encode_numericentity($string, [0x80, 0x10FFFF, 0, 0x1FFFFF], 'UTF-8'), \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD | \LIBXML_NOBLANKS | \LIBXML_PARSEHUGE | \LIBXML_COMPACT | \LIBXML_NOWARNING | \LIBXML_NOERROR | \LIBXML_NONET);
+        $html->loadHTML(\mb_encode_numericentity($string, [0x80, 0x10FFFF, 0, 0x1FFFFF], 'UTF-8'), \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD | \LIBXML_NOBLANKS | \LIBXML_PARSEHUGE | \LIBXML_COMPACT | \LIBXML_NOWARNING | \LIBXML_NOERROR | \LIBXML_NONET);
         $html->preserveWhiteSpace = true;
         $html->formatOutput = true;
         $html->normalizeDocument();

@@ -42,10 +42,10 @@ class Activation extends Page
             if (empty($path[0])) {
                 $user_id = null;
             } else {
-                $user_id = (int)$path[0];
+                $user_id = (int) $path[0];
             }
         } else {
-            $user_id = (int)$_SESSION['user_id'];
+            $user_id = (int) $_SESSION['user_id'];
         }
         // Get activation ID
         $activation = $path[1] ?? null;

@@ -46,9 +46,9 @@ abstract class Entity
     public function setId(string|int $id): self
     {
         // Convert to string for consistency
-        $id = (string)$id;
+        $id = (string) $id;
         if (\preg_match($this->id_format, $id) !== 1) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.get_class($this).'` has incorrect format.');
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.\get_class($this).'` has incorrect format.');
         }
         $this->id = $id;
         return $this;

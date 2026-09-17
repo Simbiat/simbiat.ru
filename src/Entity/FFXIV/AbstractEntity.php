@@ -52,6 +52,7 @@ abstract class AbstractEntity
 
     /**
      * Set entity ID
+     *
      * @param string|int $id
      *
      * @return $this
@@ -59,7 +60,7 @@ abstract class AbstractEntity
     public function setId(string|int $id): self
     {
         // Convert to string for consistency
-        $id = (string)$id;
+        $id = (string) $id;
         if (\preg_match($this->id_format, $id) !== 1) {
             throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.\get_class($this).'` has incorrect format.');
         }
@@ -69,6 +70,7 @@ abstract class AbstractEntity
 
     /**
      * Get entity properties
+     *
      * @return $this
      */
     final public function get(): self
@@ -101,6 +103,7 @@ abstract class AbstractEntity
 
     /**
      * Get the data in an array
+     *
      * @return array
      */
     final public function getArray(): array
@@ -125,8 +128,9 @@ abstract class AbstractEntity
 
     /**
      * Attempt to schedule an update for the entity
-     * @internal
+     *
      * @return int|null
+     * @internal
      */
     final public function scheduleUpdate(): ?int
     {
@@ -146,7 +150,7 @@ abstract class AbstractEntity
             /** @noinspection PhpPossiblePolymorphicInvocationInspection These attributes are specific for achievements */
             if (\count($this->characters) !== 0 && ($this->category === null || $this->subcategory === null || $this->how_to === null || $this->db_id === null || (\time() - \strtotime($this->updated)) >= 31536000)) {
                 try {
-                    $cron_task = new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$this->id, 'achievement'], 'message' => 'Updating achievement with ID '.$this->id, 'priority' => 2]);
+                    $cron_task = new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $this->id, 'achievement'], 'message' => 'Updating achievement with ID '.$this->id, 'priority' => 2]);
                     $cron_task->add();
                     $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
                     if ($scheduled) {
@@ -163,7 +167,7 @@ abstract class AbstractEntity
             try {
                 // Check if already scheduled
                 /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-                $cron_task = new TaskInstance('ff_update_entity', [(string)$this->id, ($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE]);
+                $cron_task = new TaskInstance('ff_update_entity', [(string) $this->id, ($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE]);
                 $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
                 if ($scheduled) {
                     return \strtotime($scheduled);
@@ -188,20 +192,24 @@ abstract class AbstractEntity
 
     /**
      * Function to get initial data from DB
+     *
      * @throws \Exception
      */
     abstract protected function getFromDB(): array;
 
     /**
      * Get entity data from Lodestone
+     *
      * @param bool $allow_sleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
-     * @internal
+     *
      * @return string|array
+     * @internal
      */
     abstract public function getFromLodestone(bool $allow_sleep = false): string|array;
 
     /**
      * Function to do processing
+     *
      * @param array $from_db
      *
      * @return void
@@ -210,12 +218,14 @@ abstract class AbstractEntity
 
     /**
      * Function to update the entity in DB
+     *
      * @return bool
      */
     abstract protected function updateDB(): bool;
 
     /**
      * Update the entity
+     *
      * @param bool $allow_sleep Flag to allow sleep if Lodestone is throttling us
      *
      * @return string|bool
@@ -246,14 +256,14 @@ abstract class AbstractEntity
             return true;
         }
         // Try to get data from Lodestone, if not already taken
-        if (!is_array($this->lodestone)) {
+        if (!\is_array($this->lodestone)) {
             try {
                 $temp_lodestone = $this->getFromLodestone($allow_sleep);
             } catch (\Throwable $exception) {
                 Errors::error_log($exception, 'Failed to get '.$this::ENTITY_TYPE.' with ID '.$this->id, debug: $this->debug);
                 return $exception->getMessage()."\r\n".$exception->getTraceAsString();
             }
-            if (!is_array($temp_lodestone)) {
+            if (!\is_array($temp_lodestone)) {
                 return $temp_lodestone;
             }
             $this->lodestone = $temp_lodestone;
@@ -279,13 +289,14 @@ abstract class AbstractEntity
 
     /**
      * Remove a scheduled job from Cron, if any
+     *
      * @return void
      */
     private function removeFromCron(): void
     {
         try {
             /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-            new TaskInstance('ff_update_entity', [(string)$this->id, ($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE])->delete();
+            new TaskInstance('ff_update_entity', [(string) $this->id, ($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE])->delete();
         } catch (\Throwable $exception) {
             // Do nothing
             Errors::error_log($exception, 'Failed to remove task for '.$this::ENTITY_TYPE.' ID `'.$this->id.'`', debug: $this->debug);
@@ -294,8 +305,9 @@ abstract class AbstractEntity
 
     /**
      * To be called from API to allow entity updates
-     * @internal
+     *
      * @return bool|array|string
+     * @internal
      */
     final public function updateFromApi(): bool|array|string
     {
@@ -308,10 +320,10 @@ abstract class AbstractEntity
         if ($result !== true) {
             try {
                 /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-                $cron_task = new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$this->id, ($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE], 'message' => 'Updating '.($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE.' with ID '.$this->id, 'priority' => 3]);
+                $cron_task = new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $this->id, ($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE], 'message' => 'Updating '.($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE.' with ID '.$this->id, 'priority' => 3]);
                 $cron_task->add();
                 $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
-                if ($scheduled && is_array($result)) {
+                if ($scheduled && \is_array($result)) {
                     $result['reason'] .= 'Scheduled for '.$scheduled;
                 }
             } catch (\Throwable) {
@@ -323,8 +335,9 @@ abstract class AbstractEntity
 
     /**
      * Register the entity if it has not been registered already
-     * @internal
+     *
      * @return bool|int
+     * @internal
      */
     public function register(): bool|int
     {
@@ -356,7 +369,7 @@ abstract class AbstractEntity
             Errors::error_log($exception, 'Failed to get '.$this::ENTITY_TYPE.' with ID '.$this->id, debug: $this->debug);
             return false;
         }
-        if (!is_array($temp_lodestone)) {
+        if (!\is_array($temp_lodestone)) {
             return 503;
         }
         $this->lodestone = $temp_lodestone;
@@ -369,7 +382,7 @@ abstract class AbstractEntity
         }
         // At some point, empty linkshells became possible on lodestone, those that have a page, but no members at all, and are not searchable by name. Possibly private linkshells or something like that
         // Since they lack some basic information, it's not possible to register them, so treat them as private
-        if (isset($this->lodestone['empty']) && $this->lodestone['empty'] === true && \in_array($this::ENTITY_TYPE,['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'], true)) {
+        if (isset($this->lodestone['empty']) && $this->lodestone['empty'] === true && \in_array($this::ENTITY_TYPE, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'], true)) {
             return 403;
         }
         unset($this->lodestone['404']);
@@ -378,6 +391,7 @@ abstract class AbstractEntity
 
     /**
      * Helper function to add new characters to Cron en masse
+     *
      * @param array $members
      *
      * @return void
@@ -391,7 +405,7 @@ abstract class AbstractEntity
                 if (!$details['registered']) {
                     // Priority is higher since they are missing a lot of data.
                     try {
-                        $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$member, 'character'], 'message' => 'Updating character with ID '.$member, 'priority' => 2])->add();
+                        $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $member, 'character'], 'message' => 'Updating character with ID '.$member, 'priority' => 2])->add();
                     } catch (\Throwable) {
                         // Do nothing, not considered critical
                     }
@@ -420,13 +434,14 @@ abstract class AbstractEntity
                     ':avatar' => \str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0.jpg'], '', $lodestone_data[$character_id]['avatar']),
                     ':gcRank' => (empty($lodestone_data[$character_id]['grand_company']['rank']) ? '' : $lodestone_data[$character_id]['grand_company']['rank']),
                     ':matches' => (empty($lodestone_data[$character_id]['feasts']) ? 0 : $lodestone_data[$character_id]['feasts']),
-                ]
+                ],
             ];
         }
     }
 
     /**
      * Function to remove Lodestone domain(s) from image links
+     *
      * @param string $url
      *
      * @return string
@@ -435,12 +450,13 @@ abstract class AbstractEntity
     {
         return \str_replace([
             'https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/',
-            'https://lds-img.finalfantasyxiv.com/itemicon/'
+            'https://lds-img.finalfantasyxiv.com/itemicon/',
         ], '', $url);
     }
 
     /**
      * Function to download crest components from Lodestone
+     *
      * @param array $images
      *
      * @return void
@@ -455,17 +471,17 @@ abstract class AbstractEntity
                 // Check if we have already downloaded the component image and use that one to speed up the process
                 if ($key === 0) {
                     // If it's background, we need to check if a subdirectory exists and create it, and create it if it does not
-                    $sub_dir = mb_substr(\basename($image), 0, 3, 'UTF-8');
+                    $sub_dir = \mb_substr(\basename($image), 0, 3, 'UTF-8');
                     $concurrent_directory = Config::$crests_components.'backgrounds/'.$sub_dir;
                     if (!\is_dir($concurrent_directory) && !\mkdir($concurrent_directory) && !\is_dir($concurrent_directory)) {
-                        throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrent_directory));
+                        throw new \RuntimeException(\sprintf('Directory "%s" was not created', $concurrent_directory));
                     }
                 } elseif ($key === 2) {
                     // If it's an emblem, we need to check if a subdirectory exists and create it, and create it if it does not
-                    $sub_dir = mb_substr(\basename($image), 0, 3, 'UTF-8');
+                    $sub_dir = \mb_substr(\basename($image), 0, 3, 'UTF-8');
                     $concurrent_directory = Config::$crests_components.'emblems/'.$sub_dir;
                     if (!\is_dir($concurrent_directory) && !\mkdir($concurrent_directory) && !\is_dir($concurrent_directory)) {
-                        throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrent_directory));
+                        throw new \RuntimeException(\sprintf('Directory "%s" was not created', $concurrent_directory));
                     }
                 } else {
                     $sub_dir = '';
@@ -478,7 +494,7 @@ abstract class AbstractEntity
                     }
                     // If it's an emblem, check that other emblem variants are downloaded as well
                     if ($key === 2) {
-                        $emblem_index = (int)\preg_replace('/(.+_)(\d{2})(_.+\.png)/', '$2', \basename($image));
+                        $emblem_index = (int) \preg_replace('/(.+_)(\d{2})(_.+\.png)/', '$2', \basename($image));
                         for ($iteration = 0; $iteration <= 7; $iteration++) {
                             if ($iteration !== $emblem_index) {
                                 $emblem_file = Config::$crests_components.'emblems/'.$sub_dir.'/'.\preg_replace('/(.+_)(\d{2})(_.+\.png)/', '${1}0'.$iteration.'$3', \basename($image));
@@ -503,6 +519,7 @@ abstract class AbstractEntity
 
     /**
      * Function to turn a group crest into a favicon
+     *
      * @param array $images
      *
      * @return string|null
@@ -515,7 +532,7 @@ abstract class AbstractEntity
         $crest_hash = \hash('sha3-512', $merged_filenames);
         if (!empty($crest_hash)) {
             // Get a full path
-            $full_path = mb_substr($crest_hash, 0, 2, 'UTF-8').'/'.mb_substr($crest_hash, 2, 2, 'UTF-8').'/'.$crest_hash.'.webp';
+            $full_path = \mb_substr($crest_hash, 0, 2, 'UTF-8').'/'.\mb_substr($crest_hash, 2, 2, 'UTF-8').'/'.$crest_hash.'.webp';
             // Generate an image file, if missing
             if (!\is_file(Config::$merged_crests_cache.$full_path)) {
                 self::crestMerge($images, Config::$merged_crests_cache.$full_path);
@@ -527,6 +544,7 @@ abstract class AbstractEntity
 
     /**
      * Function converts image URL to a local path
+     *
      * @param string $image
      *
      * @return string|null
@@ -535,16 +553,16 @@ abstract class AbstractEntity
     {
         $filename = \basename($image);
         // Backgrounds
-        if (str_starts_with($filename, 'F00') || str_starts_with($filename, 'B')) {
-            return Config::$crests_components.'backgrounds/'.mb_substr($filename, 0, 3, 'UTF-8').'/'.$filename;
+        if (\str_starts_with($filename, 'F00') || \str_starts_with($filename, 'B')) {
+            return Config::$crests_components.'backgrounds/'.\mb_substr($filename, 0, 3, 'UTF-8').'/'.$filename;
         }
         // Frames
-        if (str_starts_with($filename, 'F')) {
+        if (\str_starts_with($filename, 'F')) {
             return Config::$crests_components.'frames/'.$filename;
         }
         // Emblems
-        if (str_starts_with($filename, 'S')) {
-            return Config::$crests_components.'emblems/'.mb_substr($filename, 0, 3, 'UTF-8').'/'.$filename;
+        if (\str_starts_with($filename, 'S')) {
+            return Config::$crests_components.'emblems/'.\mb_substr($filename, 0, 3, 'UTF-8').'/'.$filename;
         }
         Errors::error_log(new \UnexpectedValueException('Unexpected crest component URL `'.$image.'`'));
         return null;
@@ -552,6 +570,7 @@ abstract class AbstractEntity
 
     /**
      * Sort crest components
+     *
      * @param array $images
      *
      * @return array
@@ -563,11 +582,11 @@ abstract class AbstractEntity
             if (!empty($image)) {
                 $cached_image = self::crestToLocal($image);
                 if ($cached_image !== null) {
-                    if (str_contains($cached_image, 'backgrounds')) {
+                    if (\str_contains($cached_image, 'backgrounds')) {
                         $images_to_merge[0] = $cached_image;
-                    } elseif (str_contains($cached_image, 'frames')) {
+                    } elseif (\str_contains($cached_image, 'frames')) {
                         $images_to_merge[1] = $cached_image;
-                    } elseif (str_contains($cached_image, 'emblems')) {
+                    } elseif (\str_contains($cached_image, 'emblems')) {
                         $images_to_merge[2] = $cached_image;
                     }
                 }
@@ -595,8 +614,8 @@ abstract class AbstractEntity
             }
             // Check if the path exists and create it recursively, if not
             /* @noinspection PhpUsageOfSilenceOperatorInspection */
-            if (!\is_dir(dirname($final_path)) && !@\mkdir(dirname($final_path), recursive: true) && !\is_dir(dirname($final_path))) {
-                throw new \RuntimeException(sprintf('Directory "%s" was not created', $final_path));
+            if (!\is_dir(\dirname($final_path)) && !@\mkdir(\dirname($final_path), recursive: true) && !\is_dir(\dirname($final_path))) {
+                throw new \RuntimeException(\sprintf('Directory "%s" was not created', $final_path));
             }
             $gd = Images::merge($images);
             // Save the file
@@ -611,6 +630,7 @@ abstract class AbstractEntity
 
     /**
      * Clean component crests to have a proper image, even if they are empty
+     *
      * @param array $results
      *
      * @return array
@@ -620,7 +640,7 @@ abstract class AbstractEntity
         foreach ($results as $key => $result) {
             if (isset($result['crest_part_1']) || isset($result['crest_part_2']) || isset($result['crest_part_3'])) {
                 $results[$key]['icon'] = self::crestToFavicon([$result['crest_part_1'], $result['crest_part_2'], $result['crest_part_3']]);
-                if (isset($result['gc_id']) && str_contains($results[$key]['icon'], 'not_found') && \in_array($result['gc_id'], [1, 2, 3], true)) {
+                if (isset($result['gc_id']) && \str_contains($results[$key]['icon'], 'not_found') && \in_array($result['gc_id'], [1, 2, 3], true)) {
                     $results[$key]['icon'] = $result['gc_id'];
                 }
             } else {

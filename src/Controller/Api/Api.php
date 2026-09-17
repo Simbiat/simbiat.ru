@@ -79,7 +79,7 @@ abstract class Api
             return ['http_error' => 403, 'reason' => 'No access to API for bots'];
         }
         // Check if proper endpoint
-        if (\count($this->sub_routes) !== 0 && (empty($path[0]) || (!$this->final_node && !in_array($path[0], $this->sub_routes, true)))) {
+        if (\count($this->sub_routes) !== 0 && (empty($path[0]) || (!$this->final_node && !\in_array($path[0], $this->sub_routes, true)))) {
             $data = ['http_error' => 400, 'reason' => 'Unsupported endpoint', 'endpoints' => \array_combine($this->sub_routes, $this->routes_description)];
         } elseif (
             (
@@ -130,7 +130,7 @@ abstract class Api
                 if (!empty($data['reason'])) {
                     $result['json_ready']['reason'] = $data['reason'];
                 }
-                if (in_array($data['http_error'], ['database', 'maintenance'])) {
+                if (\in_array($data['http_error'], ['database', 'maintenance'])) {
                     $result['json_ready']['status'] = 503;
                     $result['json_ready']['reason'] = 'Database required, but unavailable';
                 } else {
@@ -145,7 +145,7 @@ abstract class Api
             } else {
                 $result['json_ready']['data'] = $data['response'] ?? null;
                 // Filter out results if data is an array
-                if (is_array($result['json_ready']['data'])) {
+                if (\is_array($result['json_ready']['data'])) {
                     // Suppressed due to https://youtrack.jetbrains.com/issue/WI-65237/Wrong-array-element-type-is-inferred-on-assignment
                     /** @noinspection PhpParamsInspection */
                     $this->fieldFilter($result['json_ready']['data']);
@@ -210,7 +210,7 @@ abstract class Api
             $filter = \explode(',', $fields);
             if (\count($filter) !== 0) {
                 foreach ($array as $field => $value) {
-                    if (!in_array($field, $filter, true)) {
+                    if (!\in_array($field, $filter, true)) {
                         unset($array[$field]);
                     }
                 }
@@ -233,7 +233,7 @@ abstract class Api
         }
         // Check if allowed method is used. EA incorrectly suggests use of `array_key_exists`, which does not fit here, due to how $allowed_methods is used in the whole method
         /** @noinspection InArrayMissUseInspection */
-        return in_array(HomePage::$method, $allowed_methods, true);
+        return \in_array(HomePage::$method, $allowed_methods, true);
     }
 
     /**
@@ -266,7 +266,7 @@ abstract class Api
                         // If origins are limited, check if origin is present
                         (!empty($origin) &&
                             // Check if it's a valid origin and is allowed
-                            (\preg_match('/'.Headers::ORIGIN_REGEX.'/i', $origin) === 1 || in_array($origin, $allow_origins, true))
+                            (\preg_match('/'.Headers::ORIGIN_REGEX.'/i', $origin) === 1 || \in_array($origin, $allow_origins, true))
                         )
                     ) {
                         // All checks passed
@@ -330,15 +330,15 @@ abstract class Api
             // Override $path[1] with `verb` from POST, if it was provided
             $path[1] = $_POST['verb'] ?? $path[1] ?? '';
             // Override based on method only if method is not HEAD, OPTIONS or GET and if a respective method has a verb set for it
-            if (!empty($this->methods[HomePage::$method]) && !in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET'])) {
+            if (!empty($this->methods[HomePage::$method]) && !\in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET'])) {
                 if (\is_string($this->methods[HomePage::$method])) {
                     $path[1] = $this->methods[HomePage::$method];
                     // If we have an array of possible verbs for method, check that proper verb is provided
-                } elseif (is_array($this->methods[HomePage::$method])) {
+                } elseif (\is_array($this->methods[HomePage::$method])) {
                     if (empty($path[1])) {
                         return \array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method supports multiple API verbs, none provided']);
                     }
-                    if (!in_array($path[1], $this->methods[HomePage::$method], true)) {
+                    if (!\in_array($path[1], $this->methods[HomePage::$method], true)) {
                         return \array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method does not support `'.$path[1].'` API verb']);
                     }
                 }

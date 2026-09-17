@@ -80,6 +80,7 @@ abstract class Notification extends Entity
 
     /**
      * Set entity ID
+     *
      * @param string|int $id
      *
      * @return $this
@@ -127,6 +128,7 @@ abstract class Notification extends Entity
 
     /**
      * Delete the notification
+     *
      * @return bool
      */
     final public function delete(): bool
@@ -139,6 +141,7 @@ abstract class Notification extends Entity
 
     /**
      * Get data from DB
+     *
      * @return array
      */
     protected function getFromDB(): array
@@ -148,6 +151,7 @@ abstract class Notification extends Entity
 
     /**
      * Function process database data
+     *
      * @param array $from_db
      *
      * @return void
@@ -156,7 +160,7 @@ abstract class Notification extends Entity
     {
         $this->user = $from_db['user_id'] ?? null;
         $this->email = $from_db['email'] ?? null;
-        $this->push = (bool)$from_db['push'];
+        $this->push = (bool) $from_db['push'];
         $this->created = $from_db['created'] !== null ? \strtotime($from_db['created']) : null;
         if ($this->created === null) {
             $this->id = null;
@@ -164,7 +168,7 @@ abstract class Notification extends Entity
         $this->sent = $from_db['sent'] !== null ? \strtotime($from_db['sent']) : null;
         $this->is_read = $from_db['is_read'] !== null ? \strtotime($from_db['is_read']) : null;
         $this->last_attempt = $from_db['last_attempt'] !== null ? \strtotime($from_db['last_attempt']) : null;
-        $this->attempts = (int)$from_db['attempts'];
+        $this->attempts = (int) $from_db['attempts'];
         if (Sanitize::whiteString($from_db['text'] ?? '')) {
             $this->text = null;
         } else {
@@ -207,7 +211,7 @@ abstract class Notification extends Entity
         if ($user_id !== null) {
             try {
                 if (Query::query('SELECT `user_id` FROM `uc__users` WHERE `user_id`=:user_id;', [':user_id' => [$user_id, 'int']], return: 'check')) {
-                    $this->user = (int)$user_id;
+                    $this->user = (int) $user_id;
                 }
             } catch (\Throwable $throwable) {
                 if (!$this::ALWAYS_SEND) {
@@ -297,7 +301,7 @@ abstract class Notification extends Entity
                         if (\filter_var($address, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
                             continue;
                         }
-                        $this->id = uuid_create(4);
+                        $this->id = \uuid_create(4);
                         $this->email = $address;
                         $result = Query::query(
                             'INSERT INTO `sys__notifications`(`uuid`, `user_id`, `type`, `text`, `email`, `push`) VALUES (:uuid, :user_id, :type, :text, :email, :push);',
@@ -308,11 +312,11 @@ abstract class Notification extends Entity
                                 ':text' => $this->text,
                                 ':email' => [$address, 'string'],
                                 ':push' => [$this->push, 'bool'],
-                            ]
+                            ],
                         );
                     }
                 } else {
-                    $this->id = uuid_create(4);
+                    $this->id = \uuid_create(4);
                     $result = Query::query(
                         'INSERT INTO `sys__notifications`(`uuid`, `user_id`, `type`, `text`, `email`, `push`) VALUES (:uuid, :user_id, :type, :text, :email, :push);',
                         [
@@ -322,11 +326,11 @@ abstract class Notification extends Entity
                             ':text' => $this->text,
                             ':email' => [null, 'null'],
                             ':push' => [$this->push, 'bool'],
-                        ]
+                        ],
                     );
                 }
             } elseif ($this::ALWAYS_SEND) {
-                $this->id = uuid_create(4);
+                $this->id = \uuid_create(4);
                 if ($email && \array_key_exists(0, $emails)) {
                     $this->email = $emails[0];
                 }
@@ -465,8 +469,8 @@ abstract class Notification extends Entity
         try {
             // Add content
             $email->subject((Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT)
-                ->htmlTemplate('email.twig')
-                ->context(['subject' => (Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT, 'username' => $username, 'unsubscribe_all' => $subscribed, 'text' => $this->text, 'tracker' => $this->id, 'created' => $this->created, 'sent' => \time()]);
+                  ->htmlTemplate('email.twig')
+                  ->context(['subject' => (Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT, 'username' => $username, 'unsubscribe_all' => $subscribed, 'text' => $this->text, 'tracker' => $this->id, 'created' => $this->created, 'sent' => \time()]);
             try {
                 Query::query('UPDATE `sys__notifications` SET `attempts`=`attempts`+1, `last_attempt`=CURRENT_TIMESTAMP(6) WHERE `uuid` = :uuid;', [':uuid' => $this->id]);
             } catch (\Throwable $exception) {

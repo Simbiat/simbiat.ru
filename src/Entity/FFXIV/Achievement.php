@@ -119,7 +119,7 @@ class Achievement extends AbstractEntity
         $achievement['characters'] = [['id' => 1]];
         foreach ($achievement['characters'] as $char) {
             try {
-                $data = $lodestone->getCharacterAchievements($char['id'], (int)$this->id)->getResult();
+                $data = $lodestone->getCharacterAchievements($char['id'], (int) $this->id)->getResult();
             } catch (\Throwable $exception) {
                 if (\preg_match('/Lodestone has throttled the request/ui', $exception->getMessage()) === 1) {
                     if ($allow_sleep) {
@@ -199,7 +199,7 @@ class Achievement extends AbstractEntity
         $this->how_to = Sanitization::sanitizeHTML($from_db['how_to'] ?? '');
         $this->db_id = $from_db['db_id'];
         $this->rewards = [
-            'points' => (int)$from_db['points'],
+            'points' => (int) $from_db['points'],
             'title' => $from_db['title'],
             'item' => [
                 'name' => $from_db['item'],
@@ -208,7 +208,7 @@ class Achievement extends AbstractEntity
             ],
         ];
         $this->characters = [
-            'total' => (int)$from_db['earned_by'],
+            'total' => (int) $from_db['earned_by'],
             'last' => $from_db['characters'],
         ];
     }

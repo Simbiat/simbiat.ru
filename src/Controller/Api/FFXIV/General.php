@@ -81,7 +81,7 @@ abstract class General extends Api
         }
         if ($data !== true && empty($data['id'])) {
             if ($path[1] === 'lodestone') {
-                return ['http_error' => 500, 'reason' => 'Failed to get '.mb_strtolower($this->name_for_errors, 'UTF-8').' with ID `'.$path[0].'` from Lodestone'];
+                return ['http_error' => 500, 'reason' => 'Failed to get '.\mb_strtolower($this->name_for_errors, 'UTF-8').' with ID `'.$path[0].'` from Lodestone'];
             }
             return ['http_error' => 404, 'reason' => $this->name_for_errors.' with ID `'.$path[0].'` is not found on Tracker'];
         }

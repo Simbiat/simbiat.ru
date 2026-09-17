@@ -30,16 +30,16 @@ class Listing extends Search
             return ['http_error' => 400, 'reason' => 'Bad search term'];
         }
         // Set page number
-        $page = (int)($_GET['page'] ?? 1);
+        $page = (int) ($_GET['page'] ?? 1);
         // Get search results
         $output_array = [];
         $output_array['numbered'] = $this->types[$this->subservice_name]['numbered'] ?? false;
         $listing_type = new $this->types[$this->subservice_name]['class']();
         $output_array['search_result'] = $listing_type->listEntities($page, $this->search_for);
         // If int is returned, we have a bad page
-        if (is_int($output_array['search_result'])) {
+        if (\is_int($output_array['search_result'])) {
             // Redirect
-            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.$this->service_name . '/' . $this->subservice_name . '/' . (!empty($this->search_for) ? '?search='.\rawurlencode($this->search_for).'&page='.$output_array['search_result'] : '?page='.$output_array['search_result']), false);
+            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.$this->service_name.'/'.$this->subservice_name.'/'.(!empty($this->search_for) ? '?search='.\rawurlencode($this->search_for).'&page='.$output_array['search_result'] : '?page='.$output_array['search_result']), false);
             return [];
         }
         // Get the freshest date
@@ -52,23 +52,23 @@ class Listing extends Search
         $output_array['pagination'] = ['current' => $page, 'total' => $output_array['search_result']['pages'], 'prefix' => '?'.(empty($this->search_for) ? '' : 'search='.\rawurlencode($this->search_for).'&').'page=', 'per' => $listing_type->list_items];
         if (!empty($this->search_for)) {
             // Update breadcrumbs
-            $this->attachCrumb('?search='.\rawurlencode($this->search_for), sprintf($this->short_title, $this->search_for));
+            $this->attachCrumb('?search='.\rawurlencode($this->search_for), \sprintf($this->short_title, $this->search_for));
             $this->breadcrumb[] = ['href' => '/'.$this->service_name.'/'.$this->subservice_name.'/?search='.\rawurlencode($this->search_for), 'name' => $this->types[$this->subservice_name]['name']];
             if ($page > 1) {
-                $this->attachCrumb('page=' . $page, mb_ucfirst($this->page_word, 'UTF-8').' '.$page, true);
+                $this->attachCrumb('page='.$page, \mb_ucfirst($this->page_word, 'UTF-8').' '.$page, true);
             }
             // Set search value, if available
             $output_array['search_value'] = $this->search_for;
             // Set titles
-            $this->title = sprintf($this->short_title, $this->search_for).', '.$this->page_word.' '.$page;
+            $this->title = \sprintf($this->short_title, $this->search_for).', '.$this->page_word.' '.$page;
             $this->h1 = $this->title;
-            $this->og_desc = sprintf($this->full_title, $this->search_for).', '.$this->page_word.' '.$page;
+            $this->og_desc = \sprintf($this->full_title, $this->search_for).', '.$this->page_word.' '.$page;
         } else {
             $output_array['search_value'] = null;
             // Update breadcrumbs
-            $this->breadcrumb = [['href' => '/' .$this->service_name. '/' . $this->subservice_name, 'name' => $this->types[$this->subservice_name]['name']]];
+            $this->breadcrumb = [['href' => '/'.$this->service_name.'/'.$this->subservice_name, 'name' => $this->types[$this->subservice_name]['name']]];
             if ($page > 1) {
-                $this->attachCrumb('/?page=' . $page, mb_ucfirst($this->page_word, 'UTF-8').' ' . $page);
+                $this->attachCrumb('/?page='.$page, \mb_ucfirst($this->page_word, 'UTF-8').' '.$page);
             }
             // Set titles
             $this->og_desc = $this->types[$this->subservice_name]['name'].', '.$this->page_word.' '.$page;

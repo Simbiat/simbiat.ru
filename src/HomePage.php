@@ -64,7 +64,7 @@ class HomePage
         self::$device_detector->setCache(new PSR6Bridge(new ApcuAdapter('Matomo')));
         // Parse multipart/form-data for PUT/DELETE/PATCH methods (if any)
         Headers::multiPartFormParse();
-        if (in_array(self::$method, ['PUT', 'DELETE', 'PATCH'], true)) {
+        if (\in_array(self::$method, ['PUT', 'DELETE', 'PATCH'], true)) {
             $_POST = \array_change_key_case(Headers::$_PUT ?: Headers::$_DELETE ?: Headers::$_PATCH ?: []);
             $_FILES = Headers::$_FILES;
         }
@@ -109,7 +109,7 @@ class HomePage
             self::canonical();
             self::nonApiLinks();
             // Redirect if the page number is set and is less than 1
-            if (\array_key_exists('page', $_GET) && (int)$_GET['page'] < 1) {
+            if (\array_key_exists('page', $_GET) && (int) $_GET['page'] < 1) {
                 // Remove page (since we ignore page=1 in canonical)
                 Headers::redirect(\preg_replace('/\\?page=-?\d+/ui', '', self::$canonical));
             }
@@ -167,7 +167,7 @@ class HomePage
                     Headers::secFetch(strict: (empty(self::$user_agent['bot']) && self::$user_agent['browser']));
                     // Try to start a session if it's not started yet and DB is up. Do not do it if the cache is being returned, if an error has been detected already or if a bot was detected
                     if (empty(self::$user_agent['bot']) && (self::$http_error === null || self::$http_error === []) && Config::$dbup && !Config::$db_update && !self::$stale_return && \session_status() === \PHP_SESSION_NONE) {
-                        session_set_save_handler(new Session(), true);
+                        \session_set_save_handler(new Session(), true);
                         if (\session_start()) {
                             // Check if banned IP
                             if (!empty($_SESSION['banned_ip'])) {
@@ -321,7 +321,7 @@ class HomePage
             }
             // Cache page if cache age is set up, no errors, GET method is used, and we are on PROD
             if (Config::$environment === 'prod' && !empty($twig_vars['cache_age']) && \is_numeric($twig_vars['cache_age']) && empty($twig_vars['http_error']) && self::$method === 'GET') {
-                self::$data_cache->write($twig_vars, age: (int)$twig_vars['cache_age']);
+                self::$data_cache->write($twig_vars, age: (int) $twig_vars['cache_age']);
             }
             if (self::$stale_return) {
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
@@ -352,15 +352,15 @@ class HomePage
         self::$device_detector->parse();
         // Get bot name
         $bot = self::$device_detector->getBot();
-        if (is_array($bot)) {
+        if (\is_array($bot)) {
             // Do not waste resources on bots
             /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-            return ['bot' => mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => null, 'client' => null, 'unsupported' => false, 'browser' => false, 'ai' => \strncasecmp($bot['category'] ?? '', 'ai', 2) === 0];
+            return ['bot' => \mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => null, 'client' => null, 'unsupported' => false, 'browser' => false, 'ai' => \strncasecmp($bot['category'] ?? '', 'ai', 2) === 0];
         }
         // Get OS
         $os = self::$device_detector->getOs();
         // Concat OS and version
-        $os = mb_trim(($os['name'] ?? '').' '.($os['version'] ?? ''), null, 'UTF-8');
+        $os = \mb_trim(($os['name'] ?? '').' '.($os['version'] ?? ''), null, 'UTF-8');
         // Force OS to be NULL if it's empty
         if (empty($os)) {
             $os = null;
@@ -384,12 +384,12 @@ class HomePage
             $unsupported = false;
         }
         // Concat client and version
-        $client = mb_trim(($client['name'] ?? '').' '.($client['version'] ?? ''), null, 'UTF-8');
+        $client = \mb_trim(($client['name'] ?? '').' '.($client['version'] ?? ''), null, 'UTF-8');
         // Force the client to be NULL if it's empty
         if (empty($client)) {
             $client = null;
         }
-        return ['bot' => null, 'os' => ($os !== null ? mb_substr($os, 0, 100, 'UTF-8') : null), 'client' => ($client !== null ? mb_substr($client, 0, 100, 'UTF-8') : null), 'full' => $_SERVER['HTTP_USER_AGENT'], 'unsupported' => $unsupported, 'browser' => $browser];
+        return ['bot' => null, 'os' => ($os !== null ? \mb_substr($os, 0, 100, 'UTF-8') : null), 'client' => ($client !== null ? \mb_substr($client, 0, 100, 'UTF-8') : null), 'full' => $_SERVER['HTTP_USER_AGENT'], 'unsupported' => $unsupported, 'browser' => $browser];
     }
 
     /**

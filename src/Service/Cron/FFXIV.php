@@ -94,7 +94,7 @@ class FFXIV
                     return $result;
                 }
                 // Remove the cron task if it's present
-                new TaskInstance('ff_update_entity', [(string)$entity['id'], $entity['type']])->delete();
+                new TaskInstance('ff_update_entity', [(string) $entity['id'], $entity['type']])->delete();
             }
             return true;
         } catch (\Throwable $throwable) {
@@ -152,7 +152,7 @@ class FFXIV
                                 }
                                 // Get data
                                 $data = $lodestone->getResult();
-                                $page_total = (int)($data['linkshells']['page_total'] ?? 0);
+                                $page_total = (int) ($data['linkshells']['page_total'] ?? 0);
                                 if ($page_total === 0) {
                                     continue 2;
                                 }
@@ -168,7 +168,7 @@ class FFXIV
                                         $extra_for_error = 'linkshell ID '.$linkshell;
                                         // Check if Linkshell exists in DB
                                         if (!Query::query('SELECT `ls_id` FROM `ffxiv__linkshell` WHERE `ls_id`=:id;', [':id' => [$linkshell, 'string']], return: 'check')) {
-                                            $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string)$linkshell, $world['entity']], 'message' => 'Updating '.$world['entity'].' with ID '.$linkshell])->add();
+                                            $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $linkshell, $world['entity']], 'message' => 'Updating '.$world['entity'].' with ID '.$linkshell])->add();
                                         }
                                     }
                                     // Attempt to update cache

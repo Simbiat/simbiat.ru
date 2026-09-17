@@ -192,6 +192,7 @@
         "phpstan": "phpstan analyse -c /app/config/phpstan.neon --memory-limit 1G",
         "psalm": "psalm --config=/app/config/psalm.xml --memory-limit=1G",
         "phpcs": "phpcs --standard=/app/config/phpcs.xml",
+        "phpcbf": "phpcbf --standard=/app/config/phpcs.xml",
         "php-cs-fixer": "php-cs-fixer fix --dry-run --config=/app/config/php-cs-fixer.php --using-cache=yes --cache-file=/app/data/temp/.php-cs-fixer.cache --verbose --allow-risky=yes --path-mode=intersection",
         "phpmd": "phpmd analyze --cache --cache-file=/app/data/temp/.phpmd.result-cache.php --cache-strategy=content --ruleset=/app/config/phpmd.xml --threads=4 --jetbrains=simbiat.eu",
         "auto-scripts": {

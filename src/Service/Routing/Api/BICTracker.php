@@ -13,7 +13,7 @@ class BICTracker extends Api
 {
     // Supported edges
     protected array $sub_routes = [
-        'bics', 'keying', 'dbupdate'
+        'bics', 'keying', 'dbupdate',
     ];
     // Description of the nodes (need to be in same order)
     protected array $routes_description = [
@@ -28,7 +28,7 @@ class BICTracker extends Api
 
     protected function genData(array $path): array
     {
-        return match($path[0]){
+        return match ($path[0]) {
             'bics' => new Bic()->getData(\array_slice($path, 1)),
             'keying' => new Keying()->getData(\array_slice($path, 1)),
             'dbupdate' => new DBUpdate()->getData(\array_slice($path, 1)),

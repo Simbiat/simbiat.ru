@@ -45,7 +45,7 @@ class Sections extends Api
         if ($section->id === null) {
             return ['http_error' => 404, 'reason' => 'ID `'.$path[0].'` not found'];
         }
-        return match($path[1]) {
+        return match ($path[1]) {
             'edit' => $section->edit(),
             'delete' => $section->delete(),
             'mark_private' => $section->setPrivate(true),

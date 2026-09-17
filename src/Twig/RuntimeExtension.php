@@ -20,17 +20,20 @@ final class RuntimeExtension implements RuntimeExtensionInterface
 {
     /**
      * Generate a link for the file
+     *
      * @param string $filename
      *
      * @return string
      */
-    #[Pure] public function uploadedLink(string $filename): string
+    #[Pure]
+    public function uploadedLink(string $filename): string
     {
         return Sanitization::getUploadedFileLink($filename);
     }
 
     /**
      * Format numeric as bytes
+     *
      * @param int|string|float $bytes
      *
      * @return string
@@ -42,6 +45,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
 
     /**
      * Generate breadcrumbs
+     *
      * @param array $items
      *
      * @return string
@@ -53,6 +57,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
 
     /**
      * Generate timeline
+     *
      * @param array $items    Array of items
      * @param int   $br_limit Maximum number of `<br>` elements between items
      *
@@ -65,6 +70,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
 
     /**
      * Generate pagination
+     *
      * @param int    $current Current page
      * @param int    $total   Total pages
      * @param string $prefix  Prefix to use
@@ -78,6 +84,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
 
     /**
      * PHP's basename function
+     *
      * @param string $string
      *
      * @return string
@@ -102,6 +109,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
 
     /**
      * Sanitize HTML string
+     *
      * @param string $string
      * @param bool   $head
      *
@@ -114,6 +122,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
 
     /**
      * Generate `<time>` tag
+     *
      * @param int|string $string
      * @param string     $format
      * @param string     $classes
@@ -136,6 +145,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
 
     /**
      * Generate `<link>` tags
+     *
      * @param array  $links
      * @param string $type
      *
@@ -148,6 +158,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
 
     /**
      * Prettify URL
+     *
      * @param string $string
      *
      * @return string

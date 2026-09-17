@@ -84,8 +84,8 @@ class FreeCompany extends AbstractEntity
             }
             return 'Failed to get all necessary data for Free Company '.$this->id;
         }
-        if (empty($data['freecompanies'][$this->id]['server']) || (empty($data['freecompanies'][$this->id]['members']) && (int)($data['freecompanies'][$this->id]['members_count'] ?? 0) > 0) || (!empty($data['freecompanies'][$this->id]['members']) && count($data['freecompanies'][$this->id]['members']) < (int)($data['freecompanies'][$this->id]['members_count'] ?? 0))) {
-            if (!empty($data['freecompanies'][$this->id]) && (int)$data['freecompanies'][$this->id] === 404) {
+        if (empty($data['freecompanies'][$this->id]['server']) || (empty($data['freecompanies'][$this->id]['members']) && (int) ($data['freecompanies'][$this->id]['members_count'] ?? 0) > 0) || (!empty($data['freecompanies'][$this->id]['members']) && \count($data['freecompanies'][$this->id]['members']) < (int) ($data['freecompanies'][$this->id]['members_count'] ?? 0))) {
+            if (!empty($data['freecompanies'][$this->id]) && (int) $data['freecompanies'][$this->id] === 404) {
                 $this->delete();
                 return ['404' => true];
             }
@@ -125,10 +125,10 @@ class FreeCompany extends AbstractEntity
                 'region' => $from_db['region'],
                 'city' => $from_db['city'],
                 'area' => $from_db['area'],
-                'ward' => (int)$from_db['ward'],
-                'plot' => (int)$from_db['plot'],
+                'ward' => (int) $from_db['ward'],
+                'plot' => (int) $from_db['plot'],
                 'name' => $from_db['estate_zone'],
-                'size' => (int)$from_db['size'],
+                'size' => (int) $from_db['size'],
                 'message' => $from_db['estate_message'],
             ],
         ];
@@ -138,38 +138,38 @@ class FreeCompany extends AbstractEntity
             1 => $from_db['crest_part_2'],
             2 => $from_db['crest_part_3'],
         ];
-        $this->rank = (int)$from_db['rank'];
+        $this->rank = (int) $from_db['rank'];
         $this->slogan = $from_db['slogan'];
-        $this->recruiting = (bool)$from_db['recruitment'];
+        $this->recruiting = (bool) $from_db['recruitment'];
         $this->community = $from_db['community_id'];
         $this->grand_company = $from_db['gc_name'];
         $this->active = $from_db['active'];
         $this->focus = [
-            'role-playing' => (bool)$from_db['role_playing'],
-            'leveling' => (bool)$from_db['leveling'],
-            'casual' => (bool)$from_db['casual'],
-            'hardcore' => (bool)$from_db['hardcore'],
-            'dungeons' => (bool)$from_db['dungeons'],
-            'guildhests' => (bool)$from_db['guildhests'],
-            'trials' => (bool)$from_db['trials'],
-            'raids' => (bool)$from_db['raids'],
-            'PvP' => (bool)$from_db['pvp'],
+            'role-playing' => (bool) $from_db['role_playing'],
+            'leveling' => (bool) $from_db['leveling'],
+            'casual' => (bool) $from_db['casual'],
+            'hardcore' => (bool) $from_db['hardcore'],
+            'dungeons' => (bool) $from_db['dungeons'],
+            'guildhests' => (bool) $from_db['guildhests'],
+            'trials' => (bool) $from_db['trials'],
+            'raids' => (bool) $from_db['raids'],
+            'PvP' => (bool) $from_db['pvp'],
         ];
         $this->seeking = [
-            'tank' => (bool)$from_db['tank'],
-            'healer' => (bool)$from_db['healer'],
-            'DPS' => (bool)$from_db['dps'],
-            'crafter' => (bool)$from_db['crafter'],
-            'gatherer' => (bool)$from_db['gatherer'],
+            'tank' => (bool) $from_db['tank'],
+            'healer' => (bool) $from_db['healer'],
+            'DPS' => (bool) $from_db['dps'],
+            'crafter' => (bool) $from_db['crafter'],
+            'gatherer' => (bool) $from_db['gatherer'],
         ];
         $this->old_names = $from_db['old_names'];
         $this->ranking = $from_db['ranks_history'];
         // Adjust types for ranking
         foreach ($this->ranking as $key => $rank) {
             $this->ranking[$key]['date'] = \strtotime($rank['date']);
-            $this->ranking[$key]['weekly'] = (int)$rank['weekly'];
-            $this->ranking[$key]['monthly'] = (int)$rank['monthly'];
-            $this->ranking[$key]['members'] = (int)$rank['members'];
+            $this->ranking[$key]['weekly'] = (int) $rank['weekly'];
+            $this->ranking[$key]['monthly'] = (int) $rank['monthly'];
+            $this->ranking[$key]['members'] = (int) $rank['members'];
         }
         $members = Splitters::splitByKey($from_db['members'], 'current');
         $this->members = $members[1] ?? [];
@@ -276,7 +276,7 @@ class FreeCompany extends AbstractEntity
                         ':fc_id' => $this->id,
                         ':weekly' => [$this->lodestone['weekly_rank'], 'int'],
                         ':monthly' => [$this->lodestone['monthly_rank'], 'int'],
-                        ':members' => [count($this->lodestone['members']), 'int'],
+                        ':members' => [\count($this->lodestone['members']), 'int'],
                     ],
                 ];
             }

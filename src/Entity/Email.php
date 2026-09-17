@@ -36,6 +36,7 @@ final class Email extends Entity
 
     /**
      * Overriding the standard function to use a standard email filter
+     *
      * @param string|int $id
      *
      * @return $this
@@ -44,7 +45,7 @@ final class Email extends Entity
     public function setId(#[\SensitiveParameter] string|int $id): self
     {
         // Convert to string for consistency
-        $id = (string)$id;
+        $id = (string) $id;
         // Validate that string is email
         if (\filter_var($id, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
             // Not an email, something is wrong, protect ourselves
@@ -58,6 +59,7 @@ final class Email extends Entity
 
     /**
      * Function to get initial data from DB
+     *
      * @return array
      */
     protected function getFromDB(): array
@@ -93,6 +95,7 @@ final class Email extends Entity
 
     /**
      * Check if mail is either banned or used
+     *
      * @return bool
      */
     public function isBad(): bool
@@ -105,6 +108,7 @@ final class Email extends Entity
 
     /**
      * Subscribe email to notifications
+     *
      * @return bool
      */
     public function subscribe(): bool
@@ -113,7 +117,7 @@ final class Email extends Entity
         if ($this->username === null) {
             $this->setId($this->id);
         }
-        $subscribed = \bin2hex(\gzdeflate(mb_str_pad($this->id, 100, "\0", encoding: 'UTF-8')."\n".Security::genToken()));
+        $subscribed = \bin2hex(\gzdeflate(\mb_str_pad($this->id, 100, "\0", encoding: 'UTF-8')."\n".Security::genToken()));
         $queries = [];
         // If this is an anonymous mail, then we do not "reset" other subscriptions, since we use that user to collect all emails, that may be used by different actual people
         if (!$this->anonymous) {
@@ -122,16 +126,16 @@ final class Email extends Entity
                 [
                     ':user_id' => [$_SESSION['user_id'], 'int'],
                     ':email' => $this->id,
-                ]
+                ],
             ];
         }
-        $queries[] =[
+        $queries[] = [
             'UPDATE `uc__emails` SET `subscribed`=:subscribed WHERE `user_id`=:user_id AND `email`=:email;',
             [
                 ':user_id' => [$_SESSION['user_id'], 'int'],
                 ':email' => $this->id,
                 ':subscribed' => $subscribed,
-            ]
+            ],
         ];
         $result = Query::query($queries);
         Security::session_regenerate_id(true);
@@ -152,10 +156,10 @@ final class Email extends Entity
             return ['http_error' => 400, 'reason' => 'No email token provided'];
         }
         try {
-            /* @noinspection PhpUsageOfSilenceOperatorInspection Suppressing to avoid warnings in log, which are pointless in this case*/
+            /* @noinspection PhpUsageOfSilenceOperatorInspection Suppressing to avoid warnings in log, which are pointless in this case */
             $email = \explode("\n", @\gzinflate(@\hex2bin($token)));
             if (\array_key_exists(0, $email)) {
-                $email = mb_rtrim($email[0], "\0", 'UTF-8');
+                $email = \mb_rtrim($email[0], "\0", 'UTF-8');
             } else {
                 throw new \UnexpectedValueException('Malformed token');
             }
@@ -194,6 +198,7 @@ final class Email extends Entity
 
     /**
      * Check if it's safe to unsubscribe the email
+     *
      * @return bool
      */
     private function safeToUnsubscribe(): bool
@@ -210,6 +215,7 @@ final class Email extends Entity
 
     /**
      * Delete email
+     *
      * @return bool
      */
     public function delete(): bool
@@ -229,6 +235,7 @@ final class Email extends Entity
 
     /**
      * Check if it's safe to remove the email
+     *
      * @return bool
      */
     private function safeToDelete(): bool
@@ -365,7 +372,7 @@ final class Email extends Entity
                     ':user_id' => [$this->user_id, 'int'],
                     ':mail' => $this->id,
                     ':activation' => Security::passHash($activation),
-                ]
+                ],
             );
         } catch (\Throwable) {
             return false;

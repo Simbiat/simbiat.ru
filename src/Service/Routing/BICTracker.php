@@ -28,9 +28,9 @@ class BICTracker extends Router
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {
-            'bics' => new Bic()->get(array_slice($path, 1)),
-            'search' => new Search()->get(array_slice($path, 1)),
-            'keying' => new Keying()->get(array_slice($path, 1)),
+            'bics' => new Bic()->get(\array_slice($path, 1)),
+            'search' => new Search()->get(\array_slice($path, 1)),
+            'keying' => new Keying()->get(\array_slice($path, 1)),
             'openbics', 'closedbics' => new Listing()->get($path),
             default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.\implode('`, `', $this->sub_routes).'`.'],
         };

@@ -74,7 +74,7 @@ class Linkshell extends AbstractEntity
             }
             return 'Failed to get all necessary data for Linkshell '.$this->id;
         }
-        if (empty($data['linkshells']) || empty($data['linkshells'][$this->id]['server']) || (empty($data['linkshells'][$this->id]['members']) && (int)$data['linkshells'][$this->id]['members_count'] > 0) || (!empty($data['linkshells'][$this->id]['members']) && \count($data['linkshells'][$this->id]['members']) < (int)$data['linkshells'][$this->id]['members_count'])) {
+        if (empty($data['linkshells']) || empty($data['linkshells'][$this->id]['server']) || (empty($data['linkshells'][$this->id]['members']) && (int) $data['linkshells'][$this->id]['members_count'] > 0) || (!empty($data['linkshells'][$this->id]['members']) && \count($data['linkshells'][$this->id]['members']) < (int) $data['linkshells'][$this->id]['members_count'])) {
             if (!empty($data['linkshells'][$this->id]['members']) && $data['linkshells'][$this->id]['members'] === 404) {
                 $this->delete();
                 return ['404' => true];

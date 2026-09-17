@@ -35,7 +35,7 @@ class Sanitization
      */
     public static function sanitizeHTML(string $string, #[ExpectedValues(self::SANITIZATION_ELEMENT_NAMES)] string $for = 'body'): string
     {
-        if (!in_array($for, self::SANITIZATION_ELEMENT_NAMES, true)) {
+        if (!\in_array($for, self::SANITIZATION_ELEMENT_NAMES, true)) {
             return '';
         }
         // Check if config has been created already
@@ -67,8 +67,8 @@ class Sanitization
     private static function initSanitizer(#[ExpectedValues(self::SANITIZATION_ELEMENT_NAMES)] string $for = 'body'): HtmlSanitizerConfig
     {
         $config = new HtmlSanitizerConfig()->withMaxInputLength(-1)->allowSafeElements()
-            ->allowRelativeLinks()->allowMediaHosts([Config::$http_host])->allowRelativeMedias()
-            ->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
+                                           ->allowRelativeLinks()->allowMediaHosts([Config::$http_host])->allowRelativeMedias()
+                                           ->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
         // Block some extra elements
         foreach (['acronym', 'applet', 'area', 'aside', 'base', 'basefont', 'bgsound', 'big', 'blink', 'body', 'button', 'canvas', 'center', 'content', 'datalist',
                      'dialog', 'dir', 'embed', 'fieldset', 'figure', 'figcaption', 'font', 'footer', 'form', 'frame', 'frameset', 'head', 'header', 'hgroup', 'html',
@@ -119,6 +119,7 @@ class Sanitization
 
     /**
      * Remove controls characters from strings and arrays.
+     *
      * @param string $string    String to sanitize. Arrays are also accepted, but it's expected that they will have string values only.
      * @param bool   $full_list Flag whether newlines and tabs should also be removed
      *
@@ -134,6 +135,7 @@ class Sanitization
 
     /**
      * Remove control characters from strings in an array.
+     *
      * @param array $array     Array to sanitize
      * @param bool  $full_list Flag whether newlines and tabs should also be removed
      *
@@ -165,13 +167,14 @@ class Sanitization
             return false;
         }
         if (\is_string($checkbox)) {
-            return mb_strtolower($checkbox, 'UTF-8') !== 'off';
+            return \mb_strtolower($checkbox, 'UTF-8') !== 'off';
         }
-        return (bool)$checkbox;
+        return (bool) $checkbox;
     }
 
     /**
      * Function to sanitize time for creating scheduled section/threads/posts
+     *
      * @param string|int|null $time
      * @param string|null     $timezone
      *
@@ -179,18 +182,18 @@ class Sanitization
      */
     public static function scheduledTime(string|int|null &$time, ?string &$timezone = null): ?int
     {
-        if (in_array('post_scheduled', $_SESSION['permissions'], true)) {
+        if (\in_array('post_scheduled', $_SESSION['permissions'], true)) {
             if (empty($time)) {
                 $time = null;
             } else {
-                if (empty($timezone) || !in_array($timezone, \timezone_identifiers_list(), true)) {
+                if (empty($timezone) || !\in_array($timezone, \timezone_identifiers_list(), true)) {
                     $timezone = 'UTC';
                 }
                 $datetime = SandClock::convertTimezone($time, $_SESSION['timezone'] ?? $timezone);
                 $time = $datetime->getTimestamp();
                 $cur_time = \time();
                 // Do not allow past, unless respective permission is present
-                if ($time < $cur_time && !in_array('post_backlog', $_SESSION['permissions'], true)) {
+                if ($time < $cur_time && !\in_array('post_backlog', $_SESSION['permissions'], true)) {
                     $time = $cur_time;
                 }
             }
@@ -202,13 +205,14 @@ class Sanitization
 
     /**
      * Function to generate a "hash tree" from string
+     *
      * @param string $string
      *
      * @return string
      */
     public static function hashTree(string $string): string
     {
-        return mb_substr($string, 0, 2, 'UTF-8').'/'.mb_substr($string, 2, 2, 'UTF-8').'/'.mb_substr($string, 4, 2, 'UTF-8');
+        return \mb_substr($string, 0, 2, 'UTF-8').'/'.\mb_substr($string, 2, 2, 'UTF-8').'/'.\mb_substr($string, 4, 2, 'UTF-8');
     }
 
     /**
@@ -218,7 +222,8 @@ class Sanitization
      *
      * @return string
      */
-    #[Pure(true)] public static function getUploadedFileLink(string $filename): string
+    #[Pure(true)]
+    public static function getUploadedFileLink(string $filename): string
     {
         // Get hash tree
         $hash_tree = self::hashTree($filename);

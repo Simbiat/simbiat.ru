@@ -125,11 +125,11 @@ class BICLibrary
                     // Get current details
                     $current_details = $this->getBIC($bic);
                     // Check for Parent BIC
-                    if (!empty($details['PrntBIC']) && count($this->getBIC($details['PrntBIC'])) === 0) {
+                    if (!empty($details['PrntBIC']) && \count($this->getBIC($details['PrntBIC'])) === 0) {
                         $delay = true;
                     }
                     // Check if BIC exists at all
-                    if (count($current_details) === 0) {
+                    if (\count($current_details) === 0) {
                         // We need to INSERT
                         $this->queries[] = [
                             'INSERT INTO `bic__list` (`BIC`, `DateIn`, `DateOut`, `Updated`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr`) VALUES (:BIC, :DateIn, :DateOut, :file_date, :NameP, :EnglName, :XchType, :PtType, :Srvcs, :UID, :PrntBIC, :CntrCd, :RegN, :Ind, :Rgn, :Tnp, :Nnp, :Adr);',
@@ -143,7 +143,7 @@ class BICLibrary
                         ];
                     }
                     // Process restrictions
-                    if (count($restrictions) > 0) {
+                    if (\count($restrictions) > 0) {
                         // Convert to array
                         $library_rest = [];
                         foreach ($restrictions as $restriction) {
@@ -154,14 +154,14 @@ class BICLibrary
                         $current_rest = $this->getRestrictions($bic);
                         // Check if any of the restrictions were removed
                         foreach ($current_rest as $restriction) {
-                            if (!in_array($restriction, $library_rest, true)) {
+                            if (!\in_array($restriction, $library_rest, true)) {
                                 // Update DateOut for restriction
                                 $this->queries[] = $this->endRestriction($bic, $restriction);
                             }
                         }
                         // Add new restrictions
                         foreach ($library_rest as $restriction) {
-                            if (!in_array($restriction, $current_rest, true)) {
+                            if (!\in_array($restriction, $current_rest, true)) {
                                 // Insert restriction
                                 $this->queries[] = [
                                     'INSERT IGNORE INTO `bic__bic_rstr` (`BIC`, `Rstr`, `RstrDate`) VALUES (:BIC, :Rstr, :RstrDate);',
@@ -178,7 +178,7 @@ class BICLibrary
                         $this->queries[] = $this->endRestriction($bic);
                     }
                     // Process swifts
-                    if (count($swifts) > 0) {
+                    if (\count($swifts) > 0) {
                         // Convert to array
                         $library_swift = [];
                         foreach ($swifts as $swift) {
@@ -189,7 +189,7 @@ class BICLibrary
                         $current_swift = $this->getSWIFTs($bic);
                         // Add all SWIFTs. Updating the default flag if already existing
                         foreach ($library_swift as $swift) {
-                            if (!in_array($swift, $current_swift, true)) {
+                            if (!\in_array($swift, $current_swift, true)) {
                                 // Insert restriction
                                 $this->queries[] = [
                                     'INSERT INTO `bic__swift` (`BIC`, `SWBIC`, `DefaultSWBIC`, `DateIn`) VALUES (:BIC, :SWBIC, :DefaultSWBIC, :file_date) ON DUPLICATE KEY UPDATE `DefaultSWBIC`=:DefaultSWBIC;',
@@ -204,7 +204,7 @@ class BICLibrary
                         }
                         // Close SWIFTs that do not match what we already have. If the default flag has been updated on a previous step, there will be no update here, because it will no longer match the condition
                         foreach ($current_swift as $swift) {
-                            if (!in_array($swift, $library_swift, true)) {
+                            if (!\in_array($swift, $library_swift, true)) {
                                 // Close SWIFT
                                 $this->queries[] = $this->closeSwift($bic, $swift['SWBIC'], $swift['DefaultSWBIC']);
                             }
@@ -214,7 +214,7 @@ class BICLibrary
                         $this->queries[] = $this->closeSwift($bic);
                     }
                     // Process accounts
-                    if (count($accounts) > 0) {
+                    if (\count($accounts) > 0) {
                         // Convert to array
                         $library_accounts = [];
                         $library_accounts_rest = [];
@@ -226,7 +226,7 @@ class BICLibrary
                             unset($library_accounts[$last_key]['AccountStatus']);
                             \ksort($library_accounts[$last_key]);
                             // Convert restrictions
-                            if (count($account->getElementsByTagName('AccRstrList')) > 0) {
+                            if (\count($account->getElementsByTagName('AccRstrList')) > 0) {
                                 foreach ($account->getElementsByTagName('AccRstrList') as $restriction) {
                                     $library_accounts_rest[$library_accounts[$last_key]['Account']][] = Converters::attributesToArray($restriction, true, ['SuccessorBIC']);
                                     \ksort($library_accounts_rest[$library_accounts[$last_key]['Account']]);
@@ -235,13 +235,13 @@ class BICLibrary
                         }
                         // "Remove" accounts
                         foreach ($this->getAccounts($bic) as $account) {
-                            if (!in_array($account, $library_accounts, true)) {
+                            if (!\in_array($account, $library_accounts, true)) {
                                 $this->closeAccount($bic, $account['Account']);
                             }
                         }
                         // Update accounts
                         foreach ($library_accounts as $account) {
-                            if (!empty($account['AccountCBRBIC']) && count($this->getBIC($account['AccountCBRBIC'])) === 0) {
+                            if (!empty($account['AccountCBRBIC']) && \count($this->getBIC($account['AccountCBRBIC'])) === 0) {
                                 $delay = true;
                             }
                             // Update account
@@ -252,8 +252,8 @@ class BICLibrary
                                     ':Account' => $account['Account'],
                                     // There are known cases when BIC was set to '000000000' for some reason, thus we need to replace it with NULL. We also cover the possibility that it will not be present at all.
                                     ':AccountCBRBIC' => [
-                                        ((int)$account['AccountCBRBIC'] === 0 ? NULL : $account['AccountCBRBIC']),
-                                        ((int)$account['AccountCBRBIC'] === 0 ? 'null' : 'string'),
+                                        ((int) $account['AccountCBRBIC'] === 0 ? NULL : $account['AccountCBRBIC']),
+                                        ((int) $account['AccountCBRBIC'] === 0 ? 'null' : 'string'),
                                     ],
                                     ':RegulationAccountType' => $account['RegulationAccountType'],
                                     ':CK' => $account['CK'],
@@ -265,8 +265,8 @@ class BICLibrary
                                 $current_rest = $this->getAccountRestrictions($account['Account']);
                                 // Add all new restrictions
                                 foreach ($library_accounts_rest[$account['Account']] as $restriction) {
-                                    if (!in_array($restriction, $current_rest, true)) {
-                                        if (!empty($restriction['SuccessorBIC']) && count($this->getBIC($restriction['SuccessorBIC'])) === 0) {
+                                    if (!\in_array($restriction, $current_rest, true)) {
+                                        if (!empty($restriction['SuccessorBIC']) && \count($this->getBIC($restriction['SuccessorBIC'])) === 0) {
                                             $delay = true;
                                         }
                                         // Insert restriction
@@ -283,7 +283,7 @@ class BICLibrary
                                 }
                                 // Check if any of the restrictions were removed
                                 foreach ($current_rest as $restriction) {
-                                    if (!in_array($restriction, $library_accounts_rest[$account['Account']], true)) {
+                                    if (!\in_array($restriction, $library_accounts_rest[$account['Account']], true)) {
                                         // End restriction
                                         $this->queries[] = $this->endAccountRestriction($account['Account'], true, ['AccRstr' => $restriction['AccRstr'], 'AccRstrDate' => $restriction['AccRstrDate'],]);
                                     }
@@ -309,7 +309,7 @@ class BICLibrary
                 $this->queries = \array_merge(...$delayed);
                 // Check for removed BICs
                 foreach ($this->getBICs() as $bic) {
-                    if (!in_array($bic, $bics, true)) {
+                    if (!\in_array($bic, $bics, true)) {
                         // Close bic
                         $this->closeBIC($bic);
                     }
@@ -358,9 +358,9 @@ class BICLibrary
         if ($result !== []) {
             \ksort($result, \SORT_NATURAL);
             // Pad BICs with zeros
-            $result['BIC'] = mb_str_pad((string)$result['BIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
+            $result['BIC'] = \mb_str_pad((string) $result['BIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
             if ($result['PrntBIC'] !== NULL) {
-                $result['PrntBIC'] = mb_str_pad((string)$result['PrntBIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
+                $result['PrntBIC'] = \mb_str_pad((string) $result['PrntBIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
             }
         }
         return $result;
@@ -400,7 +400,7 @@ class BICLibrary
         // Pad BICs with zeros
         foreach ($result as $key => $account) {
             if ($account['AccountCBRBIC'] !== NULL) {
-                $result[$key]['AccountCBRBIC'] = mb_str_pad((string)$account['AccountCBRBIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
+                $result[$key]['AccountCBRBIC'] = \mb_str_pad((string) $account['AccountCBRBIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
             }
         }
         return $result;
@@ -417,7 +417,7 @@ class BICLibrary
         );
         foreach ($result as $key => $restriction) {
             if ($restriction['SuccessorBIC'] !== NULL) {
-                $result[$key]['SuccessorBIC'] = mb_str_pad((string)$restriction['SuccessorBIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
+                $result[$key]['SuccessorBIC'] = \mb_str_pad((string) $restriction['SuccessorBIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
             }
         }
         return $result;

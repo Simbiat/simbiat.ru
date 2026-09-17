@@ -49,7 +49,7 @@ class Countables extends Page
         if (empty($path[1]) || !\is_numeric($path[1]) || $path[1] < 1) {
             $path[1] = 1;
         } else {
-            $path[1] = (int)$path[1];
+            $path[1] = (int) $path[1];
         }
         // Update the link of breadcrumb
         $this->breadcrumb[0]['href'] .= $path[0].'/';

@@ -62,7 +62,7 @@ final class Post extends Entity
     {
         // Set a page required for threads
         $data = new Posts([':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`post_id`=:post_id')->listEntities();
-        if (!is_array($data) || empty($data['entities'])) {
+        if (!\is_array($data) || empty($data['entities'])) {
             return [];
         }
         $data = $data['entities'][0];
@@ -70,7 +70,7 @@ final class Post extends Entity
         if (!empty($data['reply_to'])) {
             $data['reply_to'] = new Posts([':post_id' => [$data['reply_to'], 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`post_id`=:post_id')->listEntities();
             /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-            if (is_array($data['reply_to']) && empty($data['reply_to']['entities'])) {
+            if (\is_array($data['reply_to']) && empty($data['reply_to']['entities'])) {
                 $data['reply_to'] = [];
             } else {
                 /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
@@ -98,9 +98,9 @@ final class Post extends Entity
         $this->access_token = $from_db['thread']['access_token'];
         $this->thread_id = $from_db['thread_id'];
         $this->thread_author = $from_db['thread']['author'];
-        $this->system = (bool)$from_db['system'];
-        $this->private = (bool)$from_db['thread']['private'];
-        $this->locked = (bool)$from_db['locked'];
+        $this->system = (bool) $from_db['system'];
+        $this->private = (bool) $from_db['thread']['private'];
+        $this->locked = (bool) $from_db['locked'];
         $this->created = $from_db['created'] !== null ? \strtotime($from_db['created']) : null;
         $this->published = $from_db['published'] !== null ? \strtotime($from_db['published']) : null;
         $this->author = $from_db['author'] ?? SystemUser::Deleted->value;
@@ -113,8 +113,8 @@ final class Post extends Entity
         $this->reply_to = $from_db['reply_to'];
         $this->avatar = $from_db['avatar'];
         $this->text = $from_db['text'];
-        $this->likes = (int)$from_db['likes'];
-        $this->dislikes = (int)$from_db['dislikes'];
+        $this->likes = (int) $from_db['likes'];
+        $this->dislikes = (int) $from_db['dislikes'];
         $this->attachments = $from_db['attachments'];
         $this->is_liked = $from_db['is_liked'];
         $this->page = $from_db['page'];
@@ -130,7 +130,7 @@ final class Post extends Entity
         $posts = [];
         try {
             // Regular list does not fit due to pagination and due to excessive data, so using a custom query to get all posts
-            $posts = Query::query('SELECT `post_id` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `published`<=CURRENT_TIMESTAMP(6)').' ORDER BY `published`;', [':thread_id' => [$thread, 'int']], return: 'column');
+            $posts = Query::query('SELECT `post_id` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `published`<=CURRENT_TIMESTAMP(6)').' ORDER BY `published`;', [':thread_id' => [$thread, 'int']], return: 'column');
         } catch (\Throwable) {
             // Do nothing
         }
@@ -140,7 +140,7 @@ final class Post extends Entity
         // Get ordinal number of the post
         $number = \array_search($this->id, $posts, true);
         // Get page
-        return (int)\ceil(($number + 1) / 50);
+        return (int) \ceil(($number + 1) / 50);
     }
 
     /**
@@ -152,7 +152,7 @@ final class Post extends Entity
     public function getHistory(float $time = 0): array
     {
         try {
-            if (in_array('view_posts_history', $_SESSION['permissions'], true)) {
+            if (\in_array('view_posts_history', $_SESSION['permissions'], true)) {
                 if ($time > 0) {
                     $data = Query::query('SELECT UNIX_TIMESTAMP(`time`) AS `time`, `text` FROM `talks__posts_history` WHERE `post_id`=:post_id AND `time`=:time LIMIT 1;', [':post_id' => [$this->id, 'int'], ':time' => [$time, 'datetime']], return: 'row');
                 } else {
@@ -195,8 +195,8 @@ final class Post extends Entity
         $for_notification['change_type'] = $type;
         $for_notification['editor_id'] = $_SESSION['user_id'];
         $for_notification['editor_name'] = $_SESSION['username'];
-        if ($for_notification['author'] !== $_SESSION['user_id'] && !in_array($for_notification['author'], SystemUser::getSystemUsers(), true)) {
-            (void)new PostChange()->save($for_notification['author'], $for_notification)->send();
+        if ($for_notification['author'] !== $_SESSION['user_id'] && !\in_array($for_notification['author'], SystemUser::getSystemUsers(), true)) {
+            (void) new PostChange()->save($for_notification['author'], $for_notification)->send();
         }
     }
 
@@ -209,7 +209,7 @@ final class Post extends Entity
     public function like(bool $dislike = false): array
     {
         // Check permission
-        if (!in_array('can_like', $_SESSION['permissions'], true)) {
+        if (!\in_array('can_like', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `can_like` permission'];
         }
         $author = Query::query('SELECT `author` FROM `talks__posts` WHERE `post_id`=:post_id;', [':post_id' => [$this->id, 'int']], return: 'value');
@@ -220,7 +220,7 @@ final class Post extends Entity
             return ['http_error' => 400, 'reason' => 'This is not the site for self-pleasuring'];
         }
         // Get the current value (if any)
-        $is_liked = (int)(Query::query('SELECT `like_value` FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
+        $is_liked = (int) (Query::query('SELECT `like_value` FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
             [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], return: 'value'
         ) ?? 0);
         if (($dislike && $is_liked === -1) || (!$dislike && $is_liked === 1)) {
@@ -258,7 +258,7 @@ final class Post extends Entity
     public function move(): array
     {
         // Check permission
-        if (!in_array('move_posts', $_SESSION['permissions'], true)) {
+        if (!\in_array('move_posts', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `move_posts` permission'];
         }
         $data = $_POST['post_data'] ?? [];
@@ -266,7 +266,7 @@ final class Post extends Entity
             return ['http_error' => 400, 'reason' => 'No thread ID provided'];
         }
         if (\is_numeric($data['thread_id'])) {
-            $data['thread_id'] = (int)$data['thread_id'];
+            $data['thread_id'] = (int) $data['thread_id'];
         } else {
             return ['http_error' => 400, 'reason' => 'Parent ID `'.$data['thread_id'].'` is not numeric'];
         }
@@ -305,13 +305,13 @@ final class Post extends Entity
     public function add(bool $first_post = false): array
     {
         // Check permission
-        if (empty($_GET['access_token']) && !in_array('can_post', $_SESSION['permissions'], true)) {
+        if (empty($_GET['access_token']) && !\in_array('can_post', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `can_post` permission'];
         }
         // Sanitize data
         $data = $_POST['post_data'] ?? [];
         $sanitize = $this->sanitizeInput($data);
-        if (is_array($sanitize)) {
+        if (\is_array($sanitize)) {
             return $sanitize;
         }
         try {
@@ -360,14 +360,14 @@ final class Post extends Entity
             }
             foreach ($thread->subscribers as $subscriber) {
                 if ($subscriber !== $_SESSION['user_id']) {
-                    (void)new NewPost()->save($subscriber, ['thread_name' => $thread->name, 'location' => $new_location]);
+                    (void) new NewPost()->save($subscriber, ['thread_name' => $thread->name, 'location' => $new_location]);
                 }
             }
             if (
                 // Not anonymous
-                $thread->author !== (int)$_SESSION['user_id'] &&
+                $thread->author !== (int) $_SESSION['user_id'] &&
                 // Not a subscriber already
-                !in_array((int)$_SESSION['user_id'], $thread->subscribers, true) &&
+                !\in_array((int) $_SESSION['user_id'], $thread->subscribers, true) &&
                 // Has no previous posts in the thread. If there are posts, but not a subscriber - means, that user unsubscribed before.
                 !Query::query(
                     'SELECT `author` FROM `talks__posts` WHERE `thread_id`=:thread_id AND `author`=:user_id AND `post_id`!=:post_id;',
@@ -412,7 +412,7 @@ final class Post extends Entity
         if ($_SESSION['user_id'] !== SystemUser::Unknown->value && Sanitize::whiteString($email ?? '')) {
             return;
         }
-        $new_token = uuid_create(7);
+        $new_token = \uuid_create(7);
         try {
             if ($this->access_token === null) {
                 $affected = Query::query('INSERT INTO `talks__contact_form` (`thread_id`, `email`, `access_token`) VALUES (:thread_id, :email, :token);', [':token' => $new_token, ':email' => [$email, (($email === null || $email === '') ? 'null' : 'string')], ':thread_id' => $this->thread_id], return: 'affected');
@@ -427,9 +427,9 @@ final class Post extends Entity
                     $ticket = \preg_replace('/^\[Contact Form]\s*/ui', '', $this->name);
                     $twig_vars = ['ticket' => $ticket, 'token' => $new_token, 'thread_id' => $this->thread_id];
                     if ($first_post) {
-                        (void)new TicketCreation()->save(SystemUser::Unknown->value, $twig_vars, true, false, $email);
+                        (void) new TicketCreation()->save(SystemUser::Unknown->value, $twig_vars, true, false, $email);
                     } else {
-                        (void)new TicketChange()->save(SystemUser::Unknown->value, $twig_vars, true, false, $email);
+                        (void) new TicketChange()->save(SystemUser::Unknown->value, $twig_vars, true, false, $email);
                     }
                 }
             }
@@ -509,7 +509,7 @@ final class Post extends Entity
     {
         $success = ['response' => true, 'location' => '/talks/threads/'.$this->thread_id.'/'.($this->page > 1 ? '?page='.$this->page : '').'#post_'.$this->id];
         // Check permission
-        if (!in_array('can_post', $_SESSION['permissions'], true)) {
+        if (!\in_array('can_post', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `can_post` permission'];
         }
         // Ensure we have current data to check ownership
@@ -517,23 +517,23 @@ final class Post extends Entity
             $this->get();
         }
         // Check permissions
-        if ($this->owned && !in_array('edit_own_posts', $_SESSION['permissions'], true)) {
+        if ($this->owned && !\in_array('edit_own_posts', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `edit_own_posts` permission'];
         }
-        if (!$this->owned && !in_array('edit_others_posts', $_SESSION['permissions'], true)) {
+        if (!$this->owned && !\in_array('edit_others_posts', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `edit_others_posts` permission'];
         }
-        if ($this->locked && !in_array('edit_locked', $_SESSION['permissions'], true)) {
+        if ($this->locked && !\in_array('edit_locked', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'Post is locked and no `edit_locked` permission'];
         }
         // Sanitize data
         $data = $_POST['post_data'] ?? [];
         $sanitize = $this->sanitizeInput($data);
-        if (is_array($sanitize)) {
+        if (\is_array($sanitize)) {
             return $sanitize;
         }
         // Check if we are moving post and have permission for that
-        if ($this->thread_id !== $data['thread_id'] && !in_array('move_posts', $_SESSION['permissions'], true)) {
+        if ($this->thread_id !== $data['thread_id'] && !\in_array('move_posts', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `move_posts` permission'];
         }
         // Check if the text is different
@@ -635,7 +635,7 @@ final class Post extends Entity
             // And thread has an empty access token or our access token does not equal the thread's token
             ($this->access_token === null || $this->access_token === '' || $this->access_token !== ($_GET['access_token'] ?? '')) &&
             // And we are also lacking `can_post` permission (so most likely posting in the thread directly)
-            !in_array('can_post', $_SESSION['permissions'], true)
+            !\in_array('can_post', $_SESSION['permissions'], true)
         ) {
             // Return same error as when no permission to minimize chances of brute-forcing the token
             return ['http_error' => 403, 'reason' => 'No `can_post` permission'];
@@ -644,11 +644,11 @@ final class Post extends Entity
             return ['http_error' => 400, 'reason' => 'Parent thread with ID `'.$data['parent_id'].'` does not exist'];
         }
         // Check if the parent is closed
-        if ($parent->closed && !in_array('post_in_closed', $_SESSION['permissions'], true)) {
+        if ($parent->closed && !\in_array('post_in_closed', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `post_in_closed` permission to post in closed thread.'];
         }
         // Check if the thread is private, and we can post in it
-        if ($this->private && !$parent->owned && !in_array('view_private', $_SESSION['permissions'], true)) {
+        if ($this->private && !$parent->owned && !\in_array('view_private', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'Cannot post in private and not owned thread'];
         }
         // Check if duplicate post
@@ -687,7 +687,7 @@ final class Post extends Entity
     public function delete(): array
     {
         // Check permission
-        if (!in_array('remove_posts', $_SESSION['permissions'], true)) {
+        if (!\in_array('remove_posts', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `remove_posts` permission'];
         }
         // Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API

@@ -36,16 +36,16 @@ class FFTracker extends Router
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {
-            'search' => new Search()->get(array_slice($path, 1)),
-            'track' => new Track()->get(array_slice($path, 1)),
-            'crests' => new Crests()->get(array_slice($path, 1)),
-            'statistics' => new FFStatistics()->route(array_slice($path, 1)),
-            'characters' => (!empty($path[1]) ? new Character()->get(array_slice($path, 1)) : new Listing()->get($path)),
-            'freecompanies' => (!empty($path[1]) ? new FreeCompany()->get(array_slice($path, 1)) : new Listing()->get($path)),
-            'pvpteams' => (!empty($path[1]) ? new PvPTeam()->get(array_slice($path, 1)) : new Listing()->get($path)),
-            'linkshells' => (!empty($path[1]) ? new Linkshell()->get(array_slice($path, 1)) : new Listing()->get($path)),
-            'crossworld_linkshells' => (!empty($path[1]) ? new CrossworldLinkshell()->get(array_slice($path, 1)) : new Listing()->get($path)),
-            'achievements' => (!empty($path[1]) ? new Achievement()->get(array_slice($path, 1)) : new Listing()->get($path)),
+            'search' => new Search()->get(\array_slice($path, 1)),
+            'track' => new Track()->get(\array_slice($path, 1)),
+            'crests' => new Crests()->get(\array_slice($path, 1)),
+            'statistics' => new FFStatistics()->route(\array_slice($path, 1)),
+            'characters' => (!empty($path[1]) ? new Character()->get(\array_slice($path, 1)) : new Listing()->get($path)),
+            'freecompanies' => (!empty($path[1]) ? new FreeCompany()->get(\array_slice($path, 1)) : new Listing()->get($path)),
+            'pvpteams' => (!empty($path[1]) ? new PvPTeam()->get(\array_slice($path, 1)) : new Listing()->get($path)),
+            'linkshells' => (!empty($path[1]) ? new Linkshell()->get(\array_slice($path, 1)) : new Listing()->get($path)),
+            'crossworld_linkshells' => (!empty($path[1]) ? new CrossworldLinkshell()->get(\array_slice($path, 1)) : new Listing()->get($path)),
+            'achievements' => (!empty($path[1]) ? new Achievement()->get(\array_slice($path, 1)) : new Listing()->get($path)),
             'points' => new Listing()->get($path),
             default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.\implode('`, `', $this->sub_routes).'`.'],
         };

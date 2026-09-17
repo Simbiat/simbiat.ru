@@ -73,7 +73,7 @@ class PvPTeam extends AbstractEntity
             return 'Failed to get all necessary data for PvPTeam '.$this->id;
         }
         if (empty($data['pvpteams'][$this->id]['data_center']) || empty($data['pvpteams'][$this->id]['members'])) {
-            if (!empty($data['pvpteams'][$this->id]['members']) && (int)$data['pvpteams'][$this->id]['members'] === 404) {
+            if (!empty($data['pvpteams'][$this->id]['members']) && (int) $data['pvpteams'][$this->id]['members'] === 404) {
                 $this->delete();
                 return ['404' => true];
             }
@@ -116,7 +116,7 @@ class PvPTeam extends AbstractEntity
         $this->data_center = $from_db['data_center'];
         $this->old_names = $from_db['old_names'];
         foreach ($from_db['members'] as $key => $member) {
-            $from_db['members'][$key]['matches'] = (int)$member['matches'];
+            $from_db['members'][$key]['matches'] = (int) $member['matches'];
         }
         $members = Splitters::splitByKey($from_db['members'], 'current');
         $this->members = $members[1] ?? [];

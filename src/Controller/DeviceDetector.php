@@ -10,7 +10,7 @@ class DeviceDetector extends FileListing
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/simplepages/devicedetector', 'name' => 'Device Detector']
+        ['href' => '/simplepages/devicedetector', 'name' => 'Device Detector'],
     ];
     // Sub service name
     protected string $subservice_name = 'devicedetector';
@@ -42,7 +42,7 @@ class DeviceDetector extends FileListing
 
     protected function extra(array &$file_details): void
     {
-        $file_details['name'] = match($file_details['basename']) {
+        $file_details['name'] = match ($file_details['basename']) {
             'OS2' => 'OS/2',
             'GNULinux' => 'GNU/Linux',
             'MTK  Nucleus' => 'MTK / Nucleus',

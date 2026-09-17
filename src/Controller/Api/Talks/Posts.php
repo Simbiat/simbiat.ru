@@ -51,7 +51,7 @@ class Posts extends Api
                 return ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
             }
         }
-        return match($path[1]) {
+        return match ($path[1]) {
             'like' => $post->like(),
             'dislike' => $post->like(true),
             'edit' => $post->edit(),

@@ -31,7 +31,7 @@ class Images
         /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         if (\is_file($temp['server_path'].'/'.$temp['server_name'])) {
             // Create directory if missing and create it recursively
-            if (!\is_dir(dirname($to)) && !\mkdir(dirname($to), recursive: true) && !\is_dir(dirname($to))) {
+            if (!\is_dir(\dirname($to)) && !\mkdir(\dirname($to), recursive: true) && !\is_dir(\dirname($to))) {
                 return false;
             }
             // Move file
@@ -117,7 +117,7 @@ class Images
         }
         // Get MIME type
         $mime = \mime_content_type($image);
-        if (!in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
+        if (!\in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
             // Presume that this is not something to convert in the first place, which may be normal
             return false;
         }
@@ -179,7 +179,7 @@ class Images
         $chunk = false;
         while (!\feof($fh) && $count < 2) {
             // add the last 20 characters from the previous string, to make sure the searched pattern is not split.
-            $chunk = ($chunk ? mb_substr($chunk, -20, encoding: 'UTF-8') : '').\fread($fh, 1024 * 100); //read 100 kb at a time
+            $chunk = ($chunk ? \mb_substr($chunk, -20, encoding: 'UTF-8') : '').\fread($fh, 1024 * 100); //read 100 kb at a time
             $count += \preg_match_all('/\x00\x21\xF9\x04.{4}\x00[\x2C\x21]/s', $chunk);
         }
         \fclose($fh);
@@ -239,7 +239,7 @@ class Images
         }
         // Get MIME type
         $mime = \mime_content_type($image);
-        if (!in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
+        if (!\in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
             // Unsupported format provided
             return false;
         }
@@ -327,7 +327,7 @@ class Images
         // Using array_merge to suppress PHPStorm's complaints about array keys
         $info = \array_merge(\pathinfo($file));
         $info['mime'] = \mime_content_type($file);
-        if (!in_array($info['mime'], ['image/png', 'image/jpeg', 'image/webp'])) {
+        if (!\in_array($info['mime'], ['image/png', 'image/jpeg', 'image/webp'])) {
             return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }
         $sizes = \getimagesize($file);

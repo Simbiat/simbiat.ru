@@ -74,7 +74,7 @@ final class Section extends Entity
     protected function getFromDB(): array
     {
         // Set the page required for threads
-        $page = (int)($_GET['page'] ?? 1);
+        $page = (int) ($_GET['page'] ?? 1);
         if ($this->id === 'top') {
             $data = [
                 'name' => '',
@@ -95,12 +95,12 @@ final class Section extends Entity
             ];
             // Get children
             if (!$this->for_thread) {
-                $data['children'] = new Sections(where: '`talks__sections`.`parent_id` IS NULL'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__sections`.`published`<=CURRENT_TIMESTAMP(6)'))->listEntities($page);
+                $data['children'] = new Sections(where: '`talks__sections`.`parent_id` IS NULL'.(\in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__sections`.`published`<=CURRENT_TIMESTAMP(6)'))->listEntities($page);
             }
         } else {
             $data = new Sections([':section_id' => [$this->id, 'int']], '`talks__sections`.`section_id`=:section_id')->listEntities();
             // Return empty if nothing was found
-            if (!is_array($data) || empty($data['entities'])) {
+            if (!\is_array($data) || empty($data['entities'])) {
                 return [];
             }
             $data = $data['entities'][0];
@@ -117,7 +117,7 @@ final class Section extends Entity
                     default => $data['detailed_type'],
                 };
             } else {
-                $data['parents'] = \array_reverse($this->getParents((int)$data['parent_id']));
+                $data['parents'] = \array_reverse($this->getParents((int) $data['parent_id']));
                 foreach ($data['parents'] as $parent) {
                     if ($parent['author'] === $_SESSION['user_id']) {
                         $inherited_ownership = true;
@@ -141,10 +141,10 @@ final class Section extends Entity
             // Get children
             $where = '';
             $bindings = [':section_id' => [$this->id, 'int']];
-            if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
+            if (!\in_array('view_scheduled', $_SESSION['permissions'], true)) {
                 $where .= ' AND `talks__sections`.`published`<=CURRENT_TIMESTAMP(6)';
             }
-            if (!in_array('view_private', $_SESSION['permissions'], true)) {
+            if (!\in_array('view_private', $_SESSION['permissions'], true)) {
                 $where .= ' AND (`talks__sections`.`private`=0 OR `talks__sections`.`author`=:user_id)';
                 $bindings[':user_id'] = [$_SESSION['user_id'], 'int'];
             }
@@ -171,10 +171,10 @@ final class Section extends Entity
                     $where .= ' AND `talks__threads`.`author`!=:anonymous';
                     $bindings[':anonymous'] = [SystemUser::Unknown->value, 'int'];
                 }
-                if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
+                if (!\in_array('view_scheduled', $_SESSION['permissions'], true)) {
                     $where .= ' AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6)';
                 }
-                if (!in_array('view_private', $_SESSION['permissions'], true)) {
+                if (!\in_array('view_private', $_SESSION['permissions'], true)) {
                     $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:user_id)';
                     $bindings[':user_id'] = [$_SESSION['user_id'], 'int'];
                 }
@@ -188,10 +188,10 @@ final class Section extends Entity
             if (!empty($data['children']['entities'])) {
                 $where = '';
                 $bindings = [];
-                if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
+                if (!\in_array('view_scheduled', $_SESSION['permissions'], true)) {
                     $where .= '`t`.`published`<=CURRENT_TIMESTAMP(6) AND ';
                 }
-                if (!in_array('view_private', $_SESSION['permissions'], true)) {
+                if (!\in_array('view_private', $_SESSION['permissions'], true)) {
                     $where .= '(`t`.`private`=0 OR `t`.`author`=:user_id) AND ';
                     $bindings[':user_id'] = [$_SESSION['user_id'], 'int'];
                 }
@@ -217,7 +217,7 @@ final class Section extends Entity
                                 )
                                 SELECT COUNT(`thread_id`) AS `thread_count`, SUM(`posts`) AS `post_count` FROM `talks__threads` `t` WHERE `t`.`section_id` IN (SELECT `section_id` FROM `SectionHierarchy`)'.($where === '' ? '' : ' AND '.$where).';',
                         $bindings, return: 'row');
-                    if (!is_array($result)) {
+                    if (!\is_array($result)) {
                         $result = [];
                     }
                     ['thread_count' => $category['threads'], 'post_count' => $category['posts']] = $result;
@@ -227,7 +227,7 @@ final class Section extends Entity
             // Count posts
             if (!empty($data['threads']['entities'])) {
                 foreach ($data['threads']['entities'] as &$thread) {
-                    $thread['posts'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)').';', [':thread_id' => [$thread['id'], 'int']], return: 'count');
+                    $thread['posts'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)').';', [':thread_id' => [$thread['id'], 'int']], return: 'count');
                 }
             }
         }
@@ -246,8 +246,8 @@ final class Section extends Entity
         $this->name = $from_db['name'];
         $this->type = $from_db['detailed_type'] ?? $from_db['type'] ?? 'Category';
         $this->inherited_type = $from_db['inherited_type'] ?? 'Category';
-        $this->system = (bool)$from_db['system'];
-        $this->private = (bool)$from_db['private'];
+        $this->system = (bool) $from_db['system'];
+        $this->private = (bool) $from_db['private'];
         $this->owned = $from_db['owned'];
         $this->closed = $from_db['closed'] !== null ? \strtotime($from_db['closed']) : null;
         $this->created = $from_db['created'] !== null ? \strtotime($from_db['created']) : null;
@@ -257,12 +257,12 @@ final class Section extends Entity
         $this->editor = $from_db['editor'] ?? SystemUser::Deleted->value;
         $this->icon = $from_db['icon'] ?? '/assets/images/talks/category.svg';
         $this->parents = $from_db['parents'];
-        $this->parent_id = (int)($from_db['parent_id'] ?? 0);
+        $this->parent_id = (int) ($from_db['parent_id'] ?? 0);
         $this->description = $from_db['description'] ?? '';
         if (!$this->for_thread) {
             $this->subscribers = $from_db['subscribers'];
-            $this->children = (is_array($from_db['children']) ? $from_db['children'] : ['pages' => $from_db['children'], 'entities' => []]);
-            $this->threads = (is_array($from_db['threads']) ? $from_db['threads'] : ['pages' => $from_db['threads'], 'entities' => []]);
+            $this->children = (\is_array($from_db['children']) ? $from_db['children'] : ['pages' => $from_db['children'], 'entities' => []]);
+            $this->threads = (\is_array($from_db['threads']) ? $from_db['threads'] : ['pages' => $from_db['threads'], 'entities' => []]);
         }
     }
 
@@ -282,7 +282,7 @@ final class Section extends Entity
         }
         // If the parent has its own parent - get it and add to array
         if (!empty($parents[0]['parent_id'])) {
-            $parents = \array_merge($parents, $this->getParents((int)$parents[0]['parent_id']));
+            $parents = \array_merge($parents, $this->getParents((int) $parents[0]['parent_id']));
         } else {
             $parents = \array_reverse($parents);
         }
@@ -316,7 +316,7 @@ final class Section extends Entity
         $for_notification['change_type'] = $type;
         $for_notification['editor_id'] = $_SESSION['user_id'];
         $for_notification['editor_name'] = $_SESSION['username'];
-        if ($for_notification['author'] !== $_SESSION['user_id'] && !in_array($for_notification['author'], SystemUser::getSystemUsers(), true)) {
+        if ($for_notification['author'] !== $_SESSION['user_id'] && !\in_array($for_notification['author'], SystemUser::getSystemUsers(), true)) {
             if ($type === 'change') {
                 $for_notification['changes'] = Checkers::getChanges(
                     [
@@ -337,7 +337,7 @@ final class Section extends Entity
                     return;
                 }
             }
-            (void)new SectionChange()->save($for_notification['author'], $for_notification);
+            (void) new SectionChange()->save($for_notification['author'], $for_notification);
         }
     }
 
@@ -350,7 +350,7 @@ final class Section extends Entity
     public function setPrivate(bool $private = false): array
     {
         // Check permission
-        if (!in_array('edit_sections', $_SESSION['permissions'], true)) {
+        if (!\in_array('edit_sections', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
         }
         try {
@@ -382,7 +382,7 @@ final class Section extends Entity
     public function setClosed(bool $closed = false): array
     {
         // Check permission
-        if (!in_array('edit_sections', $_SESSION['permissions'], true)) {
+        if (!\in_array('edit_sections', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
         }
         try {
@@ -411,7 +411,7 @@ final class Section extends Entity
     public function move(): array
     {
         // Check permission
-        if (!in_array('move_sections', $_SESSION['permissions'], true)) {
+        if (!\in_array('move_sections', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `move_sections` permission'];
         }
         $data = $_POST['section_data'] ?? [];
@@ -453,15 +453,15 @@ final class Section extends Entity
         // Sanitize data
         $data = $_POST['section_data'] ?? [];
         $sanitize = $this->sanitizeInput($data);
-        if (is_array($sanitize)) {
+        if (\is_array($sanitize)) {
             return $sanitize;
         }
         try {
             $new_id = Query::query(
                 'INSERT INTO `talks__sections`(`section_id`, `name`, `description`, `parent_id`, `sequence`, `type`, `closed`, `private`, `published`, `author`, `editor`, `icon`) VALUES (NULL,:name,:description,:parent_id,:sequence,:type,:closed,:private,:time,:user_id,:user_id,:icon);',
                 [
-                    ':name' => mb_trim($data['name'], null, 'UTF-8'),
-                    ':description' => mb_trim($data['description'], null, 'UTF-8'),
+                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
+                    ':description' => \mb_trim($data['description'], null, 'UTF-8'),
                     ':parent_id' => [
                         (empty($data['parent_id']) ? null : $data['parent_id']),
                         (empty($data['parent_id']) ? 'null' : 'int')
@@ -529,7 +529,7 @@ final class Section extends Entity
         // Sanitize data
         $data = $_POST['section_data'] ?? [];
         $sanitize = $this->sanitizeInput($data, true);
-        if (is_array($sanitize)) {
+        if (\is_array($sanitize)) {
             return $sanitize;
         }
         // Check if we are changing to a category and if we have any threads in it
@@ -542,8 +542,8 @@ final class Section extends Entity
                 'UPDATE `talks__sections` SET `name`=:name, `description`=:description, `sequence`=:sequence, `type`=:type, `editor`=:user_id, `icon`=COALESCE(:icon, `icon`) WHERE `section_id`=:section_id;',
                 [
                     ':section_id' => [$this->id, 'int'],
-                    ':name' => mb_trim($data['name'], null, 'UTF-8'),
-                    ':description' => mb_trim($data['description'], null, 'UTF-8'),
+                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
+                    ':description' => \mb_trim($data['description'], null, 'UTF-8'),
                     ':sequence' => [$data['order'], 'int'],
                     ':type' => [$data['type'], 'int'],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
@@ -581,19 +581,19 @@ final class Section extends Entity
         $data['private'] = $data['private'] ?? $this->private;
         $data['private'] = Sanitization::checkboxToBoolean($data['private']);
         $data['clear_icon'] = Sanitization::checkboxToBoolean($data['clear_icon']);
-        $data['icon'] = !(mb_strtolower($data['icon'], 'UTF-8') === 'false');
-        $data['type'] = (int)$data['type'];
+        $data['icon'] = !(\mb_strtolower($data['icon'], 'UTF-8') === 'false');
+        $data['type'] = (int) $data['type'];
         $data['order'] = $data['order'] ?? $this->sequence;
-        $data['order'] = (int)($data['order'] ?? 0);
+        $data['order'] = (int) ($data['order'] ?? 0);
         if ($data['order'] < 0) {
             $data['order'] = 0;
         } elseif ($data['order'] > 99) {
             $data['order'] = 99;
         }
-        if (empty($data['parent_id']) || mb_strtolower($data['parent_id'], 'UTF-8') === 'top') {
+        if (empty($data['parent_id']) || \mb_strtolower($data['parent_id'], 'UTF-8') === 'top') {
             $data['parent_id'] = null;
         } elseif (\is_numeric($data['parent_id'])) {
-            $data['parent_id'] = (int)$data['parent_id'];
+            $data['parent_id'] = (int) $data['parent_id'];
             if ($data['parent_id'] < 0) {
                 $data['parent_id'] = null;
             }
@@ -615,16 +615,16 @@ final class Section extends Entity
         }
         // Check permission
         if ($edit) {
-            if (!$this->owned && !in_array('edit_sections', $_SESSION['permissions'], true)) {
+            if (!$this->owned && !\in_array('edit_sections', $_SESSION['permissions'], true)) {
                 return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
             }
-        } elseif (!$parent->owned && !in_array('add_sections', $_SESSION['permissions'], true)) {
+        } elseif (!$parent->owned && !\in_array('add_sections', $_SESSION['permissions'], true)) {
             // Check permission
             return ['http_error' => 403, 'reason' => 'No `add_sections` permission'];
         }
         // Check that type is allowed in the current section
         $allowed_types = self::getSectionTypes($parent->inherited_type);
-        if (!in_array($data['type'], \array_column($allowed_types, 'value'), true)) {
+        if (!\in_array($data['type'], \array_column($allowed_types, 'value'), true)) {
             return ['http_error' => 400, 'reason' => 'Can\'t create this type in current section'];
         }
         // Check if the section is being created in the appropriate parent
@@ -678,7 +678,7 @@ final class Section extends Entity
                 break;
         }
         // Check if the parent is closed
-        if ($parent->closed && !in_array('post_in_closed', $_SESSION['permissions'], true)) {
+        if ($parent->closed && !\in_array('post_in_closed', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `post_in_closed` permission to create subsection in closed section.'];
         }
         // Check if the name is duplicated
@@ -724,10 +724,10 @@ final class Section extends Entity
     {
         // Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
         if (!$this->attempted) {
-            (void)$this->get();
+            (void) $this->get();
         }
         // Check permission
-        if (!$this->owned && !in_array('remove_sections', $_SESSION['permissions'], true)) {
+        if (!$this->owned && !\in_array('remove_sections', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `remove_sections` permission'];
         }
         if ($this->id === null) {
@@ -769,7 +769,7 @@ final class Section extends Entity
     public static function getSectionTypes(string|int $type = ''): array
     {
         $where = '';
-        switch (mb_strtolower($type, 'UTF-8')) {
+        switch (\mb_strtolower($type, 'UTF-8')) {
             case 'blog':
             case '2':
                 $where = ' WHERE `talks__types`.`type`=\'Blog\'';

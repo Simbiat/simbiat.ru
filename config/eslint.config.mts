@@ -549,6 +549,46 @@ const html_files = {
         }],
         'html/quotes': 'warn',
         'html/no-duplicate-attrs': 'warn',
+        'html/require-attrs': [
+            'warn',
+            {
+                tag: 'img',
+                attr: 'width',
+            },
+            {
+                tag: 'img',
+                attr: 'height',
+            },
+            {
+                tag: 'img',
+                attr: 'crossorigin',
+                value: 'anonymous',
+            },
+            {
+                tag: 'img',
+                attr: 'decoding',
+                value: 'async',
+            },
+            {
+                tag: 'img',
+                attr: 'loading',
+                value: 'lazy',
+            },
+            {
+                tag: 'input',
+                attr: 'crossorigin',
+                value: 'anonymous',
+                conditions: [{
+                    attr: 'type',
+                    kind: 'equal',
+                    value: 'image',
+                }],
+            },
+            {
+                tag: 'button',
+                attr: 'type',
+            },
+        ],
         // Handled by IDE
         'html/indent': 'off',
         // Handled by custom inspections, which are used in all HTML contexts.

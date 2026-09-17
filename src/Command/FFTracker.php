@@ -509,18 +509,18 @@ final class FFTracker
         $data['bugs']['duplicate_names'] = Splitters::splitByKey($duplicate_names, 'type', keep_key: true);
         foreach ($data['bugs']['duplicate_names'] as $entity_type => $names_data) {
             // Split by server/data center
-            $data['bugs']['duplicate_names'][$entity_type] = Splitters::splitByKey($names_data, (in_array($entity_type, ['pvpteam', 'crossworldlinkshell'], true) ? 'data_center' : 'server'));
+            $data['bugs']['duplicate_names'][$entity_type] = Splitters::splitByKey($names_data, (\in_array($entity_type, ['pvpteam', 'crossworldlinkshell'], true) ? 'data_center' : 'server'));
             foreach ($data['bugs']['duplicate_names'][$entity_type] as $server => $server_data) {
                 // Split by name
                 $data['bugs']['duplicate_names'][$entity_type][$server] = Splitters::splitByKey($server_data, 'name', keep_key: true, case_insensitive: true);
                 foreach ($data['bugs']['duplicate_names'][$entity_type][$server] as $name => $name_data) {
-                    if (in_array($entity_type, ['freecompany', 'pvpteam'], true)) {
+                    if (\in_array($entity_type, ['freecompany', 'pvpteam'], true)) {
                         $name_data = AbstractEntity::cleanCrestResults($name_data);
                     }
                     foreach ($name_data as $key => $duplicates) {
                         // Clean up
                         unset($duplicates['crest_part_1'], $duplicates['crest_part_2'], $duplicates['crest_part_3']);
-                        if (in_array($entity_type, ['crossworldlinkshell', 'pvpteam'], true)) {
+                        if (\in_array($entity_type, ['crossworldlinkshell', 'pvpteam'], true)) {
                             unset($duplicates['server']);
                         } else {
                             unset($duplicates['data_center']);

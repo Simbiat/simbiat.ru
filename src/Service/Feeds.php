@@ -24,8 +24,8 @@ class Feeds
             return ['http_error' => 404];
         }
         return match ($uri[0]) {
-            'atom' => $this->feed(array_slice($uri, 1)),
-            'rss' => $this->feed(array_slice($uri, 1), 'rss'),
+            'atom' => $this->feed(\array_slice($uri, 1)),
+            'rss' => $this->feed(\array_slice($uri, 1), 'rss'),
             default => ['http_error' => 404],
         };
     }

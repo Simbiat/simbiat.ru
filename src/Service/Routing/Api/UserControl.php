@@ -24,7 +24,7 @@ class UserControl extends Api
 {
     // Supported edges
     protected array $sub_routes = [
-        'register', 'login', 'remind', 'logout', 'emails', 'notifications', 'password', 'username', 'profile', 'fflink', 'avatars', 'cookies', 'sessions', 'remove'
+        'register', 'login', 'remind', 'logout', 'emails', 'notifications', 'password', 'username', 'profile', 'fflink', 'avatars', 'cookies', 'sessions', 'remove',
     ];
     // Description of the nodes (need to be in same order)
     protected array $routes_description = [
@@ -48,7 +48,7 @@ class UserControl extends Api
 
     protected function genData(array $path): array
     {
-        return match($path[0]) {
+        return match ($path[0]) {
             'remind' => (new Remind)->route(\array_slice($path, 1)),
             'login' => (new Login)->route(\array_slice($path, 1)),
             'logout' => (new Logout)->route(\array_slice($path, 1)),

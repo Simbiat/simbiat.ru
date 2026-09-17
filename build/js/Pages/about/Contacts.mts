@@ -12,52 +12,52 @@ import { Form } from 'NativeElements/Form.mts';
  * Handle scripts on the contact page.
  */
 export class Contacts {
-  private readonly add_thread_form = document.querySelector<HTMLFormElement>('#thread_form');
+    private readonly add_thread_form = document.querySelector<HTMLFormElement>('#thread_form');
 
-  public constructor() {
-    if (this.add_thread_form) {
-      Form.submitIntercept(this.add_thread_form, () => {
-        void this.addThread();
-      });
+    public constructor() {
+        if (this.add_thread_form) {
+            Form.submitIntercept(this.add_thread_form, () => {
+                void this.addThread();
+            });
+        }
     }
-  }
 
-  /**
-   * Create a new thread.
-   */
-  private async addThread(): Promise<void> {
-    if (this.add_thread_form) {
-      //Get the `submit` button
-      const button = this.add_thread_form.querySelector<HTMLButtonElement>('button[type=submit]');
-      //Get form data
-      const form_data = new FormData(this.add_thread_form);
-      //Add time zone
-      form_data.append('thread_data[timezone]', TIMEZONE);
-      await Ajax.request({
-        url: `${location.protocol}//${location.host}/api/contact`,
-        form_data,
-        method: 'POST',
-        button,
-        /**
-         * Further processing on success.
-         * @param response - Response from API endpoint.
-         */
-        onSuccess: async (response) => {
-          if (response.data === true) {
-            //Notify TinyMCE that data was saved
-            const textarea = this.add_thread_form?.querySelector<HTMLTextAreaElement>('textarea');
-            if (textarea && !empty(textarea.id)) {
-              await TinyMCE.save(textarea.id);
-            }
-            void new Snackbar('Thread created. Reloading...', 'success');
-            pageRefresh(response.location);
-          } else if (response.location) {
-            void new Snackbar(`${response.reason} View the thread <a href="${response.location}" target="_blank">here</a>.`, 'failure', 0);
-          }
-        },
-        keep_disabled: true,
-        require_data_true: true,
-      });
+    /**
+     * Create a new thread.
+     */
+    private async addThread(): Promise<void> {
+        if (this.add_thread_form) {
+            //Get the `submit` button
+            const button = this.add_thread_form.querySelector<HTMLButtonElement>('button[type=submit]');
+            //Get form data
+            const form_data = new FormData(this.add_thread_form);
+            //Add time zone
+            form_data.append('thread_data[timezone]', TIMEZONE);
+            await Ajax.request({
+                url: `${location.protocol}//${location.host}/api/contact`,
+                form_data,
+                method: 'POST',
+                button,
+                /**
+                 * Further processing on success.
+                 * @param response - Response from API endpoint.
+                 */
+                onSuccess: async (response) => {
+                    if (response.data === true) {
+                        //Notify TinyMCE that data was saved
+                        const textarea = this.add_thread_form?.querySelector<HTMLTextAreaElement>('textarea');
+                        if (textarea && !empty(textarea.id)) {
+                            await TinyMCE.save(textarea.id);
+                        }
+                        void new Snackbar('Thread created. Reloading...', 'success');
+                        pageRefresh(response.location);
+                    } else if (response.location) {
+                        void new Snackbar(`${response.reason} View the thread <a href="${response.location}" target="_blank">here</a>.`, 'failure', 0);
+                    }
+                },
+                keep_disabled: true,
+                require_data_true: true,
+            });
+        }
     }
-  }
 }

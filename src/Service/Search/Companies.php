@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Service\Search;
+
 use App\Entity\FFXIV\AbstractEntity;
 
 class Companies extends Search

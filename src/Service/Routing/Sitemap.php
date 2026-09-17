@@ -18,7 +18,7 @@ class Sitemap extends Router
     ];
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/sitemap/', 'name' => 'Sitemap']
+        ['href' => '/sitemap/', 'name' => 'Sitemap'],
     ];
     protected string $title = 'Sitemap';
     protected string $h1 = 'Sitemap';
@@ -38,7 +38,7 @@ class Sitemap extends Router
         if (empty($path[0])) {
             $path[0] = 'index';
         }
-        $result = match($path[0]) {
+        $result = match ($path[0]) {
             'general' => new General()->get($path),
             'bics', 'ffxiv_characters', 'ffxiv_freecompanies', 'ffxiv_linkshells', 'ffxiv_pvpteams', 'ffxiv_achievements', 'threads', 'users' => new Countables()->get($path),
             'fftracker' => new \App\Controller\Sitemap\FFTracker()->get($path),

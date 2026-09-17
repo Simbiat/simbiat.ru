@@ -116,7 +116,7 @@ final class Talks
                 $tickets = Query::query('SELECT `thread_id` FROM `talks__threads` LEFT JOIN `talks__sections` ON `talks__threads`.`section_id`=`talks__sections`.`section_id` WHERE `type`=:type AND `last_post` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 MONTH);', [':type' => TalkType::Support->value], return: 'column');
                 foreach ($tickets as $ticket) {
                     try {
-                        (void)new Thread($ticket)->setClosed(true);
+                        (void) new Thread($ticket)->setClosed(true);
                     } catch (\Throwable $throwable) {
                         Errors::error_log($throwable);
                     }

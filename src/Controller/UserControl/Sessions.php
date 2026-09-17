@@ -75,7 +75,7 @@ class Sessions extends Page
                     $output_array[$type][$key]['country'] = '';
                     $output_array[$type][$key]['city'] = '';
                 }
-                HomePage::$device_detector->setUserAgent((string)$item['user_agent']);
+                HomePage::$device_detector->setUserAgent((string) $item['user_agent']);
                 HomePage::$device_detector->setClientHints();
                 HomePage::$device_detector->parse();
                 // Get OS

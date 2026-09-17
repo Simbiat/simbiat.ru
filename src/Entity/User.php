@@ -113,7 +113,7 @@ final class User extends Entity
         }
         // Get user's groups
         $db_data['groups'] = Query::query('SELECT `group_id` FROM `uc__user_to_group` WHERE `user_id`=:user_id', ['user_id' => [$this->id, 'int']], return: 'column');
-        if (in_array(5, $db_data['groups'], true)) {
+        if (\in_array(5, $db_data['groups'], true)) {
             $this->banned = true;
         }
         // Get permissions
@@ -122,7 +122,7 @@ final class User extends Entity
             // System users need to be treated as not activated
             $db_data['activated'] = false;
         } else {
-            $db_data['activated'] = !in_array(Config::$group_ids['Unverified'], $db_data['groups'], true);
+            $db_data['activated'] = !\in_array(Config::$group_ids['Unverified'], $db_data['groups'], true);
         }
         $db_data['current_avatar'] = $this->getAvatar();
         return $db_data;
@@ -157,7 +157,7 @@ final class User extends Entity
             'changelog' => empty($from_db['changelog']) ? null : $from_db['changelog'],
             'knowledgebase' => empty($from_db['knowledgebase']) ? null : $from_db['knowledgebase'],
         ];
-        $this->system = (bool)$from_db['system'];
+        $this->system = (bool) $from_db['system'];
         // Clean up the array
         unset($from_db['system'], $from_db['parent_id'], $from_db['parentname'], $from_db['first_name'], $from_db['last_name'], $from_db['middle_name'], $from_db['father_name'], $from_db['prefix'],
             $from_db['suffix'], $from_db['registered'], $from_db['updated'], $from_db['birthday'], $from_db['blog'], $from_db['changelog'], $from_db['knowledgebase']);
@@ -332,7 +332,7 @@ final class User extends Entity
         if ($this->system) {
             return ['http_error' => 403, 'reason' => 'Can\'t modify system user'];
         }
-        if (!empty($_POST['avatar']) && is_string($_POST['avatar'])) {
+        if (!empty($_POST['avatar']) && \is_string($_POST['avatar'])) {
             $file_id = $_POST['avatar'];
         }
         // Log the change
@@ -469,7 +469,7 @@ final class User extends Entity
         }
         // Query for time zone
         $_POST['details']['timezone'] = Sanitization::removeNonPrintable($_POST['details']['timezone'] ?? 'UTC', true);
-        if ($this->timezone !== $_POST['details']['timezone'] && in_array($_POST['details']['timezone'], \timezone_identifiers_list(), true)) {
+        if ($this->timezone !== $_POST['details']['timezone'] && \in_array($_POST['details']['timezone'], \timezone_identifiers_list(), true)) {
             $log['timezone'] = ['old' => $this->timezone, 'new' => $_POST['details']['timezone']];
             $queries[] = [
                 'UPDATE `uc__users` SET `timezone`=:timezone WHERE `user_id`=:user_id;',
@@ -508,7 +508,7 @@ final class User extends Entity
         // Query for website
         if (isset($_POST['details']['website'])) {
             $_POST['details']['website'] = Security::sanitizeURL($_POST['details']['website']);
-            if (!empty($_POST['details']['website']) || mb_strlen($_POST['details']['website'], 'UTF-8') > 255) {
+            if (!empty($_POST['details']['website']) || \mb_strlen($_POST['details']['website'], 'UTF-8') > 255) {
                 $_POST['details']['website'] = $this->website ?? null;
             }
             if ($this->website !== $_POST['details']['website']) {
@@ -641,18 +641,18 @@ final class User extends Entity
         $this->setId($credentials['user_id']);
         // Get permissions
         $_SESSION['permissions'] = $this->getPermissions();
-        if (!in_array('can_login', $_SESSION['permissions'], true)) {
-            Security::log(LogType::FailedLogin->value, 'Attempt to login with account that can\'t login', user_id: (int)$this->id);
+        if (!\in_array('can_login', $_SESSION['permissions'], true)) {
+            Security::log(LogType::FailedLogin->value, 'Attempt to login with account that can\'t login', user_id: (int) $this->id);
             return ['http_error' => 403, 'reason' => 'No `can_login` permission'];
         }
         // Check for strikes
         if ($credentials['strikes'] >= 5) {
-            Security::log(LogType::FailedLogin->value, 'Too many failed login attempts', user_id: (int)$this->id);
+            Security::log(LogType::FailedLogin->value, 'Too many failed login attempts', user_id: (int) $this->id);
             return ['http_error' => 403, 'reason' => 'Too many failed login attempts. Try password reset.'];
         }
         // Check the password
         if (!$this->passValid($_POST['signinup']['password'], $credentials['password'])) {
-            Security::log(LogType::FailedLogin->value, 'Bad password', user_id: (int)$this->id);
+            Security::log(LogType::FailedLogin->value, 'Bad password', user_id: (int) $this->id);
             return ['http_error' => 403, 'reason' => 'Wrong login or password'];
         }
         // Add username and user_id to the session
@@ -661,9 +661,9 @@ final class User extends Entity
         // Set cookie if we have "rememberme" checked
         if (!empty($_POST['signinup']['rememberme'])) {
             $this->rememberMe();
-            Security::log(LogType::Login->value, 'Successful login with cookie setup', 'Cookie ID is '.($_SESSION['cookie_id'] ?? 'NULL'), (int)$this->id);
+            Security::log(LogType::Login->value, 'Successful login with cookie setup', 'Cookie ID is '.($_SESSION['cookie_id'] ?? 'NULL'), (int) $this->id);
         } else {
-            Security::log(LogType::Login->value, 'Successful login', user_id: (int)$this->id);
+            Security::log(LogType::Login->value, 'Successful login', user_id: (int) $this->id);
         }
         if (\session_status() === \PHP_SESSION_ACTIVE) {
             Security::session_regenerate_id(true);
@@ -704,8 +704,8 @@ final class User extends Entity
             $this->setId($credentials['user_id']);
             // Get permissions
             $_SESSION['permissions'] = $this->getPermissions();
-            if (!in_array('can_login', $_SESSION['permissions'], true)) {
-                Security::log(LogType::PasswordReset->value, 'Attempt to reset password for account that can\'t login', user_id: (int)$this->id);
+            if (!\in_array('can_login', $_SESSION['permissions'], true)) {
+                Security::log(LogType::PasswordReset->value, 'Attempt to reset password for account that can\'t login', user_id: (int) $this->id);
                 // Return fake "true" to minimize spoofing registered emails
                 return ['response' => true];
             }
@@ -713,7 +713,7 @@ final class User extends Entity
             try {
                 // Write the reset token to DB
                 Query::query('UPDATE `uc__users` SET `password_reset`=:token WHERE `user_id`=:user_id', [':user_id' => $credentials['user_id'], ':token' => Security::passHash($token)]);
-                Security::log(LogType::PasswordReset->value, 'Attempt to reset password for account', user_id: (int)$this->id);
+                Security::log(LogType::PasswordReset->value, 'Attempt to reset password for account', user_id: (int) $this->id);
                 new PasswordReset()->save($this->id, ['token' => $token, 'user_id' => $credentials['user_id']], true, false, $credentials['email'])->send();
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Password reset failed'];
@@ -743,7 +743,7 @@ final class User extends Entity
             $pass = \bin2hex(\random_bytes(128));
             $hashed_pass = Security::passHash($pass);
             // Write cookie data to DB
-            if (!($this->id === null || $this->id === '') || (!empty($_SESSION['user_id']) && !in_array((int)$_SESSION['user_id'], SystemUser::getSystemUsers(), true))) {
+            if (!($this->id === null || $this->id === '') || (!empty($_SESSION['user_id']) && !\in_array((int) $_SESSION['user_id'], SystemUser::getSystemUsers(), true))) {
                 // Check if a cookie exists and get its `validator`. This also helps with race conditions a bit
                 $current_pass = Query::query('SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
                     [
@@ -785,7 +785,7 @@ final class User extends Entity
                     // Another attempt to prevent race conditions
                     if ($current_pass === $hashed_pass) {
                         /** @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
-                        setcookie('rememberme_'.Config::$http_host,
+                        \setcookie('rememberme_'.Config::$http_host,
                             \json_encode(['cookie_id' => Security::encrypt($cookie_id), 'pass' => Security::encrypt($pass)], \JSON_THROW_ON_ERROR | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION),
                             \array_merge(Config::$cookie_settings, ['expires' => \time() + 2592000]),
                         );
@@ -891,7 +891,7 @@ final class User extends Entity
         return Query::query(
             'UPDATE `uc__users` SET `strikes`=0, `password_reset`=NULL WHERE `user_id`=:user_id;',
             [
-                ':user_id' => [(string)$this->id, 'string']
+                ':user_id' => [(string) $this->id, 'string']
             ]
         );
     }
@@ -940,7 +940,7 @@ final class User extends Entity
         $result = Query::query(
             'DELETE FROM `uc__sessions` WHERE `user_id`=:user_id AND `session_id`=:session;',
             [
-                ':user_id' => [(string)$this->id, 'string'],
+                ':user_id' => [(string) $this->id, 'string'],
                 ':session' => $_POST['session'],
             ], return: 'affected'
         );
@@ -959,17 +959,17 @@ final class User extends Entity
     {
         $where = '`talks__threads`.`author`=:user_id';
         $bindings = [':user_id' => [$this->id, 'int'],];
-        if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
+        if (!\in_array('view_scheduled', $_SESSION['permissions'], true)) {
             $where .= ' AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6)';
         }
-        if (!in_array('view_private', $_SESSION['permissions'], true)) {
+        if (!\in_array('view_private', $_SESSION['permissions'], true)) {
             $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:author)';
             $bindings[':author'] = [$_SESSION['user_id'], 'int'];
         }
         $threads = new Threads($bindings, $where, '`talks__threads`.`published` DESC')->listEntities();
         // Clean any threads with empty `first_post` (means the thread is either empty or is in progress of creation)
         /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-        if (is_array($threads) && is_array($threads['entities'])) {
+        if (\is_array($threads) && \is_array($threads['entities'])) {
             /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             foreach ($threads['entities'] as $key => $thread) {
                 if (empty($thread['first_post'])) {
@@ -994,15 +994,15 @@ final class User extends Entity
     {
         $where = '`talks__posts`.`author`=:author';
         $bindings = [':author' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int'],];
-        if (!$this->id !== $_SESSION['user_id'] && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
+        if (!$this->id !== $_SESSION['user_id'] && !\in_array('view_scheduled', $_SESSION['permissions'], true)) {
             $where .= ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)';
         }
-        if (!$this->id !== $_SESSION['user_id'] && !in_array('view_private', $_SESSION['permissions'], true)) {
+        if (!$this->id !== $_SESSION['user_id'] && !\in_array('view_private', $_SESSION['permissions'], true)) {
             $where .= ' AND `talks__threads`.`private`=0';
         }
         $posts = new Posts($bindings, $where, '`talks__posts`.`published` DESC')->listEntities();
         /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-        if (!is_array($posts) || !is_array($posts['entities'])) {
+        if (!\is_array($posts) || !\is_array($posts['entities'])) {
             return [];
         }
         /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
@@ -1050,17 +1050,17 @@ final class User extends Entity
         // Get posts
         $where = '';
         $bindings = [':user_id' => [$_SESSION['user_id'], 'int']];
-        if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
+        if (!\in_array('view_scheduled', $_SESSION['permissions'], true)) {
             $where .= ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)';
         }
-        if (!in_array('view_private', $_SESSION['permissions'], true)) {
+        if (!\in_array('view_private', $_SESSION['permissions'], true)) {
             $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:author)';
             $bindings[':author'] = [$_SESSION['user_id'], 'int'];
         }
         $bindings[':postIDs'] = [$ids, 'in', 'int'];
         $posts = new Posts($bindings, '`talks__posts`.`post_id` IN (:postIDs)'.$where, '`talks__posts`.`published` DESC')->listEntities();
         /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-        if (is_array($posts) && is_array($posts['entities'])) {
+        if (\is_array($posts) && \is_array($posts['entities'])) {
             // Get like value for each post if the current user has appropriate permission
             /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             foreach ($posts['entities'] as &$post) {
@@ -1085,7 +1085,7 @@ final class User extends Entity
         // Remove rememberme cookie
         // From browser
         /** @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
-        setcookie('rememberme_'.Config::$http_host, '',
+        \setcookie('rememberme_'.Config::$http_host, '',
             \array_merge(Config::$cookie_settings, ['expires' => \time() - 3600])
         );
         // From DB
@@ -1119,12 +1119,12 @@ final class User extends Entity
         if (empty($_POST['signinup']['password'])) {
             return ['http_error' => 400, 'reason' => 'No password provided'];
         }
-        if (mb_strlen($_POST['signinup']['password'], 'UTF-8') < 8) {
+        if (\mb_strlen($_POST['signinup']['password'], 'UTF-8') < 8) {
             return ['http_error' => 400, 'reason' => 'Password is shorter than 8 symbols'];
         }
         // Get time zone
         $timezone = $_POST['signinup']['timezone'] ?? 'UTC';
-        if (!in_array($timezone, \timezone_identifiers_list(), true)) {
+        if (!\in_array($timezone, \timezone_identifiers_list(), true)) {
             $timezone = 'UTC';
         }
         // Check if banned or in use

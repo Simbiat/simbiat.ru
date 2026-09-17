@@ -35,10 +35,10 @@ class Api extends \App\Controller\Api\Api
     protected function genData(array $path): array
     {
         return match ($path[0]) {
-            'fftracker' => new \App\Service\Routing\Api\FFTracker()->route(array_slice($path, 1)),
-            'bictracker' => new \App\Service\Routing\Api\BICTracker()->route(array_slice($path, 1)),
-            'uc' => new \App\Service\Routing\Api\UserControl()->route(array_slice($path, 1)),
-            'talks' => new \App\Service\Routing\Api\Talks()->route(array_slice($path, 1)),
+            'fftracker' => new \App\Service\Routing\Api\FFTracker()->route(\array_slice($path, 1)),
+            'bictracker' => new \App\Service\Routing\Api\BICTracker()->route(\array_slice($path, 1)),
+            'uc' => new \App\Service\Routing\Api\UserControl()->route(\array_slice($path, 1)),
+            'talks' => new \App\Service\Routing\Api\Talks()->route(\array_slice($path, 1)),
             // Upload does not require any further paths
             'upload' => new Upload()->route([]),
             // Contact does not require any further paths

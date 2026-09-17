@@ -57,7 +57,7 @@ final class Extension extends AbstractExtension implements GlobalsInterface
             'site_name' => Config::$site_name,
             'domain' => Config::$base_url,
             'canonical' => HomePage::$canonical,
-            'url' => mb_rtrim(Config::$base_url.($_SERVER['REQUEST_URI'] ?? ''), '/', 'UTF-8'),
+            'url' => \mb_rtrim(Config::$base_url.($_SERVER['REQUEST_URI'] ?? ''), '/', 'UTF-8'),
             'maintenance' => 1,
             'registration' => 0,
         ];

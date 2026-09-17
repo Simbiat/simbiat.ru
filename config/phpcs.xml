@@ -29,9 +29,6 @@
     <arg name="colors"/>
     <arg name="parallel" value="8"/>
 
-    <!-- Assume modern PHP -->
-    <config name="testVersion" value="8.3-"/>
-
     <!-- Base standards -->
     <rule ref="PSR12">
         <exclude name="PSR12.Operators.OperatorSpacing"/>
@@ -71,6 +68,8 @@
         <!-- Conflicts Symfony.Commenting.FunctionComment.MissingReturn -->
         <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.UselessAnnotation"/>
         <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.UselessAnnotation"/>
+        <!-- This sniff has been deprecated since Slevomat Coding Standard 8.16.0 and will be removed in Slevomat Coding Standard 9.0.0. Use SlevomatCodingStandard.TypeHints.DNFTypeHintFormat instead -->
+        <exclude name="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat"/>
     </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
         <properties>
@@ -95,6 +94,8 @@
     <rule ref="SlevomatCodingStandard.Classes">
         <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineAfterOpeningBrace"/>
         <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineBeforeClosingBrace"/>
+        <exclude name="SlevomatCodingStandard.Classes.ClassLength.ClassTooLong"/>
+
     </rule>
 
     <!-- Functions -->
@@ -178,6 +179,9 @@
     </rule>
     <rule ref="SlevomatCodingStandard.Files.LineLength.LineTooLong">
         <exclude name="SlevomatCodingStandard.Files.LineLength.LineTooLong"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Files.FileLength.FileTooLong">
+        <exclude name="SlevomatCodingStandard.Files.FileLength.FileTooLong"/>
     </rule>
     <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing">
         <properties>

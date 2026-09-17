@@ -209,7 +209,7 @@ final class Clean
                     } else {
                         $full_path = Config::$uploaded;
                     }
-                    $full_path .= '/'.mb_substr($file['file_id'], 0, 2, 'UTF-8').'/'.mb_substr($file['file_id'], 2, 2, 'UTF-8').'/'.mb_substr($file['file_id'], 4, 2, 'UTF-8').'/'.$file['file_id'].'.'.$file['extension'];
+                    $full_path .= '/'.\mb_substr($file['file_id'], 0, 2, 'UTF-8').'/'.\mb_substr($file['file_id'], 2, 2, 'UTF-8').'/'.\mb_substr($file['file_id'], 4, 2, 'UTF-8').'/'.$file['file_id'].'.'.$file['extension'];
                     // Log the removal
                     Security::log(LogType::FileUpload->value, 'Automatically deleted file', $file['file_id'].'.'.$file['extension'], user_id: $file['user_id']);
                     // Remove from DB
@@ -228,7 +228,7 @@ final class Clean
                     // Ignore directories and .gitignore and check if the file's ID is present in a database
                     if (!\is_dir($file) && \preg_match('/\.gitignore$/ui', $file) !== 1 && !\in_array(\pathinfo($file, \PATHINFO_FILENAME), $db_files, true)) {
                         // Get a directory tree for the file
-                        $dirs = [dirname($file), dirname($file, 2), dirname($file, 3)];
+                        $dirs = [\dirname($file), \dirname($file, 2), \dirname($file, 3)];
                         // Log the removal
                         Security::log(LogType::FileUpload->value, 'Automatically deleted file', \basename($file), user_id: SystemUser::System->value);
                         // Remove the file

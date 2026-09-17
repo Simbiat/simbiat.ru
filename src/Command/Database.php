@@ -10,7 +10,6 @@ use Doctrine\DBAL\Connection;
 use Simbiat\Database\Maintainer\Analyzer;
 use Simbiat\Database\Maintainer\Settings;
 use Simbiat\Database\Manage;
-use Simbiat\Database\Query;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -101,7 +100,7 @@ final class Database
                 }
                 // Get DDL statement
                 if (\preg_match('/^(cron|maintainer)__/ui', $table['table']) !== 1) {
-                    \file_put_contents(Config::$ddl_dir.mb_str_pad((string)($order + 1), 3, '0', \STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', mb_trim($create, null, 'UTF-8'));
+                    \file_put_contents(Config::$ddl_dir.\mb_str_pad((string) ($order + 1), 3, '0', \STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', \mb_trim($create, null, 'UTF-8'));
                 }
             }
         } catch (\Throwable $throwable) {

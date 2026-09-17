@@ -121,7 +121,7 @@ abstract class Search
         // Count entities first
         $count = $this->countEntities($what);
         // Count pages
-        $pages = (int)\ceil($count / $this->list_items);
+        $pages = (int) \ceil($count / $this->list_items);
         if ($pages < 1) {
             return ['count' => $count, 'pages' => $pages, 'entities' => []];
         }
@@ -278,6 +278,6 @@ abstract class Search
             $result .= '(MATCH (`'.$field.'`) AGAINST (:what IN BOOLEAN MODE))*'.($factor - $key).' + ';
         }
         // Remove the last +, close the brackets and return
-        return mb_trim($result, ' +', 'UTF-8').')';
+        return \mb_trim($result, ' +', 'UTF-8').')';
     }
 }

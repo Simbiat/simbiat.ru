@@ -2,8 +2,6 @@
   <profile version="1.0">
     <option name="myName" value="Project Default" />
     <inspection_tool class="7387f796-c82a-3028-87f9-07527621e7c8" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
-    <inspection_tool class="7d78d672-300c-3398-b4a6-a376cf564ba3" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
-    <inspection_tool class="869a30f7-35aa-3f0c-b967-c25fee0428cc" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="8da76c0a-418d-319a-9904-af5dfebefb78" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="AssignmentResultUsedJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AssignmentToForLoopParameterJS" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -49,22 +47,6 @@
     <inspection_tool class="CustomRegExpInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myConfigurations">
         <list>
-          <RegExpInspectionConfiguration>
-            <option name="description" value="There is no need for `role=&quot;button&quot;` in `button` elements" />
-            <option name="name" value="Redundant button role" />
-            <option name="suppressId" value="ButtonRedundantRole" />
-            <option name="uuid" value="b28144e8-301e-359d-8d2f-1d7ce8caf65d" />
-            <option name="patterns">
-              <list>
-                <InspectionPattern>
-                  <option name="regExp" value="&lt;button(.*)(\s+role=&quot;button&quot;)" />
-                  <option name="_fileType" value="HTML" />
-                  <option name="searchContext" value="ANY" />
-                  <option name="replacement" value="&lt;button$1" />
-                </InspectionPattern>
-              </list>
-            </option>
-          </RegExpInspectionConfiguration>
           <RegExpInspectionConfiguration>
             <option name="description" value="Use CURRENT date/time functions instead of UTC" />
             <option name="name" value="Prefer UTC to CURRENT" />
@@ -499,18 +481,6 @@
         <constraint name="content" within="" contains="" />
         <constraint name="label_attrs" minCount="0" maxCount="2147483647" within="" contains="" />
       </replaceConfiguration>
-      <searchConfiguration name="Empty height attribute" description="Image has empty `height` attribute" suppressId="NoEmptyHeightAttribute" problemDescriptor="Use non-empty `height` attribute to minimize content shifting" text="&lt;$tag$ $attribute$=&quot;$value$&quot; /&gt;" recursive="true" caseInsensitive="true" type="HTML">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="tag" regexp="img" within="" contains="" />
-        <constraint name="attribute" regexp="height" target="true" within="" contains="" />
-        <constraint name="value" regexp="^$" within="" contains="" />
-      </searchConfiguration>
-      <searchConfiguration name="Empty width attribute" description="Image has empty `width` attribute" suppressId="NoEmptyWidthAttribute" problemDescriptor="Use non-empty `width` attribute to minimize content shifting" text="&lt;$tag$ $attribute$=&quot;$value$&quot; /&gt;" recursive="true" caseInsensitive="true" type="HTML">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="tag" regexp="img" within="" contains="" />
-        <constraint name="attribute" regexp="width" target="true" within="" contains="" />
-        <constraint name="value" regexp="^$" within="" contains="" />
-      </searchConfiguration>
       <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" description="Recommend explicit encoding in multibyte functions" suppressId="NoMBExplicitEncoding" problemDescriptor="Use explicit encoding in multibyte functions" text="mb_check_encoding($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_check_encoding($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
         <constraint name="p" within="" contains="" />
@@ -720,47 +690,12 @@
         <constraint name="func" regexp="^preg_(filter|grep|match|match_all|replace|replace_callback|replace_callback_array|split)$" within="" contains="" />
         <constraint name="arg" maxCount="2147483647" within="" contains="" />
       </searchConfiguration>
-      <replaceConfiguration name="Missing crossorigin attribute" uuid="14c1cc58-94c6-378d-a191-5f9c0701f99e" description="Image is missing `crossorigin` attribute" suppressId="NoImgCrossoriginAttribute" problemDescriptor="Use `crossorigin=&quot;anonymous&quot;` attribute for images on same host" text="&lt;$tag$ $attr$ /&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attr$ crossorigin=&quot;anonymous&quot; /&gt;">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="tag" script="&quot;def src = tag.getAttribute(&quot;src&quot;)?.value&#10;if (src == null) return true&#10;&#10;// internal links begin with &quot;/&quot;, &quot;#&quot;, &quot;?&quot;&#10;def external = src.startsWith(&quot;http&quot;)&#10;if (external) return false&#10;&#10;def crossorigin = tag.getAttribute(&quot;crossorigin&quot;)?.value&#10;return crossorigin == null&quot;" regexp="img" within="" contains="" />
-        <constraint name="attr" minCount="0" maxCount="2147483647" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Missing crossorigin attribute" uuid="14c1cc58-94c6-378d-a191-5f9c0701f99e" text="&lt;$tag$ $attr$ /&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;input $attr$ crossorigin=&quot;anonymous&quot; /&gt;">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="tag" script="&quot;def input_type = tag.getAttribute(&quot;type&quot;)?.value&#10;if (input_type != &quot;image&quot;) return false&#10;&#10;def src = tag.getAttribute(&quot;src&quot;)?.value&#10;if (src == null) return true&#10;&#10;// internal links begin with &quot;/&quot;, &quot;#&quot;, &quot;?&quot;&#10;def external = src.startsWith(&quot;http&quot;)&#10;if (external) return false&#10;&#10;def crossorigin = tag.getAttribute(&quot;crossorigin&quot;)?.value&#10;return crossorigin == null&quot;" regexp="input" within="" contains="" />
-        <constraint name="attr" minCount="0" maxCount="2147483647" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Missing decoding attribute" uuid="7d78d672-300c-3398-b4a6-a376cf564ba3" description="Image is missing `decoding` attribute" suppressId="NoImgDecodingAttribute" problemDescriptor="Use `decoding=&quot;async&quot;` attribute" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attributes$ decoding=&quot;async&quot;&gt;">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
-        <constraint name="tag" script="&quot;tag.getAttribute(&quot;decoding&quot;) == null&quot;" regexp="img" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Missing dimensions attributes" uuid="8faa9e07-8538-3bd4-83fd-cabf5e4db9a5" description="Image is missing `width` and/or `height` attributes" suppressId="NoImgDimensionAttributes" problemDescriptor="Use non-empty `width` and `height` attributes to minimize content shifting" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attributes$ width=&quot;&quot; height=&quot;&quot;&gt;">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
-        <constraint name="tag" script="&quot;tag.getAttribute(&quot;width&quot;) == null &amp;&amp; tag.getAttribute(&quot;height&quot;) == null&quot;" regexp="img" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Missing height attribute" description="Image is missing `height` attribute" suppressId="NoMissingHeightAttribute" problemDescriptor="Use non-empty `height` attribute to minimize content shifting" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attributes$ height=&quot;&quot;&gt;">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
-        <constraint name="tag" script="&quot;tag.getAttribute(&quot;height&quot;) == null &amp;&amp; tag.getAttribute(&quot;width&quot;) !== null&quot;" regexp="img" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Missing loading attribute" uuid="869a30f7-35aa-3f0c-b967-c25fee0428cc" description="Image is missing `loading` attribute" suppressId="NoImgLoadingAttribute" problemDescriptor="Use `loading=&quot;lazy&quot;` attribute" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attributes$ loading=&quot;lazy&quot;&gt;">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
-        <constraint name="tag" script="&quot;tag.getAttribute(&quot;loading&quot;) == null&quot;" regexp="img" within="" contains="" />
-      </replaceConfiguration>
       <searchConfiguration name="Missing Unicode flag" uuid="1862d894-bdc2-301a-83f2-68d306d11363" description="Use Unicode flag (`u`) in regexp" suppressId="NoPHPRegexpUFlag" problemDescriptor="Use Unicode flag (`u`) in regexp" text="$func$($pattern$, $arg$)" recursive="true" caseInsensitive="true" type="PHP">
         <constraint name="__context__" within="" contains="" />
         <constraint name="pattern" script="&quot;def text = __context__.text&#10;if (text.length() &lt; 2) return false&#10;&#10;// Ignore non-literal arguments (variables, constants, function calls, etc.)&#10;if (!text.startsWith('&quot;') &amp;&amp; !text.startsWith(&quot;'&quot;)) return false&#10;&#10;def inner = text[1..-2]&#10;if (inner.isEmpty()) return false&#10;&#10;// first char is the regex delimiter&#10;char delim = inner.charAt(0)&#10;int lastDelim = inner.lastIndexOf((int) delim)&#10;if (lastDelim &lt;= 0) return false&#10;&#10;String flags = inner.substring(lastDelim + 1)&#10;return !flags.contains('u')&quot;" within="" contains="" />
         <constraint name="func" regexp="^preg_(filter|grep|match|match_all|replace|replace_callback|replace_callback_array|split)$" within="" contains="" />
         <constraint name="arg" maxCount="2147483647" within="" contains="" />
       </searchConfiguration>
-      <replaceConfiguration name="Missing width attribute" uuid="2bd1bce4-e6e7-32d0-9e93-961b0b50697d" description="Image is missing `width` attribute" suppressId="NoMissingWidthAttribute" problemDescriptor="Use non-empty `width` attribute to minimize content shifting" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attributes$ width=&quot;&quot;&gt;">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
-        <constraint name="tag" script="&quot;tag.getAttribute(&quot;width&quot;) == null &amp;&amp; tag.getAttribute(&quot;height&quot;) !== null&quot;" regexp="img" within="" contains="" />
-      </replaceConfiguration>
       <replaceConfiguration name="Prefer `whiteString()`" uuid="c3808b79-f378-3ace-8e38-38ae7b94a133" description="Use custom sanitizer to check for whitespace-only strings" suppressId="NoIsWhitespaceRegex" problemDescriptor="Use a more extensive whitespace-only check" text="preg_match($pattern$, $keep$, $rest$) === 1" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="false" shortenFQN="false" replacement="\Simbiat\StringHelpers\Sanitize::whiteString($keep$)">
         <constraint name="__context__" within="" contains="" />
         <constraint name="pattern" regexp="^'/\^\\s\*\$/[imsxeADSUXJu]*'$" within="" contains="" />
@@ -954,15 +889,6 @@
       <replaceConfiguration name="Use exit function with exit code" uuid="4e1209f3-613d-3ab3-981e-ef2bb07b5abf" description="Use exit function with exit code" suppressId="use_exit_function" problemDescriptor="Use `exit` function with exit code" text="exit($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="false" shortenFQN="false" replacement="exit(0)">
         <constraint name="__context__" within="" contains="" />
         <constraint name="p" regexp="^\s*$" minCount="0" maxCount="0" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Use strict `in_array`" uuid="fc7ffc6a-986e-3ec7-ad37-d6cd2f5d268c" description="Use strict comparison for `in_array`" suppressId="NoPHPStrictInArray" problemDescriptor="Use strict comparison for `in_array`" text="$func$($arg$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="false" shortenFQN="false" replacement="$func$($arg$, true)">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="func" regexp="in_array" within="" contains="" />
-        <constraint name="arg" minCount="2" maxCount="2" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Use strict BASE64 decode" uuid="6eb703bb-3a17-326e-9c68-7eeb27312da3" description="Use strict flag in `base64_decode`" suppressId="strict_base64_decode" problemDescriptor="Use `strict` flag in base64_decode" text="base64_decode($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="false" shortenFQN="false" replacement="base64_decode($p$, true)">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" within="" contains="" />
       </replaceConfiguration>
     </inspection_tool>
     <inspection_tool class="SecurityAdvisoriesInspection" enabled="true" level="WARNING" enabled_by_default="true">

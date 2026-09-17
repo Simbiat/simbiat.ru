@@ -219,7 +219,7 @@ final class Errors
             } elseif (\is_bool($value)) {
                 $parts[] = $key.'='.($value ? 'true' : 'false');
             } else {
-                $parts[] = $key.'='.\json_encode((string)$value);
+                $parts[] = $key.'='.\json_encode((string) $value);
             }
         }
 

@@ -44,7 +44,7 @@ class Keying extends Api
         $result = ['response' => $data];
         // Link header/tag for API
         $result['alt_links'] = [
-            ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/bictracker/keying/' . $bic.'/'.$acc],
+            ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/bictracker/keying/'.$bic.'/'.$acc],
         ];
         return $result;
     }

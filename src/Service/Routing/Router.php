@@ -37,7 +37,7 @@ abstract class Router
         // Check that subclass has set appropriate properties
         foreach (['sub_routes', 'breadcrumb'] as $property) {
             if (empty($this->{$property})) {
-                throw new \LogicException(get_class($this).' must have a non-empty `'.$property.'` property.');
+                throw new \LogicException(\get_class($this).' must have a non-empty `'.$property.'` property.');
             }
         }
     }
@@ -54,7 +54,7 @@ abstract class Router
                 Headers::redirect('https://'.(\preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config::$http_host) === 1 ? 'www.' : '').Config::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').$this->redirect_main);
             }
             $page_data['breadcrumbs'] = $this->breadcrumb;
-        } elseif (in_array($path[0], $this->sub_routes, true)) {
+        } elseif (\in_array($path[0], $this->sub_routes, true)) {
             // Generate page
             $page_data = $this->pageGen($path);
             // Update breadcrumbs
