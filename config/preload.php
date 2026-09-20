@@ -1,6 +1,7 @@
 <?php
+
 declare(strict_types=1);
 
-if (file_exists(dirname(__DIR__).'/var/cache/prod/App_KernelProdContainer.preload.php')) {
-    opcache_compile_file(dirname(__DIR__).'/var/cache/prod/App_KernelProdContainer.preload.php');
+foreach (glob(dirname(__DIR__).'/var/cache/prod/*.preload.php') ?: [] as $file) {
+    require $file;
 }
