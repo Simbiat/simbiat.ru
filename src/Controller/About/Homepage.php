@@ -43,6 +43,7 @@ class Homepage extends Page
             $this->h2_push_extra[] = $post['og_image']['og_image'];
             $output_array['posts'][$post_id]['text'] = Cut::cut($post['text'], 400, 3, '<a href="/talks/threads/'.$post['thread_id'].'">…</a>');
         }
+
         return $output_array;
     }
 }

@@ -30,6 +30,7 @@ class Bic extends Page
 
     /**
      * Generation of the page data
+     *
      * @param array $path
      *
      * @return array
@@ -83,6 +84,7 @@ class Bic extends Page
                 }
             }
         }
+
         return $output_array;
     }
 }

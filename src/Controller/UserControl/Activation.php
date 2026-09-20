@@ -31,6 +31,7 @@ class Activation extends Page
 
     /**
      * Generation of the page data
+     *
      * @param array $path
      *
      * @return array
@@ -49,7 +50,11 @@ class Activation extends Page
         }
         // Get activation ID
         $activation = $path[1] ?? null;
-        if ($user_id === null || $user_id < 1 || empty($activation)) {
+        if (
+            $user_id === null
+            || $user_id < 1
+            || empty($activation)
+        ) {
             return ['http_error' => 403];
         }
         // Check if a user exists
@@ -66,12 +71,14 @@ class Activation extends Page
         foreach ($emails as $email) {
             if (new Email($email)->activate($user_id, $activation)) {
                 $output_array = ['activated' => true, 'email' => $email];
+
                 break;
             }
         }
         if (!\array_key_exists('activated', $output_array)) {
             $output_array = ['activated' => false];
         }
+
         return $output_array;
     }
 }

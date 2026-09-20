@@ -56,7 +56,7 @@ final class FFTracker
             // We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
             $new_max_id = \min($max_id + 500, 4294967295);
             if ((int) $max_id < (int) $new_max_id) {
-                for ($character = ($max_id + 1); (int) $character <= (int) $new_max_id; $character++) {
+                for ($character = $max_id + 1; (int) $character <= (int) $new_max_id; $character++) {
                     $extra_for_error = 'character ID '.$character;
                     $cron->settingsFromArray(
                         ['task' => 'ff_update_entity', 'arguments' => [(string) $character, 'character'], 'message' => 'Updating character with ID '.$character],
@@ -85,7 +85,11 @@ final class FFTracker
         $output->writeln(Errors::logfmt('Updating FFXIV statistics...'));
         try {
             // Create a path if missing
-            if (!\is_dir(Config::$statistics) && !\mkdir(Config::$statistics) && !\is_dir(Config::$statistics)) {
+            if (
+                !\is_dir(Config::$statistics)
+                && !\mkdir(Config::$statistics)
+                && !\is_dir(Config::$statistics)
+            ) {
                 throw new \RuntimeException(\sprintf('Directory "%s" was not created', Config::$statistics));
             }
             /* @var \PDO $pdo IDE complains due to more generic object */
@@ -98,24 +102,31 @@ final class FFTracker
                 switch ($type) {
                     case 'raw':
                         $this->getRaw($data);
+
                         break;
                     case 'characters':
                         $this->getCharacters($data);
+
                         break;
                     case 'groups':
                         $this->getGroups($data);
+
                         break;
                     case 'achievements':
                         $this->getAchievements($data);
+
                         break;
                     case 'timelines':
                         $this->getTimelines($data);
+
                         break;
                     case 'bugs':
                         $this->getBugs($data);
+
                         break;
                     case 'other':
                         $this->getOthers($data);
+
                         break;
                 }
                 // Attempt to write to cache
@@ -147,7 +158,7 @@ final class FFTracker
         try {
             /* @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
-            $lodestone = (new Lodestone());
+            $lodestone = new Lodestone();
             // Get server
             $worlds = $lodestone->getWorldStatus()->getResult()['worlds'];
             // Prepare queries
@@ -608,6 +619,7 @@ final class FFTracker
      * @param array $data Array of gathered data
      *
      * @return void
+     *
      * @throws \Doctrine\DBAL\Exception
      */
     private function scheduleBugs(array $data): void

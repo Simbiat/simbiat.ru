@@ -85,3 +85,6 @@
 [submodule "packages/Argon"]
 	path = packages/Argon
 	url = https://github.com/Simbiat/argon-calc
+[submodule "packages/Sniffs"]
+	path = packages/Sniffs
+	url = https://github.com/Simbiat/sniffs

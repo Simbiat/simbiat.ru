@@ -54,6 +54,7 @@ final class Email extends Entity
         $this->id = $id;
         /** @noinspection UnusedFunctionResultInspection */
         $this->getFromDB();
+
         return $this;
     }
 
@@ -65,7 +66,10 @@ final class Email extends Entity
     protected function getFromDB(): array
     {
         $details = Query::query('SELECT `email`, `uc__emails`.`user_id`, `username`, `subscribed`, `activation` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__emails`.`user_id`=`uc__users`.`user_id` WHERE `email`=:mail', [':mail' => $this->id], return: 'row');
-        if (\is_array($details) && \array_key_exists('email', $details)) {
+        if (
+            \is_array($details)
+            && \array_key_exists('email', $details)
+        ) {
             $this->registered = true;
             $this->subscribed = $details['subscribed'];
             $this->activation = $details['activation'];
@@ -78,6 +82,7 @@ final class Email extends Entity
             }
         }
         $this->banned = Query::query('SELECT `mail` FROM `uc__bad_mails` WHERE `mail`=:mail', [':mail' => $this->id], return: 'check');
+
         return [];
     }
 
@@ -100,9 +105,13 @@ final class Email extends Entity
      */
     public function isBad(): bool
     {
-        if ($this->id === null || Sanitize::whiteString($this->id)) {
+        if (
+            $this->id === null
+            || Sanitize::whiteString($this->id)
+        ) {
             return true;
         }
+
         return ($this->banned || ($this->registered && !$this->anonymous && $this->activation === null));
     }
 
@@ -140,6 +149,7 @@ final class Email extends Entity
         $result = Query::query($queries);
         Security::session_regenerate_id(true);
         Security::log(LogType::UserDetailsChanged->value, 'Attempted to subscribe email', ['email' => $this->id, 'result' => $result]);
+
         return $result;
     }
 
@@ -193,6 +203,7 @@ final class Email extends Entity
             Security::session_regenerate_id(true);
         }
         Security::log(LogType::UserDetailsChanged->value, 'Attempted to unsubscribe email', ['email' => $this->id, 'result' => $result]);
+
         return ['response' => $result, 'email' => $this->id];
     }
 
@@ -205,6 +216,7 @@ final class Email extends Entity
     {
         $emails = new User($_SESSION['user_id'])->getEmails();
         $exists = \array_search($this->id, \array_column($emails['emails'], 'email'), true);
+
         return !(
             // Safe to unsubscribe if mail does not exist for the user
             $exists !== false &&
@@ -224,12 +236,16 @@ final class Email extends Entity
         if ($this->username === null) {
             $this->setId($this->id);
         }
-        if (!$this->anonymous && !$this->safeToDelete()) {
+        if (
+            !$this->anonymous
+            && !$this->safeToDelete()
+        ) {
             return false;
         }
         $result = Query::query('DELETE FROM `uc__emails` WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
         Security::session_regenerate_id(true);
         Security::log(LogType::UserDetailsChanged->value, 'Attempted to delete email', ['email' => $this->id, 'result' => $result]);
+
         return $result;
     }
 
@@ -257,6 +273,7 @@ final class Email extends Entity
             // Emails is not in the list, so nothing to remove
             return true;
         }
+
         return true;
     }
 
@@ -280,7 +297,10 @@ final class Email extends Entity
         }
         // Add email
         if ($this->registered) {
-            if ($this->anonymous || $this->activation !== null) {
+            if (
+                $this->anonymous
+                || $this->activation !== null
+            ) {
                 $result = Query::query('UPDATE `uc__emails` SET `user_id`=:user_id, `subscribed`=DEFAULT, `activation`=DEFAULT WHERE `email`=:email;', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
             } else {
                 // Should not get here, but still return an error at this point
@@ -297,8 +317,10 @@ final class Email extends Entity
         if ($result) {
             $this->setId($this->id);
             Security::session_regenerate_id(true);
+
             return ['status' => 201, 'response' => !$confirm || $this->confirm()];
         }
+
         return ['http_error' => 500, 'reason' => 'Failed to write email to database'];
     }
 
@@ -316,7 +338,13 @@ final class Email extends Entity
         if ($this->username === null) {
             $this->setId($this->id);
         }
-        if (($this->activation === null || $this->activation === '') || !\password_verify($activation, $this->activation)) {
+        if (
+            (
+                $this->activation === null
+                || $this->activation === ''
+            )
+            || !\password_verify($activation, $this->activation)
+        ) {
             return false;
         }
         $emails = new User($user_id)->getEmails();
@@ -340,7 +368,11 @@ final class Email extends Entity
         try {
             $result = Query::query($queries);
             // Subscribe the email if it's the only one for the user
-            if ($result && !$this->anonymous && $emails['count_subscribed'] === 0) {
+            if (
+                $result
+                && !$this->anonymous
+                && $emails['count_subscribed'] === 0
+            ) {
                 $this->setId($this->id);
                 $this->subscribe();
             }
@@ -348,6 +380,7 @@ final class Email extends Entity
             return false;
         }
         Security::log(LogType::UserDetailsChanged->value, 'Attempted to activate email', ['email' => $this->id, 'result' => $result]);
+
         return $result;
     }
 
@@ -378,6 +411,7 @@ final class Email extends Entity
             return false;
         }
         new UserActivation()->save($this->id, ['activation' => $activation, 'user_id' => $this->user_id], true, false, $this->id)->send();
+
         return true;
     }
 }

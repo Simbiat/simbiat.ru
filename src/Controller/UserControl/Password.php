@@ -31,7 +31,10 @@ class Password extends Page
         $output_array = ['user_id' => null, 'token' => null];
         if ($_SESSION['user_id'] === 1) {
             // Check if password reset is being attempted
-            if (!empty($path[0]) && \preg_match('/\d+/u', $path[0]) === 1) {
+            if (
+                !empty($path[0])
+                && \preg_match('/\d+/u', $path[0]) === 1
+            ) {
                 // Check token
                 if (empty($path[1])) {
                     return ['http_error' => 403];
@@ -42,6 +45,7 @@ class Password extends Page
                 return ['http_error' => 403];
             }
         }
+
         return $output_array;
     }
 }

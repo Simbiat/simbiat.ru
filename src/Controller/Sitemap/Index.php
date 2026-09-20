@@ -41,13 +41,17 @@ class Index extends Page
 
     /**
      * Generation of the page data
+     *
      * @param array $path
      *
      * @return array
      */
     protected function generate(array $path): array
     {
-        if ($this->max_elements > 50000 || $this->max_elements < 10) {
+        if (
+            $this->max_elements > 50000
+            || $this->max_elements < 10
+        ) {
             $this->max_elements = 50000;
         }
         $this->h2_push = [];
@@ -76,6 +80,7 @@ class Index extends Page
                 }
             }
         }
+
         return [
             'index' => true,
             'sitemap_links' => $links,

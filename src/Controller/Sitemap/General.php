@@ -24,6 +24,7 @@ class General extends StaticPage
     protected function generate(array $path): array
     {
         $this->h2_push = [];
+
         return [
             'index' => false,
             'sitemap_links' => [

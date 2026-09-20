@@ -29,7 +29,10 @@ class Password extends Api
      */
     protected function genData(array $path): array
     {
-        if (!empty($_POST['pass_user_id']) && \preg_match('/\d+/u', $_POST['pass_user_id']) === 1) {
+        if (
+            !empty($_POST['pass_user_id'])
+            && \preg_match('/\d+/u', $_POST['pass_user_id']) === 1
+        ) {
             $id = $_POST['pass_user_id'];
         } else {
             if ($_SESSION['user_id'] === 1) {
@@ -37,7 +40,10 @@ class Password extends Api
             }
             $id = $_SESSION['user_id'];
         }
-        if (empty($_POST['current_password']) && empty($_POST['pass_reset'])) {
+        if (
+            empty($_POST['current_password'])
+            && empty($_POST['pass_reset'])
+        ) {
             return ['http_error' => 400, 'reason' => 'No current password or reset token provided'];
         }
         if (empty($_POST['new_password'])) {
@@ -46,7 +52,7 @@ class Password extends Api
         if (!Config::$dbup) {
             return ['http_error' => 503, 'reason' => 'Database is not available'];
         }
-        $user = (new User($id));
+        $user = new User($id);
         if (empty($_POST['pass_reset'])) {
             // Get password
             try {
@@ -85,6 +91,7 @@ class Password extends Api
         if ($user->passChange($_POST['new_password'])) {
             return ['response' => true];
         }
+
         return ['http_error' => 500, 'reason' => 'Failed to update password'];
     }
 }

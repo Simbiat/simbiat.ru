@@ -23,6 +23,7 @@ final class EnvironmentGenerator
      * Function to get the actual Twig environment object
      *
      * @return \Twig\Environment
+     *
      * @throws \Twig\Error\LoaderError
      */
     public static function getTwig(): Environment
@@ -38,6 +39,7 @@ final class EnvironmentGenerator
             self::$environment->addExtension(new Extension());
             self::$environment->addExtension(new CssInlinerExtension());
         }
+
         return self::$environment;
     }
 }

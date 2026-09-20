@@ -82,7 +82,7 @@
                     {% endif %}
                     {% if character.biography %}
                         {# This is sanitized when saving to database and when grabbed from it #}
-                        <!--suppress TwigRawUsed -->
+                        {# twig-cs-fixer-disable-next-line ForbiddenFilter #}
                         <blockquote class="w100pc">{{ sanitize(character.biography|raw) }}</blockquote>
                     {% endif %}
                     {% if character.lodestone_url %}

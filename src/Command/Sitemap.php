@@ -54,7 +54,10 @@ final class Sitemap
                 $xml_files = \array_merge(\glob(Config::$sitemap.'*.xml'), \glob(Config::$sitemap.'*/*.xml'), \glob(Config::$sitemap.'*/*/*.xml'));
                 // Remove XML files, which no longer exist as per new index
                 foreach ($xml_files as $file) {
-                    if (!\in_array(\basename($file, '.xml'), $this->index_files, true) && !\in_array(\str_replace('.xml', '', Config::$base_url.'/sitemap/'.\str_replace(Config::$sitemap, '', $file)), $links, true)) {
+                    if (
+                        !\in_array(\basename($file, '.xml'), $this->index_files, true)
+                        && !\in_array(\str_replace('.xml', '', Config::$base_url.'/sitemap/'.\str_replace(Config::$sitemap, '', $file)), $links, true)
+                    ) {
                         @\unlink($file);
                     }
                 }
@@ -69,14 +72,21 @@ final class Sitemap
                         $file_path = \mb_rtrim(Config::$sitemap.\implode('/', \array_slice($path, 0, -1)), '/', 'UTF-8');
                         $file_name = \implode('/', \array_slice($path, -1));
                         // Create folder if it does not exist
-                        if (!@\mkdir($file_path) && !\is_dir($file_path)) {
+                        if (
+                            !@\mkdir($file_path)
+                            && !\is_dir($file_path)
+                        ) {
                             throw new \RuntimeException(\sprintf('Directory `%s` was not created', $file_path));
                         }
                         // Generate and write file
                         $map_vars = $router->route(\array_merge($path));
                         $content = EnvironmentGenerator::getTwig()->render($map_vars['template_override'] ?? 'index.twig', $map_vars);
                         // Check if file already exists and if its contents are the same
-                        if (!\is_file($file_path.'/'.$file_name) || $content !== \file_get_contents($file_path.'/'.$file_name) || \filemtime($file_path.'/'.$file_name) < \strtotime('-2 weeks')) {
+                        if (
+                            !\is_file($file_path.'/'.$file_name)
+                            || $content !== \file_get_contents($file_path.'/'.$file_name)
+                            || \filemtime($file_path.'/'.$file_name) < \strtotime('-2 weeks')
+                        ) {
                             // Save the file
                             \file_put_contents($file_path.'/'.$file_name.'.xml', $content);
                         }
@@ -85,7 +95,11 @@ final class Sitemap
                 // Write XML index
                 foreach ($this->index_files as $index_file) {
                     // Check if the index file already exists and if its contents are the same
-                    if (!\is_file(Config::$sitemap.$index_file.'.xml') || $index[$index_file] !== \file_get_contents(Config::$sitemap.$index_file.'.xml') || \filemtime(Config::$sitemap.$index_file.'.xml') < \strtotime('-2 weeks')) {
+                    if (
+                        !\is_file(Config::$sitemap.$index_file.'.xml')
+                        || $index[$index_file] !== \file_get_contents(Config::$sitemap.$index_file.'.xml')
+                        || \filemtime(Config::$sitemap.$index_file.'.xml') < \strtotime('-2 weeks')
+                    ) {
                         \file_put_contents(Config::$sitemap.$index_file.'.xml', $index[$index_file]);
                     }
                 }

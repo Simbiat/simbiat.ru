@@ -31,6 +31,7 @@ class Search extends Page
 
     /**
      * Generation of the page data
+     *
      * @param array $path
      *
      * @return array
@@ -40,7 +41,10 @@ class Search extends Page
         // Check if types are set
         $this->typesCheck();
         // Check if we got some old link (before GET implementation)
-        if (empty($_GET['search']) && !empty($path[0])) {
+        if (
+            empty($_GET['search'])
+            && !empty($path[0])
+        ) {
             // Redirect to a proper version using GET value
             Headers::redirect(\preg_replace('/(.*)(?>\/([^\/]+)\/?$)/u', '$1/?search=$2', HomePage::$canonical));
         }
@@ -71,12 +75,14 @@ class Search extends Page
         } else {
             $output_array['search_value'] = null;
         }
+
         // Merge with extra fields and return the result
         return \array_merge($output_array, $this->extras());
     }
 
     /**
      * Check if types are properly set
+     *
      * @return void
      */
     final protected function typesCheck(): void
@@ -95,6 +101,7 @@ class Search extends Page
 
     /**
      * Get date from results
+     *
      * @param array $results
      *
      * @return int|string
@@ -111,6 +118,7 @@ class Search extends Page
         if (\count($dates) === 0) {
             return 0;
         }
+
         return \max($dates);
     }
 
@@ -135,11 +143,13 @@ class Search extends Page
         if (!empty($decoded_search)) {
             $this->search_for = $decoded_search;
         }
+
         return true;
     }
 
     /**
      * Add any extra fields, if required by overriding this function
+     *
      * @return array
      */
     protected function extras(): array

@@ -8,12 +8,12 @@
     </description>
 
     <!-- Directories to scan -->
-    <file>src</file>
-    <file>tests</file>
-    <file>packages</file>
-    <file>bin</file>
-    <file>config</file>
-    <file>public</file>
+    <file>/app/src</file>
+    <file>/app/tests</file>
+    <file>/app/packages</file>
+    <file>/app/bin</file>
+    <file>/app/config</file>
+    <file>/app/public</file>
     <arg name="extensions" value="php"/>
     <!-- Exclusions -->
     <exclude-pattern>vendor/*</exclude-pattern>
@@ -33,11 +33,16 @@
     <rule ref="PSR12">
         <exclude name="PSR12.Operators.OperatorSpacing"/>
     </rule>
+    <rule ref="PSR2.ControlStructures.ControlStructureSpacing">
+        <!-- Prohibits multiline conditions, allowed by PSR12 -->
+        <exclude name="PSR2.ControlStructures.ControlStructureSpacing"/>
+    </rule>
 
     <!-- Symfony coding standard -->
     <rule ref="Symfony"/>
     <rule ref="Symfony.Commenting.License.Warning">
         <exclude name="Symfony.Commenting.License.Warning"/>
+        <exclude name="Symfony.ControlStructure.YodaConditions"/>
     </rule>
 
     <!-- PHP compatibility -->
@@ -95,19 +100,23 @@
         <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineAfterOpeningBrace"/>
         <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineBeforeClosingBrace"/>
         <exclude name="SlevomatCodingStandard.Classes.ClassLength.ClassTooLong"/>
-
+        <!-- Contradicts Symfony coding standards -->
+        <exclude name="SlevomatCodingStandard.Classes.RequireMultiLineMethodSignature"/>
     </rule>
 
     <!-- Functions -->
     <rule ref="SlevomatCodingStandard.Functions">
         <exclude name="SlevomatCodingStandard.Functions.DisallowNamedArguments.DisallowedNamedArgument"/>
         <exclude name="SlevomatCodingStandard.Functions.FunctionLength.FunctionLength"/>
-        <!-- Conflicts with SlevomatCodingStandard.Functions.RequireTrailingCommaInCall.MissingTrailingComma -->
-        <exclude name="SlevomatCodingStandard.Functions.DisallowTrailingCommaInCall.DisallowedTrailingComma"/>
+        <!-- Conflicts with SlevomatCodingStandard.Functions.RequireTrailingCommaInCall -->
+        <exclude name="SlevomatCodingStandard.Functions.DisallowTrailingCommaInCall"/>
+        <!-- Contradicts Symfony coding standards -->
+        <exclude name="SlevomatCodingStandard.Functions.RequireMultiLineCall"/>
+        <exclude name="SlevomatCodingStandard.Functions.DisallowArrowFunction"/>
     </rule>
-    <rule ref="SlevomatCodingStandard.Functions.RequireMultiLineCall">
+    <rule ref="SlevomatCodingStandard.Functions.ArrowFunctionDeclaration">
         <properties>
-            <property name="minParametersCount" value="5"/>
+            <property name="spacesCountAfterKeyword" value="0"/>
         </properties>
     </rule>
 
@@ -116,16 +125,23 @@
         <exclude name="SlevomatCodingStandard.ControlStructures.BlockControlStructureSpacing"/>
         <exclude name="SlevomatCodingStandard.ControlStructures.NewWithoutParentheses.UselessParentheses"/>
         <exclude name="SlevomatCodingStandard.Exceptions.DisallowNonCapturingCatch.DisallowedNonCapturingCatch"/>
-        <!-- Duplicates Symfony.ControlStructure.YodaConditions.Invalid -->
+        <!-- Conflicts SlevomatCodingStandard.ControlStructures.DisallowYodaComparison -->
         <exclude name="SlevomatCodingStandard.ControlStructures.RequireYodaComparison.RequiredYodaComparison"/>
-        <!-- Conflicts Symfony.ControlStructure.YodaConditions.Invalid -->
-        <exclude name="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison.DisallowedYodaComparison"/>
+        <!-- Conflicts SlevomatCodingStandard.ControlStructures.RequireMultiLineCondition -->
+        <exclude name="SlevomatCodingStandard.ControlStructures.RequireSingleLineCondition"/>
     </rule>
     <rule ref="SlevomatCodingStandard.ControlStructures.EarlyExit">
         <properties>
             <property name="ignoreStandaloneIfInScope" value="true"/>
             <property name="ignoreOneLineTrailingIf" value="true"/>
             <property name="ignoreTrailingIfWithOneInstruction" value="true"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.ControlStructures.RequireMultiLineCondition">
+        <properties>
+            <property name="minLineLength" value="0"/>
+            <property name="booleanOperatorOnPreviousLine" value="false"/>
+            <property name="alwaysSplitAllConditionParts" value="true"/>
         </properties>
     </rule>
 
@@ -136,7 +152,9 @@
     <rule ref="SlevomatCodingStandard.Arrays"/>
 
     <!-- Operators -->
-    <rule ref="SlevomatCodingStandard.Operators"/>
+    <rule ref="SlevomatCodingStandard.Operators">
+        <exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators"/>
+    </rule>
 
     <!-- Complexity -->
     <rule ref="SlevomatCodingStandard.Complexity">
@@ -145,6 +163,11 @@
 
     <!-- Exceptions -->
     <rule ref="SlevomatCodingStandard.Exceptions"/>
+
+    <rule ref="SlevomatCodingStandard.Numbers">
+        <!-- Conflicts SlevomatCodingStandard.Numbers.RequireNumericLiteralSeparator -->
+        <exclude name="SlevomatCodingStandard.Numbers.DisallowNumericLiteralSeparator"/>
+    </rule>
 
     <!-- Include PHPCSExtra rulesets -->
     <rule ref="NormalizedArrays"/>
@@ -156,6 +179,10 @@
         <exclude name="Universal.UseStatements.DisallowUseClass.FoundWithAlias"/>
         <exclude name="Universal.ControlStructures.IfElseDeclaration.NoNewLine"/>
         <exclude name="Universal.Arrays.DisallowShortArraySyntax.Found"/>
+        <!-- Conflicts Universal.PHP.DisallowExitDieParentheses -->
+        <exclude name="Universal.PHP.RequireExitDieParentheses"/>
+        <!-- Duplicates SlevomatCodingStandard.Classes.RequireAbstractOrFinal -->
+        <exclude name="Universal.Classes.RequireFinalClass"/>
     </rule>
 
     <rule ref="Zend">
@@ -174,6 +201,27 @@
         <properties>
             <property name="rootNamespaces" type="array">
                 <element key="src" value="App"/>
+                <element key="packages/Argon" value="Simbiat"/>
+                <element key="packages/ArrayHelpers" value="Simbiat\ArrayHelpers"/>
+                <element key="packages/BIC/AccountKeying" value="Simbiat\BIC"/>
+                <element key="packages/Cron" value="Simbiat\Cron"/>
+                <element key="packages/CuteBytes" value="Simbiat"/>
+                <element key="packages/Database/Bind " value="Simbiat\Database"/>
+                <element key="packages/Database/Installer" value="Simbiat\Database"/>
+                <element key="packages/Database/Maintainer" value="Simbiat\Database\Maintainer"/>
+                <element key="packages/Database/Manage" value="Simbiat\Database"/>
+                <element key="packages/Database/Pool" value="Simbiat\Database"/>
+                <element key="packages/Database/Query" value="Simbiat\Database"/>
+                <element key="packages/DDCIcons" value="Simbiat"/>
+                <element key="packages/FFXIV/Lodestone" value="Simbiat\FFXIV"/>
+                <element key="packages/HTML/Cut" value="Simbiat\HTML"/>
+                <element key="packages/HTML/nl2tag" value="Simbiat\HTML"/>
+                <element key="packages/HTMLCache" value="Simbiat"/>
+                <element key="packages/HTTP/SSE" value="Simbiat\HTTP"/>
+                <element key="packages/http20" value="Simbiat\htt20"/>
+                <element key="packages/SandClock" value="Simbiat"/>
+                <element key="packages/Sniffs" value=""/>
+                <element key="packages/StringHelpers" value="Simbiat\StringHelpers"/>
             </property>
         </properties>
     </rule>
@@ -196,6 +244,31 @@
     <rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces">
         <properties>
             <property name="ignoreSpacesInAnnotation" value="true"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.PHP.UselessParentheses">
+        <properties>
+            <property name="enableCheckAroundNew" value="true"/>
+        </properties>
+    </rule>
+
+    <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
+    <config name='tab-width' value='4'/>
+    <rule ref="Generic.WhiteSpace.ScopeIndent">
+        <properties>
+            <property name="indent" value="4"/>
+        </properties>
+    </rule>
+    <rule ref="Universal.WhiteSpace.DisallowInlineTabs"/>
+
+    <!-- My own sniffs -->
+    <rule ref="/app/packages/Sniffs/Simbiat/ruleset.xml"/>
+    <rule ref="Simbiat">
+        <exclude-pattern phpcbf-only="true">/app/packages/Sniffs/tests/*</exclude-pattern>
+    </rule>
+    <rule ref="Simbiat.SQL.DateTimeFunctions">
+        <properties>
+            <property name="precision" value="6"/>
         </properties>
     </rule>
 </ruleset>

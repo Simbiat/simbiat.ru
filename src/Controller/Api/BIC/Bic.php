@@ -26,6 +26,7 @@ class Bic extends Api
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
+
             return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         }
         // Check if 404
@@ -40,6 +41,7 @@ class Bic extends Api
         $result['alt_links'] = [
             ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/bictracker/bics/'.$path[0]],
         ];
+
         return $result;
     }
 }

@@ -29,6 +29,7 @@ class Unsubscribe extends Page
 
     /**
      * Actual page generation based on further details of the $path
+     *
      * @param array $path URL path
      *
      * @return array

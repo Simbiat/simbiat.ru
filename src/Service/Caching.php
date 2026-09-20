@@ -22,7 +22,11 @@ class Caching
             $this->cache_dir = Config::$html_cache;
         }
         /** @noinspection PhpUsageOfSilenceOperatorInspection */
-        if (!\is_dir($this->cache_dir) && !@\mkdir($this->cache_dir, recursive: true) && !\is_dir($this->cache_dir)) {
+        if (
+            !\is_dir($this->cache_dir)
+            && !@\mkdir($this->cache_dir, recursive: true)
+            && !\is_dir($this->cache_dir)
+        ) {
             throw new \RuntimeException(\sprintf('Directory "%s" was not created', $this->cache_dir));
         }
         if (\preg_match('/\/$/', $this->cache_dir) !== 1) {
@@ -32,6 +36,7 @@ class Caching
 
     /**
      * Write cache to file
+     *
      * @param array|string $data Data to write
      * @param string       $key  Key to write to
      * @param int          $age  How long to store in seconds
@@ -42,7 +47,10 @@ class Caching
     {
         // JSON encode the value
         try {
-            if ($data !== '' && $data !== []) {
+            if (
+                $data !== ''
+                && $data !== []
+            ) {
                 // Ensure we do not save CSRF
                 unset($data['X-CSRF-Token']);
                 // Add headers' data
@@ -57,14 +65,21 @@ class Caching
         } catch (\Throwable) {
             $data = '';
         }
-        if ($data !== '' && $data !== []) {
+        if (
+            $data !== ''
+            && $data !== []
+        ) {
             // Generate key
             $key = $this->key($key);
             // Generate subdirectory name
             $sub_dir = \mb_substr($key, 0, 2, 'UTF-8').'/'.\mb_substr($key, 2, 2, 'UTF-8').'/'.\mb_substr($key, 4, 2, 'UTF-8').'/';
             // Create the folder if missing. Silencing operator because of potential concurrency
             /** @noinspection PhpUsageOfSilenceOperatorInspection */
-            if (!\is_dir($this->cache_dir.$sub_dir) && !@\mkdir($this->cache_dir.$sub_dir, recursive: true) && !\is_dir($this->cache_dir.$sub_dir)) {
+            if (
+                !\is_dir($this->cache_dir.$sub_dir)
+                && !@\mkdir($this->cache_dir.$sub_dir, recursive: true)
+                && !\is_dir($this->cache_dir.$sub_dir)
+            ) {
                 throw new \RuntimeException(\sprintf('Directory "%s" was not created', $this->cache_dir.$sub_dir));
             }
             // Write the file. We do not care much if it fails, so silencing
@@ -74,6 +89,7 @@ class Caching
                     \header('X-Server-Cached: true');
                     \header('X-Server-Cache-Hit: false');
                 }
+
                 return true;
             }
         }
@@ -81,11 +97,13 @@ class Caching
             \header('X-Server-Cached: false');
             \header('X-Server-Cache-Hit: false');
         }
+
         return true;
     }
 
     /**
      * Read from cache
+     *
      * @param string $key
      *
      * @return array
@@ -117,11 +135,13 @@ class Caching
         }
         // Ensure we use fresh CSRF
         unset($data['X-CSRF-Token']);
+
         return $data;
     }
 
     /**
      * Generate key
+     *
      * @param string $key
      *
      * @return string
@@ -133,11 +153,13 @@ class Caching
         } else {
             $key = \hash('sha3-512', $key);
         }
+
         return $key;
     }
 
     /**
      * Gets JSON decoded array from a file
+     *
      * @param string $cache_path
      *
      * @return array
@@ -148,13 +170,16 @@ class Caching
         if (\is_file($cache_path)) {
             // Read the cache
             $json = \file_get_contents($cache_path);
-            if ($json !== false && $json !== '') {
+            if (
+                $json !== false
+                && $json !== ''
+            ) {
                 try {
                     $json = \json_decode($json, true, 512, \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR);
                 } catch (\Throwable) {
                     $json = [];
                 }
-                if ($json !== NULL) {
+                if ($json !== null) {
                     if (!\is_array($json)) {
                         return [];
                     }
@@ -167,6 +192,7 @@ class Caching
         } else {
             return [];
         }
+
         return $json;
     }
 }

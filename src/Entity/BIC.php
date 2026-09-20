@@ -74,6 +74,7 @@ class BIC extends Entity
 
     /**
      * Get BIC data from DB
+     *
      * @return array
      */
     protected function getFromDB(): array
@@ -88,6 +89,7 @@ class BIC extends Entity
 
     /**
      * Function to return current data about the bank
+     *
      * @throws \Exception
      */
     protected function process(array $from_db): void
@@ -147,7 +149,7 @@ class BIC extends Entity
         }
         // If RKC is the same as BIC, it means that the current bank is RKC and does not have a bank above it
         if ($from_db['RKC'] === $from_db['BIC']) {
-            $from_db['RKC'] = NULL;
+            $from_db['RKC'] = null;
         }
         // Chains based on DBF data
         if (!empty($from_db['RKC'])) {
@@ -173,7 +175,7 @@ class BIC extends Entity
         }
         // If RKC equals headquarters - remove it. For newer entries, they were essentially replaced
         if ($from_db['DBF']['misc']['RKC'] === $from_db['PrntBIC']) {
-            $from_db['DBF']['misc']['RKC'] = NULL;
+            $from_db['DBF']['misc']['RKC'] = null;
         }
         // Convert the array to properties
         Converters::arrayToProperties($this, $from_db);
@@ -181,6 +183,7 @@ class BIC extends Entity
 
     /**
      * Function to get a list of all predecessors (direct or not)
+     *
      * @throws \Exception
      */
     private function predecessors(string $vkey): array
@@ -199,11 +202,13 @@ class BIC extends Entity
         } else {
             $predecessors = [];
         }
+
         return $predecessors;
     }
 
     /**
      * Function to get all successors (each as a chain)
+     *
      * @throws \Exception
      */
     private function successors(string $vkey): array
@@ -214,18 +219,24 @@ class BIC extends Entity
             // Get successors for each successor
             foreach ($bank as $key => $item) {
                 $bank[$key]['id'] = $this->padBic((string) $item['id']);
-                if (!empty($item[0]['VKEYDEL']) && $item[0]['VKEYDEL'] !== $vkey && $bank[0]['VKEYDEL'] !== $bank[0]['VKEY']) {
+                if (
+                    !empty($item[0]['VKEYDEL'])
+                    && $item[0]['VKEYDEL'] !== $vkey
+                    && $bank[0]['VKEYDEL'] !== $bank[0]['VKEY']
+                ) {
                     $bank[$key] = \array_merge($item, $this->successors($item[0]['id']));
                 }
             }
         } else {
             $bank = [];
         }
+
         return $bank;
     }
 
     /**
      * Function to get all RKCs for a bank as a chain
+     *
      * @throws \Exception
      */
     private function rkcChain(string $bic): array
@@ -233,7 +244,10 @@ class BIC extends Entity
         $banks = [];
         // Get the initial list
         $bank = Query::query('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`, `RKC`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC', [':BIC' => $bic], return: 'row');
-        if ($bank === false || $bank === []) {
+        if (
+            $bank === false
+            || $bank === []
+        ) {
             return [];
         }
         $bank['id'] = $this->padBic((string) $bank['id']);
@@ -245,14 +259,20 @@ class BIC extends Entity
         }
         $banks[] = $bank;
         // Get RKC for RKC
-        if (!empty($bank['RKC']) && $bank['RKC'] !== $bic && $bank['RKC'] !== $bank['id']) {
+        if (
+            !empty($bank['RKC'])
+            && $bank['RKC'] !== $bic
+            && $bank['RKC'] !== $bank['id']
+        ) {
             $banks = \array_merge($banks, $this->rkcChain($bank['RKC']));
         }
+
         return $banks;
     }
 
     /**
      * Function to get authorized branches as a chain
+     *
      * @throws \Exception
      */
     private function bicUf(string $bic): array
@@ -272,14 +292,21 @@ class BIC extends Entity
         }
         $banks[] = $bank;
         // Get authorized branch of authorized branch
-        if (!empty($bank['PrntBIC']) && $bank['PrntBIC'] !== $bic && !empty($bank['id']) && $bank['PrntBIC'] !== $bank['id']) {
+        if (
+            !empty($bank['PrntBIC'])
+            && $bank['PrntBIC'] !== $bic
+            && !empty($bank['id'])
+            && $bank['PrntBIC'] !== $bank['id']
+        ) {
             $banks = \array_merge($banks, $this->bicUf($bank['PrntBIC']));
         }
+
         return $banks;
     }
 
     /**
      * Function to get all branches of a bank
+     *
      * @throws \Exception
      */
     private function getBranches(string $bic): array
@@ -298,6 +325,7 @@ class BIC extends Entity
         } else {
             $branches = [];
         }
+
         return $branches;
     }
 
@@ -370,11 +398,13 @@ class BIC extends Entity
             }
             $phones[$key] = ['phone' => $phone, 'url' => \preg_replace('/[^\d+]/', '', $phone)];
         }
+
         return ['phones' => $phones, 'dob' => $dobs];
     }
 
     /**
      * Pad BICs with zeros
+     *
      * @param string $bic
      *
      * @return string

@@ -33,6 +33,7 @@ class Threads extends Api
             if (HomePage::$method !== 'POST') {
                 return ['http_error' => 405, 'reason' => 'Incorrect method or verb used'];
             }
+
             // Only support adding a new post here
             return new Thread()->add();
         }
@@ -47,6 +48,7 @@ class Threads extends Api
         if ($thread->id === null) {
             return ['http_error' => 404, 'reason' => 'ID `'.$path[0].'` not found'];
         }
+
         return match ($path[1]) {
             'edit' => $thread->edit(),
             'delete' => $thread->delete(),

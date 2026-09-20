@@ -15,6 +15,7 @@ class Images
 {
     /**
      * Function to download images
+     *
      * @param string $from    URL to download from
      * @param string $to      Path to save to
      * @param bool   $convert Whether conversion is required
@@ -31,7 +32,11 @@ class Images
         /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         if (\is_file($temp['server_path'].'/'.$temp['server_name'])) {
             // Create directory if missing and create it recursively
-            if (!\is_dir(\dirname($to)) && !\mkdir(\dirname($to), recursive: true) && !\is_dir(\dirname($to))) {
+            if (
+                !\is_dir(\dirname($to))
+                && !\mkdir(\dirname($to), recursive: true)
+                && !\is_dir(\dirname($to))
+            ) {
                 return false;
             }
             // Move file
@@ -42,14 +47,17 @@ class Images
                     // Convert to WebP
                     return self::toWebP($to);
                 }
+
                 return $to;
             }
         }
+
         return false;
     }
 
     /**
      * Function to merge images
+     *
      * @param array $images Array of images to merge
      * @param int   $width  Width of the resulting image
      * @param int   $height Height of the resulting image
@@ -67,6 +75,7 @@ class Images
                 if ($output) {
                     self::noImage();
                 }
+
                 // This means that we failed to get the image thus a final object will either fail or be corrupt, thus exiting early
                 throw new \RuntimeException('Failed to open `'.$image.'`');
             }
@@ -89,6 +98,7 @@ class Images
             if ($output) {
                 self::noImage();
             }
+
             return null;
         }
         if ($output) {
@@ -100,11 +110,13 @@ class Images
             \ob_end_flush();
             exit(0);
         }
+
         return $gd;
     }
 
     /**
      * Convert image to webp format
+     *
      * @param string $image
      *
      * @return string|false
@@ -122,12 +134,18 @@ class Images
             return false;
         }
         // If we have a GIF, check if it's animated
-        if ($mime === 'image/gif' && self::isGIFAnimated($image)) {
+        if (
+            $mime === 'image/gif'
+            && self::isGIFAnimated($image)
+        ) {
             // Do not convert animated GIFs
             return false;
         }
         // If we have a PNG, check if it's animated
-        if ($mime === 'image/png' && self::isPNGAnimated($image)) {
+        if (
+            $mime === 'image/png'
+            && self::isPNGAnimated($image)
+        ) {
             // Do not convert animated PNGs
             return false;
         }
@@ -150,14 +168,17 @@ class Images
             if ($image !== $new_name) {
                 @\unlink($image);
             }
+
             return $new_name;
         }
+
         return false;
     }
 
     /**
      * Check if GIF is animated
      * Taken from https://stackoverflow.com/a/47907134/2992851
+     *
      * @param string $gif
      *
      * @return bool
@@ -177,18 +198,23 @@ class Images
         // We read through the file til we reach the end of the file, or we've found
         // at least 2 frame headers
         $chunk = false;
-        while (!\feof($fh) && $count < 2) {
+        while (
+            !\feof($fh)
+            && $count < 2
+        ) {
             // add the last 20 characters from the previous string, to make sure the searched pattern is not split.
             $chunk = ($chunk ? \mb_substr($chunk, -20, encoding: 'UTF-8') : '').\fread($fh, 1024 * 100); //read 100 kb at a time
             $count += \preg_match_all('/\x00\x21\xF9\x04.{4}\x00[\x2C\x21]/s', $chunk);
         }
         \fclose($fh);
+
         return $count > 1;
     }
 
     /**
      * Check if PNG is animated
      * Taken from https://stackoverflow.com/a/68618296/2992851
+     *
      * @param string $apng
      *
      * @return bool
@@ -220,6 +246,7 @@ class Images
             }
             $f->fseek($length + 4, \SEEK_CUR);
         }
+
         return false;
     }
 
@@ -229,6 +256,7 @@ class Images
      * @param string $image Path to the image file
      *
      * @return false|\GdImage
+     *
      * @noinspection PhpUsageOfSilenceOperatorInspection
      */
     public static function open(string $image): false|\GdImage
@@ -260,6 +288,7 @@ class Images
 
     /**
      * Display an image for "no image" scenario
+     *
      * @return void
      */
     #[NoReturn]
@@ -274,6 +303,7 @@ class Images
 
     /**
      * Display a red cross indicating an error
+     *
      * @return void
      */
     #[NoReturn]
@@ -288,6 +318,7 @@ class Images
 
     /**
      * Display a green check mark indicating success
+     *
      * @return void
      */
     #[NoReturn]
@@ -302,6 +333,7 @@ class Images
 
     /**
      * Function to generate data for og:image using provided file ID
+     *
      * @param string $file_id File ID to use
      * @param bool   $is_path If `true` ID is actually a path
      *
@@ -336,12 +368,17 @@ class Images
         }
         $info['width'] = $sizes[0];
         $info['height'] = $sizes[1];
-        if ($info['width'] < 1200 || $info['height'] < 630 || \round($info['width'] / $info['height'], 1) !== 1.9) {
+        if (
+            $info['width'] < 1200
+            || $info['height'] < 630
+            || \round($info['width'] / $info['height'], 1) !== 1.9
+        ) {
             return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }
         if ($is_path) {
             return ['og_image' => '/assets/images'.$file_id, 'og_image_width' => $info['width'], 'og_image_height' => $info['height']];
         }
+
         return ['og_image' => '/assets/images/uploaded/'.$hash_tree.'/'.$info['basename'], 'og_image_width' => $info['width'], 'og_image_height' => $info['height']];
     }
 }

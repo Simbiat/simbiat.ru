@@ -33,7 +33,10 @@ class Section extends Page
         @\header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' blob:; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\'; trusted-types dompurify default;');
         // Sanitize ID
         $id = $path[0] ?? 'top';
-        if ($id !== 'top' && (int) $id < 1) {
+        if (
+            $id !== 'top'
+            && (int) $id < 1
+        ) {
             // Redirect to top page
             Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/talks/sections/', false);
         }
@@ -42,19 +45,30 @@ class Section extends Page
             return ['http_error' => 404, 'reason' => 'Section does not exist', 'suggested_link' => '/talks/sections/'];
         }
         // Check if private
-        if ($output_array['private'] && $output_array['author'] !== $_SESSION['user_id'] && !\in_array('view_private', $_SESSION['permissions'], true)) {
+        if (
+            $output_array['private']
+            && $output_array['author'] !== $_SESSION['user_id']
+            && !\in_array('view_private', $_SESSION['permissions'], true)
+        ) {
             return ['http_error' => 403, 'reason' => 'This section is private and you lack `view_private` permission'];
         }
         // Check if scheduled
-        if ($output_array['created'] >= \time() && !\in_array('view_scheduled', $_SESSION['permissions'], true)) {
+        if (
+            $output_array['created'] >= \time()
+            && !\in_array('view_scheduled', $_SESSION['permissions'], true)
+        ) {
             return ['http_error' => 404, 'reason' => 'Section does not exist', 'suggested_link' => '/talks/sections/'];
         }
         // Generate pagination data
         $page = (int) ($_GET['page'] ?? 1);
         $output_array['pagination'] = ['current' => $page, 'total' => \max($output_array['threads']['pages'] ?? 1, $output_array['children']['pages'] ?? 1), 'prefix' => '?page='];
-        if ($output_array['pagination']['current'] > $output_array['pagination']['total'] && $output_array['pagination']['total'] !== 0) {
+        if (
+            $output_array['pagination']['current'] > $output_array['pagination']['total']
+            && $output_array['pagination']['total'] !== 0
+        ) {
             // Redirect to last page
             Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/talks/sections/'.($id === 'top' ? '' : $id).'?page='.$output_array['pagination']['total'], false);
+
             return [];
         }
         // Collect times
@@ -95,14 +109,21 @@ class Section extends Page
             $this->og_desc = $output_array['description'] ?? ($output_array['type'].' with the name of `'.$output_array['name'].'`');
         }
         // Get section types
-        if ($output_array['owned'] || \in_array('add_sections', $_SESSION['permissions'], true)) {
+        if (
+            $output_array['owned']
+            || \in_array('add_sections', $_SESSION['permissions'], true)
+        ) {
             $output_array['section_types'] = \App\Entity\Section::getSectionTypes($output_array['inherited_type']);
         }
         // Get stuff for threads
-        if ($output_array['owned'] || \in_array('can_post', $_SESSION['permissions'], true)) {
+        if (
+            $output_array['owned']
+            || \in_array('can_post', $_SESSION['permissions'], true)
+        ) {
             $output_array['thread_languages'] = \App\Entity\Thread::getLanguages();
             $output_array['thread_link_types'] = \App\Entity\Thread::getAltLinkTypes();
         }
+
         return $output_array;
     }
 }

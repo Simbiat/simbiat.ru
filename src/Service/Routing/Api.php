@@ -28,6 +28,7 @@ class Api extends \App\Controller\Api\Api
 
     /**
      * This is an actual API response generation based on further details of the $path
+     *
      * @param array $path
      *
      * @return array

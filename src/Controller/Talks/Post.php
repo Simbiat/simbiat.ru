@@ -31,27 +31,49 @@ class Post extends Page
     {
         // Sanitize ID
         $id = $path[0] ?? null;
-        if (empty($id) || (int) $id < 1) {
+        if (
+            empty($id)
+            || (int) $id < 1
+        ) {
             return ['http_error' => 400, 'reason' => 'Wrong ID'];
         }
         $post = new \App\Entity\Post($id);
         $output_array = $post->getArray();
-        if (empty($output_array['id']) || empty($output_array['text'])) {
+        if (
+            empty($output_array['id'])
+            || empty($output_array['text'])
+        ) {
             return ['http_error' => 404, 'reason' => 'Post does not exist', 'suggested_link' => '/talks/sections/'];
         }
         // Check if private
         if ($output_array['private']) {
-            if ($output_array['author'] === SystemUser::Unknown->value && $output_array['owned'] === true) {
-                if ($output_array['type'] === 'Support' && ($output_array['access_token'] === null || $output_array['access_token'] === '' || $output_array['access_token'] !== ($_GET['access_token'] ?? ''))) {
+            if (
+                $output_array['author'] === SystemUser::Unknown->value
+                && $output_array['owned'] === true
+            ) {
+                if (
+                    $output_array['type'] === 'Support'
+                    && (
+                        $output_array['access_token'] === null
+                        || $output_array['access_token'] === ''
+                        || $output_array['access_token'] !== ($_GET['access_token'] ?? '')
+                    )
+                ) {
                     // Return same error to limit potential of brute-forcing a token
                     return ['http_error' => 403, 'reason' => 'This post is private and you lack `view_private` permission'];
                 }
-            } elseif ($output_array['owned'] !== true && !\in_array('view_private', $_SESSION['permissions'], true)) {
+            } elseif (
+                $output_array['owned'] !== true
+                && !\in_array('view_private', $_SESSION['permissions'], true)
+            ) {
                 return ['http_error' => 403, 'reason' => 'This post is private and you lack `view_private` permission'];
             }
         }
         // Check if scheduled
-        if ($output_array['created'] >= \time() && !\in_array('view_scheduled', $_SESSION['permissions'], true)) {
+        if (
+            $output_array['created'] >= \time()
+            && !\in_array('view_scheduled', $_SESSION['permissions'], true)
+        ) {
             return ['http_error' => 404, 'reason' => 'Post does not exist', 'suggested_link' => '/talks/sections/'];
         }
         // Check if we are trying to edit a post, that we can't edit
@@ -63,13 +85,20 @@ class Post extends Page
         } elseif (\in_array('edit_others_posts', $_SESSION['permissions'], true)) {
             $output_array['can_edit_post'] = true;
         }
-        if ($output_array['can_edit_post'] && $post->locked && !\in_array('edit_locked', $_SESSION['permissions'], true)) {
+        if (
+            $output_array['can_edit_post']
+            && $post->locked
+            && !\in_array('edit_locked', $_SESSION['permissions'], true)
+        ) {
             $output_array['can_edit_post'] = false;
         }
         // Try to exit early based on modification date
         $this->lastModified($output_array['updated']);
         // Changelogs have Unix timestamp for names, need to convert those to the desired format
-        if ($output_array['type'] === 'Changelog' && \is_numeric($output_array['name'])) {
+        if (
+            $output_array['type'] === 'Changelog'
+            && \is_numeric($output_array['name'])
+        ) {
             $output_array['name'] = \date('Y.m.d', (int) $output_array['name']);
         }
         // Get history
@@ -105,7 +134,10 @@ class Post extends Page
         // Add current page
         $this->breadcrumb[] = ['href' => '/talks/posts/'.$id, 'name' => '#'.$id];
         // Add a version link to breadcrumb
-        if ($history && $time > 0) {
+        if (
+            $history
+            && $time > 0
+        ) {
             $this->breadcrumb[] = ['href' => '/talks/posts/'.$id.'/'.$time, 'name' => \date('d/m/Y H:i', (int) $time)];
         }
         // Update title, h1 and og_desc
@@ -127,6 +159,7 @@ class Post extends Page
             ($output_array['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />').
             ($output_array['editor'] !== 1 && $output_array['editor'] !== $output_array['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />' : '').
             '<meta property="article:section" content="'.$output_array['name'].'" />';
+
         return $output_array;
     }
 }

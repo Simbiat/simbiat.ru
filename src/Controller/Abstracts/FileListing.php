@@ -36,6 +36,7 @@ class FileListing extends StaticPage
 
     /**
      * Generate the page
+     *
      * @param array $path
      *
      * @return array
@@ -56,7 +57,10 @@ class FileListing extends StaticPage
                 if (!\is_dir(Config::$work_dir.$dir['path'])) {
                     return ['http_error' => 404, 'reason' => 'Directory `'.$dir['path'].'` does not exist.'];
                 }
-                if (!empty($dir['depth']) && $dir['depth'] >= 1) {
+                if (
+                    !empty($dir['depth'])
+                    && $dir['depth'] >= 1
+                ) {
                     $output_array['files'][$key] = $this->getDirs(Config::$work_dir.$dir['path'], true);
                     $output_array['files'][$key]['files'] = [];
                 } else {
@@ -104,6 +108,7 @@ class FileListing extends StaticPage
             }
         }
         $output_array['path'] = $path[0] ?? null;
+
         return $output_array;
     }
 
@@ -124,6 +129,7 @@ class FileListing extends StaticPage
                 if (\strcasecmp($path_entry, $sub_path) === 0) {
                     $match = true;
                     $full_sub_dir .= $path_entry.'/';
+
                     break;
                 }
             }
@@ -131,6 +137,7 @@ class FileListing extends StaticPage
                 return false;
             }
         }
+
         return $full_sub_dir;
     }
 
@@ -147,7 +154,10 @@ class FileListing extends StaticPage
         $output_array['files'][$path] = $this->getFiles(Config::$work_dir.$this->dirs[$path]['path'].$sub_dir);
         // Process pagination
         $total_pages = (int) \ceil($output_array['files'][$path]['count'] / $this->list_items);
-        if ($total_pages > 0 && $this->page > $total_pages) {
+        if (
+            $total_pages > 0
+            && $this->page > $total_pages
+        ) {
             // Redirect to last page
             Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').$this->getLastCrumb().'/'.(!empty($this->search_for) ? '?search='.\rawurlencode($this->search_for).'&page='.$total_pages : '?page='.$total_pages), false);
         }
@@ -185,6 +195,7 @@ class FileListing extends StaticPage
         // Update title and H1
         $this->title = $this->dirs[$path]['name'].' from '.$this->title;
         $this->h1 = $this->dirs[$path]['name'];
+
         return $output_array;
     }
 
@@ -223,6 +234,7 @@ class FileListing extends StaticPage
             }
             $result['count'] = \count($result['dirs']);
         }
+
         return $result;
     }
 
@@ -257,8 +269,17 @@ class FileListing extends StaticPage
         } else {
             $id = 1;
             foreach ($iterator as $key => $file) {
-                if (!\in_array($key, $this->exclude, true) && (empty($this->search_for) || \mb_stripos($key, $this->search_for, 0, 'UTF-8') !== false)) {
-                    if ($id >= ((($this->page - 1) * $this->list_items) + 1) && $id <= ($this->page * $this->list_items)) {
+                if (
+                    !\in_array($key, $this->exclude, true)
+                    && (
+                        empty($this->search_for)
+                        || \mb_stripos($key, $this->search_for, 0, 'UTF-8') !== false
+                    )
+                ) {
+                    if (
+                        $id >= ((($this->page - 1) * $this->list_items) + 1)
+                        && $id <= $this->page * $this->list_items
+                    ) {
                         $file_details = [
                             'filename' => $file->getFilename(),
                             'basename' => $file->getBasename('.'.$file->getExtension()),
@@ -281,6 +302,7 @@ class FileListing extends StaticPage
             }
             $result['count'] = \count($result['files']);
         }
+
         return $result;
     }
 

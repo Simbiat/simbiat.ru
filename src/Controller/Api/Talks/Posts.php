@@ -33,6 +33,7 @@ class Posts extends Api
             if (HomePage::$method !== 'POST') {
                 return ['http_error' => 405, 'reason' => 'Incorrect method or verb used'];
             }
+
             // Only support adding a new post here
             return new Post()->add();
         }
@@ -46,11 +47,15 @@ class Posts extends Api
         // If post is being deleted - require CSRF. Deletion is final, so it's critical.
         // Adding and editing a post can take a lot of time, thus CSRF will easily expire. Since these operations do not change user data - not so critical.
         // Liking and disliking is even less critical.
-        if ($path[1] === 'delete' || HomePage::$method === 'DELETE') {
+        if (
+            $path[1] === 'delete'
+            || HomePage::$method === 'DELETE'
+        ) {
             if (!$this->antiCSRF($this->allowed_origins)) {
                 return ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
             }
         }
+
         return match ($path[1]) {
             'like' => $post->like(),
             'dislike' => $post->like(true),

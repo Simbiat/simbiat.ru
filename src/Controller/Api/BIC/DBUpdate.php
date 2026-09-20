@@ -25,6 +25,7 @@ class DBUpdate extends Api
 
     /**
      * This is actual API response generation based on further details of the $path
+     *
      * @param array $path
      *
      * @return array
@@ -38,11 +39,13 @@ class DBUpdate extends Api
             $data = new BICLibrary()->update(true);
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
+
             return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         }
         if (\is_string($data)) {
             return ['http_error' => 500, 'reason' => $data];
         }
+
         return ['response' => $data];
     }
 }

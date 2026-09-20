@@ -36,7 +36,10 @@ class Keying extends Page
         $output_array['acc_value'] = null;
         $output_array['first_half'] = null;
         $output_array['second_half'] = null;
-        if (!empty($path[0]) && !empty($path[1])) {
+        if (
+            !empty($path[0])
+            && !empty($path[1])
+        ) {
             $output_array['check_result'] = AccountKeying::accCheck($path[0], $path[1]);
             if ($output_array['check_result'] !== false) {
                 $output_array['bic_value'] = $path[0];
@@ -50,6 +53,7 @@ class Keying extends Page
                 $output_array['second_half'] = \preg_replace('/(^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{2})(\d)(\d{11})$/u', '$3', $path[1]);
             }
         }
+
         return $output_array;
     }
 }

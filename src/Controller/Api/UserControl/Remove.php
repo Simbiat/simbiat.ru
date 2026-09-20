@@ -27,6 +27,7 @@ class Remove extends Api
         if (HomePage::$method === 'DELETE') {
             $_POST['hard'] = true;
         }
+
         return ['response' => new User($_SESSION['user_id'])->remove((bool) ($_POST['hard'] ?? false))];
     }
 }

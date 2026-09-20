@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="PHP" pattern="file[simbiat.eu]:bin//*||file[simbiat.eu]:lib/*.php" />
+  <scope name="PHP" pattern="file[simbiat.eu]:bin//*.php||file[simbiat.eu]:packages/*.php||file[simbiat.eu]:src/*.php" />
 </component>

@@ -35,6 +35,7 @@ final class Errors
 
     /**
      * Helper function to log errors with identifying the page
+     *
      * @param \Throwable $error   Error object
      * @param mixed      $context Context (extra data) to store in the log
      * @param bool       $debug   If set to `true` will output the error instead of writing to file
@@ -52,6 +53,7 @@ final class Errors
         }
         // Write to file
         self::write($message);
+
         return false;
     }
 
@@ -89,6 +91,7 @@ final class Errors
                 $context = '';
             }
         }
+
         return '['.\date('c').'] '.$type.':'."\r\n\t".
             'Request: '.$page."\r\n\t".
             'File: '.$file."\r\n\t".
@@ -101,6 +104,7 @@ final class Errors
 
     /**
      * Actual custom error handler
+     *
      * @param int    $level   Error level
      * @param string $message Error message
      * @param string $file    The file where the error happened
@@ -117,9 +121,16 @@ final class Errors
         // Excluding some warnings from processing
         if (
             // Exclude Twig cache
-            ($level === \E_DEPRECATED && \preg_match('/twig[\\\\\/]cache/i', $file) === 1) ||
+            (
+                $level === \E_DEPRECATED
+                && \preg_match('/twig[\\\\\/]cache/i', $file) === 1
+            )
+            ||
             // Exclude GD color profile warning
-            ($level === \E_WARNING && \preg_match('/known incorrect sRGB profile/i', $file) === 1)
+            (
+                $level === \E_WARNING
+                && \preg_match('/known incorrect sRGB profile/i', $file) === 1
+            )
         ) {
             return false;
         }
@@ -127,11 +138,13 @@ final class Errors
         $message = self::genLogEntry(self::PHP_ERROR_TYPES[$level], $file, $line, $message);
         // Write to file
         self::write($message);
+
         return true;
     }
 
     /**
      * Custom shutdown function
+     *
      * @return void
      */
     public static function shutdown(): void
@@ -139,20 +152,29 @@ final class Errors
         // Get error
         $error = \error_get_last();
         // Log only time and memory exhaustion to avoid duplicates
-        if ($error !== null && $error !== [] && $error['type'] === \E_ERROR && \preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1) {
+        if (
+            $error !== null
+            && $error !== []
+            && $error['type'] === \E_ERROR
+            && \preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1
+        ) {
             // Generate message
             $message = self::genLogEntry(self::PHP_ERROR_TYPES[$error['type']], $error['file'], $error['line'], $error['message']);
             // Write to file
             self::write($message);
         }
         // Rollback if there was an open transaction
-        if (Query::$dbh !== null && Query::$dbh->inTransaction()) {
+        if (
+            Query::$dbh !== null
+            && Query::$dbh->inTransaction()
+        ) {
             Query::$dbh->rollBack();
         }
     }
 
     /**
      * Helper to write errors in the log
+     *
      * @param string $message Error message
      *
      * @return void
@@ -164,6 +186,7 @@ final class Errors
 
     /**
      * Helper to attempt to get URL, which was used when the error occurred
+     *
      * @return string
      */
     private static function getRequest(): string
@@ -173,11 +196,13 @@ final class Errors
         } else {
             $request = $_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];;
         }
+
         return $request;
     }
 
     /**
      * A simple wrapper function for var_dump to apply <pre> tag and exit the script (by default)
+     *
      * @param mixed $variable Variable to dump
      * @param bool  $exit     Whether to stop execution right away
      *

@@ -46,6 +46,7 @@ class Sitemap extends Router
         };
         $result['format'] = 'xml';
         $result['template_override'] = 'common/pages/sitemap.twig';
+
         return $result;
     }
 }

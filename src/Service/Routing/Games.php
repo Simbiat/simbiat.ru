@@ -27,8 +27,8 @@ class Games extends Router
     {
         return match ($path[0]) {
             'jiangshi' => new Jiangshi()->get(\array_slice($path, 1)),
-            'dden' => (new DDEN())->get(\array_slice($path, 1)),
-            'radicalresonance' => (new RadicalResonance())->get(\array_slice($path, 1)),
+            'dden' => new DDEN()->get(\array_slice($path, 1)),
+            'radicalresonance' => new RadicalResonance()->get(\array_slice($path, 1)),
             default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.\implode('`, `', $this->sub_routes).'`.'],
         };
     }

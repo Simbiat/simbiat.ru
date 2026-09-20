@@ -52,6 +52,7 @@ class MergeCrest extends Api
         if (empty($location)) {
             return ['http_error' => 500, 'reason' => 'Failed to merge the component'];
         }
+
         return ['location' => $location, 'response' => true, 'status' => 201];
     }
 }

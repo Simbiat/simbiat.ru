@@ -46,6 +46,7 @@ class General extends Page
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Failed to read `'.$this->json_to_ingest.'.json` file'];
         }
+
         // Placeholder
         return $output_array;
     }

@@ -16,6 +16,7 @@ class StaticPage extends Page
 
     /**
      * Static pages have all the data in Twig templates, thus we usually return an empty array
+     *
      * @param array $path
      *
      * @return array

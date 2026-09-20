@@ -44,7 +44,10 @@ class Linkshell extends Page
         // Try to exit early based on the modification date
         $this->lastModified($output_array['linkshell']['dates']['updated']);
         // Check if linked to the current user
-        if ($_SESSION['user_id'] !== 1 && \in_array($_SESSION['user_id'], \array_column($output_array['linkshell']['members'], 'user_id'), true)) {
+        if (
+            $_SESSION['user_id'] !== 1
+            && \in_array($_SESSION['user_id'], \array_column($output_array['linkshell']['members'], 'user_id'), true)
+        ) {
             $output_array['linkshell']['linked'] = true;
         } else {
             $output_array['linkshell']['linked'] = false;
@@ -84,6 +87,7 @@ class Linkshell extends Page
         } else {
             $output_array['linkshell']['lodestone_url'] = null;
         }
+
         return $output_array;
     }
 }

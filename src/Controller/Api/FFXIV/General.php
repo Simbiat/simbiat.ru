@@ -30,10 +30,19 @@ abstract class General extends Api
             $path[1] = '';
         }
         try {
-            if ($path[1] === 'update' && !$this->antiCSRF($this->allowed_origins)) {
+            if (
+                $path[1] === 'update'
+                && !$this->antiCSRF($this->allowed_origins)
+            ) {
                 return ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
             }
-            if ($path[1] === 'lodestone' && (empty($_SESSION['user_id']) || $_SESSION['user_id'] === 1)) {
+            if (
+                $path[1] === 'lodestone'
+                && (
+                    empty($_SESSION['user_id'])
+                    || $_SESSION['user_id'] === 1
+                )
+            ) {
                 // User is not authenticated. Abuse of Lodestone can slow down automated updates, and Update requires authentication either way
                 return ['http_error' => 403, 'reason' => 'Authentication required'];
             }
@@ -55,22 +64,35 @@ abstract class General extends Api
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
+
             return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         }
         // Check for errors
         if (!empty($data['http_error'])) {
             return $data;
         }
-        if ($data === 404 || (!empty($data['404']) && $data['404'] === true)) {
+        if (
+            $data === 404
+            || (
+                !empty($data['404'])
+                && $data['404'] === true
+            )
+        ) {
             return ['http_error' => 404, 'reason' => $data['reason'] ?? ($this->name_for_errors.' with ID `'.$path[0].'` is not found on Lodestone')];
         }
         if ($data === 400) {
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];
         }
-        if ($data === 500 || $data === false) {
+        if (
+            $data === 500
+            || $data === false
+        ) {
             return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         }
-        if ($data === 403 && \in_array($this->name_for_links, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'])) {
+        if (
+            $data === 403
+            && \in_array($this->name_for_links, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'])
+        ) {
             return ['http_error' => 403, 'reason' => $this->name_for_errors.' has empty page on Lodestone'];
         }
         if ($data === 409) {
@@ -79,10 +101,14 @@ abstract class General extends Api
         if (\is_string($data)) {
             return ['http_error' => 500, 'reason' => $data];
         }
-        if ($data !== true && empty($data['id'])) {
+        if (
+            $data !== true
+            && empty($data['id'])
+        ) {
             if ($path[1] === 'lodestone') {
                 return ['http_error' => 500, 'reason' => 'Failed to get '.\mb_strtolower($this->name_for_errors, 'UTF-8').' with ID `'.$path[0].'` from Lodestone'];
             }
+
             return ['http_error' => 404, 'reason' => $this->name_for_errors.' with ID `'.$path[0].'` is not found on Tracker'];
         }
         if (!empty($data['dates']['updated'])) {
@@ -90,7 +116,10 @@ abstract class General extends Api
         }
         $result = ['response' => $data];
         // Return 201 if we were registering an entity
-        if ($path[1] === 'register' && $data === true) {
+        if (
+            $path[1] === 'register'
+            && $data === true
+        ) {
             $result['location'] = '/fftracker/'.($this->name_for_links === 'freecompany' ? 'freecompanies' : $this->name_for_links.'s').'/'.$path[0];
             $result['status'] = 201;
         }
@@ -102,7 +131,10 @@ abstract class General extends Api
             if ($path[1] !== 'lodestone') {
                 $result['alt_links'][] = ['type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/'.($this->name_for_links === 'freecompany' ? 'freecompanies' : $this->name_for_links.'s').'/'.$path[0].'/lodestone'];
             }
-            if ($path[1] === 'update' || $path[1] === 'register') {
+            if (
+                $path[1] === 'update'
+                || $path[1] === 'register'
+            ) {
                 $result['alt_links'][] = ['type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/'.($this->name_for_links === 'freecompany' ? 'freecompanies' : $this->name_for_links.'s').'/'.$path[0]];
             }
             if ($this->name_for_links === 'achievement') {
@@ -119,6 +151,7 @@ abstract class General extends Api
         if ($path[1] === 'lodestone') {
             $result['cache_age'] = 1440;
         }
+
         return $result;
     }
 }

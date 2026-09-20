@@ -50,6 +50,7 @@ H /config/phpstan.neon
 H /config/phpunit.xml
 H /config/psalm.xml
 H /config/stylelint.config.ts
+H /config/twig-cs-fixer.php
 + /data/
 + /data/.gitignore
 - /data/security.json
@@ -112,6 +113,7 @@ H /example.env
 H /.gitattributes
 H /.gitignore
 H /.gitmodules
+H /.twig-cs-fixer.cache
 H /bun.lock
 + /.compose.yaml
 H /.compose.override.yaml

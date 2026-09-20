@@ -36,6 +36,7 @@ class Emails extends Api
         switch ($path[0]) {
             case 'activate':
                 new Email($_POST['email'])->confirm();
+
                 return ['response' => true];
             case 'add':
                 return new Email($_POST['email'])->add(true);

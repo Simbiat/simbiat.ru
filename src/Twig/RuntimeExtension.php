@@ -100,6 +100,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
      * @param mixed $string
      *
      * @return bool
+     *
      * @noinspection PhpMethodNamingConventionInspection
      */
     public function is_numeric(mixed $string): bool
@@ -128,6 +129,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
      * @param string     $classes
      *
      * @return string
+     *
      * @throws \DateInvalidTimeZoneException
      */
     public function timeTag(int|string $string, string $format = 'd/m/Y H:i', string $classes = ''): string
@@ -140,6 +142,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
         // Create DateTime object while converting the time
         $datetime = SandClock::convertTimezone($string, 'UTC', $timezone);
         $datetime->setTimezone(new \DateTimeZone($timezone));
+
         return '<time datetime="'.$datetime->format('c').'"'.(empty($classes) ? '' : 'class="'.$classes.'"').'>'.$datetime->format($format).'</time>';
     }
 

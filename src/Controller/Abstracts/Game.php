@@ -24,6 +24,7 @@ class Game extends Page
 
     /**
      * Generation of the page data
+     *
      * @param array $path
      *
      * @return array
@@ -46,6 +47,7 @@ class Game extends Page
         if (!empty($this->og_image)) {
             $this->h2_push_extra[] = '/assets/images'.$this->og_image;
         }
+
         return $output_array;
     }
 }

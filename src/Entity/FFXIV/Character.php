@@ -92,6 +92,7 @@ class Character extends AbstractEntity
             // Clean up the data from unnecessary (technical) clutter
             unset($data['clan_id'], $data['nameday_id'], $data['achievement_id'], $data['category'], $data['subcategory'], $data['how_to'], $data['points'], $data['icon'], $data['item'], $data['item_icon'], $data['item_id'], $data['server_id']);
         }
+
         return $data;
     }
 
@@ -101,11 +102,12 @@ class Character extends AbstractEntity
      * @param bool $allow_sleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
      *
      * @return string|array
+     *
      * @internal
      */
     public function getFromLodestone(bool $allow_sleep = false): string|array
     {
-        $lodestone = (new Lodestone());
+        $lodestone = new Lodestone();
         try {
             $data = $lodestone->getCharacter($this->id)->getResult();
         } catch (\Throwable $exception) {
@@ -114,27 +116,42 @@ class Character extends AbstractEntity
                     // Take a pause if we were throttled, and pause is allowed
                     \sleep(60);
                 }
+
                 return 'Request throttled by Lodestone';
             }
             if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) === 1) {
                 return 'Lodestone not available';
             }
             Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
+
             return 'Failed to get all necessary data for Character '.$this->id;
         }
         // Check if the character is private
         $private = false;
-        if (!empty($data['characters'][$this->id]) && \is_array($data['characters'][$this->id]) && \array_key_exists('private', $data['characters'][$this->id]) && $data['characters'][$this->id]['private'] === true) {
+        if (
+            !empty($data['characters'][$this->id])
+            && \is_array($data['characters'][$this->id])
+            && \array_key_exists('private', $data['characters'][$this->id])
+            && $data['characters'][$this->id]['private'] === true
+        ) {
             $this->markPrivate();
             $private = true;
         }
         // Check for possible errors
-        if (!$private && empty($data['characters'][$this->id]['server'])) {
-            if (!empty($data['characters'][$this->id]) && (int) $data['characters'][$this->id] === 404) {
+        if (
+            !$private
+            && empty($data['characters'][$this->id]['server'])
+        ) {
+            if (
+                !empty($data['characters'][$this->id])
+                && (int) $data['characters'][$this->id] === 404
+            ) {
                 $this->delete();
+
                 return ['404' => true];
             }
             Errors::error_log(new \RuntimeException('Failed to get all necessary data for Character '.$this->id), ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
+
             return 'Failed to get all necessary data for Character '.$this->id;
         }
         // Try to get jobs and achievements now, that we got basic information, and there were no issues with it.
@@ -150,6 +167,7 @@ class Character extends AbstractEntity
                     // Take a pause if we were throttled, and pause is allowed
                     \sleep(60);
                 }
+
                 return 'Request throttled by Lodestone';
             }
             if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) !== 1) {
@@ -160,6 +178,7 @@ class Character extends AbstractEntity
         $data = $data['characters'][$this->id];
         $data['id'] = $this->id;
         $data['404'] = false;
+
         return $data;
     }
 
@@ -274,7 +293,10 @@ class Character extends AbstractEntity
                 $this->lodestone['pvp']['registered'] = Query::query('SELECT `pvp_id` FROM `ffxiv__pvpteam` WHERE `pvp_id` = :id', [':id' => $this->lodestone['pvp']['id']], return: 'check');
             }
             // Insert Free Companies and PvP Team if they are not registered
-            if ($this->lodestone['free_company']['id'] !== null && $this->lodestone['free_company']['registered'] === false) {
+            if (
+                $this->lodestone['free_company']['id'] !== null
+                && $this->lodestone['free_company']['registered'] === false
+            ) {
                 $queries[] = [
                     'INSERT IGNORE INTO `ffxiv__freecompany` (`fc_id`, `name`, `server_id`, `updated`) VALUES (:fc_id, :fc_name, (SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server), TIMESTAMPADD(SECOND, -3600, CURRENT_TIMESTAMP(6)));',
                     [
@@ -284,7 +306,10 @@ class Character extends AbstractEntity
                     ],
                 ];
             }
-            if ($this->lodestone['pvp']['id'] !== null && $this->lodestone['pvp']['registered'] === false) {
+            if (
+                $this->lodestone['pvp']['id'] !== null
+                && $this->lodestone['pvp']['registered'] === false
+            ) {
                 $queries[] = [
                     'INSERT IGNORE INTO `ffxiv__pvpteam` (`pvp_id`, `name`, `data_center_id`, `updated`) VALUES (:pvp_id, :pvp_name, (SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server), TIMESTAMPADD(SECOND, -3600, CURRENT_TIMESTAMP(6)));',
                     [
@@ -302,8 +327,14 @@ class Character extends AbstractEntity
             // Get total achievements points. Using foreach for speed
             $achievement_points = 0;
             $hidden_achievements = false;
-            if (!empty($this->lodestone['achievements']) && \is_array($this->lodestone['achievements'])) {
-                if (\array_key_exists('private', $this->lodestone['achievements']) && $this->lodestone['achievements']['private']) {
+            if (
+                !empty($this->lodestone['achievements'])
+                && \is_array($this->lodestone['achievements'])
+            ) {
+                if (
+                    \array_key_exists('private', $this->lodestone['achievements'])
+                    && $this->lodestone['achievements']['private']
+                ) {
                     $hidden_achievements = true;
                 } else {
                     unset($this->lodestone['achievements']['private']);
@@ -315,15 +346,27 @@ class Character extends AbstractEntity
             // Check friends/following lists
             $hidden_friends = false;
             $hidden_following = false;
-            if (!empty($this->lodestone['friends']) && \is_array($this->lodestone['friends'])) {
-                if (\array_key_exists('private', $this->lodestone['friends']) && $this->lodestone['friends']['private']) {
+            if (
+                !empty($this->lodestone['friends'])
+                && \is_array($this->lodestone['friends'])
+            ) {
+                if (
+                    \array_key_exists('private', $this->lodestone['friends'])
+                    && $this->lodestone['friends']['private']
+                ) {
                     $hidden_friends = true;
                 } else {
                     unset($this->lodestone['friends']['private']);
                 }
             }
-            if (!empty($this->lodestone['following']) && \is_array($this->lodestone['following'])) {
-                if (\array_key_exists('private', $this->lodestone['following']) && $this->lodestone['following']['private']) {
+            if (
+                !empty($this->lodestone['following'])
+                && \is_array($this->lodestone['following'])
+            ) {
+                if (
+                    \array_key_exists('private', $this->lodestone['following'])
+                    && $this->lodestone['following']['private']
+                ) {
                     $hidden_following = true;
                 } else {
                     unset($this->lodestone['following']['private']);
@@ -414,7 +457,11 @@ class Character extends AbstractEntity
                 ],
             ];
             // Achievements
-            if (!$hidden_achievements && !empty($this->lodestone['achievements']) && \is_array($this->lodestone['achievements'])) {
+            if (
+                !$hidden_achievements
+                && !empty($this->lodestone['achievements'])
+                && \is_array($this->lodestone['achievements'])
+            ) {
                 foreach ($this->lodestone['achievements'] as $achievement_id => $item) {
                     $icon = self::removeLodestoneDomain($item['icon']);
                     // Download the icon if it's not already present
@@ -443,7 +490,10 @@ class Character extends AbstractEntity
                             ],
                         ];
                         // If the achievement is new since the last check, or if this is the first time the character is being processed, add and count the achievement
-                        if (!empty($updated) && (int) $item['time'] > \strtotime($updated)) {
+                        if (
+                            !empty($updated)
+                            && (int) $item['time'] > \strtotime($updated)
+                        ) {
                             $queries[] = [
                                 'UPDATE `ffxiv__achievement` SET `earned_by`=`earned_by`+1 WHERE `achievement_id`=:achievement_id;',
                                 [
@@ -455,7 +505,11 @@ class Character extends AbstractEntity
                 }
             }
             // Process friends/following
-            if (!$hidden_friends && !empty($this->lodestone['friends']) && \is_array($this->lodestone['friends'])) {
+            if (
+                !$hidden_friends
+                && !empty($this->lodestone['friends'])
+                && \is_array($this->lodestone['friends'])
+            ) {
                 // Get current friends from tracker
                 $friends_list = Query::query('SELECT `character_id` FROM `ffxiv__character_friends` WHERE `character_id`=:character_id AND `current`=1;', [':character_id' => $this->id], return: 'column');
                 // Update status of removed friends
@@ -481,7 +535,11 @@ class Character extends AbstractEntity
                     ];
                 }
             }
-            if (!$hidden_following && !empty($this->lodestone['following']) && \is_array($this->lodestone['following'])) {
+            if (
+                !$hidden_following
+                && !empty($this->lodestone['following'])
+                && \is_array($this->lodestone['following'])
+            ) {
                 // Get current friends from tracker
                 $following_list = Query::query('SELECT `character_id` FROM `ffxiv__character_following` WHERE `character_id`=:character_id AND `current`=1;', [':character_id' => $this->id], return: 'column');
                 // Update status of removed friends
@@ -509,14 +567,24 @@ class Character extends AbstractEntity
             }
             Query::query($queries);
             // Schedule the proper update of any newly added characters
-            if (!$hidden_friends && !empty($this->lodestone['friends'])) {
+            if (
+                !$hidden_friends
+                && !empty($this->lodestone['friends'])
+            ) {
                 $this->charMassCron($this->lodestone['friends']);
             }
-            if (!$hidden_following && !empty($this->lodestone['following'])) {
+            if (
+                !$hidden_following
+                && !empty($this->lodestone['following'])
+            ) {
                 $this->charMassCron($this->lodestone['following']);
             }
             // Register the Free Company update if a change was detected
-            if (!empty($this->lodestone['free_company']['id']) && !Query::query('SELECT `character_id` FROM `ffxiv__freecompany_character` WHERE `character_id`=:character_id AND `fc_id`=:fcID;', [':character_id' => $this->id, ':fcID' => $this->lodestone['free_company']['id']], return: 'check') && new FreeCompany($this->lodestone['free_company']['id'])->update() !== true) {
+            if (
+                !empty($this->lodestone['free_company']['id'])
+                && !Query::query('SELECT `character_id` FROM `ffxiv__freecompany_character` WHERE `character_id`=:character_id AND `fc_id`=:fcID;', [':character_id' => $this->id, ':fcID' => $this->lodestone['free_company']['id']], return: 'check')
+                && new FreeCompany($this->lodestone['free_company']['id'])->update() !== true
+            ) {
                 try {
                     new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $this->lodestone['free_company']['id'], 'freecompany'], 'message' => 'Updating free company with ID '.$this->lodestone['free_company']['id'], 'priority' => 2])->add();
                 } catch (\Throwable) {
@@ -524,7 +592,11 @@ class Character extends AbstractEntity
                 }
             }
             // Register PvP Team update if a change was detected
-            if (!empty($this->lodestone['pvp']['id']) && !Query::query('SELECT `character_id` FROM `ffxiv__pvpteam_character` WHERE `character_id`=:character_id AND `pvp_id`=:pvpID;', [':character_id' => $this->id, ':pvpID' => $this->lodestone['pvp']['id']], return: 'check') && new PvPTeam($this->lodestone['pvp']['id'])->update() !== true) {
+            if (
+                !empty($this->lodestone['pvp']['id'])
+                && !Query::query('SELECT `character_id` FROM `ffxiv__pvpteam_character` WHERE `character_id`=:character_id AND `pvp_id`=:pvpID;', [':character_id' => $this->id, ':pvpID' => $this->lodestone['pvp']['id']], return: 'check')
+                && new PvPTeam($this->lodestone['pvp']['id'])->update() !== true
+            ) {
                 try {
                     new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $this->lodestone['pvp']['id'], 'pvpteam'], 'message' => 'Updating PvP team with ID '.$this->lodestone['pvp']['id'], 'priority' => 2])->add();
                 } catch (\Throwable) {
@@ -537,9 +609,11 @@ class Character extends AbstractEntity
                 // Download avatar
                 new User($character['user_id'])->addAvatar(false, $this->lodestone['avatar'], (int) $this->id);
             }
+
             return true;
         } catch (\Throwable $exception) {
             Errors::error_log($exception, 'character_id: '.$this->id);
+
             return false;
         }
     }
@@ -553,7 +627,11 @@ class Character extends AbstractEntity
     {
         try {
             // In some cases, we may have a server, name and avatar
-            if (!empty($this->lodestone['server']) && !empty($this->lodestone['name']) && !empty($this->lodestone['avatar'])) {
+            if (
+                !empty($this->lodestone['server'])
+                && !empty($this->lodestone['name'])
+                && !empty($this->lodestone['avatar'])
+            ) {
                 $queries = [];
                 $queries[] = [
                     'UPDATE `ffxiv__character` SET `hidden` = COALESCE(`hidden`, CURRENT_TIMESTAMP(6)), `updated`=CURRENT_TIMESTAMP(6) WHERE `character_id` = :character_id',
@@ -565,15 +643,18 @@ class Character extends AbstractEntity
                     ],
                 ];
                 $this->insertServerAndName($queries);
+
                 return Query::query($queries);
             }
             $result = Query::query(
                 'UPDATE `ffxiv__character` SET `hidden` = COALESCE(`hidden`, CURRENT_TIMESTAMP(6)), `updated`=CURRENT_TIMESTAMP(6) WHERE `character_id` = :character_id',
                 [':character_id' => $this->id],
             );
+
             return $result;
         } catch (\Throwable $exception) {
             Errors::error_log($exception, debug: $this->debug);
+
             return false;
         }
     }
@@ -669,6 +750,7 @@ class Character extends AbstractEntity
             return Query::query($queries, [':character_id' => $this->id]);
         } catch (\Throwable $exception) {
             Errors::error_log($exception, debug: $this->debug);
+
             return false;
         }
     }
@@ -677,6 +759,7 @@ class Character extends AbstractEntity
      * Link user to character
      *
      * @return array
+     *
      * @internal
      */
     public function linkUser(): array
@@ -684,7 +767,10 @@ class Character extends AbstractEntity
         try {
             // Check if a character exists and is linked already
             $character = Query::query('SELECT `character_id`, `user_id` FROM `uc__user_to_ff_character` WHERE `character_id`=:id;', [':id' => $this->id], return: 'row');
-            if ($character !== [] && $character['user_id']) {
+            if (
+                $character !== []
+                && $character['user_id']
+            ) {
                 return ['http_error' => 409, 'reason' => 'Character already linked'];
             }
             // Register or update the character
@@ -694,6 +780,7 @@ class Character extends AbstractEntity
                 if (!empty($this->lodestone['404'])) {
                     return ['http_error' => 400, 'reason' => 'No character found with id `'.$this->id.'`'];
                 }
+
                 return ['http_error' => 500, 'reason' => 'Failed to get fresh data for character with id `'.$this->id.'`'];
             }
             // Check if biography is set
@@ -717,6 +804,7 @@ class Character extends AbstractEntity
             Security::log(LogType::UserDetailsChanged->value, 'Attempted to link FFXIV character', ['id' => $this->id, 'result' => $result]);
             // Download avatar
             new User($_SESSION['user_id'])->addAvatar(false, 'https://img2.finalfantasyxiv.com/f/'.$this->avatar_id.'c0.jpg', $this->id);
+
             return ['response' => $result];
         } catch (\Throwable $exception) {
             return ['http_error' => 500, 'reason' => $exception->getMessage()];

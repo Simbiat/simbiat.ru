@@ -23,6 +23,7 @@ class Tests extends Router
 
     /**
      * This is the actual page generation based on further details of the $path
+     *
      * @param array $path
      *
      * @return array
@@ -31,9 +32,16 @@ class Tests extends Router
     {
         $output_array = [];
         // Forbid if on PROD
-        if (!empty($path[0]) && $path[0] !== 'styling') {
-            if (Config::$environment === 'prod' || \count($path) === 0) {
+        if (
+            !empty($path[0])
+            && $path[0] !== 'styling'
+        ) {
+            if (
+                Config::$environment === 'prod'
+                || \count($path) === 0
+            ) {
                 $output_array['http_error'] = 403;
+
                 return $output_array;
             }
         }

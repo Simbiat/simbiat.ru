@@ -73,7 +73,14 @@ class Curl
             $share = \curl_share_init_persistent([\CURL_LOCK_DATA_DNS, \CURL_LOCK_DATA_SSL_SESSION, \CURL_LOCK_DATA_CONNECT, \CURL_LOCK_DATA_PSL]);
             $this->curl_options[\CURLOPT_SHARE] = $share;
             self::$curl_handle = \curl_init();
-            if (self::$curl_handle !== false && (!\curl_setopt_array(self::$curl_handle, $this->curl_options) || !\curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers) || !\curl_setopt(self::$curl_handle, \CURLOPT_USERAGENT, $user_agent))) {
+            if (
+                self::$curl_handle !== false
+                && (
+                    !\curl_setopt_array(self::$curl_handle, $this->curl_options)
+                    || !\curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers)
+                    || !\curl_setopt(self::$curl_handle, \CURLOPT_USERAGENT, $user_agent)
+                )
+            ) {
                 // Do not set curl handle, if setting up options failed
                 self::$curl_handle = false;
             }
@@ -82,6 +89,7 @@ class Curl
 
     /**
      * Get page content
+     *
      * @param string $link
      *
      * @return string|false|int
@@ -107,11 +115,13 @@ class Curl
         if ($http_code !== 200) {
             return $http_code;
         }
+
         return \mb_substr($response, \curl_getinfo(self::$curl_handle, \CURLINFO_HEADER_SIZE), encoding: 'UTF-8');
     }
 
     /**
      * Download a file
+     *
      * @param string $link
      *
      * @return array|false
@@ -136,7 +146,10 @@ class Curl
         $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
         // Close file
         @\fclose($fp);
-        if ($response === false || $http_code !== 200) {
+        if (
+            $response === false
+            || $http_code !== 200
+        ) {
             return false;
         }
         // Rename the file to give it a proper extension
@@ -144,6 +157,7 @@ class Curl
         $new_name = \pathinfo($filepath, \PATHINFO_FILENAME).'.'.(Common::getExtensionFromMime($mime) ?? \preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$2', $link));
         \rename($filepath, \sys_get_temp_dir().'/'.$new_name);
         $filepath = \sys_get_temp_dir().'/'.$new_name;
+
         return [
             'server_name' => $new_name,
             'server_path' => \sys_get_temp_dir(),
@@ -156,6 +170,7 @@ class Curl
 
     /**
      * POST something
+     *
      * @param string $link
      * @param mixed  $payload
      *
@@ -171,11 +186,13 @@ class Curl
         // Get a response
         $response = \curl_exec(self::$curl_handle);
         $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
+
         return !($response === false || !\in_array($http_code, [200, 201, 202, 203, 204, 205, 206, 207, 208, 226], true));
     }
 
     /**
      * POST something as a JSON
+     *
      * @param string $link
      * @param mixed  $payload
      *
@@ -191,11 +208,13 @@ class Curl
         $result = $this->post($link, $payload);
         $this->removeHeader('Content-Type: application/json');
         $this->addHeader('Content-type: text/html; charset=utf-8');
+
         return $result;
     }
 
     /**
      * Add header to CURL
+     *
      * @param string $header
      *
      * @return $this
@@ -208,11 +227,13 @@ class Curl
             self::$headers[] = $header;
             \curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers);
         }
+
         return $this;
     }
 
     /**
      * Remove header from CURL
+     *
      * @param string $header
      *
      * @return $this
@@ -226,11 +247,13 @@ class Curl
             unset(self::$headers[$key]);
             \curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers);
         }
+
         return $this;
     }
 
     /**
      * Change CURL settings
+     *
      * @param int   $option Setting to change
      * @param mixed $value  Value to set
      *
@@ -239,11 +262,13 @@ class Curl
     public function changeSetting(int $option, mixed $value): self
     {
         \curl_setopt(self::$curl_handle, $option, $value);
+
         return $this;
     }
 
     /**
      * Check if a remote file exists
+     *
      * @param $remote_file
      *
      * @return bool
@@ -258,12 +283,14 @@ class Curl
         \curl_setopt(self::$curl_handle, \CURLOPT_URL, $remote_file);
         (void) \curl_exec(self::$curl_handle);
         $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
+
         // Check code
         return $http_code === 200;
     }
 
     /**
      * Function to process file uploads either through POST/PUT or by using a provided link
+     *
      * @param string $link        URL to process if we are to download a remote file
      * @param bool   $only_images Flag to indicate that only images are allowed
      * @param bool   $to_webp     Whether to convert images to WEBP (if possible)
@@ -285,7 +312,10 @@ class Curl
                 }
             } else {
                 $upload = Sharing::upload(Config::$uploaded, exit: false);
-                if (!\is_array($upload) || empty($upload[0]['server_name'])) {
+                if (
+                    !\is_array($upload)
+                    || empty($upload[0]['server_name'])
+                ) {
                     return ['http_error' => $upload, 'reason' => match ($upload) {
                         405 => 'Unsupported method',
                         415 => 'Unsupported file format',
@@ -311,6 +341,7 @@ class Curl
             // Check if a file is one of the allowed types
             if (!\in_array($upload['type'], self::ALLOWED_MIME, true)) {
                 @\unlink($upload['server_path'].'/'.$upload['server_name']);
+
                 return ['http_error' => 400, 'reason' => 'Unsupported file type provided'];
             }
             // Check if we have an image
@@ -346,7 +377,11 @@ class Curl
             $upload['extension'] = \pathinfo($upload['server_path'].'/'.$upload['server_name'], \PATHINFO_EXTENSION);
             // Get a path for hash-tree structure
             $upload['hash_tree'] = \mb_substr($upload['hash'], 0, 2, 'UTF-8').'/'.\mb_substr($upload['hash'], 2, 2, 'UTF-8').'/'.\mb_substr($upload['hash'], 4, 2, 'UTF-8').'/';
-            if (!\is_dir($upload['new_path'].'/'.$upload['hash_tree']) && !\mkdir($upload['new_path'].'/'.$upload['hash_tree'], recursive: true) && !\is_dir($upload['new_path'].'/'.$upload['hash_tree'])) {
+            if (
+                !\is_dir($upload['new_path'].'/'.$upload['hash_tree'])
+                && !\mkdir($upload['new_path'].'/'.$upload['hash_tree'], recursive: true)
+                && !\is_dir($upload['new_path'].'/'.$upload['hash_tree'])
+            ) {
                 throw new \RuntimeException(\sprintf('Directory "%s" was not created', $upload['new_path'].'/'.$upload['hash_tree']));
             }
             // Set the file location to return in output
@@ -357,6 +392,7 @@ class Curl
                 @\unlink($upload['server_path'].'/'.$upload['server_name']);
             } elseif (!@\rename($upload['server_path'].'/'.$upload['server_name'], $upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
                 @\unlink($upload['server_path'].'/'.$upload['server_name']);
+
                 return ['http_error' => 500, 'reason' => 'Failed to move file to final destination'];
             }
             // Add to the database
@@ -371,9 +407,11 @@ class Curl
                     ':size' => [$upload['size'], 'int'],
                 ]
             );
+
             return $upload;
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
+
             return ['http_error' => 500, 'reason' => 'Failed to upload file'];
         }
     }

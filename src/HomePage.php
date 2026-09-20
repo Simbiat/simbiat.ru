@@ -109,7 +109,10 @@ class HomePage
             self::canonical();
             self::nonApiLinks();
             // Redirect if the page number is set and is less than 1
-            if (\array_key_exists('page', $_GET) && (int) $_GET['page'] < 1) {
+            if (
+                \array_key_exists('page', $_GET)
+                && (int) $_GET['page'] < 1
+            ) {
                 // Remove page (since we ignore page=1 in canonical)
                 Headers::redirect(\preg_replace('/\\?page=-?\d+/ui', '', self::$canonical));
             }
@@ -117,10 +120,13 @@ class HomePage
             $this->filesRequests();
             // Exploding further processing
             /* @noinspection NotOptimalRegularExpressionsInspection False positive, since does not know what can be in the string */
-            $uri = \explode('/', \preg_replace('/^(\/)([^?]*)(\?'.(\preg_quote($_SERVER['QUERY_STRING'] ?? '', '/')).')?/ui', '$2', $_SERVER['REQUEST_URI']));
+            $uri = \explode('/', \preg_replace('/^(\/)([^?]*)(\?'.\preg_quote($_SERVER['QUERY_STRING'] ?? '', '/').')?/ui', '$2', $_SERVER['REQUEST_URI']));
             // Check if there was an internal redirect to a custom error page.
             // If there was no Caddy error, then the value of the variable will be `{http.error.status_code}`. Otherwise - it will be a numeric HTTP code.
-            if (!empty($_SERVER['CADDY_HTTP_ERROR']) && \is_numeric($_SERVER['CADDY_HTTP_ERROR'])) {
+            if (
+                !empty($_SERVER['CADDY_HTTP_ERROR'])
+                && \is_numeric($_SERVER['CADDY_HTTP_ERROR'])
+            ) {
                 self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR'], 'reason' => $_SERVER['CADDY_HTTP_ERROR_MSG'] ?? ''];
             }
             // Suppress inspection, since we only need headers to be sent
@@ -158,22 +164,40 @@ class HomePage
                     // Block some bots, in case they somehow got through CrowdSec, but were detected by Matomo (unlikely to happen, this is precaution)
                     // Also block any bot known as AI one
                     if (
-                        !empty(self::$user_agent['bot']) &&
-                        (\array_key_exists('ai', self::$user_agent) && self::$user_agent['ai'] === true)
+                        !empty(self::$user_agent['bot'])
+                        &&
+                        (
+                            \array_key_exists('ai', self::$user_agent)
+                            && self::$user_agent['ai'] === true
+                        )
                     ) {
                         self::$http_error = ['http_error' => 403, 'reason' => 'Bad bot'];
                     }
                     // Handle Sec-Fetch. Use strict mode if the request is not from a known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
                     Headers::secFetch(strict: (empty(self::$user_agent['bot']) && self::$user_agent['browser']));
                     // Try to start a session if it's not started yet and DB is up. Do not do it if the cache is being returned, if an error has been detected already or if a bot was detected
-                    if (empty(self::$user_agent['bot']) && (self::$http_error === null || self::$http_error === []) && Config::$dbup && !Config::$db_update && !self::$stale_return && \session_status() === \PHP_SESSION_NONE) {
+                    if (
+                        empty(self::$user_agent['bot'])
+                        && (
+                            self::$http_error === null
+                            || self::$http_error === []
+                        )
+                        && Config::$dbup
+                        && !Config::$db_update
+                        && !self::$stale_return
+                        && \session_status() === \PHP_SESSION_NONE
+                    ) {
                         \session_set_save_handler(new Session(), true);
                         if (\session_start()) {
                             // Check if banned IP
                             if (!empty($_SESSION['banned_ip'])) {
                                 self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
                             }
-                            if (\array_key_exists('banned', $_SESSION) && $_SESSION['banned'] === true && \preg_match('/^\/about\/contacts$/ui', $_SERVER['REQUEST_URI']) !== 1) {
+                            if (
+                                \array_key_exists('banned', $_SESSION)
+                                && $_SESSION['banned'] === true
+                                && \preg_match('/^\/about\/contacts$/ui', $_SERVER['REQUEST_URI']) !== 1
+                            ) {
                                 self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
                             }
                         } else {
@@ -189,10 +213,16 @@ class HomePage
                     $vars = ['http_error' => 500];
                 }
             }
-            if ($uri[0] === 'api' && empty($vars['template_override'])) {
+            if (
+                $uri[0] === 'api'
+                && empty($vars['template_override'])
+            ) {
                 $vars['template_override'] = 'common/pages/api.twig';
             }
-            if ($uri[0] === 'api' && empty($vars['json_ready'])) {
+            if (
+                $uri[0] === 'api'
+                && empty($vars['json_ready'])
+            ) {
                 $vars['json_ready'] = null;
             }
             // Generate page
@@ -217,7 +247,10 @@ class HomePage
                 \header('Content-Type: text/plain; charset=utf-8');
                 \header('Content-Disposition: inline; filename="security.txt"');
             }
-            if (self::$method !== 'HEAD' && self::$method !== 'OPTIONS') {
+            if (
+                self::$method !== 'HEAD'
+                && self::$method !== 'OPTIONS'
+            ) {
                 $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => \date(DateTimeInterface::RFC3339_EXTENDED, \strtotime('last Monday of next month midnight'))]);
             }
             exit(0);
@@ -238,18 +271,32 @@ class HomePage
         if (self::$method === 'OPTIONS') {
             exit(0);
         }
-        if ($cache && ($twig_vars === [] || self::$method !== 'GET' || \array_key_exists('cachereset', $_GET) || \array_key_exists('cachereset', $_POST))) {
+        if (
+            $cache
+            && (
+                $twig_vars === []
+                || self::$method !== 'GET'
+                || \array_key_exists('cachereset', $_GET)
+                || \array_key_exists('cachereset', $_POST)
+            )
+        ) {
             return false;
         }
         // Update CSRF token
-        if (!$api && \session_status() === \PHP_SESSION_ACTIVE) {
+        if (
+            !$api
+            && \session_status() === \PHP_SESSION_ACTIVE
+        ) {
             $_SESSION['csrf'] = Security::genToken();
             if (!\headers_sent()) {
                 \header('X-CSRF-Token: '.$_SESSION['csrf']);
             }
         }
         $twig_vars = \array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
-        if (\array_key_exists('http_error', $twig_vars) && \is_numeric($twig_vars['http_error'])) {
+        if (
+            \array_key_exists('http_error', $twig_vars)
+            && \is_numeric($twig_vars['http_error'])
+        ) {
             Headers::clientReturn($twig_vars['http_error'], false);
         }
         if ($cache) {
@@ -265,9 +312,13 @@ class HomePage
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
                 @\ob_flush();
                 \flush();
-                if (!empty($twig_vars['cache_expires_at']) && ($twig_vars['cache_expires_at'] - \time()) > 0) {
+                if (
+                    !empty($twig_vars['cache_expires_at'])
+                    && ($twig_vars['cache_expires_at'] - \time()) > 0
+                ) {
                     exit(0);
                 }
+
                 return true;
             } catch (\Throwable) {
                 return false;
@@ -320,7 +371,13 @@ class HomePage
                 \session_write_close();
             }
             // Cache page if cache age is set up, no errors, GET method is used, and we are on PROD
-            if (Config::$environment === 'prod' && !empty($twig_vars['cache_age']) && \is_numeric($twig_vars['cache_age']) && empty($twig_vars['http_error']) && self::$method === 'GET') {
+            if (
+                Config::$environment === 'prod'
+                && !empty($twig_vars['cache_age'])
+                && \is_numeric($twig_vars['cache_age'])
+                && empty($twig_vars['http_error'])
+                && self::$method === 'GET'
+            ) {
                 self::$data_cache->write($twig_vars, age: (int) $twig_vars['cache_age']);
             }
             if (self::$stale_return) {
@@ -354,6 +411,7 @@ class HomePage
         $bot = self::$device_detector->getBot();
         if (\is_array($bot)) {
             // Do not waste resources on bots
+
             /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             return ['bot' => \mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => null, 'client' => null, 'unsupported' => false, 'browser' => false, 'ai' => \strncasecmp($bot['category'] ?? '', 'ai', 2) === 0];
         }
@@ -389,6 +447,7 @@ class HomePage
         if (empty($client)) {
             $client = null;
         }
+
         return ['bot' => null, 'os' => ($os !== null ? \mb_substr($os, 0, 100, 'UTF-8') : null), 'client' => ($client !== null ? \mb_substr($client, 0, 100, 'UTF-8') : null), 'full' => $_SERVER['HTTP_USER_AGENT'], 'unsupported' => $unsupported, 'browser' => $browser];
     }
 

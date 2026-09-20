@@ -61,5 +61,71 @@
       <option name="workingDir" value="$ProjectFileDir$" />
       <envs />
     </TaskOptions>
+    <TaskOptions isEnabled="true">
+      <option name="arguments" value="compose -f ./compose.yaml exec frankenphp composer twig-cs-inspection /app/$/FileRelativePath$" />
+      <option name="checkSyntaxErrors" value="true" />
+      <option name="description" />
+      <option name="exitCodeBehavior" value="NEVER" />
+      <option name="fileExtension" value="twig" />
+      <option name="immediateSync" value="true" />
+      <option name="name" value="Twig CS Fixer" />
+      <option name="output" value="" />
+      <option name="outputFilters">
+        <array>
+          <FilterInfo>
+            <option name="description" value="" />
+            <option name="name" value="" />
+            <option name="regExp" value="::error file=/app/$FILE_PATH::$MESSAGE$" />
+          </FilterInfo>
+          <FilterInfo>
+            <option name="description" value="" />
+            <option name="name" value="" />
+            <option name="regExp" value="::warning file=/app/$FILE_PATH$::$MESSAGE$" />
+          </FilterInfo>
+          <FilterInfo>
+            <option name="description" value="" />
+            <option name="name" value="" />
+            <option name="regExp" value="::notice file=/app/$FILE_PATH$::$MESSAGE$" />
+          </FilterInfo>
+          <FilterInfo>
+            <option name="description" value="" />
+            <option name="name" value="" />
+            <option name="regExp" value="::error file=/app/$FILE_PATH$,line=$LINE$::$MESSAGE$" />
+          </FilterInfo>
+          <FilterInfo>
+            <option name="description" value="" />
+            <option name="name" value="" />
+            <option name="regExp" value="::warning file=/app/$FILE_PATH$,line=$LINE$::$MESSAGE$" />
+          </FilterInfo>
+          <FilterInfo>
+            <option name="description" value="" />
+            <option name="name" value="" />
+            <option name="regExp" value="::notice file=/app/$FILE_PATH$,line=$LINE$::$MESSAGE$" />
+          </FilterInfo>
+          <FilterInfo>
+            <option name="description" value="" />
+            <option name="name" value="" />
+            <option name="regExp" value="::error file=/app/$FILE_PATH$,line=$LINE$,col=$COLUMN$::$MESSAGE$" />
+          </FilterInfo>
+          <FilterInfo>
+            <option name="description" value="" />
+            <option name="name" value="" />
+            <option name="regExp" value="::warning file=/app/$FILE_PATH$,line=$LINE$,col=$COLUMN$::$MESSAGE$" />
+          </FilterInfo>
+          <FilterInfo>
+            <option name="description" value="" />
+            <option name="name" value="" />
+            <option name="regExp" value="::notice file=/app/$FILE_PATH$,line=$LINE$,col=$COLUMN$::$MESSAGE$" />
+          </FilterInfo>
+        </array>
+      </option>
+      <option name="outputFromStdout" value="false" />
+      <option name="program" value="docker" />
+      <option name="runOnExternalChanges" value="true" />
+      <option name="scopeName" value="Twig" />
+      <option name="trackOnlyRoot" value="false" />
+      <option name="workingDir" value="$ProjectFileDir$" />
+      <envs />
+    </TaskOptions>
   </component>
 </project>

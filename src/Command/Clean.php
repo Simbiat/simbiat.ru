@@ -34,11 +34,15 @@ final class Clean
         try {
             // Connect to DB
             Config::dbConnect();
-            if (Config::$dbup && !new Session()->gc()) {
+            if (
+                Config::$dbup
+                && !new Session()->gc()
+            ) {
                 return Command::FAILURE;
             }
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
+
             return Command::FAILURE;
         }
 
@@ -226,7 +230,11 @@ final class Clean
                 $db_files = Query::query('SELECT `file_id` FROM `sys__files`;', return: 'column');
                 foreach ($all_files as $file) {
                     // Ignore directories and .gitignore and check if the file's ID is present in a database
-                    if (!\is_dir($file) && \preg_match('/\.gitignore$/ui', $file) !== 1 && !\in_array(\pathinfo($file, \PATHINFO_FILENAME), $db_files, true)) {
+                    if (
+                        !\is_dir($file)
+                        && \preg_match('/\.gitignore$/ui', $file) !== 1
+                        && !\in_array(\pathinfo($file, \PATHINFO_FILENAME), $db_files, true)
+                    ) {
                         // Get a directory tree for the file
                         $dirs = [\dirname($file), \dirname($file, 2), \dirname($file, 3)];
                         // Log the removal

@@ -47,7 +47,10 @@
       <option name="LOWER_CASE_NULL_CONST" value="true" />
       <option name="ELSE_IF_STYLE" value="COMBINE" />
       <option name="VARIABLE_NAMING_STYLE" value="SNAKE_CASE" />
+      <option name="BLANK_LINES_BEFORE_RETURN_STATEMENT" value="1" />
+      <option name="KEEP_RPAREN_AND_LBRACE_ON_ONE_LINE" value="true" />
       <option name="FORCE_SHORT_DECLARATION_ARRAY_STYLE" value="true" />
+      <option name="TREAT_MULTILINE_ARRAYS_AND_LAMBDAS_MULTILINE" value="true" />
       <option name="FORCE_EMPTY_METHODS_IN_ONE_LINE" value="true" />
       <option name="PHPDOC_USE_FQCN" value="true" />
       <option name="REFORMAT_NULL_TYPE_POSITION" value="IN_THE_END" />
@@ -142,8 +145,17 @@
     </codeStyleSettings>
     <codeStyleSettings language="PHP">
       <option name="RIGHT_MARGIN" value="240" />
+      <option name="BLANK_LINES_AFTER_PACKAGE" value="1" />
       <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
+      <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
       <option name="SPACE_AFTER_TYPE_CAST" value="true" />
+      <option name="ARRAY_INITIALIZER_WRAP" value="5" />
+      <option name="ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE" value="true" />
+      <option name="ARRAY_INITIALIZER_RBRACE_ON_NEXT_LINE" value="true" />
+      <option name="IF_BRACE_FORCE" value="3" />
+      <option name="DOWHILE_BRACE_FORCE" value="3" />
+      <option name="WHILE_BRACE_FORCE" value="3" />
+      <option name="FOR_BRACE_FORCE" value="3" />
     </codeStyleSettings>
     <codeStyleSettings language="SASS">
       <indentOptions>

@@ -24,7 +24,7 @@
     {% if achievement.how_to %}
         <p>But it won't be easy to reap these rewards. As per established rules, one is required to fulfill these conditions:</p>
         {# This is sanitized when saving to database and when grabbed from it #}
-        <!--suppress TwigRawUsed -->
+        {# twig-cs-fixer-disable-next-line ForbiddenFilter #}
         <blockquote class="w100pc">{{ achievement.how_to|raw }}</blockquote>
     {% else %}
         <p>But it won't be easy to reap these rewards. What makes that even harder is that it's still unknown what the requirements are.</p>

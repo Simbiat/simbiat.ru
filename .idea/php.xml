@@ -256,6 +256,8 @@
       <path value="$PROJECT_DIR$/vendor/clue/ndjson-react" />
       <path value="$PROJECT_DIR$/vendor/ergebnis/agent-detector" />
       <path value="$PROJECT_DIR$/vendor/friendsofphp/php-cs-fixer" />
+      <path value="$PROJECT_DIR$/vendor/vincentlanglet/twig-cs-fixer" />
+      <path value="$PROJECT_DIR$/vendor/phildaiguille/twig-a11y-rules" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

@@ -50,7 +50,10 @@ abstract class Router
         // The main page of the segment is called
         if (empty($path)) {
             // If no path is provided, but we want to show a specific page, instead of a stub - redirect
-            if (!empty($this->redirect_main) && \preg_match('/^\/.+?$/u', $this->redirect_main) === 1) {
+            if (
+                !empty($this->redirect_main)
+                && \preg_match('/^\/.+?$/u', $this->redirect_main) === 1
+            ) {
                 Headers::redirect('https://'.(\preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config::$http_host) === 1 ? 'www.' : '').Config::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').$this->redirect_main);
             }
             $page_data['breadcrumbs'] = $this->breadcrumb;
@@ -71,13 +74,22 @@ abstract class Router
             Headers::clientReturn($page_data['http_error'], false);
         }
         // Inherit title, H1 and description, if page does not have them and router does
-        if (empty($page_data['title']) && !empty($this->title)) {
+        if (
+            empty($page_data['title'])
+            && !empty($this->title)
+        ) {
             $page_data['title'] = $this->title;
         }
-        if (empty($page_data['h1']) && !empty($this->h1)) {
+        if (
+            empty($page_data['h1'])
+            && !empty($this->h1)
+        ) {
             $page_data['h1'] = $this->h1;
         }
-        if (empty($page_data['og_desc']) && !empty($this->ogdesc)) {
+        if (
+            empty($page_data['og_desc'])
+            && !empty($this->ogdesc)
+        ) {
             $page_data['og_desc'] = $this->ogdesc;
         }
         // Set service name if available
@@ -85,14 +97,19 @@ abstract class Router
             $page_data['service_name'] = $this->service_name;
         }
         // Set custom og_image if available
-        if (!empty($this->og_image) && empty($page_data['og_image'])) {
+        if (
+            !empty($this->og_image)
+            && empty($page_data['og_image'])
+        ) {
             $page_data = \array_merge($page_data, Images::ogImage($this->og_image, true));
         }
+
         return $page_data;
     }
 
     /**
      * This is the actual page generation based on further details of the $path
+     *
      * @param array $path
      *
      * @return array

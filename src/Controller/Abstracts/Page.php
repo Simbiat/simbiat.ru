@@ -86,6 +86,7 @@ abstract class Page
 
     /**
      * Send common headers
+     *
      * @return void
      */
     public static function headers(): void
@@ -107,6 +108,7 @@ abstract class Page
 
     /**
      * Get the page
+     *
      * @param array $path
      *
      * @return array|int[]
@@ -114,13 +116,23 @@ abstract class Page
     final public function get(array $path): array
     {
         // Send page language
-        if ($this->language !== '' && !\headers_sent()) {
+        if (
+            $this->language !== ''
+            && !\headers_sent()
+        ) {
             \header('Content-Language: '.$this->language);
         }
         // Check if user has required permission
-        if (\count($this->required_permission) > 0 && \count(\array_intersect($this->required_permission, $_SESSION['permissions'] ?? [])) === 0) {
+        if (
+            \count($this->required_permission) > 0
+            && \count(\array_intersect($this->required_permission, $_SESSION['permissions'] ?? [])) === 0
+        ) {
             $page = ['http_error' => 403, 'reason' => 'No `'.\implode('` or `', $this->required_permission).'` permission'];
-        } elseif (HomePage::$http_error === [] || HomePage::$http_error === null || $this->static) {
+        } elseif (
+            HomePage::$http_error === []
+            || HomePage::$http_error === null
+            || $this->static
+        ) {
             // Generate the page only if no prior errors detected
             // Generate a list of allowed methods
             $allowed_methods = \array_unique(\array_merge(['HEAD', 'OPTIONS', 'GET'], $this->methods));
@@ -133,7 +145,10 @@ abstract class Page
             if (!\in_array(HomePage::$method, $allowed_methods, true)) {
                 $page = ['http_error' => 405];
                 // Check that user is authenticated
-            } elseif ($this->authentication_needed && $_SESSION['user_id'] === 1) {
+            } elseif (
+                $this->authentication_needed
+                && $_SESSION['user_id'] === 1
+            ) {
                 $page = ['http_error' => 403, 'reason' => 'Authentication required'];
             } else {
                 // Generate the page
@@ -163,12 +178,18 @@ abstract class Page
         $page['title'] = $this->title;
         $page['h1'] = $this->h1;
         $page['og_desc'] = $this->og_desc;
-        if (!empty($this->og_image) && empty($page['og_image'])) {
+        if (
+            !empty($this->og_image)
+            && empty($page['og_image'])
+        ) {
             $page = \array_merge($page, Images::ogImage($this->og_image, true));
         }
         $page['cache_age'] = $this->cache_age;
         $page['cache_strategy'] = $this->cache_strategy;
-        if (!empty($this->h2_push) || !empty($this->h2_push_extra)) {
+        if (
+            !empty($this->h2_push)
+            || !empty($this->h2_push_extra)
+        ) {
             $this->h2_push = \array_merge($this->h2_push, $this->h2_push_extra);
             // Prepare a set of images to push
             foreach ($this->h2_push as $key => $image) {
@@ -197,7 +218,10 @@ abstract class Page
         // Limit Ogdesc to 120 characters
         $page['og_desc'] = \mb_substr($page['og_desc'], 0, 120, 'UTF-8');
         // Generate a link for cache reset if page uses cache
-        if ($this->cache_age > 0 && !$this->static) {
+        if (
+            $this->cache_age > 0
+            && !$this->static
+        ) {
             $query = IRI::parseUri(HomePage::$canonical);
             if (\is_array($query)) {
                 /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
@@ -206,11 +230,13 @@ abstract class Page
                 $page['cache_reset'] = '';
             }
         }
+
         return $page;
     }
 
     /**
      * Generate Last-Modified header
+     *
      * @param int|string|null $time
      *
      * @return void
@@ -222,7 +248,10 @@ abstract class Page
             $time = \strtotime($time);
         }
         // If time is less than 0, use the Last Modified set initially
-        if ($time === null || $time <= 0) {
+        if (
+            $time === null
+            || $time <= 0
+        ) {
             $time = $this->last_modified;
         }
         // Set Last Modified to the time
@@ -237,6 +266,7 @@ abstract class Page
 
     /**
      * Function to append a breadcrumb, which is based on the last crumb currently set
+     *
      * @param string $path  Current path node
      * @param string $name  Current path name
      * @param bool   $query Whether the current path name is an actual node or a GET parameter
@@ -254,6 +284,7 @@ abstract class Page
 
     /**
      * Function to get last breadcrumb's href
+     *
      * @return string
      */
     final protected function getLastCrumb(): string
@@ -263,6 +294,7 @@ abstract class Page
 
     /**
      * Function to set og:desc
+     *
      * @param string $string
      *
      * @return void
@@ -296,6 +328,7 @@ abstract class Page
 
     /**
      * Generation of the page data
+     *
      * @param array $path
      *
      * @return array

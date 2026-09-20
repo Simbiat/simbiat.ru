@@ -32,6 +32,7 @@ class Me extends StaticPage
 
     /**
      * Static pages have all the data in Twig templates, thus we usually return the empty array
+     *
      * @param array $path
      *
      * @return array

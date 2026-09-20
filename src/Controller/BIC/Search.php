@@ -42,6 +42,7 @@ class Search extends \App\Controller\Abstracts\Search
     protected function extras(): array
     {
         $output_array['bic_date'] = new BICLibrary()->bicDate()->format('d.m.Y');
+
         return $output_array;
     }
 }

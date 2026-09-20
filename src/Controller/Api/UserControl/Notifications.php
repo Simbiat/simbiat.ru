@@ -23,6 +23,7 @@ final class Notifications extends Api
 
     /**
      * This is an actual API response generation based on further details of the $path
+     *
      * @param array $path
      *
      * @return array
@@ -35,8 +36,10 @@ final class Notifications extends Api
         if ($path[0] === 'read') {
             // Using Test notification, as most benign one
             new Test()::markRead($_GET['uuid'] ?? '', true);
+
             return [];
         }
+
         return ['http_error' => 400, 'reason' => 'Unsupported verb'];
     }
 }

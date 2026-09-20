@@ -29,9 +29,11 @@ class Upload extends Api
             if (!empty($upload['http_error'])) {
                 return $upload;
             }
+
             return ['response' => true, 'location' => $upload['location']];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
+
             return ['http_error' => 500, 'reason' => 'Failed to upload file'];
         }
     }

@@ -22,7 +22,6 @@ class Logout extends Api
 
     protected function genData(array $path): array
     {
-
         return ['response' => new User($_SESSION['user_id'])->logout()];
     }
 }

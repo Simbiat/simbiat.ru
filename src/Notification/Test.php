@@ -32,6 +32,7 @@ final class Test extends Notification
     protected function setText(array $twig_vars = []): self
     {
         $this->text = '<p>Test message</p>';
+
         return $this;
     }
 }

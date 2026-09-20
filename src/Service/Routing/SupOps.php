@@ -46,6 +46,7 @@ class SupOps extends Router
 
     /**
      * This is the actual page generation based on further details of the $path
+     *
      * @param array $path
      *
      * @return array

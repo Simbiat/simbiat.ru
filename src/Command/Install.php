@@ -42,7 +42,6 @@ final class Install
     {
         $output->writeln(Errors::logfmt('Installing the app...'));
         try {
-
             // TODO: Need to figure out a way to prevent run for the 2nd time
             return Command::SUCCESS;
 

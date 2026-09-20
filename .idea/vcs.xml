@@ -28,6 +28,7 @@
     <mapping directory="$PROJECT_DIR$/packages/HTMLCache" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/HTTP/SSE" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/SandClock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/Sniffs" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/StringHelpers" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/http20" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/public/assets/images/fftracker/crests-components" vcs="Git" />

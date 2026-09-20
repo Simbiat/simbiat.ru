@@ -53,6 +53,7 @@ class Sanitization
         } else {
             $string = $sanitizer->sanitize($string);
         }
+
         // TODO add loading="lazy" decoding="async" to all images
         return $string;
     }
@@ -114,6 +115,7 @@ class Sanitization
         $config = $config->dropAttribute('border', '*');
         // Save config to static for future reuse
         self::$sanitizer_config[$for] = $config;
+
         return $config;
     }
 
@@ -130,6 +132,7 @@ class Sanitization
         if ($full_list) {
             return \preg_replace('/[[:cntrl:]]/iu', '', $string) ?? '';
         }
+
         return \preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/iu', '', $string) ?? '';
     }
 
@@ -169,6 +172,7 @@ class Sanitization
         if (\is_string($checkbox)) {
             return \mb_strtolower($checkbox, 'UTF-8') !== 'off';
         }
+
         return (bool) $checkbox;
     }
 
@@ -186,20 +190,27 @@ class Sanitization
             if (empty($time)) {
                 $time = null;
             } else {
-                if (empty($timezone) || !\in_array($timezone, \timezone_identifiers_list(), true)) {
+                if (
+                    empty($timezone)
+                    || !\in_array($timezone, \timezone_identifiers_list(), true)
+                ) {
                     $timezone = 'UTC';
                 }
                 $datetime = SandClock::convertTimezone($time, $_SESSION['timezone'] ?? $timezone);
                 $time = $datetime->getTimestamp();
                 $cur_time = \time();
                 // Do not allow past, unless respective permission is present
-                if ($time < $cur_time && !\in_array('post_backlog', $_SESSION['permissions'], true)) {
+                if (
+                    $time < $cur_time
+                    && !\in_array('post_backlog', $_SESSION['permissions'], true)
+                ) {
                     $time = $cur_time;
                 }
             }
         } else {
             $time = null;
         }
+
         return $time;
     }
 
@@ -234,6 +245,7 @@ class Sanitization
         if (\file_exists(Config::$uploaded.$hash_tree.'/'.$filename)) {
             return '/assets/uploaded/'.$hash_tree.'/'.$filename;
         }
+
         return '/assets/images/noimage.svg';
     }
 }

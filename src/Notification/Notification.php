@@ -94,6 +94,7 @@ abstract class Notification extends Entity
             throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
         }
         $this->id = $id;
+
         return $this;
     }
 
@@ -123,6 +124,7 @@ abstract class Notification extends Entity
                 Images::errorImage();
             }
         }
+
         return $result;
     }
 
@@ -136,6 +138,7 @@ abstract class Notification extends Entity
         if ($this->id !== null) {
             return Query::query('DELETE FROM `sys__notifications` WHERE `uuid`=:id;', [':id' => $this->id]);
         }
+
         return false;
     }
 
@@ -199,13 +202,19 @@ abstract class Notification extends Entity
     final public function save(string|int|null $user_id = null, array $twig_vars = [], bool $email = true, bool $push = true, ?string $email_override = null): self
     {
         $this->push = $push;
-        if (!$this::ALWAYS_SEND && !Config::$dbup) {
+        if (
+            !$this::ALWAYS_SEND
+            && !Config::$dbup
+        ) {
             throw new \RuntimeException('Notification requires a DB, but DB is down');
         }
         if ($this->id !== null) {
             throw new \UnexpectedValueException('Saving of a notification is only possible for new ones, lacking ID');
         }
-        if (!$email && !$push) {
+        if (
+            !$email
+            && !$push
+        ) {
             throw new \UnexpectedValueException('Can\'t save notification with neither email nor push enabled');
         }
         if ($user_id !== null) {
@@ -220,11 +229,17 @@ abstract class Notification extends Entity
             }
         }
         // If DB is not required, then we are ok with not saving to the database
-        if ($this->user === null && !$this::ALWAYS_SEND) {
+        if (
+            $this->user === null
+            && !$this::ALWAYS_SEND
+        ) {
             throw new \UnexpectedValueException('No user is set for notification');
         }
         // If email override is provided, but not a valid email - nullify it
-        if ($email_override !== null && \filter_var($email_override, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
+        if (
+            $email_override !== null
+            && \filter_var($email_override, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false
+        ) {
             $email_override = null;
         }
         // Get email
@@ -242,6 +257,7 @@ abstract class Notification extends Entity
                         }
                     } catch (\Throwable $throwable) {
                         Errors::error_log($throwable);
+
                         throw new \RuntimeException('Failed to get valid addresses for the notification');
                     }
                 } else {
@@ -276,7 +292,10 @@ abstract class Notification extends Entity
             $twig_vars['session_details'] = $session_details;
         }
         // If Twig variables are required but not provided, we do not do anything
-        if ($this::TWIG_REQUIRED && \count($twig_vars) === 0) {
+        if (
+            $this::TWIG_REQUIRED
+            && \count($twig_vars) === 0
+        ) {
             $this->text = null;
         } else {
             $this->setText($twig_vars);
@@ -331,7 +350,10 @@ abstract class Notification extends Entity
                 }
             } elseif ($this::ALWAYS_SEND) {
                 $this->id = \uuid_create(4);
-                if ($email && \array_key_exists(0, $emails)) {
+                if (
+                    $email
+                    && \array_key_exists(0, $emails)
+                ) {
                     $this->email = $emails[0];
                 }
                 $result = true;
@@ -347,9 +369,11 @@ abstract class Notification extends Entity
         }
         if ($result === false) {
             $this->id = null;
+
             throw new \RuntimeException('Failed to save notification to database');
         }
         $this->created = \time();
+
         return $this;
     }
 
@@ -369,7 +393,10 @@ abstract class Notification extends Entity
         if (Sanitize::whiteString($this->text ?? '')) {
             throw new \UnexpectedValueException('No text is set for notification');
         }
-        if (!$this::ALWAYS_SEND && $this->created === null) {
+        if (
+            !$this::ALWAYS_SEND
+            && $this->created === null
+        ) {
             throw new \UnexpectedValueException('Sending of a notification is only possible for those that have been saved');
         }
         if ($this->sent !== null) {
@@ -384,9 +411,13 @@ abstract class Notification extends Entity
                 // Do nothing, since not critical, will be retried later
                 Errors::error_log($exception);
             }
+
             return true;
         }
-        if ($this->email !== null && \filter_var($this->email, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
+        if (
+            $this->email !== null
+            && \filter_var($this->email, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false
+        ) {
             $this->email = null;
         }
         if ($this->email === null) {
@@ -396,6 +427,7 @@ abstract class Notification extends Entity
             } catch (\Throwable $throwable) {
                 Errors::error_log($throwable);
             }
+
             return true;
         }
         if (Sanitize::whiteString($this::SUBJECT)) {
@@ -416,7 +448,10 @@ abstract class Notification extends Entity
             }
         }
         // If we are not forcing, and email is not subscribed - disable email sending for this notification
-        if ($subscribed === null && !$this::ALWAYS_SEND) {
+        if (
+            $subscribed === null
+            && !$this::ALWAYS_SEND
+        ) {
             if ($this->id !== null) {
                 try {
                     Query::query('UPDATE `sys__notifications` SET `email`=NULL WHERE `uuid` = :uuid;', [':uuid' => $this->id]);
@@ -425,10 +460,14 @@ abstract class Notification extends Entity
                     Errors::error_log($exception);
                 }
             }
+
             // Consider this being "success", but do not set the time
             return true;
         }
-        if ($subscribed === null && !$this::ALWAYS_SEND) {
+        if (
+            $subscribed === null
+            && !$this::ALWAYS_SEND
+        ) {
             throw new \UnexpectedValueException('No subscribed email found and no override email provided');
         }
         // Prepare message listener with Twig renderer
@@ -437,6 +476,7 @@ abstract class Notification extends Entity
             $message_listener = new MessageListener(null, $renderer);
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
+
             return false;
         }
         $event_dispatcher = new EventDispatcher();
@@ -476,6 +516,7 @@ abstract class Notification extends Entity
             } catch (\Throwable $exception) {
                 if (!$this::ALWAYS_SEND) {
                     Errors::error_log($exception, debug: $debug);
+
                     return false;
                 }
             }
@@ -489,6 +530,7 @@ abstract class Notification extends Entity
             $mailer->send($email);
         } catch (\Throwable $exception) {
             Errors::error_log($exception, debug: $debug);
+
             return false;
         }
         if ($this->id !== null) {
@@ -501,6 +543,7 @@ abstract class Notification extends Entity
                 }
             }
         }
+
         return true;
     }
 }

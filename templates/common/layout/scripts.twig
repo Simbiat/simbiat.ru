@@ -1,5 +1,6 @@
 <script id="tracking_query_parameters" type="application/json">
     {# Need to be raw otherwise it gets HTML encoded and breaks processing #}
+    {# twig-cs-fixer-disable-next-line ForbiddenFilter #}
     {{ tracking_query_parameters|json_encode|raw }}
 </script>
 

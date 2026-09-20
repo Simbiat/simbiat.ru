@@ -24,6 +24,7 @@ class Kernel extends BaseKernel
 
     /**
      * Overriding Symfony's boot to replace the previous `Bootstrap.php`
+     *
      * @return void
      */
     public function boot(): void

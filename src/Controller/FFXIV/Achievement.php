@@ -69,6 +69,7 @@ class Achievement extends Page
         if (\is_file(Config::$icons.$output_array['achievement']['icon'])) {
             $output_array['favicon'] = '/assets/images/fftracker/icons/'.$output_array['achievement']['icon'];
         }
+
         return $output_array;
     }
 }

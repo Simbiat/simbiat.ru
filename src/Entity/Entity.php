@@ -39,6 +39,7 @@ abstract class Entity
 
     /**
      * Set entity ID
+     *
      * @param string|int $id
      *
      * @return $this
@@ -51,11 +52,13 @@ abstract class Entity
             throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.\get_class($this).'` has incorrect format.');
         }
         $this->id = $id;
+
         return $this;
     }
 
     /**
      * Get entity properties
+     *
      * @return $this
      */
     final public function get(): self
@@ -83,17 +86,20 @@ abstract class Entity
                 die('<pre>'.$error.'</pre>');
             }
         }
+
         return $this;
     }
 
     /**
      * Function to get initial data from DB
+     *
      * @return array
      */
     abstract protected function getFromDB(): array;
 
     /**
      * Function process database data
+     *
      * @param array $from_db
      *
      * @return void
@@ -102,6 +108,7 @@ abstract class Entity
 
     /**
      * Get the data in an array
+     *
      * @return array
      */
     final public function getArray(): array
@@ -121,6 +128,7 @@ abstract class Entity
                 unset($array[$key]);
             }
         }
+
         return $array;
     }
 }

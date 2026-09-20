@@ -26,6 +26,7 @@
                     <div class="article margin_05rem">
                         <p>Hi, {{ username|default('dear user') }}!</p>
                         {# This can be a valid HTML generated in respective notification class, and that is sanitized before we get here #}
+                        {# twig-cs-fixer-disable-next-line ForbiddenFilter #}
                         {{ text|raw }}
                     </div>
                 </div>

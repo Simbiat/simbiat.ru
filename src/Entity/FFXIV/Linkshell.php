@@ -46,6 +46,7 @@ class Linkshell extends AbstractEntity
         if ($data['crossworld']) {
             unset($data['server']);
         }
+
         return $data;
     }
 
@@ -53,12 +54,14 @@ class Linkshell extends AbstractEntity
      * Get linkshell data from Lodestone
      *
      * @param bool $allow_sleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
+     *
      * @internal
+     *
      * @return string|array
      */
     public function getFromLodestone(bool $allow_sleep = false): string|array
     {
-        $lodestone = (new Lodestone());
+        $lodestone = new Lodestone();
         try {
             $data = $lodestone->getLinkshellMembers($this->id, 0)->getResult();
         } catch (\Throwable $exception) {
@@ -67,20 +70,43 @@ class Linkshell extends AbstractEntity
                     // Take a pause if we were throttled, and pause is allowed
                     \sleep(60);
                 }
+
                 return 'Request throttled by Lodestone';
             }
             if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) !== 1) {
                 Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
             }
+
             return 'Failed to get all necessary data for Linkshell '.$this->id;
         }
-        if (empty($data['linkshells']) || empty($data['linkshells'][$this->id]['server']) || (empty($data['linkshells'][$this->id]['members']) && (int) $data['linkshells'][$this->id]['members_count'] > 0) || (!empty($data['linkshells'][$this->id]['members']) && \count($data['linkshells'][$this->id]['members']) < (int) $data['linkshells'][$this->id]['members_count'])) {
-            if (!empty($data['linkshells'][$this->id]['members']) && $data['linkshells'][$this->id]['members'] === 404) {
+        if (
+            empty($data['linkshells'])
+            || empty($data['linkshells'][$this->id]['server'])
+            || (
+                empty($data['linkshells'][$this->id]['members'])
+                && (int) $data['linkshells'][$this->id]['members_count'] > 0
+            )
+            || (
+                !empty($data['linkshells'][$this->id]['members'])
+                && \count($data['linkshells'][$this->id]['members']) < (int) $data['linkshells'][$this->id]['members_count']
+            )
+        ) {
+            if (
+                !empty($data['linkshells'][$this->id]['members'])
+                && $data['linkshells'][$this->id]['members'] === 404
+            ) {
                 $this->delete();
+
                 return ['404' => true];
             }
-            if (empty($data['linkshells']) || empty($data['linkshells'][$this->id]) || !\array_key_exists('page_total', $data['linkshells'][$this->id]) || $data['linkshells'][$this->id]['page_total'] !== 0) {
+            if (
+                empty($data['linkshells'])
+                || empty($data['linkshells'][$this->id])
+                || !\array_key_exists('page_total', $data['linkshells'][$this->id])
+                || $data['linkshells'][$this->id]['page_total'] !== 0
+            ) {
                 Errors::error_log(new \RuntimeException('Failed to get all necessary data for '.($this::CROSSWORLD ? 'Crossworld ' : '').'Linkshell '.$this->id), ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
+
                 return 'Failed to get all necessary data for '.($this::CROSSWORLD ? 'Crossworld ' : '').'Linkshell '.$this->id;
             }
             // At some point, empty linkshells became possible on lodestone, those that have a page, but no members at all, and are not searchable by name. Possibly private linkshells or something like that
@@ -90,6 +116,7 @@ class Linkshell extends AbstractEntity
         $data['id'] = $this->id;
         $data['404'] = false;
         unset($data['page_current'], $data['page_total']);
+
         return $data;
     }
 
@@ -130,7 +157,10 @@ class Linkshell extends AbstractEntity
     {
         try {
             // If the `empty` flag is set, it means that the Lodestone page is empty, so we can't update anything besides name, data center and formed date
-            if (\array_key_exists('empty', $this->lodestone) && $this->lodestone['empty'] === true) {
+            if (
+                \array_key_exists('empty', $this->lodestone)
+                && $this->lodestone['empty'] === true
+            ) {
                 $queries[] = [
                     'UPDATE `ffxiv__linkshell` SET `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(6), `deleted`=NULL WHERE `ls_id`=:ls_id',
                     [
@@ -176,7 +206,10 @@ class Linkshell extends AbstractEntity
             // Process members that left the linkshell
             foreach ($track_members as $member) {
                 // Check if member from tracker is present in a Lodestone list
-                if (!\array_key_exists('members', $this->lodestone) || !\array_key_exists($member, $this->lodestone['members'])) {
+                if (
+                    !\array_key_exists('members', $this->lodestone)
+                    || !\array_key_exists($member, $this->lodestone['members'])
+                ) {
                     // Update status for the character
                     $queries[] = [
                         'UPDATE `ffxiv__linkshell_character` SET `current`=0 WHERE `ls_id`=:ls_id AND `character_id`=:character_id;',
@@ -208,15 +241,18 @@ class Linkshell extends AbstractEntity
             if (!empty($this->lodestone['members'])) {
                 $this->charMassCron($this->lodestone['members']);
             }
+
             return true;
         } catch (\Throwable $exception) {
             Errors::error_log($exception, 'ls_id: '.$this->id);
+
             return false;
         }
     }
 
     /**
      * Delete linkshell
+     *
      * @return bool
      */
     protected function delete(): bool
@@ -233,9 +269,11 @@ class Linkshell extends AbstractEntity
                 'UPDATE `ffxiv__linkshell` SET `deleted` = COALESCE(`deleted`, CURRENT_TIMESTAMP(6)), `updated`=CURRENT_TIMESTAMP(6) WHERE `ls_id` = :id',
                 [':id' => $this->id],
             ];
+
             return Query::query($queries);
         } catch (\Throwable $exception) {
             Errors::error_log($exception, debug: $this->debug);
+
             return false;
         }
     }

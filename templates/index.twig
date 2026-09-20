@@ -18,25 +18,25 @@
         <!-- eslint-disable-next-line html/use-baseline -->
         <meta name="theme-color" content="#2e293d">
 
-        {#  Author Meta #}
+        {# Author Meta #}
         <meta name="author" content="Dmitrii Kustov">
         <link rel="author" href="https://www.facebook.com/simbiat19">
 
-        {#  Google Meta #}
+        {# Google Meta #}
         <meta itemprop="name" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}">
         <meta itemprop="description" content="{{ og_desc|default('Official Simbiat Software website') }}">
         <meta itemprop="image" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}">
 
         <meta name="X-CSRF-Token" content="{{ session_data.csrf }}">
         <meta name="is_bot" content="{{ request_from_bot }}">
-        {#  Custom meta tag to indicate whether Save-Data header was received #}
+        {# Custom meta tag to indicate whether Save-Data header was received #}
         <meta name="save_data" content="{{ save_data }}">
 
-        {#  Facebook IDs #}
+        {# Facebook IDs #}
         <meta property="fb:app_id" content="288606374482851">
         <meta property="fb:admins" content="100002283569233">
 
-        {#  Open Graph Protocol #}
+        {# Open Graph Protocol #}
         <meta property="og:site_name" content="{{ site_name }}">
         <meta property="og:title" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}">
         <meta property="og:description" content="{{ og_desc|default('Official Simbiat Software website') }}">
@@ -55,7 +55,7 @@
             {{ sanitize(ogextra, true) }}
         {% endif %}
 
-        {#  Twitter Card #}
+        {# Twitter Card #}
         <meta name="twitter:card" content="summary">
         <meta name="twitter:title" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}">
         <meta name="twitter:site" content="@simbiat199">
@@ -66,7 +66,7 @@
         <meta name="twitter:image" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}">
         <meta name="twitter:image:alt" content="{% if og_image %}{{ title }}{% else %}Default banner image{% endif %}">
 
-        {#  MS Tiles #}
+        {# MS Tiles #}
         <meta name="application-name" content="{{ site_name }}">
         <meta name="msapplication-navbutton-color" content="#000000">
         <meta name="msapplication-TileColor" content="#2e293d">
@@ -83,13 +83,13 @@
         <meta name="msapplication-config" content="/browserconfig.xml">
         <meta name="msapplication-tap-highlight" content="no">
 
-        {#  Web Apps #}
+        {# Web Apps #}
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
         <meta name="apple-mobile-web-app-title" content="{{ site_name }}">
 
-        {#  Favicons #}
+        {# Favicons #}
         {% if favicon %}
             <link href="{{ favicon }}" rel="icon" type="image/png">
         {% else %}
@@ -126,7 +126,7 @@
 
         {{ include('common/layout/scripts.twig') }}
         {% if http_error %}
-            {% if not(error_page) and http_error in [305, 408, 409, 500, 501, 502, 503] and construction == false and static_page == false %}
+            {% if not (error_page) and http_error in [305, 408, 409, 500, 501, 502, 503] and construction == false and static_page == false %}
                 <meta http-equiv="refresh" content="60">
             {% endif %}
         {% endif %}
@@ -146,11 +146,11 @@
                             {% if construction == false %}
                                 {% if http_error not in [503, 418] %}
                                     <p>An error code
-                                        <span class="error">{{ http_error }}</span> was encountered while processing your request{% if not('httperror/'~http_error in url) %} to
+                                        <span class="error">{{ http_error }}</span> was encountered while processing your request{% if not ('httperror/' ~ http_error in url) %} to
                                         <var>{{ url }}</var> page{% endif %}. Here's what the server has to say in its defense:
                                     </p>
                                 {% endif %}
-                                {{ include('errors/'~http_error~'.twig') }}
+                                {{ include('errors/' ~ http_error ~ '.twig') }}
                                 {% if http_error not in [503, 418] and session_data.prev_page %}
                                     <p>You can try going back to previous
                                         <a href="{{ session_data.prev_page }}">page</a>.
@@ -159,7 +159,7 @@
                             {% else %}
                                 {{ include('errors/construction.twig') }}
                             {% endif %}
-                            {% if not(error_page) and http_error in [305, 408, 409, 500, 501, 502, 503] %}
+                            {% if not (error_page) and http_error in [305, 408, 409, 500, 501, 502, 503] %}
                                 <p>
                                     Page will refresh in
                                     <time-r id="refresh_timer">

@@ -36,7 +36,10 @@ class Thread extends Page
         @\header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' blob:; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\'; trusted-types dompurify default;');
         // Sanitize ID
         $id = $path[0] ?? null;
-        if (empty($id) || (int) $id < 1) {
+        if (
+            empty($id)
+            || (int) $id < 1
+        ) {
             return ['http_error' => 400, 'reason' => 'Wrong ID'];
         }
         $output_array = new \App\Entity\Thread($id)->getArray();
@@ -45,21 +48,36 @@ class Thread extends Page
         }
         // Check if private
         if ($output_array['private']) {
-            if ($output_array['author'] === SystemUser::Unknown->value && $output_array['author'] === $_SESSION['user_id']) {
+            if (
+                $output_array['author'] === SystemUser::Unknown->value
+                && $output_array['author'] === $_SESSION['user_id']
+            ) {
                 if ($output_array['type'] === 'Support') {
-                    if (($output_array['access_token'] === null || $output_array['access_token'] === '' || $output_array['access_token'] !== ($_GET['access_token'] ?? ''))) {
+                    if (
+                        (
+                            $output_array['access_token'] === null
+                            || $output_array['access_token'] === ''
+                            || $output_array['access_token'] !== ($_GET['access_token'] ?? '')
+                        )
+                    ) {
                         // Return same error to limit potential of brute-forcing a token
                         return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
                     }
                     // If token is valid - temporary give permission to allow posting
                     $_SESSION['permissions'][] = 'can_post';
                 }
-            } elseif ($output_array['author'] !== $_SESSION['user_id'] && !\in_array('view_private', $_SESSION['permissions'], true)) {
+            } elseif (
+                $output_array['author'] !== $_SESSION['user_id']
+                && !\in_array('view_private', $_SESSION['permissions'], true)
+            ) {
                 return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
             }
         }
         // Check if scheduled
-        if ($output_array['created'] >= \time() && !\in_array('view_scheduled', $_SESSION['permissions'], true)) {
+        if (
+            $output_array['created'] >= \time()
+            && !\in_array('view_scheduled', $_SESSION['permissions'], true)
+        ) {
             return ['http_error' => 404, 'reason' => 'Thread does not exist', 'suggested_link' => '/talks/sections/'];
         }
         // Collect times
@@ -79,14 +97,21 @@ class Thread extends Page
         // Generate pagination data
         $page = (int) ($_GET['page'] ?? 1);
         $output_array['pagination'] = ['current' => $page, 'total' => $output_array['posts']['pages'] ?? 1, 'prefix' => '?page='];
-        if ($output_array['pagination']['current'] > $output_array['pagination']['total'] && $output_array['pagination']['total'] !== 0) {
+        if (
+            $output_array['pagination']['current'] > $output_array['pagination']['total']
+            && $output_array['pagination']['total'] !== 0
+        ) {
             // Redirect to last page
             Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/talks/threads/'.$id.'?page='.$output_array['pagination']['total'], false);
+
             return [];
         }
         // Changelogs have Unix timestamp for names, need to convert those to the desired format
         /** @noinspection DuplicatedCode */
-        if ($output_array['type'] === 'Changelog' && \is_numeric($output_array['name'])) {
+        if (
+            $output_array['type'] === 'Changelog'
+            && \is_numeric($output_array['name'])
+        ) {
             $output_array['name'] = \date('Y.m.d', (int) $output_array['name']);
         }
         // Add parents to breadcrumbs if we have any
@@ -142,18 +167,29 @@ class Thread extends Page
         $this->language = $output_array['language'];
         // Get stuff for thread's editing
         if (
-            ($output_array['owned'] && \in_array('edit_own_threads', $_SESSION['permissions'], true)) ||
-            (!$output_array['owned'] && \in_array('edit_others_threads', $_SESSION['permissions'], true))
+            (
+                $output_array['owned']
+                && \in_array('edit_own_threads', $_SESSION['permissions'], true)
+            )
+            ||
+            (
+                !$output_array['owned']
+                && \in_array('edit_others_threads', $_SESSION['permissions'], true)
+            )
         ) {
             $output_array['thread_languages'] = \App\Entity\Thread::getLanguages();
             $output_array['thread_link_types'] = \App\Entity\Thread::getAltLinkTypes();
         }
         // Add access token
-        if ($output_array['author'] === SystemUser::Unknown->value && $_SESSION['user_id'] === SystemUser::Unknown->value) {
+        if (
+            $output_array['author'] === SystemUser::Unknown->value
+            && $_SESSION['user_id'] === SystemUser::Unknown->value
+        ) {
             $output_array['get_access_token'] = $_GET['access_token'] ?? null;
         } else {
             $output_array['get_access_token'] = null;
         }
+
         return $output_array;
     }
 }

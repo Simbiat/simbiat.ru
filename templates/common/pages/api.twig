@@ -1,5 +1,6 @@
 {% if json_ready %}
     {# Twig will escape quotes and other characters without `raw` filter here, even if Twig's `|json_encode` filter is used. Otherwise sanitization is handled by respesctive API controllers #}
+    {# twig-cs-fixer-disable-next-line ForbiddenFilter #}
     {{ json_ready|raw }}
 {% else %}
     {

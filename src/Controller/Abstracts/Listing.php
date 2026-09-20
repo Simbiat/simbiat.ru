@@ -40,6 +40,7 @@ class Listing extends Search
         if (\is_int($output_array['search_result'])) {
             // Redirect
             Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.$this->service_name.'/'.$this->subservice_name.'/'.(!empty($this->search_for) ? '?search='.\rawurlencode($this->search_for).'&page='.$output_array['search_result'] : '?page='.$output_array['search_result']), false);
+
             return [];
         }
         // Get the freshest date
@@ -75,6 +76,7 @@ class Listing extends Search
             $this->title = $this->og_desc;
             $this->h1 = $this->og_desc;
         }
+
         // Merge with extra fields and return the result
         return \array_merge($output_array, $this->extras());
     }
@@ -88,6 +90,7 @@ class Listing extends Search
         if (empty($dates)) {
             return 0;
         }
+
         return \max($dates);
     }
 }

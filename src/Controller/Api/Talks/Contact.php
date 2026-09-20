@@ -31,6 +31,7 @@ class Contact extends Api
         $ticket = Security::genToken(8);
         $_POST['thread_data']['name'] = '[Contact form] '.$ticket;
         $_SESSION['permissions'] = ['can_post'];
+
         return new Thread()->add();
     }
 }

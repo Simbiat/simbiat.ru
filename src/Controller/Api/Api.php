@@ -51,6 +51,7 @@ abstract class Api
 
     /**
      * Send API headers
+     *
      * @return void
      */
     public static function headers(): void
@@ -65,6 +66,7 @@ abstract class Api
 
     /**
      * This is a general routing check for supported node
+     *
      * @param array $path
      *
      * @return array
@@ -79,7 +81,16 @@ abstract class Api
             return ['http_error' => 403, 'reason' => 'No access to API for bots'];
         }
         // Check if proper endpoint
-        if (\count($this->sub_routes) !== 0 && (empty($path[0]) || (!$this->final_node && !\in_array($path[0], $this->sub_routes, true)))) {
+        if (
+            \count($this->sub_routes) !== 0
+            && (
+                empty($path[0])
+                || (
+                    !$this->final_node
+                    && !\in_array($path[0], $this->sub_routes, true)
+                )
+            )
+        ) {
             $data = ['http_error' => 400, 'reason' => 'Unsupported endpoint', 'endpoints' => \array_combine($this->sub_routes, $this->routes_description)];
         } elseif (
             (
@@ -96,11 +107,17 @@ abstract class Api
         ) {
             // User is not authenticated or there is no access_token provided
             $data = ['http_error' => 403, 'reason' => 'Authentication required'];
-        } elseif ($this->csrf && !$this->antiCSRF($this->allowed_origins)) {
+        } elseif (
+            $this->csrf
+            && !$this->antiCSRF($this->allowed_origins)
+        ) {
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
             try {
-                if (\count($this->required_permission) !== 0 && \count(\array_intersect($this->required_permission, $_SESSION['permissions'])) === 0) {
+                if (
+                    \count($this->required_permission) !== 0
+                    && \count(\array_intersect($this->required_permission, $_SESSION['permissions'])) === 0
+                ) {
                     $data = ['http_error' => 403, 'reason' => 'No `'.\implode('` or `', $this->required_permission).'` permission'];
                 } else {
                     $data = $this->getData($path);
@@ -119,7 +136,10 @@ abstract class Api
             $result['template_override'] = 'common/pages/api.twig';
             // Prepare JSON output
             $result['json_ready'] = ['status' => 200];
-            if (!empty($data['cache_age']) && !$this->static) {
+            if (
+                !empty($data['cache_age'])
+                && !$this->static
+            ) {
                 $result['cache_age'] = $data['cache_age'];
             }
             if (!empty($data['http_error'])) {
@@ -191,14 +211,17 @@ abstract class Api
 }';
             }
             Sorters::recursiveSort($result, true, false, \SORT_NATURAL);
+
             return $result;
         }
         Sorters::recursiveSort($data, true, false, \SORT_NATURAL);
+
         return $data;
     }
 
     /**
      * Method to filter output fields
+     *
      * @param array $array
      *
      * @return void
@@ -220,6 +243,7 @@ abstract class Api
 
     /**
      * Check that method used is allowed
+     *
      * @return bool
      */
     final protected function methodCheck(): bool
@@ -232,6 +256,7 @@ abstract class Api
             \header('Allow: '.\implode(', ', $allowed_methods));
         }
         // Check if allowed method is used. EA incorrectly suggests use of `array_key_exists`, which does not fit here, due to how $allowed_methods is used in the whole method
+
         /** @noinspection InArrayMissUseInspection */
         return \in_array(HomePage::$method, $allowed_methods, true);
     }
@@ -253,7 +278,7 @@ abstract class Api
         $token = $_POST['X-CSRF-Token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_SERVER['HTTP_X_XSRF_TOKEN'] ?? null;
         // Get origin
         // In some cases Origin can be empty. In case of forms, we can try checking Referer instead.
-        $origin = $_SERVER['HTTP_ORIGIN'] ?? $_SERVER['HTTP_REFERER'] ?? NULL;
+        $origin = $_SERVER['HTTP_ORIGIN'] ?? $_SERVER['HTTP_REFERER'] ?? null;
         // Check if a token is provided
         if (!empty($token)) {
             // Check if CSRF token is present in session data
@@ -274,6 +299,7 @@ abstract class Api
                         if (!\headers_sent()) {
                             \header('X-CSRF-Token: '.$_SESSION['csrf']);
                         }
+
                         return true;
                     }
                     $reason = 'Bad origin';
@@ -301,18 +327,23 @@ abstract class Api
         if (!\headers_sent()) {
             \header('X-CSRF-Token: '.$_SESSION['csrf']);
         }
+
         return false;
     }
 
     /**
      * This is a wrapper to allow some common checks
+     *
      * @param array $path
      *
      * @return array
      */
     protected function getData(array $path): array
     {
-        if ($this->final_node && !isset($path[0])) {
+        if (
+            $this->final_node
+            && !isset($path[0])
+        ) {
             $path[0] = '';
         }
         $result = [];
@@ -330,7 +361,10 @@ abstract class Api
             // Override $path[1] with `verb` from POST, if it was provided
             $path[1] = $_POST['verb'] ?? $path[1] ?? '';
             // Override based on method only if method is not HEAD, OPTIONS or GET and if a respective method has a verb set for it
-            if (!empty($this->methods[HomePage::$method]) && !\in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET'])) {
+            if (
+                !empty($this->methods[HomePage::$method])
+                && !\in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET'])
+            ) {
                 if (\is_string($this->methods[HomePage::$method])) {
                     $path[1] = $this->methods[HomePage::$method];
                     // If we have an array of possible verbs for method, check that proper verb is provided
@@ -343,10 +377,16 @@ abstract class Api
                     }
                 }
             }
-            if (!empty($path[1]) && !\array_key_exists($path[1], $this->verbs)) {
+            if (
+                !empty($path[1])
+                && !\array_key_exists($path[1], $this->verbs)
+            ) {
                 return \array_merge($result, ['http_error' => 405, 'reason' => 'Unsupported API verb used']);
             }
-            if (!empty(HomePage::$http_error) && !$this->static) {
+            if (
+                !empty(HomePage::$http_error)
+                && !$this->static
+            ) {
                 return \array_merge($result, HomePage::$http_error);
             }
         }
@@ -354,15 +394,20 @@ abstract class Api
         // Add extra data if final node
         if ($this->final_node) {
             // Add cache age if set
-            if (empty($result['cache_age']) && !$this->static) {
+            if (
+                empty($result['cache_age'])
+                && !$this->static
+            ) {
                 $result['cache_age'] = $this->cache_age;
             }
         }
+
         return $result;
     }
 
     /**
      * This is an actual API response generation based on further details of the $path
+     *
      * @param array $path
      *
      * @return array

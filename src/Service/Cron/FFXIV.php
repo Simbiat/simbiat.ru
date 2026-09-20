@@ -27,6 +27,7 @@ class FFXIV
 {
     /**
      * Update a FFXIV entity
+     *
      * @param string|int $id   Entity ID
      * @param string     $type Entity type
      *
@@ -52,6 +53,7 @@ class FFXIV
      * @param int $instance Instance number that called the function
      *
      * @return bool|string
+     *
      * @noinspection PhpUnused Used from Cron Agent
      */
     public function updateOld(int $limit = 1, int $instance = 1): bool|string
@@ -89,29 +91,35 @@ class FFXIV
                     if (\preg_match('/Request throttled by Lodestone/', $result) === 1) {
                         $cron_agent->log('Throttled on '.$extra_for_error.'. Sleeping...', EventTypes::CustomNotice);
                         \sleep(60);
+
                         return true;
                     }
+
                     return $result;
                 }
                 // Remove the cron task if it's present
                 new TaskInstance('ff_update_entity', [(string) $entity['id'], $entity['type']])->delete();
             }
+
             return true;
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable, $extra_for_error ?? '');
+
             return $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
         }
     }
 
     /**
      * Register any new linkshells found
+     *
      * @return bool|string
+     *
      * @noinspection PhpUnused Used from Cron Agent
      */
     public function registerNewLinkshells(): bool|string
     {
         try {
-            $lodestone = (new Lodestone());
+            $lodestone = new Lodestone();
             $cron = new TaskInstance();
             // Generate a list of worlds for linkshells
             $worlds = Query::query(
@@ -147,6 +155,7 @@ class FFXIV
                                     // If we were throttled, sleep an extra minute, and then do an early return to reduce throttling chance on other jobs. Do not treat this as failure, though
                                     if (\preg_match('/Lodestone has throttled the request/ui', $exception->getMessage()) === 1) {
                                         \sleep(60);
+
                                         return true;
                                     }
                                 }
@@ -189,8 +198,10 @@ class FFXIV
             }
         } catch (\Throwable $exception) {
             Errors::error_log($exception, $extra_for_error ?? '');
+
             return $exception->getMessage()."\r\n".$exception->getTraceAsString();
         }
+
         return true;
     }
 }

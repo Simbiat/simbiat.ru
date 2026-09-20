@@ -20,6 +20,7 @@ class Security
 
     /**
      * Function to hash password. Used mostly as a wrapper in case of future changes
+     *
      * @param string $password
      *
      * @return string
@@ -37,6 +38,7 @@ class Security
      * @param string $data
      *
      * @return string
+     *
      * @throws \Random\RandomException
      */
     public static function encrypt(#[\SensitiveParameter] string $data): string
@@ -50,6 +52,7 @@ class Security
         $tag = '';
         // Encrypt and als get the tag
         $encrypted = \openssl_encrypt($data, 'AES-256-GCM', \hex2bin(Config::$encryption_passphrase), \OPENSSL_RAW_DATA, $iv, $tag);
+
         // Encrypt and prepend IV and tag
         return Encode::base64url($iv.$tag.$encrypted);
     }
@@ -60,6 +63,7 @@ class Security
      * @param string $data
      *
      * @return string
+     *
      * @noinspection NoMBMultibyteAlternative
      */
     public static function decrypt(string $data): string
@@ -75,6 +79,7 @@ class Security
         $tag = \substr($data, 12, 16);
         // Strip them from data
         $data = \substr($data, 28);
+
         return \openssl_decrypt($data, 'AES-256-GCM', \hex2bin(Config::$encryption_passphrase), \OPENSSL_RAW_DATA, $iv, $tag);
     }
 
@@ -92,6 +97,7 @@ class Security
         } catch (\Throwable) {
             $token = '';
         }
+
         return $token;
     }
 
@@ -99,11 +105,13 @@ class Security
      * Function to generate passphrase for encrypt and decrypt functions
      *
      * @return string
+     *
      * @throws \Random\RandomException
      */
     public static function genCrypto(): string
     {
         $pass = \random_bytes(\openssl_cipher_iv_length('AES-256-GCM'));
+
         return \bin2hex($pass);
     }
 
@@ -117,10 +125,13 @@ class Security
      *
      * @return bool
      */
-    public static function log(int $type, string $action, mixed $extras = NULL, ?int $user_id = null): bool
+    public static function log(int $type, string $action, mixed $extras = null, ?int $user_id = null): bool
     {
         /** @noinspection IsEmptyFunctionUsageInspection Valid case, since mixed type */
-        if (!empty($extras) && !\is_scalar($extras)) {
+        if (
+            !empty($extras)
+            && !\is_scalar($extras)
+        ) {
             try {
                 $extras = \json_encode($extras, \JSON_PRETTY_PRINT | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION | \JSON_THROW_ON_ERROR);
             } catch (\Throwable $throwable) {
@@ -150,25 +161,28 @@ class Security
                         ($ip === null ? 'null' : 'string'),
                     ],
                     ':ua' => [
-                        ($ua ?? NULL),
+                        ($ua ?? null),
                         ($ua === null ? 'null' : 'string'),
                     ],
                     ':extras' => [
-                        ($extras ?? NULL),
+                        ($extras ?? null),
                         ($extras === null ? 'null' : 'string'),
                     ],
                 ]
             );
+
             return true;
         } catch (\Throwable $exception) {
             // Log to the file. Generally we do not lose much if this fails
             Errors::error_log($exception);
+
             return false;
         }
     }
 
     /**
      * Sanitize URLs and remove tracking query parameters from them
+     *
      * @param string $url
      *
      * @return string
@@ -199,12 +213,14 @@ class Security
         // Rebuild the query string
         /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         $parsed_url['query'] = IRI::rawBuildQuery($query_params);
+
         // Reconstruct the full URL
         return IRI::restoreUri($parsed_url);
     }
 
     /**
      * Wrapper for regular `session_regenerate_id`, to always include CSRF regeneration.
+     *
      * @param bool $delete_old_session Whether to delete the old associated session or not.
      *
      * @return bool
@@ -219,6 +235,7 @@ class Security
             if (!\headers_sent()) {
                 \header('X-CSRF-Token: '.$_SESSION['csrf']);
             }
+
             return true;
         } catch (\Throwable) {
             return false;

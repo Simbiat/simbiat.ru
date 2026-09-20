@@ -143,19 +143,19 @@
         "symfony/runtime": "^8.1",
         "symfony/security-bundle": "^8.1.7",
         "symfony/serializer": "^8.1.7",
-        "symfony/stimulus-bundle": "^3.4",
+        "symfony/stimulus-bundle": "^3.5.1",
         "symfony/string": "^8.1.7",
         "symfony/translation": "^8.1.5",
         "symfony/twig-bundle": "^8.1.7",
-        "symfony/ux-turbo": "^3.4",
+        "symfony/ux-turbo": "^3.5.1",
         "symfony/validator": "^8.1.7",
         "symfony/web-link": "^8.1",
         "symfony/yaml": "^8.1.6",
         "tinify/tinify": "^1.6.4",
         "tinymce/tinymce": "^8.9.1",
         "twig/cssinliner-extra": "^3.26",
-        "twig/extra-bundle": "^3.24",
-        "twig/twig": "^3.28"
+        "twig/extra-bundle": "^3.29",
+        "twig/twig": "^3.29"
     },
     "require-dev": {
         "ext-igbinary": "*",
@@ -184,16 +184,20 @@
         "symfony/stopwatch": "^8.1",
         "symfony/web-profiler-bundle": "^8.1.7",
         "vimeo/psalm": "^6.17.2",
-        "friendsofphp/php-cs-fixer": "^3.95.25",
+        "friendsofphp/php-cs-fixer": "^3.95.26",
         "phpmd/phpmd": "^3.0.0@dev",
-        "pdepend/pdepend": "^3.0.0@dev"
+        "pdepend/pdepend": "^3.0.0@dev",
+        "vincentlanglet/twig-cs-fixer": "^4.1.1",
+        "phildaiguille/twig-a11y-rules": ">=0.9"
     },
     "scripts": {
         "phpstan": "phpstan analyse -c /app/config/phpstan.neon --memory-limit 1G",
         "psalm": "psalm --config=/app/config/psalm.xml --memory-limit=1G",
-        "phpcs": "phpcs --standard=/app/config/phpcs.xml",
+        "phpcs": "phpcs --standard=/app/config/phpcs.xml -s",
         "phpcbf": "phpcbf --standard=/app/config/phpcs.xml",
         "php-cs-fixer": "php-cs-fixer fix --dry-run --config=/app/config/php-cs-fixer.php --using-cache=yes --cache-file=/app/data/temp/.php-cs-fixer.cache --verbose --allow-risky=yes --path-mode=intersection",
+        "twig-cs-inspection": "twig-cs-fixer lint --config=/app/config/twig-cs-fixer.php --report=github",
+        "twig-cs": "twig-cs-fixer lint --config=/app/config/twig-cs-fixer.php",
         "phpmd": "phpmd analyze --cache --cache-file=/app/data/temp/.phpmd.result-cache.php --cache-strategy=content --ruleset=/app/config/phpmd.xml --threads=4 --jetbrains=simbiat.eu",
         "auto-scripts": {
             "php -d xdebug.mode=off bin/console cache:clear": "script",

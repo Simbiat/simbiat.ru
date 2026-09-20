@@ -1,8 +1,6 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
-    <inspection_tool class="7387f796-c82a-3028-87f9-07527621e7c8" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
-    <inspection_tool class="8da76c0a-418d-319a-9904-af5dfebefb78" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="AssignmentResultUsedJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AssignmentToForLoopParameterJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AssignmentToFunctionParameterJS" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -20,7 +18,9 @@
     </inspection_tool>
     <inspection_tool class="ClassOverridesFieldOfSuperClassInspection" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CompactCanBeUsedInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
-    <inspection_tool class="CompositionAndInheritanceInspection" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="CompositionAndInheritanceInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="FORCE_FINAL_OR_ABSTRACT" value="true" />
+    </inspection_tool>
     <inspection_tool class="ConditionalExpressionWithIdenticalBranchesJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ConfusingFloatingPointLiteralJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ConfusingPlusesOrMinusesJS" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -48,78 +48,6 @@
       <option name="myConfigurations">
         <list>
           <RegExpInspectionConfiguration>
-            <option name="description" value="Use CURRENT date/time functions instead of UTC" />
-            <option name="name" value="Prefer UTC to CURRENT" />
-            <option name="suppressId" value="utc_to_current" />
-            <option name="uuid" value="d3158831-6ab0-3377-a3b9-167c1a996028" />
-            <option name="patterns">
-              <list>
-                <InspectionPattern>
-                  <option name="regExp" value="(UTC_)(TIMESTAMP|TIME|DATE)(\(\d*\))?" />
-                  <option name="_fileType" value="UNKNOWN" />
-                  <option name="searchContext" value="ANY" />
-                  <option name="replacement" value="CURRENT_\U$2$3\E" />
-                  <option name="flags" value="66" />
-                </InspectionPattern>
-              </list>
-            </option>
-          </RegExpInspectionConfiguration>
-          <RegExpInspectionConfiguration>
-            <option name="description" value="Force maxmium precision of 6" />
-            <option name="name" value="Force maximum time precision" />
-            <option name="suppressId" value="force_maximum_precision" />
-            <option name="uuid" value="9f576d4d-a29e-3bd3-ad99-ac9f3a9e430d" />
-            <option name="patterns">
-              <list>
-                <InspectionPattern>
-                  <option name="regExp" value="\b(CURRENT_TIMESTAMP|CURRENT_TIME|SYSDATE|NOW|CURTIME|TIMESTAMP|DATETIME)\b(?!\(6\))(?:\((?:[0-5])?\))?(?=(?:[^'&quot;]))" />
-                  <option name="_fileType" value="UNKNOWN" />
-                  <option name="searchContext" value="ANY" />
-                  <option name="replacement" value="\U$1\E(6)" />
-                  <option name="flags" value="66" />
-                </InspectionPattern>
-              </list>
-            </option>
-          </RegExpInspectionConfiguration>
-          <RegExpInspectionConfiguration>
-            <option name="description" value="Buttons should be of type `button` by default" />
-            <option name="name" value="Default button type" />
-            <option name="suppressId" value="DefaultButtonType" />
-            <option name="uuid" value="2e656a96-e5c0-3c50-8e0b-9cb284bae209" />
-            <option name="patterns">
-              <list>
-                <InspectionPattern>
-                  <option name="regExp" value="(&lt;button)(\s+(?!.*?\btype\s*=)[^&gt;]*&gt;)" />
-                  <option name="_fileType" value="HTML" />
-                  <option name="searchContext" value="ANY" />
-                  <option name="replacement" value="$1 type=&quot;button&quot;$2" />
-                </InspectionPattern>
-                <InspectionPattern>
-                  <option name="regExp" value="&lt;\s*button\s*&gt;" />
-                  <option name="_fileType" value="HTML" />
-                  <option name="searchContext" value="ANY" />
-                  <option name="replacement" value="&lt;button type=&quot;button&quot;&gt;" />
-                </InspectionPattern>
-              </list>
-            </option>
-          </RegExpInspectionConfiguration>
-          <RegExpInspectionConfiguration>
-            <option name="description" value="Using raw is unsafe. Be sure that sanitization is applied when using it." />
-            <option name="name" value="Use of `|raw` filter" />
-            <option name="suppressId" value="TwigRawUsed" />
-            <option name="uuid" value="c80cc5f5-1826-35e5-8cd7-617f9f606617" />
-            <option name="patterns">
-              <list>
-                <InspectionPattern>
-                  <option name="regExp" value="\|raw" />
-                  <option name="_fileType" value="HTML" />
-                  <option name="searchContext" value="ANY" />
-                  <option name="flags" value="64" />
-                </InspectionPattern>
-              </list>
-            </option>
-          </RegExpInspectionConfiguration>
-          <RegExpInspectionConfiguration>
             <option name="description" value="Wrap text nodes in `span` for consistent styling" />
             <option name="name" value="Text node in anchor" />
             <option name="problemDescriptor" value="Wrap text nodes in `span`" />
@@ -145,17 +73,35 @@
             </option>
           </RegExpInspectionConfiguration>
           <RegExpInspectionConfiguration>
-            <option name="description" value="Prefer `button` element instead of `input` with type `button`, `image`, `reset` or `submit`" />
-            <option name="name" value="Prefer button instead of input" />
-            <option name="suppressId" value="PreferButtonInsteadInput" />
-            <option name="uuid" value="2b08bb32-ea14-3936-a47d-ded0f3b7c487" />
+            <option name="description" value="Force maxmium precision of 6. Applied only to SQL files." />
+            <option name="name" value="Force maximum time precision" />
+            <option name="suppressId" value="force_maximum_precision" />
+            <option name="uuid" value="9f576d4d-a29e-3bd3-ad99-ac9f3a9e430d" />
             <option name="patterns">
               <list>
                 <InspectionPattern>
-                  <option name="regExp" value="&lt;input\b[^&gt;]*\btype=&quot;(button|submit|reset|image)&quot;[^&gt;]*&gt;" />
-                  <option name="_fileType" value="HTML" />
+                  <option name="regExp" value="\b(CURRENT_TIMESTAMP|CURRENT_TIME|SYSDATE|NOW|CURTIME|TIMESTAMP|DATETIME)\b(?!\(6\))(?:\((?:[0-5])?\))?(?=(?:[^'&quot;]))" />
+                  <option name="_fileType" value="SQL" />
                   <option name="searchContext" value="ANY" />
-                  <option name="flags" value="64" />
+                  <option name="replacement" value="\U$1\E(6)" />
+                  <option name="flags" value="66" />
+                </InspectionPattern>
+              </list>
+            </option>
+          </RegExpInspectionConfiguration>
+          <RegExpInspectionConfiguration>
+            <option name="description" value="Use CURRENT date/time functions instead of UTC. Applied only to SQL files." />
+            <option name="name" value="Prefer UTC to CURRENT" />
+            <option name="suppressId" value="utc_to_current" />
+            <option name="uuid" value="d3158831-6ab0-3377-a3b9-167c1a996028" />
+            <option name="patterns">
+              <list>
+                <InspectionPattern>
+                  <option name="regExp" value="(UTC_)(TIMESTAMP|TIME|DATE)(\(\d*\))?" />
+                  <option name="_fileType" value="SQL" />
+                  <option name="searchContext" value="ANY" />
+                  <option name="replacement" value="CURRENT_\U$2$3\E" />
+                  <option name="flags" value="66" />
                 </InspectionPattern>
               </list>
             </option>
@@ -462,251 +408,12 @@
     <inspection_tool class="ReplaceAssignmentWithOperatorAssignmentJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ReuseOfLocalVariableJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
-      <searchConfiguration name="`is_safe` option used" uuid="f24ccb9a-bfe6-31c7-b172-e242a1bf9652" description="If `is_safe` is used, you need to be sure appropriate sanitization is done to the output." suppressId="twig_is_safe_used" text="new TwigFunction($name$, $callable$, $options$)" recursive="true" caseInsensitive="false" type="PHP">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="name" within="" contains="" />
-        <constraint name="callable" regexp="^.*is_safe.*$" nameOfExprType="array" within="" contains="" />
-        <constraint name="options" within="" contains="" />
-      </searchConfiguration>
-      <searchConfiguration name="`is_safe` option used" uuid="f24ccb9a-bfe6-31c7-b172-e242a1bf9652" text="new TwigFunction($name$, $callable$, $options$)" recursive="true" caseInsensitive="false" type="PHP">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="name" within="" contains="" />
-        <constraint name="callable" within="" contains="" />
-        <constraint name="options" regexp="^.*is_safe.*$" nameOfExprType="array" within="" contains="" />
-      </searchConfiguration>
       <replaceConfiguration name="Checkbox label" description="Use `span` in label to allow CSS-based label switching" suppressId="CheckboxDoubleSpan" problemDescriptor="Use `span` for CSS-based label switching" text="&lt;input id=&quot;$id$&quot; type=&quot;checkbox&quot; $attributes$&gt;&#10;&lt;label for=&quot;$id$&quot; $label_attrs$&gt;$content$&lt;/label&gt;" recursive="false" caseInsensitive="false" type="HTML" reformatAccordingToStyle="true" shortenFQN="true" replacement="&lt;input id=&quot;$id$&quot; type=&quot;checkbox&quot; $attributes$&gt;&#10;&lt;label for=&quot;$id$&quot; $label_attrs$&gt;&#10;    &lt;span class=&quot;checkbox_checked_icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&#10;    &lt;span class=&quot;checkbox_checked&quot;&gt;$content$&lt;/span&gt;&#10;    &lt;span class=&quot;checkbox_not_checked_icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&#10;    &lt;span class=&quot;checkbox_not_checked&quot;&gt;$content$&lt;/span&gt;&#10;&lt;/label&gt;">
         <constraint name="__context__" within="" contains="" />
         <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
         <constraint name="id" within="" contains="" />
         <constraint name="content" within="" contains="" />
         <constraint name="label_attrs" minCount="0" maxCount="2147483647" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" description="Recommend explicit encoding in multibyte functions" suppressId="NoMBExplicitEncoding" problemDescriptor="Use explicit encoding in multibyte functions" text="mb_check_encoding($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_check_encoding($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_chr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_chr($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_convert_case($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_convert_case($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_convert_encoding($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_convert_encoding($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_convert_kana($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_convert_kana($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_convert_kana($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_convert_kana($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_encode_numericentity($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_decode_numericentity($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_decode_numericentity($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_decode_numericentity($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_http_output()" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_http_output('UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_ord($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_ord($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_scrub($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_scrub($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_str_pad($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_pad($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_str_pad($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_pad($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_str_pad($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_pad($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="4" maxCount="4" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_str_split($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_split($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_str_split($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_split($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strcut($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strcut($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strcut($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strcut($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strimwidth($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strimwidth($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strimwidth($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strimwidth($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="4" maxCount="4" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_stripos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stripos($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_stripos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stripos($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_stristr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stristr($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_stristr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stristr($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strlen($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stristr($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strpos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strpos($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strpos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strpos($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strrchr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrchr($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strrchr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrchr($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strrichr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrichr($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strrichr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrichr($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strripos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strripos($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strripos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strripos($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strrpos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrpos($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strrpos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrpos($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strstr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strstr($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strstr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strstr($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strtolower($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strtolower($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strtoupper($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strtoupper($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strwidth($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strwidth($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_substr_count($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_substr_count($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_substr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_substr($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_substr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_substr($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_lcfirst($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_lcfirst($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_ucfirst($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_ucfirst($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_ltrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_ltrim($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_ltrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_ltrim($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_rtrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_rtrim($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_rtrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_rtrim($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&quot;" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_trim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_trim($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_trim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_trim($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&#10;return true&#10;&#10;&quot;" minCount="2" maxCount="2" within="" contains="" />
-      </replaceConfiguration>
-      <searchConfiguration name="Missing caseless restrict flag" uuid="546688eb-8c27-34cd-bb65-384cf4b0263f" description="Use caseless restrict flag (`r`) in regexp" suppressId="NoPHPRegexpRFlag" problemDescriptor="Use caseless restrict flag (`r`) in regexp" text="$func$($pattern$, $arg$)" recursive="true" caseInsensitive="true" type="PHP">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="pattern" script="&quot;def text = __context__.text&#10;if (text.length() &lt; 2) return false&#10;&#10;// Ignore non-literal arguments (variables, constants, function calls, etc.)&#10;if (!text.startsWith('&quot;') &amp;&amp; !text.startsWith(&quot;'&quot;)) return false&#10;&#10;def inner = text[1..-2]&#10;if (inner.isEmpty()) return false&#10;&#10;// first char is the regex delimiter&#10;char delim = inner.charAt(0)&#10;int lastDelim = inner.lastIndexOf((int) delim)&#10;if (lastDelim &lt;= 0) return false&#10;&#10;String flags = inner.substring(lastDelim + 1)&#10;return flags.contains('u') &amp;&amp; flags.contains('i') &amp;&amp; !flags.contains('r')&quot;" within="" contains="" />
-        <constraint name="func" regexp="^preg_(filter|grep|match|match_all|replace|replace_callback|replace_callback_array|split)$" within="" contains="" />
-        <constraint name="arg" maxCount="2147483647" within="" contains="" />
-      </searchConfiguration>
-      <searchConfiguration name="Missing Unicode flag" uuid="1862d894-bdc2-301a-83f2-68d306d11363" description="Use Unicode flag (`u`) in regexp" suppressId="NoPHPRegexpUFlag" problemDescriptor="Use Unicode flag (`u`) in regexp" text="$func$($pattern$, $arg$)" recursive="true" caseInsensitive="true" type="PHP">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="pattern" script="&quot;def text = __context__.text&#10;if (text.length() &lt; 2) return false&#10;&#10;// Ignore non-literal arguments (variables, constants, function calls, etc.)&#10;if (!text.startsWith('&quot;') &amp;&amp; !text.startsWith(&quot;'&quot;)) return false&#10;&#10;def inner = text[1..-2]&#10;if (inner.isEmpty()) return false&#10;&#10;// first char is the regex delimiter&#10;char delim = inner.charAt(0)&#10;int lastDelim = inner.lastIndexOf((int) delim)&#10;if (lastDelim &lt;= 0) return false&#10;&#10;String flags = inner.substring(lastDelim + 1)&#10;return !flags.contains('u')&quot;" within="" contains="" />
-        <constraint name="func" regexp="^preg_(filter|grep|match|match_all|replace|replace_callback|replace_callback_array|split)$" within="" contains="" />
-        <constraint name="arg" maxCount="2147483647" within="" contains="" />
-      </searchConfiguration>
-      <replaceConfiguration name="Prefer `whiteString()`" uuid="c3808b79-f378-3ace-8e38-38ae7b94a133" description="Use custom sanitizer to check for whitespace-only strings" suppressId="NoIsWhitespaceRegex" problemDescriptor="Use a more extensive whitespace-only check" text="preg_match($pattern$, $keep$, $rest$) === 1" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="false" shortenFQN="false" replacement="\Simbiat\StringHelpers\Sanitize::whiteString($keep$)">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="pattern" regexp="^'/\^\\s\*\$/[imsxeADSUXJu]*'$" within="" contains="" />
-        <constraint name="keep" within="" contains="" />
-        <constraint name="rest" minCount="0" maxCount="2147483647" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer `whiteString()`" uuid="c3808b79-f378-3ace-8e38-38ae7b94a133" text="preg_match($pattern$, $keep$, $rest$) !== 1" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="false" shortenFQN="false" replacement="!\Simbiat\StringHelpers\Sanitize::whiteString($keep$)">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="pattern" regexp="^'/\^\\s\*\$/[imsxeADSUXJu]*'$" within="" contains="" />
-        <constraint name="keep" within="" contains="" />
-        <constraint name="rest" minCount="0" maxCount="2147483647" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="Prefer button to input" uuid="75e525bc-8637-3cb2-81c5-95dabedae2b8" description="Prefer `button` element instead of `input` with type `button`, `image`, `reset` or `submit`" suppressId="PreferButtonInsteadInput" text="&lt;$tag$ type=&quot;$type$&quot; value=&quot;$value$&quot; $after$&gt;" recursive="false" caseInsensitive="false" type="HTML" reformatAccordingToStyle="true" shortenFQN="false" replacement="&lt;button type=&quot;$type$&quot; value=&quot;$value$&quot; $after$&gt;&#10;    $value$&#10;&lt;/button&gt;">
         <constraint name="__context__" within="" contains="" />
@@ -724,154 +431,6 @@
         <constraint name="alt" within="" contains="" />
         <variableDefinition name="src" />
       </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" description="Suggest replacing certain string functions with multibyte alterantive" suppressId="NoMBMultibyteAlternative" problemDescriptor="Consider using multibyte alternative" text="chr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_chr($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="ord($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_ord($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="str_pad($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_pad($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="str_pad($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_pad($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="str_pad($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_pad($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="str_split($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_split($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="str_split($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_split($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="stripos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stripos($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="stripos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stripos($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="stristr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stristr($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="stristr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stristr($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="strlen($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strlen($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="strpos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strpos($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="strpos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strpos($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="strrchr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrchr($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="strrchr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrchr($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="strripos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strripos($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="strripos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strripos($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="strrpos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrpos($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="strrpos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrpos($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="strstr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strstr($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="strstr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strstr($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="strtolower($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strtolower($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="strtoupper($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strtoupper($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="substr_count($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_substr_count($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="substr_count($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_substr_count($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="substr_count($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_substr_count($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="4" maxCount="4" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="substr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_substr($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="substr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_substr($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="trim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_trim($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="ltrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_ltrim($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="rtrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_rtrim($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="trim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_trim($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="ltrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_ltrim($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="rtrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_rtrim($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="ucfirst($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_ucfirst($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer multibyte alterantive" uuid="8da76c0a-418d-319a-9904-af5dfebefb78" text="lcfirst($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_lcfirst($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
       <replaceConfiguration name="Redundant alt" text="&lt;img $attribute$=&quot;$alt$&quot; $attributes$&gt;&lt;$tag$&gt;$alt$&lt;/$tag$&gt;" recursive="false" caseInsensitive="false" type="HTML" reformatAccordingToStyle="true" shortenFQN="false" replacement="alt=&quot;&quot;">
         <constraint name="__context__" within="" contains="" />
         <constraint name="attribute" regexp="alt" target="true" within="" contains="" />
@@ -885,10 +444,6 @@
         <constraint name="alt" regexp=".+" within="" contains="" />
         <constraint name="tag" within="" contains="" />
         <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Use exit function with exit code" uuid="4e1209f3-613d-3ab3-981e-ef2bb07b5abf" description="Use exit function with exit code" suppressId="use_exit_function" problemDescriptor="Use `exit` function with exit code" text="exit($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="false" shortenFQN="false" replacement="exit(0)">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" regexp="^\s*$" minCount="0" maxCount="0" within="" contains="" />
       </replaceConfiguration>
     </inspection_tool>
     <inspection_tool class="SecurityAdvisoriesInspection" enabled="true" level="WARNING" enabled_by_default="true">
@@ -983,8 +538,5 @@
     <inspection_tool class="UnusedDefine" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UsingInclusionReturnValueInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="XHTMLIncompatabilitiesJS" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="c80cc5f5-1826-35e5-8cd7-617f9f606617" enabled="true" level="WARNING" enabled_by_default="false">
-      <scope name="Twig" level="WARNING" enabled="true" />
-    </inspection_tool>
   </profile>
 </component>

@@ -32,9 +32,13 @@ class Sections extends Api
         // Check for ID
         if (empty($path[0])) {
             // Limit accidental spam by extra checks
-            if (HomePage::$method !== 'POST' && $path[1] === 'add') {
+            if (
+                HomePage::$method !== 'POST'
+                && $path[1] === 'add'
+            ) {
                 return ['http_error' => 405, 'reason' => 'Incorrect method or verb used'];
             }
+
             // Only support adding a new post here
             return new Section()->add();
         }
@@ -45,6 +49,7 @@ class Sections extends Api
         if ($section->id === null) {
             return ['http_error' => 404, 'reason' => 'ID `'.$path[0].'` not found'];
         }
+
         return match ($path[1]) {
             'edit' => $section->edit(),
             'delete' => $section->delete(),

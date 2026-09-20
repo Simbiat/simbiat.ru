@@ -22,6 +22,10 @@
       <sourceFolder url="file://$MODULE_DIR$/packages/http20/" isTestSource="false" packagePrefix="Simbiat\http20\" />
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/Argon/" isTestSource="false" packagePrefix="Simbiat\" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/Sniffs/" isTestSource="false" packagePrefix="\" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/Database/Bind/" isTestSource="false" packagePrefix="Simbiat\Database\" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/Database/Manage/" isTestSource="false" packagePrefix="Simbiat\Database\" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/repo" />

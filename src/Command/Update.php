@@ -32,7 +32,6 @@ final class Update
             // Connect to DB
             Config::dbConnect();
             if (Config::$dbup) {
-
                 return Command::SUCCESS;
             }
         } catch (\Throwable $throwable) {

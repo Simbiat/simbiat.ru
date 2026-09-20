@@ -77,12 +77,15 @@ final class Database
         try {
             // Run only ony DEV
             if (Config::$environment !== 'dev') {
-
                 return Command::SUCCESS;
             }
             /* @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
-            if (!\is_dir(Config::$ddl_dir) && !\mkdir(Config::$ddl_dir, recursive: true) && !\is_dir(Config::$ddl_dir)) {
+            if (
+                !\is_dir(Config::$ddl_dir)
+                && !\mkdir(Config::$ddl_dir, recursive: true)
+                && !\is_dir(Config::$ddl_dir)
+            ) {
                 Errors::error_log(new \RuntimeException('Failed to create DDL directory'));
             }
             // Clean up SQL files but do not touch manually maintained files with prefixes `000` and `999`

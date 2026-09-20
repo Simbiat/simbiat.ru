@@ -34,7 +34,11 @@ final class Healthcheck
         $output->writeln(Errors::logfmt('Checking if DB is up...'));
         // Get directory
         $dir = '/app/var/log';
-        if (!\is_dir($dir) && !\mkdir($dir) && !\is_dir($dir)) {
+        if (
+            !\is_dir($dir)
+            && !\mkdir($dir)
+            && !\is_dir($dir)
+        ) {
             throw new \RuntimeException(\sprintf('Directory "%s" was not created', $dir));
         }
         $no_db_flag = $dir.'/no_db.flag';
@@ -48,7 +52,10 @@ final class Healthcheck
         }
         // Connect to DB
         Config::dbConnect();
-        if (Config::$environment === 'prod' && !Config::$dbup) {
+        if (
+            Config::$environment === 'prod'
+            && !Config::$dbup
+        ) {
             // Do not do anything if mail has already been sent
             if (!\is_file($no_db_flag)) {
                 // Send mail

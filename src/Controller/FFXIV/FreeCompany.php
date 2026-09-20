@@ -40,7 +40,10 @@ class FreeCompany extends Page
         $this->lastModified($output_array['freecompany']['dates']['updated']);
         $output_array['freecompany']['dates']['scheduled'] = $entity->scheduleUpdate();
         // Check if linked to the current user
-        if ($_SESSION['user_id'] !== 1 && \in_array($_SESSION['user_id'], \array_column($output_array['freecompany']['members'], 'user_id'), true)) {
+        if (
+            $_SESSION['user_id'] !== 1
+            && \in_array($_SESSION['user_id'], \array_column($output_array['freecompany']['members'], 'user_id'), true)
+        ) {
             $output_array['freecompany']['linked'] = true;
         } else {
             $output_array['freecompany']['linked'] = false;
@@ -82,6 +85,7 @@ class FreeCompany extends Page
         // Merge crest and update favicon
         $output_array['freecompany']['crest'] = AbstractEntity::crestToFavicon($output_array['freecompany']['crest']);
         $output_array['favicon'] = $output_array['freecompany']['crest'];
+
         return $output_array;
     }
 }

@@ -44,6 +44,7 @@ final class PasswordChange extends Notification
             Errors::error_log($throwable);
             $this->text = null;
         }
+
         return $this;
     }
 }

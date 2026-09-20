@@ -48,9 +48,13 @@ class MainRouter extends Router
             // We want to handle sitemap links equally regardless of trailing .xml extension
             $path[\array_key_last($path)] = \str_replace('.xml', '', $path[\array_key_last($path)]);
         }
-        if ($path[0] === 'supops' && !\array_key_exists(1, $path)) {
+        if (
+            $path[0] === 'supops'
+            && !\array_key_exists(1, $path)
+        ) {
             $path[1] = 'pitch';
         }
+
         return match ($path[0]) {
             'api' => \array_merge(['template_override' => 'common/pages/api.twig'], new Api()->route(\array_slice($path, 1))),
             // Forum/Articles
@@ -79,19 +83,24 @@ class MainRouter extends Router
 
     /**
      * Function to help route error pages on frontend
+     *
      * @param array $uri
      *
      * @return array
      */
     private function error(array $uri): array
     {
-        if (empty($uri[0]) || !\in_array((int) $uri[0], [300, 301, 302, 303, 305, 307, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 421, 422, 423, 424, 425, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505], true)) {
+        if (
+            empty($uri[0])
+            || !\in_array((int) $uri[0], [300, 301, 302, 303, 305, 307, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 421, 422, 423, 424, 425, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505], true)
+        ) {
             $output_array['http_error'] = 404;
         } else {
             $output_array['http_error'] = (int) $uri[0];
         }
         $output_array['suggested_link'] = \dirname($_SERVER['REQUEST_URI'] ?? '');
         $output_array['error_page'] = true;
+
         return $output_array;
     }
 }

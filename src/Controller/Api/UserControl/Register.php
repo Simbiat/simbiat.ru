@@ -18,7 +18,6 @@ class Register extends Api
     protected array $methods = ['POST' => ''];
 
     /**
-     *
      * @param array $path
      *
      * @return array

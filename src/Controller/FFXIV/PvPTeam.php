@@ -39,7 +39,10 @@ class PvPTeam extends Page
         // Try to exit early based on the modification date
         $this->lastModified($output_array['pvpteam']['dates']['updated']);
         // Check if linked to the current user
-        if ($_SESSION['user_id'] !== 1 && \in_array($_SESSION['user_id'], \array_column($output_array['pvpteam']['members'], 'user_id'), true)) {
+        if (
+            $_SESSION['user_id'] !== 1
+            && \in_array($_SESSION['user_id'], \array_column($output_array['pvpteam']['members'], 'user_id'), true)
+        ) {
             $output_array['pvpteam']['linked'] = true;
         } else {
             $output_array['pvpteam']['linked'] = false;
@@ -82,6 +85,7 @@ class PvPTeam extends Page
         // Merge crest and update favicon
         $output_array['pvpteam']['crest'] = AbstractEntity::crestToFavicon($output_array['pvpteam']['crest']);
         $output_array['favicon'] = $output_array['pvpteam']['crest'];
+
         return $output_array;
     }
 }

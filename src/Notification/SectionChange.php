@@ -40,6 +40,7 @@ final class SectionChange extends Notification
             Errors::error_log($throwable);
             $this->text = null;
         }
+
         return $this;
     }
 }

@@ -16,6 +16,7 @@ class Feeds
 {
     /**
      * Function to parse URI and generate appropriate feed
+     *
      * @throws \Exception
      */
     public function uriParse(array $uri): array
@@ -23,6 +24,7 @@ class Feeds
         if (empty($uri[0])) {
             return ['http_error' => 404];
         }
+
         return match ($uri[0]) {
             'atom' => $this->feed(\array_slice($uri, 1)),
             'rss' => $this->feed(\array_slice($uri, 1), 'rss'),
@@ -32,10 +34,12 @@ class Feeds
 
     /**
      * Generate Atom/RSS
+     *
      * @param array  $uri    List of URIs
      * @param string $format What format should be used
      *
      * @return int[]
+     *
      * @throws \DOMException
      */
     private function feed(array $uri, string $format = 'atom'): array
@@ -89,7 +93,10 @@ class Feeds
                     }
                 }
                 // Change language for BICs
-                if ($format === 'rss' && \in_array($uri[0], ['bicchanged', 'bicdeleted'])) {
+                if (
+                    $format === 'rss'
+                    && \in_array($uri[0], ['bicchanged', 'bicdeleted'])
+                ) {
                     $settings['language'] = 'ru-ru';
                 }
                 // Set a query for the feed
@@ -114,6 +121,7 @@ class Feeds
                 }
             }
         }
+
         // If we reach here, it means, the requested page does not exist
         return ['http_error' => 404];
     }

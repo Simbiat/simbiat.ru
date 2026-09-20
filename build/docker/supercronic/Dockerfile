@@ -1,4 +1,4 @@
-FROM alpine:3.23.5
+FROM alpine:3.24.2
 
 # Default values
 ARG PUID=1000

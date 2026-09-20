@@ -82,6 +82,7 @@ abstract class Search
 
     /**
      * Actually run the search
+     *
      * @param string $what  What to search for
      * @param int    $limit How many results to provide
      *
@@ -98,15 +99,18 @@ abstract class Search
             } else {
                 $results['results'] = [];
             }
+
             return $results;
         } catch (\Throwable $e) {
             Errors::error_log($e);
+
             return [];
         }
     }
 
     /**
      * Function to generate a list of entities or get a proper page number for redirect
+     *
      * @param int    $page Page number
      * @param string $what What to search for
      *
@@ -133,12 +137,14 @@ abstract class Search
             return ['count' => $count, 'pages' => $pages, 'entities' => $this->selectEntities($what, $this->list_items, $this->list_items * ($page - 1), true)];
         } catch (\Throwable $e) {
             Errors::error_log($e);
+
             return ['count' => $count, 'pages' => $pages, 'entities' => []];
         }
     }
 
     /**
      * Generalized function to count entities
+     *
      * @param string $what What to search for
      *
      * @return int
@@ -158,7 +164,10 @@ abstract class Search
                 // Prepare results
                 $results = 0;
                 // Get exact comparison results
-                if (!empty($this->exact) && !$like) {
+                if (
+                    !empty($this->exact)
+                    && !$like
+                ) {
                     $results = Query::query($exactly_like.$this->exact().')'.(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by), \array_merge($this->bindings, [':what' => [$what, 'string']]), return: 'count');
                 }
                 // If something was found - return results
@@ -169,24 +178,29 @@ abstract class Search
                     if (empty($this->fulltext)) {
                         return 0;
                     }
+
                     // Get fulltext results
                     return Query::query($exactly_like.$this->relevancy().' > 0)'.(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by), \array_merge($this->bindings, [':what' => [$what, 'match']]), return: 'count');
                 }
                 if (empty($this->like)) {
                     return 0;
                 }
+
                 // Search using LIKE
                 return Query::query($exactly_like.$this->like().')'.(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by), \array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'like']]), return: 'count');
             }
+
             return Query::query('SELECT COUNT('.$this->count_argument.') FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by).';', $this->bindings, return: 'count');
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
+
             return 0;
         }
     }
 
     /**
      * Generalized function to select entities
+     *
      * @param string $what   What to search for
      * @param int    $limit  How much to select
      * @param int    $offset Optional offset (for pagination)
@@ -209,7 +223,10 @@ abstract class Search
                 // Prepare the results array
                 $results = [];
                 // Get exact comparison results
-                if (!empty($this->exact) && !$like) {
+                if (
+                    !empty($this->exact)
+                    && !$like
+                ) {
                     $results = $this->postProcess(Query::query($exactly_like.$this->exact().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, \array_merge($this->bindings, [':what' => [$what, 'string']]), return: 'all'));
                 }
                 // If something was found - return results
@@ -220,24 +237,29 @@ abstract class Search
                     if (empty($this->fulltext)) {
                         return [];
                     }
+
                     // Get fulltext results
                     return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` , '.$this->relevancy().' as `relevance` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->where_search) ? '' : $this->where_search.' OR ').$this->relevancy().' > 0)'.(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by).' ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, \array_merge($this->bindings, [':what' => [$what, 'match']]), return: 'all'));
                 }
                 if (empty($this->like)) {
                     return [];
                 }
+
                 // Search using LIKE
                 return $this->postProcess(Query::query($exactly_like.$this->like().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, \array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']]), return: 'all'));
             }
+
             return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by).' ORDER BY '.($list ? $this->order_list : $this->order_default).' LIMIT '.$limit.' OFFSET '.$offset.';', $this->bindings, return: 'all'));
         } catch (\Throwable $e) {
             Errors::error_log($e);
+
             return [];
         }
     }
 
     /**
      * Optional post-processing. Override to apply. Is not meant for removing results.
+     *
      * @param array $results
      *
      * @return array
@@ -249,6 +271,7 @@ abstract class Search
 
     /**
      * Generate WHERE for direct comparison
+     *
      * @return string
      */
     final protected function exact(): string
@@ -258,6 +281,7 @@ abstract class Search
 
     /**
      * Generate WHERE for %LIKE% comparison
+     *
      * @return string
      */
     final protected function like(): string
@@ -267,6 +291,7 @@ abstract class Search
 
     /**
      * Helper function to generate relevancy statement
+     *
      * @return string
      */
     final protected function relevancy(): string
@@ -277,6 +302,7 @@ abstract class Search
         foreach ($this->fulltext as $key => $field) {
             $result .= '(MATCH (`'.$field.'`) AGAINST (:what IN BOOLEAN MODE))*'.($factor - $key).' + ';
         }
+
         // Remove the last +, close the brackets and return
         return \mb_trim($result, ' +', 'UTF-8').')';
     }

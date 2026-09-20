@@ -58,6 +58,7 @@ class User extends Page
             ($output_array['user_data']['name']['first_name'] === null ? '' : '<meta property="profile:first_name" content="'.\htmlspecialchars($output_array['user_data']['name']['first_name'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />').
             ($output_array['user_data']['name']['last_name'] === null ? '' : '<meta property="profile:last_name" content="'.\htmlspecialchars($output_array['user_data']['name']['last_name'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />').
             ($output_array['user_data']['sex'] === null ? '' : '<meta property="profile:gender" content="'.\htmlspecialchars(($output_array['user_data']['sex'] === 1 ? 'male' : 'female'), \ENT_QUOTES | \ENT_SUBSTITUTE).'" />');
+
         return $output_array;
     }
 }

@@ -20,6 +20,7 @@ class Redirect extends StaticPage
 
     /**
      * Unlike with parent class, we are just redirecting here
+     *
      * @param array $path
      *
      * @return array
@@ -29,6 +30,7 @@ class Redirect extends StaticPage
     {
         $new_uri = \preg_replace('/'.$this->search_for.'/ui', $this->replace_with, HomePage::$canonical);
         Headers::redirect($new_uri);
+
         return [];
     }
 }

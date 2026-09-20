@@ -35,8 +35,12 @@ final class TicketChange extends Notification
     protected function setText(array $twig_vars = []): self
     {
         // If Twig variables are required, but not provided - do not do anything. This will result in failure on save and send.
-        if (self::TWIG_REQUIRED && \count($twig_vars) === 0) {
+        if (
+            self::TWIG_REQUIRED
+            && \count($twig_vars) === 0
+        ) {
             $this->text = null;
+
             return $this;
         }
         try {
@@ -45,6 +49,7 @@ final class TicketChange extends Notification
             Errors::error_log($throwable);
             $this->text = null;
         }
+
         return $this;
     }
 }
