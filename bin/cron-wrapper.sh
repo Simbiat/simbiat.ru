@@ -10,7 +10,6 @@ MAILER="/etc/supercronic/bin/send-mail.sh"
 POSTFIX_CONTAINER="postfix"         # container delivering the alert mail
 HEALTH_GRACE=120                    # seconds to wait for healthcheck after container start
 ALERT_LOCK_WAIT=120                 # seconds to wait for a sibling holding the alert lock
-MAX_OUTPUT_LINES=50                 # max lines of exec output captured into alerts/stamps
 
 WRAPPER_ARGS="$*"                   # captured early, safe to reference in on_error
 
@@ -204,11 +203,11 @@ fi
 
 # Build a snippet of the failing run's output for the alert body / stamp.
 SNIPPET=""
-[ -s "$TMP_STDOUT" ] && SNIPPET="--- captured stdout (last $MAX_OUTPUT_LINES lines) ---
-$(tail -n "$MAX_OUTPUT_LINES" "$TMP_STDOUT")"
+[ -s "$TMP_STDOUT" ] && SNIPPET="--- captured stdout ---
+$(cat "$TMP_STDOUT")"
 [ -s "$TMP_STDERR" ] && SNIPPET="${SNIPPET:+$SNIPPET
-}--- captured stderr (last $MAX_OUTPUT_LINES lines) ---
-$(tail -n "$MAX_OUTPUT_LINES" "$TMP_STDERR")"
+}--- captured stderr ---
+$(cat "$TMP_STDERR")"
 
 alert_once "$CMD_STAMP" "[Alert] Failed cron job" \
     "Cron job \`$CONTAINER: $*\` failed with exit code $RC.${SNIPPET:+
