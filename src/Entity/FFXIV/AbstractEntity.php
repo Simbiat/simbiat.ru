@@ -12,9 +12,6 @@ use App\Service\Images;
 use JetBrains\PhpStorm\FileReference;
 use Simbiat\Cron\TaskInstance;
 use Simbiat\Database\Query;
-use function dirname;
-use function is_array;
-use function sprintf;
 
 /**
  * Generic class for FFXIV entities
@@ -62,7 +59,7 @@ abstract class AbstractEntity
         // Convert to string for consistency
         $id = (string) $id;
         if (\preg_match($this->id_format, $id) !== 1) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.\get_class($this).'` has incorrect format.');
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
         }
         $this->id = $id;
 
@@ -271,7 +268,7 @@ abstract class AbstractEntity
         }
         // Check if it has not been updated recently (10 minutes, to protect from potential abuse)
         if (
-            isset($updated)
+            $updated !== null
             && (\time() - \strtotime($updated)) < 600
         ) {
             $this->removeFromCron();
@@ -453,7 +450,7 @@ abstract class AbstractEntity
     protected function charMassCron(array $members): void
     {
         // Cache CRON object
-        if (!empty($members)) {
+        if (\count($members) !== 0) {
             $cron = new TaskInstance();
             foreach ($members as $member => $details) {
                 if (!$details['registered']) {

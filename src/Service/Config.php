@@ -103,7 +103,7 @@ final class Config
         // Check in case we accidentally call this for the 2nd time
         if (!self::$dbup) {
             try {
-                new Query(self::$container->get('doctrine.dbal.default_connection')->getNativeConnection());
+                new Query(self::$container->get('doctrine.dbal.default_connection')?->getNativeConnection());
                 self::$dbup = true;
             } catch (\Throwable $exception) {
                 // 2002 error code means server is not listening on port

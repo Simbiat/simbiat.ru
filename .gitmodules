@@ -88,3 +88,6 @@
 [submodule "packages/Sniffs"]
 	path = packages/Sniffs
 	url = https://github.com/Simbiat/sniffs
+[submodule "build/js/dev/HTMLESLintPlugin"]
+	path = build/js/dev/HTMLESLintPlugin
+	url = https://github.com/Simbiat/html-eslint-plugin-simbiat
