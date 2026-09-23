@@ -8,6 +8,7 @@ import markdown from '@eslint/markdown';
 import html from '@html-eslint/eslint-plugin';
 import { default as html_parser, TEMPLATE_ENGINE_SYNTAX } from '@html-eslint/parser';
 import simbiat from '@simbiat/eslint-plugin-simbiat';
+import simbiat_html from '@simbiat/html-eslint-plugin-simbiat';
 import stylistic from '@stylistic/eslint-plugin';
 import { configs as compat } from 'eslint-plugin-compat';
 import { configs as deMorgan } from 'eslint-plugin-de-morgan';
@@ -346,7 +347,8 @@ const js_files_config = {
         'jsdoc/prefer-import-tag': 'warn',
         'jsdoc/require-asterisk-prefix': 'warn',
         'jsdoc/require-description': 'warn',
-        'jsdoc/require-description-complete-sentence': 'warn',
+        // Complains when using common abbreviations like `e.g.` or `etc.`
+        'jsdoc/require-description-complete-sentence': 'off',
         'jsdoc/require-file-overview': 'warn',
         'jsdoc/require-hyphen-before-param-description': 'warn',
         'jsdoc/require-next-description': 'warn',
@@ -498,6 +500,9 @@ const html_files = {
             templateEngineSyntax: TEMPLATE_ENGINE_SYNTAX.TWIG,
         },
     },
+    plugins: {
+        simbiat_html,
+    },
     rules: {
         'html/css-no-empty-blocks': 'warn',
         'html/head-order': 'warn',
@@ -595,6 +600,12 @@ const html_files = {
         'html/no-target-blank': 'off',
         'html/require-button-type': 'off',
         'html/require-explicit-size': 'off',
+        // Custom rules
+        'simbiat_html/require-span-in-anchor-text': 'warn',
+        'simbiat_html/prefer-button-over-input': 'warn',
+        'simbiat_html/no-redundant-alt': 'warn',
+        'simbiat_html/checkbox-label-structure': 'warn',
+        'simbiat_html/require-float-label-wrapper': 'warn',
     },
 };
 const template_email = {

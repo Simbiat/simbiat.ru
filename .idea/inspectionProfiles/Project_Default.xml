@@ -48,31 +48,6 @@
       <option name="myConfigurations">
         <list>
           <RegExpInspectionConfiguration>
-            <option name="description" value="Wrap text nodes in `span` for consistent styling" />
-            <option name="name" value="Text node in anchor" />
-            <option name="problemDescriptor" value="Wrap text nodes in `span`" />
-            <option name="suppressId" value="NoTextNodesInAcnhors" />
-            <option name="uuid" value="a0a511c2-83ae-3a39-b286-dfe4917b3dcd" />
-            <option name="patterns">
-              <list>
-                <InspectionPattern>
-                  <option name="regExp" value="(&lt;a\b[^&gt;]*&gt;\s*(?:&lt;(?:img|br|hr|input|wbr|area|base|col|embed|link|meta|source|track)\b[^&gt;]*&gt;\s*)+)([^\s&lt;&gt;][^&lt;&gt;]*?)(\s*&lt;/a&gt;)" />
-                  <option name="_fileType" value="HTML" />
-                  <option name="searchContext" value="ANY" />
-                  <option name="replacement" value="$1&lt;span&gt;$2&lt;/span&gt;$3" />
-                  <option name="flags" value="64" />
-                </InspectionPattern>
-                <InspectionPattern>
-                  <option name="regExp" value="(&lt;a\b[^&gt;]*&gt;\s*)([^\s&lt;&gt;][^&lt;&gt;]*?)(\s*(?:&lt;(?:img|br|hr|input|wbr|area|base|col|embed|link|meta|source|track)\b[^&gt;]*&gt;\s*)+&lt;/a&gt;)" />
-                  <option name="_fileType" value="HTML" />
-                  <option name="searchContext" value="ANY" />
-                  <option name="replacement" value="$1&lt;span&gt;$2&lt;/span&gt;$3" />
-                  <option name="flags" value="64" />
-                </InspectionPattern>
-              </list>
-            </option>
-          </RegExpInspectionConfiguration>
-          <RegExpInspectionConfiguration>
             <option name="description" value="Force maxmium precision of 6. Applied only to SQL files." />
             <option name="name" value="Force maximum time precision" />
             <option name="suppressId" value="force_maximum_precision" />
@@ -407,45 +382,7 @@
     <inspection_tool class="RegExpAnonymousGroup" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ReplaceAssignmentWithOperatorAssignmentJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ReuseOfLocalVariableJS" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
-      <replaceConfiguration name="Checkbox label" description="Use `span` in label to allow CSS-based label switching" suppressId="CheckboxDoubleSpan" problemDescriptor="Use `span` for CSS-based label switching" text="&lt;input id=&quot;$id$&quot; type=&quot;checkbox&quot; $attributes$&gt;&#10;&lt;label for=&quot;$id$&quot; $label_attrs$&gt;$content$&lt;/label&gt;" recursive="false" caseInsensitive="false" type="HTML" reformatAccordingToStyle="true" shortenFQN="true" replacement="&lt;input id=&quot;$id$&quot; type=&quot;checkbox&quot; $attributes$&gt;&#10;&lt;label for=&quot;$id$&quot; $label_attrs$&gt;&#10;    &lt;span class=&quot;checkbox_checked_icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&#10;    &lt;span class=&quot;checkbox_checked&quot;&gt;$content$&lt;/span&gt;&#10;    &lt;span class=&quot;checkbox_not_checked_icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&#10;    &lt;span class=&quot;checkbox_not_checked&quot;&gt;$content$&lt;/span&gt;&#10;&lt;/label&gt;">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
-        <constraint name="id" within="" contains="" />
-        <constraint name="content" within="" contains="" />
-        <constraint name="label_attrs" minCount="0" maxCount="2147483647" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer button to input" uuid="75e525bc-8637-3cb2-81c5-95dabedae2b8" description="Prefer `button` element instead of `input` with type `button`, `image`, `reset` or `submit`" suppressId="PreferButtonInsteadInput" text="&lt;$tag$ type=&quot;$type$&quot; value=&quot;$value$&quot; $after$&gt;" recursive="false" caseInsensitive="false" type="HTML" reformatAccordingToStyle="true" shortenFQN="false" replacement="&lt;button type=&quot;$type$&quot; value=&quot;$value$&quot; $after$&gt;&#10;    $value$&#10;&lt;/button&gt;">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="type" regexp="button|reset|submit" within="" contains="" />
-        <constraint name="value" within="" contains="" />
-        <constraint name="after" minCount="0" maxCount="2147483647" within="" contains="" />
-        <constraint name="tag" regexp="input" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Prefer button to input" uuid="75e525bc-8637-3cb2-81c5-95dabedae2b8" text="&lt;$tag$ type=&quot;$type$&quot; src=&quot;$src$&quot; alt=&quot;$alt$&quot; $after$&gt;" recursive="false" caseInsensitive="false" type="HTML" reformatAccordingToStyle="true" shortenFQN="false" replacement="&lt;button type=&quot;button&quot; $after$&gt;&#10;    &lt;img crossorigin=&quot;anonymous&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; alt=&quot;$alt$&quot; src=&quot;$src$&quot;&gt;&#10;&lt;/button&gt;">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="type" regexp="image" within="" contains="" />
-        <constraint name="after" minCount="0" maxCount="2147483647" within="" contains="" />
-        <constraint name="tag" regexp="input" within="" contains="" />
-        <constraint name="src" within="" contains="" />
-        <constraint name="alt" within="" contains="" />
-        <variableDefinition name="src" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Redundant alt" text="&lt;img $attribute$=&quot;$alt$&quot; $attributes$&gt;&lt;$tag$&gt;$alt$&lt;/$tag$&gt;" recursive="false" caseInsensitive="false" type="HTML" reformatAccordingToStyle="true" shortenFQN="false" replacement="alt=&quot;&quot;">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="attribute" regexp="alt" target="true" within="" contains="" />
-        <constraint name="alt" regexp=".+" within="" contains="" />
-        <constraint name="tag" within="" contains="" />
-        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Redundant alt" text="&lt;$tag$&gt;$alt$&lt;/$tag$&gt;&lt;img $attribute$=&quot;$alt$&quot; $attributes$&gt;" recursive="false" caseInsensitive="false" type="HTML" reformatAccordingToStyle="true" shortenFQN="false" replacement="alt=&quot;&quot;">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="attribute" regexp="alt" target="true" within="" contains="" />
-        <constraint name="alt" regexp=".+" within="" contains="" />
-        <constraint name="tag" within="" contains="" />
-        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
-      </replaceConfiguration>
-    </inspection_tool>
+    <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SecurityAdvisoriesInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="optionConfiguration">
         <list>

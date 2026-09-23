@@ -9,6 +9,7 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/build/PSDs/FFXIV" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/build/js/dev/ESLintPlugin" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build/js/dev/HTMLESLintPlugin" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/build/js/dev/StylelintPlugin" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/Argon" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/ArrayHelpers" vcs="Git" />
