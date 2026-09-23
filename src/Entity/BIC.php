@@ -5,6 +5,8 @@ declare(strict_types=1);
 // TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
 namespace App\Entity;
 
+use App\Enum\BIC\AccRstrType;
+use App\Enum\BIC\RstrType;
 use Simbiat\ArrayHelpers\Converters;
 use Simbiat\ArrayHelpers\Editors;
 use Simbiat\ArrayHelpers\Sorters;
@@ -115,7 +117,10 @@ class BIC extends Entity
         // Get SWIFT codes
         $from_db['SWIFTs'] = Query::query('SELECT `SWBIC`, `DefaultSWBIC`, `DateIn`, `DateOut` FROM `bic__swift` WHERE `BIC`=:BIC ORDER BY `DefaultSWBIC` DESC, `DateOut` DESC', [':BIC' => $this->id], return: 'all');
         // Get restrictions for BIC
-        $from_db['restrictions'] = Query::query('SELECT `bic__bic_rstr`.`Rstr` as `name`, `Description` as `description`, `RstrDate` as `start_time`, `DateOut` as `end_time`, \'bic\' as `type` FROM `bic__bic_rstr` LEFT JOIN `bic__rstr` ON `bic__bic_rstr`.`Rstr`=`bic__rstr`.`Rstr` WHERE `BIC`=:BIC ORDER BY `RstrDate` DESC;', [':BIC' => $this->id], return: 'all');
+        $from_db['restrictions'] = Query::query('SELECT `bic__bic_rstr`.`Rstr` as `name`, `RstrDate` as `start_time`, `DateOut` as `end_time`, \'bic\' as `type` FROM `bic__bic_rstr` WHERE `BIC`=:BIC ORDER BY `RstrDate` DESC;', [':BIC' => $this->id], return: 'all');
+        foreach ($from_db['restrictions'] as $key => $restriction) {
+            $from_db['restrictions'][$key]['description'] = RstrType::{$restriction['name']}->value;
+        }
         // Get accounts
         $from_db['accounts'] = Query::query(
             'SELECT `Account`, `bic__acc_type`.`Description` as `AccountType`, `CK`, `DateIn`, `DateOut`, `AccountCBRBIC` FROM `bic__accounts`
@@ -124,9 +129,10 @@ class BIC extends Entity
         );
         foreach ($from_db['accounts'] as $key => $account) {
             // Get restrictions
-            $account_restrictions = Query::query('SELECT `bic__acc_rstr`.`AccRstr` as `name`, `Description` as `description`, `AccRstrDate` as `start_time`, `DateOut` as `end_time`, `SuccessorBIC`, \'account\' as `type`, `account` FROM `bic__acc_rstr` LEFT JOIN `bic__rstr` ON `bic__acc_rstr`.`AccRstr`=`bic__rstr`.`Rstr` WHERE `account`=:account ORDER BY `AccRstrDate` DESC;', [':account' => $account['Account']], return: 'all');
+            $account_restrictions = Query::query('SELECT `bic__acc_rstr`.`AccRstr` as `name`, `AccRstrDate` as `start_time`, `DateOut` as `end_time`, `SuccessorBIC`, \'account\' as `type`, `account` FROM `bic__acc_rstr` WHERE `account`=:account ORDER BY `AccRstrDate` DESC;', [':account' => $account['Account']], return: 'all');
             // Get successor details for restrictions
             foreach ($account_restrictions as $key_rstr => $restriction) {
+                $account_restrictions[$key_rstr]['description'] = AccRstrType::{$restriction['name']}->value;
                 if (!empty($restriction['SuccessorBIC'])) {
                     $account_restrictions[$key_rstr]['SuccessorBIC'] = Query::query('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `BIC`=:BIC;', [':BIC' => $this->padBic((string) $restriction['SuccessorBIC'])], return: 'row');
                 }

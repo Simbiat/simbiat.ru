@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Enum\BIC\AccRstrType;
+use App\Enum\BIC\RstrType;
 use App\Enum\LogType;
 use App\Enum\SystemUser;
 use App\Security\Security;
 use Simbiat\ArrayHelpers\Converters;
 use Simbiat\Database\Query;
 use Simbiat\StringHelpers\Sanitize;
-use function count;
-use function in_array;
+
 
 /**
  * Class to process the BIC library
  */
-class BICLibrary
+final class BICLibrary
 {
     /**
      * Date from the XML file
@@ -34,6 +35,15 @@ class BICLibrary
      * Queries to process
      */
     private array $queries = [];
+
+    private readonly array $bic_restrictions;
+    private readonly array $account_restrictions;
+
+    public function __construct()
+    {
+        $this->bic_restrictions = Converters::enumNames(RstrType::class);
+        $this->account_restrictions = Converters::enumNames(AccRstrType::class);
+    }
 
     /**
      * Function to update the library in the database
@@ -168,6 +178,13 @@ class BICLibrary
                         // Add new restrictions
                         foreach ($library_rest as $restriction) {
                             if (!\in_array($restriction, $current_rest, true)) {
+                                if (!\in_array($restriction['Rstr'], $this->bic_restrictions, true)) {
+                                    throw new \UnexpectedValueException('Unknown organization restriction `'.$restriction['Rstr'].'`');
+                                }
+                                if ($restriction['Rstr'] === 'NORS') {
+                                    // This means "no restriction", should not normally happen, this is just a precaution.
+                                    continue;
+                                }
                                 // Insert restriction
                                 $this->queries[] = [
                                     'INSERT IGNORE INTO `bic__bic_rstr` (`BIC`, `Rstr`, `RstrDate`) VALUES (:BIC, :Rstr, :RstrDate);',
@@ -280,6 +297,13 @@ class BICLibrary
                                             && \count($this->getBIC($restriction['SuccessorBIC'])) === 0
                                         ) {
                                             $delay = true;
+                                        }
+                                        if (!\in_array($restriction['AccRstr'], $this->account_restrictions, true)) {
+                                            throw new \UnexpectedValueException('Unknown account restriction `'.$restriction['AccRstr'].'`');
+                                        }
+                                        if ($restriction['AccRstr'] === 'NORS') {
+                                            // This means "no restriction", should not normally happen, this is just a precaution.
+                                            continue;
                                         }
                                         // Insert restriction
                                         $this->queries[] = [

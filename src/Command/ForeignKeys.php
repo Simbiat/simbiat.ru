@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Enum\BIC\AccRstrType;
+use App\Enum\BIC\RstrType;
 use App\Enum\LogType;
 use App\Enum\NotificationType;
 use App\Enum\SystemUser;
@@ -47,6 +49,9 @@ final class ForeignKeys
                 Query::query('DELETE FROM `sys__notifications` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(NotificationType::class), 'in', 'int']]);
                 // Unsupported section types
                 Query::query('DELETE FROM `talks__sections` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(TalkType::class), 'in', 'int']]);
+                // BIC restrictions
+                Query::query('DELETE FROM `bic__acc_rstr` WHERE `AccRstr` NOT IN (:types);', [':types' => [Converters::enumValues(AccRstrType::class), 'in', 'string']]);
+                Query::query('DELETE FROM `bic__bic_rstr` WHERE `Rstr` NOT IN (:types);', [':types' => [Converters::enumValues(RstrType::class), 'in', 'string']]);
             }
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable, cli: true);

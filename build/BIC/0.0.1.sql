@@ -37823,6 +37823,19 @@ INSERT INTO `bic__reg` (`RGN`, `NAME`, `CENTER`) VALUES ('21', 'ДОНЕЦКАЯ
 ALTER TABLE `bic__list` CHANGE `Ind` `Ind` VARCHAR(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NULL DEFAULT NULL COMMENT 'Индекс';
 /*New account type was added in 2024.4.2 or earlier*/
 INSERT INTO `bic__acc_type` (`RegulationAccountType`, `Description`) VALUES ('CBDC', 'Счёт Оператора платформы цифрового рубля');
+/* Moved restrictions to enums */
+ALTER TABLE bic__acc_rstr
+    DROP FOREIGN KEY acc_to_rstr;
+ALTER TABLE `bic__acc_rstr`
+    DROP INDEX `acc_to_rstr`;
+ALTER TABLE bic__bic_rstr
+    DROP FOREIGN KEY rstr_to_rstr;
+ALTER TABLE `bic__bic_rstr`
+    DROP INDEX `rstr_to_rstr`;
+ALTER TABLE `bic__acc_rstr`
+    DROP PRIMARY KEY,
+    ADD PRIMARY KEY (`Account`, `AccRstr`, `AccRstrDate`) USING BTREE;
+DROP TABLE `bic__rstr`
 
 COMMIT;
 
