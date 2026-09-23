@@ -6,11 +6,16 @@ namespace App;
 
 use App\Enum\SystemUser;
 use App\Service\Config;
-use Simbiat\Database\Query;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 
-class Kernel extends BaseKernel
+/**
+ * Symfony's Kernel
+ */
+final class Kernel extends BaseKernel
 {
     use MicroKernelTrait;
 
@@ -46,6 +51,28 @@ class Kernel extends BaseKernel
             \set_exception_handler('\App\Service\Errors::error_log');
             \register_shutdown_function('\App\Service\Errors::shutdown');
         }
+    }
+
+    /**
+     * Temporary custom handler to process requests like `/%c0`.
+     * TODO: Most likely can be removed after proper migration.
+     *
+     * @throws \Exception
+     */
+    public function handle(Request $request, int $type = HttpKernelInterface::MAIN_REQUEST, bool $catch = true): Response
+    {
+        if ($type === HttpKernelInterface::MAIN_REQUEST) {
+            $decoded_path = \rawurldecode($request->getPathInfo());
+            if (!\mb_check_encoding($decoded_path, 'UTF-8')) {
+                $request = Request::create(
+                            '/httperror/404',
+                            $request->getMethod(),
+                    server: $request->server->all(),
+                );
+            }
+        }
+
+        return parent::handle($request, $type, $catch);
     }
 
     /**
