@@ -39,14 +39,19 @@ final class Errors
      * @param \Throwable $error   Error object
      * @param mixed      $context Context (extra data) to store in the log
      * @param bool       $debug   If set to `true` will output the error instead of writing to file
+     * @param bool       $cli     Same as `debug`, but without the `<pre></pre>` wrapper
      *
      * @return false
      */
-    public static function error_log(\Throwable $error, mixed $context = '', bool $debug = false): false
+    public static function error_log(\Throwable $error, mixed $context = '', bool $debug = false, bool $cli = false): false
     {
         // Generate message
         $message = self::genLogEntry(\get_class($error).' Exception', $error->getFile(), $error->getLine(), $error->getMessage(), $error->getTraceAsString(), $error->getPrevious(), $context);
         // Write to log
+        if ($cli) {
+            echo $message;
+            exit(0);
+        }
         if ($debug) {
             echo '<pre>'.$message.'</pre>';
             exit(0);

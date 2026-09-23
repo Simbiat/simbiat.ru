@@ -41,7 +41,7 @@ final class Clean
                 return Command::FAILURE;
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }
@@ -91,7 +91,7 @@ final class Clean
                 }
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }
@@ -120,7 +120,7 @@ final class Clean
                 Query::query($queries);
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }
@@ -151,7 +151,7 @@ final class Clean
                 Query::query($queries);
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }
@@ -179,7 +179,7 @@ final class Clean
                 return Command::SUCCESS;
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }
@@ -253,7 +253,7 @@ final class Clean
                 }
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }
@@ -279,7 +279,7 @@ final class Clean
                 Query::query('DELETE FROM `sys__notifications` WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 YEAR);');
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }

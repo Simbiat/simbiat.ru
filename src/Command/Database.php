@@ -55,7 +55,7 @@ final class Database
             }
             \file_put_contents(Config::$work_dir.'/data/backups/recommended_table_order.txt', $dump_order);
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }
@@ -86,7 +86,7 @@ final class Database
                 && !\mkdir(Config::$ddl_dir, recursive: true)
                 && !\is_dir(Config::$ddl_dir)
             ) {
-                Errors::error_log(new \RuntimeException('Failed to create DDL directory'));
+                throw new \RuntimeException('Failed to create DDL directory');
             }
             // Clean up SQL files but do not touch manually maintained files with prefixes `000` and `999`
             \array_map(
@@ -107,7 +107,7 @@ final class Database
                 }
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }
@@ -145,7 +145,7 @@ final class Database
                      ->setGlobalFineTune('use_flush', true);
             $analyzer->writeCommandsToFiles(Config::$work_dir.'/data/backups/optimization', Config::$database_name, [], true);
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }

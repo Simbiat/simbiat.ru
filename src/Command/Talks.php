@@ -64,7 +64,7 @@ final class Talks
                 }
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }
@@ -90,7 +90,7 @@ final class Talks
                 Query::query('UPDATE `talks__posts` SET `updated`=`updated`, `locked`=1 WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND `locked`=0;');
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }
@@ -115,15 +115,11 @@ final class Talks
             if (Config::$dbup) {
                 $tickets = Query::query('SELECT `thread_id` FROM `talks__threads` LEFT JOIN `talks__sections` ON `talks__threads`.`section_id`=`talks__sections`.`section_id` WHERE `type`=:type AND `last_post` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 MONTH);', [':type' => TalkType::Support->value], return: 'column');
                 foreach ($tickets as $ticket) {
-                    try {
-                        (void) new Thread($ticket)->setClosed(true);
-                    } catch (\Throwable $throwable) {
-                        Errors::error_log($throwable);
-                    }
+                    (void) new Thread($ticket)->setClosed(true);
                 }
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }
@@ -149,7 +145,7 @@ final class Talks
                 Query::query('DELETE FROM `talks__threads` WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND `posts`=0;');
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }

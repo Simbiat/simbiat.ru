@@ -59,19 +59,15 @@ final class Mailer
                         new Test($uuid)->delete();
                     } else {
                         $to_call = "\App\Notification\\".$class_name->name;
-                        try {
-                            /** @psalm-suppress MixedMethodCall */
-                            new $to_call($uuid)->get()->send();
-                        } catch (\Throwable $throwable) {
-                            Errors::error_log($throwable);
-                        }
+                        /** @psalm-suppress MixedMethodCall */
+                        new $to_call($uuid)->get()->send();
                     }
                 }
             } else {
                 $output->writeln(Errors::logfmt('DB is down, skipping...'));
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }

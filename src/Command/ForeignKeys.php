@@ -49,7 +49,7 @@ final class ForeignKeys
                 Query::query('DELETE FROM `talks__sections` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(TalkType::class), 'in', 'int']]);
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }

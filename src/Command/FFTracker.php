@@ -64,7 +64,7 @@ final class FFTracker
                 }
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable, $extra_for_error ?? '');
+            Errors::error_log($throwable, $extra_for_error ?? '', cli: true);
 
             return Command::FAILURE;
         }
@@ -136,7 +136,7 @@ final class FFTracker
                 }
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }
@@ -174,7 +174,7 @@ final class FFTracker
             new Query($pdo);
             Query::query($queries);
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }

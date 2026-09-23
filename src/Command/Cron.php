@@ -35,12 +35,12 @@ final readonly class Cron
     public function cron(OutputInterface $output): int
     {
         try {
+            /* @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
             $output->writeln(Errors::logfmt('Processing CRON tasks from DB...'));
-            /* @var \PDO $pdo IDE complains due to more generic object */
             new Agent($pdo)->process(50);
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }

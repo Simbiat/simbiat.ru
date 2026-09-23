@@ -37,7 +37,7 @@ final class Maintain
                 $output->writeln("Argon setting $key: $value");
             }
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            Errors::error_log($throwable, cli: true);
 
             return Command::FAILURE;
         }
