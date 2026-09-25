@@ -7,8 +7,6 @@ namespace App\Service\Routing;
 use App\Service\Config;
 use App\Service\Images;
 use Simbiat\http20\Headers;
-use function get_class;
-use function in_array;
 
 /**
  * CLass to handle page routing while generating breadcrumbs
@@ -17,18 +15,25 @@ abstract class Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = [];
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [];
+
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = '';
+
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = '';
+
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = '';
+
     // Banner for all pages under the router. Defaults to website's banner. Needs to be inside /assets/images directory and start with /
     protected string $og_image = '';
+
     // Service name
     protected string $service_name = '';
+
     // If no path[0] is provided, but we want to show a specific page, instead of a stub - redirect to page with this address
     protected string $redirect_main = '';
 
@@ -37,7 +42,7 @@ abstract class Router
         // Check that subclass has set appropriate properties
         foreach (['sub_routes', 'breadcrumb'] as $property) {
             if (empty($this->{$property})) {
-                throw new \LogicException(\get_class($this).' must have a non-empty `'.$property.'` property.');
+                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
             }
         }
     }

@@ -14,22 +14,30 @@ class Index extends Page
 {
     // Cache age, in case we prefer the generated page to be cached
     protected int $cache_age = 1440;
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/sitemap/index.xml', 'name' => 'Index']
+        ['href' => '/sitemap/index.xml', 'name' => 'Index'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'sitemap';
+
     // Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $title = 'Sitemap Index';
+
     // Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $h1 = 'Sitemap Index';
+
     // Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $og_desc = 'Sitemap Index';
+
     // Max elements per sitemap page
     protected int $max_elements = 50000;
+
     // Flag indicating the main index file (index.xml)
     protected bool $main_index = true;
+
     // Query for countables
     protected string $query = '
                     SELECT \'threads\' AS `link`, \'Forum Threads\' AS `name`, COUNT(*) AS `count` FROM `talks__threads` WHERE `private`=0 AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6)

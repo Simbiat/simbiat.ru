@@ -13,18 +13,24 @@ class Bic extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/bictracker/search', 'name' => 'Поиск']
+        ['href' => '/bictracker/search', 'name' => 'Поиск'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'bic';
+
     // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $title = 'Детали организации из БИК трекера';
+
     // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'Детали организации из БИК трекера';
+
     // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'Детали организации из БИК трекера';
+
     // Language override, to be sent in header (if present)
     protected string $language = 'ru-RU';
+
     // List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = ['view_bic'];
 

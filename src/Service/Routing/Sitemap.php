@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\Routing;
 
 use App\Controller\Sitemap\Countables;
+use App\Controller\Sitemap\FFTracker;
 use App\Controller\Sitemap\General;
 use App\Controller\Sitemap\Index;
 use Simbiat\http20\Headers;
@@ -16,6 +17,7 @@ class Sitemap extends Router
         'general', 'bics', 'threads', 'users',
         'ffxiv_characters', 'ffxiv_freecompanies', 'ffxiv_linkshells', 'ffxiv_pvpteams', 'ffxiv_achievements',
     ];
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/sitemap/', 'name' => 'Sitemap'],
@@ -24,6 +26,7 @@ class Sitemap extends Router
     protected string $h1 = 'Sitemap';
     protected string $og_desc = 'Sitemap';
     protected string $service_name = 'sitemap';
+
     // If no path[0] is provided, but we want to show specific page, instead of a stub - redirect to page with this address
     protected string $redirect_main = '/sitemap/index';
 
@@ -41,7 +44,7 @@ class Sitemap extends Router
         $result = match ($path[0]) {
             'general' => new General()->get($path),
             'bics', 'ffxiv_characters', 'ffxiv_freecompanies', 'ffxiv_linkshells', 'ffxiv_pvpteams', 'ffxiv_achievements', 'threads', 'users' => new Countables()->get($path),
-            'fftracker' => new \App\Controller\Sitemap\FFTracker()->get($path),
+            'fftracker' => new FFTracker()->get($path),
             'index' => new Index()->get($path),
         };
         $result['format'] = 'xml';

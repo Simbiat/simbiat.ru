@@ -17,20 +17,20 @@ final class Errors
      * Human-readable description of PHP error types
      */
     public const array PHP_ERROR_TYPES = [
-        \E_ERROR => 'PHP Error',
-        \E_WARNING => 'PHP Warning',
-        \E_PARSE => 'PHP Parsing Error',
-        \E_NOTICE => 'PHP Notice',
-        \E_CORE_ERROR => 'PHP Core Error',
-        \E_CORE_WARNING => 'PHP Core Warning',
         \E_COMPILE_ERROR => 'PHP Compile Error',
         \E_COMPILE_WARNING => 'PHP Compile Warning',
-        \E_USER_ERROR => 'PHP User Error',
-        \E_USER_WARNING => 'PHP User Warning',
-        \E_USER_NOTICE => 'PHP User Notice',
-        \E_RECOVERABLE_ERROR => 'PHP Recoverable Error',
+        \E_CORE_ERROR => 'PHP Core Error',
+        \E_CORE_WARNING => 'PHP Core Warning',
         \E_DEPRECATED => 'PHP Deprecation Notice',
+        \E_ERROR => 'PHP Error',
+        \E_NOTICE => 'PHP Notice',
+        \E_PARSE => 'PHP Parsing Error',
+        \E_RECOVERABLE_ERROR => 'PHP Recoverable Error',
         \E_USER_DEPRECATED => 'PHP User Deprecation Notice',
+        \E_USER_ERROR => 'PHP User Error',
+        \E_USER_NOTICE => 'PHP User Notice',
+        \E_USER_WARNING => 'PHP User Warning',
+        \E_WARNING => 'PHP Warning',
     ];
 
     /**
@@ -46,7 +46,7 @@ final class Errors
     public static function error_log(\Throwable $error, mixed $context = '', bool $debug = false, bool $cli = false): false
     {
         // Generate message
-        $message = self::genLogEntry(\get_class($error).' Exception', $error->getFile(), $error->getLine(), $error->getMessage(), $error->getTraceAsString(), $error->getPrevious(), $context);
+        $message = self::genLogEntry($error::class.' Exception', $error->getFile(), $error->getLine(), $error->getMessage(), $error->getTraceAsString(), $error->getPrevious(), $context);
         // Write to log
         if ($cli) {
             echo $message;
@@ -199,7 +199,7 @@ final class Errors
         if (\preg_match('/^cli(-server)?$/i', \PHP_SAPI) === 1) {
             $request = 'CLI';
         } else {
-            $request = $_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];;
+            $request = $_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
         }
 
         return $request;

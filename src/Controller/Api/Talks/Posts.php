@@ -12,16 +12,22 @@ class Posts extends Api
 {
     // Flag to indicate, that this is the lowest level
     protected bool $final_node = true;
+
     // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ['add'], 'DELETE' => 'delete', 'PATCH' => ['edit', 'like', 'dislike', 'move']];
+
     // Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = ['add' => 'Add post', 'delete' => 'Delete post', 'edit' => 'Edit post', 'like' => 'Like a post', 'dislike' => 'Dislike a post', 'move' => 'Move post to different thread'];
+
     // Flag indicating that authentication is required
     protected bool $authentication_needed = true;
+
     // Flag indicating, that lack of authentication can be bypassed by an access_token
     protected bool $access_token_possible = true;
+
     // Flag to indicate need to validate CSRF
     protected bool $csrf = false;
+
     // Flag to indicate that session data change is possible on this page
     protected bool $session_change = false;
 

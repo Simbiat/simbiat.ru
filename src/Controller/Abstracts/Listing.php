@@ -6,13 +6,12 @@ namespace App\Controller\Abstracts;
 
 use App\Service\Config;
 use Simbiat\http20\Headers;
-use function is_int;
-use function sprintf;
 
 class Listing extends Search
 {
     // How pages are called (at the moment required only for bictracker for translation)
     protected string $page_word = 'page';
+
     // Service name for breadcrumbs
     protected string $service_name = 'listing';
 

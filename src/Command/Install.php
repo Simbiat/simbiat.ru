@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Service\Errors;
 use App\Service\Config;
 use App\Service\Cron\FFXIV;
+use App\Service\Errors;
 use Doctrine\DBAL\Connection;
 use Simbiat\Cron\Agent;
 use Simbiat\Cron\Installer;

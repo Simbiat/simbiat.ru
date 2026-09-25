@@ -8,15 +8,15 @@ use App\Controller\BIC\Bic;
 use App\Controller\BIC\Keying;
 use App\Controller\BIC\Listing;
 use App\Controller\BIC\Search;
-use function array_slice;
 
 class BICTracker extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['keying', 'search', 'bics', 'openbics', 'closedbics', 'bic'];
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/bictracker/', 'name' => 'БИК Трекер']
+        ['href' => '/bictracker/', 'name' => 'БИК Трекер'],
     ];
     protected string $title = 'БИК Трекер';
     protected string $h1 = 'БИК Трекер';

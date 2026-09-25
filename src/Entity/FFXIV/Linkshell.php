@@ -132,10 +132,10 @@ class Linkshell extends AbstractEntity
         $this->name = $from_db['name'];
         $this->community = $from_db['community_id'];
         $this->dates = [
+            'deleted' => (empty($from_db['deleted']) ? null : \strtotime($from_db['deleted'])),
             'formed' => (empty($from_db['formed']) ? null : \strtotime($from_db['formed'])),
             'registered' => \strtotime($from_db['registered']),
             'updated' => \strtotime($from_db['updated']),
-            'deleted' => (empty($from_db['deleted']) ? null : \strtotime($from_db['deleted'])),
         ];
         $this->old_names = $from_db['old_names'];
         $members = Splitters::splitByKey($from_db['members'], 'current');
@@ -164,13 +164,13 @@ class Linkshell extends AbstractEntity
                 $queries[] = [
                     'UPDATE `ffxiv__linkshell` SET `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(6), `deleted`=NULL WHERE `ls_id`=:ls_id',
                     [
-                        ':ls_id' => $this->id,
-                        ':name' => $this->lodestone['name'],
                         ':crossworld' => [$this::CROSSWORLD, 'bool'],
                         ':formed' => [
                             (empty($this->lodestone['formed']) ? null : $this->lodestone['formed']),
                             (empty($this->lodestone['formed']) ? 'null' : 'datetime'),
                         ],
+                        ':ls_id' => $this->id,
+                        ':name' => $this->lodestone['name'],
                     ],
                 ];
             } else {
@@ -178,18 +178,18 @@ class Linkshell extends AbstractEntity
                 $queries[] = [
                     'INSERT INTO `ffxiv__linkshell`(`ls_id`, `name`, `crossworld`, `formed`, `registered`, `updated`, `deleted`, `server_id`, `community_id`) VALUES (:ls_id, :name, :crossworld, :formed, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), NULL, (SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server OR `data_center`=:server ORDER BY `server_id` LIMIT 1), :community_id) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(6), `deleted`=NULL, `server_id`=(SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server OR `data_center`=:server ORDER BY `server_id` LIMIT 1), `community_id`=:community_id;',
                     [
-                        ':ls_id' => $this->id,
-                        ':server' => $this->lodestone['server'] ?? $this->lodestone['data_center'],
-                        ':name' => $this->lodestone['name'],
+                        ':community_id' => [
+                            (empty($this->lodestone['community_id']) ? null : $this->lodestone['community_id']),
+                            (empty($this->lodestone['community_id']) ? 'null' : 'string'),
+                        ],
                         ':crossworld' => [$this::CROSSWORLD, 'bool'],
                         ':formed' => [
                             (empty($this->lodestone['formed']) ? null : $this->lodestone['formed']),
                             (empty($this->lodestone['formed']) ? 'null' : 'datetime'),
                         ],
-                        ':community_id' => [
-                            (empty($this->lodestone['community_id']) ? null : $this->lodestone['community_id']),
-                            (empty($this->lodestone['community_id']) ? 'null' : 'string'),
-                        ],
+                        ':ls_id' => $this->id,
+                        ':name' => $this->lodestone['name'],
+                        ':server' => $this->lodestone['server'] ?? $this->lodestone['data_center'],
                     ],
                 ];
             }
@@ -230,7 +230,7 @@ class Linkshell extends AbstractEntity
                         [
                             ':ls_id' => $this->id,
                             ':member_id' => $member,
-                            ':rank' => (empty($details['ls_rank']) ? 'Member' : $details['ls_rank'])
+                            ':rank' => (empty($details['ls_rank']) ? 'Member' : $details['ls_rank']),
                         ],
                     ];
                 }
@@ -262,7 +262,7 @@ class Linkshell extends AbstractEntity
             // Remove characters from the group
             $queries[] = [
                 'UPDATE `ffxiv__linkshell_character` SET `current`=0 WHERE `ls_id`=:group_id;',
-                [':group_id' => $this->id,]
+                [':group_id' => $this->id],
             ];
             // Update linkshell
             $queries[] = [

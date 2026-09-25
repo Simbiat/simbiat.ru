@@ -16,8 +16,6 @@ use JetBrains\PhpStorm\ExpectedValues;
 use Simbiat\ArrayHelpers\Checkers;
 use Simbiat\Database\Query;
 use Simbiat\StringHelpers\Sanitize;
-use function in_array;
-use function is_array;
 
 /**
  * Forum section
@@ -38,18 +36,25 @@ final class Section extends Entity
     public int $editor = 1;
     public string $icon = '/assets/images/talks/category.svg';
     public string $description = '';
+
     // Flag indicating that section is owned by the current user
     public bool $owned = false;
+
     // List of parents for the section
     public array $parents = [];
+
     // ID of direct parent
     public int $parent_id = 0;
+
     // List of direct children
     public array $children = [];
+
     // List of threads
     public array $threads = [];
+
     // Flag indicating if we are getting data for a thread and can skip some details
     private bool $for_thread = false;
+
     // List of subscribers
     public array $subscribers = [];
     public int $sequence = 0;
@@ -79,21 +84,21 @@ final class Section extends Entity
         $page = (int) ($_GET['page'] ?? 1);
         if ($this->id === 'top') {
             $data = [
-                'name' => '',
-                'description' => '',
-                'type' => 'Category',
-                'system' => true,
-                'private' => false,
+                'author' => SystemUser::System->value,
                 'closed' => 'now',
                 'created' => null,
-                'published' => null,
-                'author' => SystemUser::System->value,
-                'updated' => null,
+                'description' => '',
                 'editor' => SystemUser::System->value,
                 'icon' => '/assets/images/talks/category.svg',
-                'parents' => [],
-                'threads' => [],
+                'name' => '',
                 'owned' => false,
+                'parents' => [],
+                'private' => false,
+                'published' => null,
+                'system' => true,
+                'threads' => [],
+                'type' => 'Category',
+                'updated' => null,
             ];
             // Get children
             if (!$this->for_thread) {
@@ -241,7 +246,9 @@ final class Section extends Entity
                                     INNER JOIN `SectionHierarchy` `sh` ON `s`.`parent_id` = `sh`.`section_id`
                                 )
                                 SELECT COUNT(`thread_id`) AS `thread_count`, SUM(`posts`) AS `post_count` FROM `talks__threads` `t` WHERE `t`.`section_id` IN (SELECT `section_id` FROM `SectionHierarchy`)'.($where === '' ? '' : ' AND '.$where).';',
-                        $bindings, return: 'row');
+                        $bindings,
+                        return: 'row',
+                    );
                     if (!\is_array($result)) {
                         $result = [];
                     }
@@ -327,16 +334,18 @@ final class Section extends Entity
     {
         if ($type === 'delete') {
             $for_notification = [
-                'section_id' => $this->id,
                 'author' => $this->author,
+                'section_id' => $this->id,
             ];
         } else {
-            $for_notification = Query::query('SELECT `section_id`, `author`, `name` AS `new_name`, `description`, `parent_id`,
+            $for_notification = Query::query(
+                'SELECT `section_id`, `author`, `name` AS `new_name`, `description`, `parent_id`,
                                                         (SELECT `name` FROM `talks__sections` WHERE `section_id`=`main_select`.`parent_id`) AS `parent_name`,
                                                         (SELECT `type` FROM `talks__types` WHERE `type_id`=`main_select`.`type`) AS `type`,
                                                         (SELECT CONCAT(\'/assets/images/uploaded/\', SUBSTRING(`file_id`, 1, 2), \'/\', SUBSTRING(`file_id`, 3, 2), \'/\', SUBSTRING(`file_id`, 5, 2), \'/\', `file_id`, \'.\', `extension`) AS `icon` FROM `sys__files` WHERE `file_id`=`main_select`.`icon`) AS `icon`
                                                         FROM `talks__sections` AS `main_select` WHERE `section_id`=:section_id;',
-                [':section_id' => [$this->id, 'int']], return: 'row'
+                [':section_id' => [$this->id, 'int']],
+                return: 'row',
             );
         }
         $for_notification['reason'] = $_POST['section_data']['change_reason'] ?? '';
@@ -351,17 +360,17 @@ final class Section extends Entity
             if ($type === 'change') {
                 $for_notification['changes'] = Checkers::getChanges(
                     [
-                        'name' => $this->name,
                         'description' => $this->description,
-                        'type' => $this->type,
                         'icon' => $this->icon,
+                        'name' => $this->name,
+                        'type' => $this->type,
                     ],
                     [
-                        'name' => $for_notification['new_name'],
                         'description' => $for_notification['description'],
-                        'type' => $for_notification['type'],
                         'icon' => $for_notification['icon'],
-                    ]
+                        'name' => $for_notification['new_name'],
+                        'type' => $for_notification['type'],
+                    ],
                 );
                 // If no changes added to, skip sending notification, something was changed, that we do not track
                 if ($for_notification['changes'] === []) {
@@ -386,13 +395,14 @@ final class Section extends Entity
             return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
         }
         try {
-            $affected = Query::query('UPDATE `talks__sections` SET `private`=:private, `editor`=:user_id WHERE `section_id`=:section_id;',
+            $affected = Query::query(
+                'UPDATE `talks__sections` SET `private`=:private, `editor`=:user_id WHERE `section_id`=:section_id;',
                 [
                     ':private' => [$private, 'bool'],
                     ':section_id' => [$this->id, 'int'],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
                 ],
-                return: 'affected'
+                return: 'affected',
             );
             if ($affected > 0) {
                 $this->private = $private;
@@ -420,13 +430,14 @@ final class Section extends Entity
             return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
         }
         try {
-            $affected = Query::query('UPDATE `talks__sections` SET `closed`=:closed, `editor`=:user_id WHERE `section_id`=:section_id;',
+            $affected = Query::query(
+                'UPDATE `talks__sections` SET `closed`=:closed, `editor`=:user_id WHERE `section_id`=:section_id;',
                 [
                     ':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')],
                     ':section_id' => [$this->id, 'int'],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
                 ],
-                return: 'affected'
+                return: 'affected',
             );
             if ($affected > 0) {
                 $this->closed = ($closed ? \time() : null);
@@ -462,14 +473,14 @@ final class Section extends Entity
             $affected = Query::query(
                 'UPDATE `talks__sections` SET `parent_id`=:parent_id, `editor`=:user_id WHERE `section_id`=:section_id;',
                 [
-                    ':section_id' => [$this->id, 'int'],
                     ':parent_id' => [
                         (empty($data['parent_id']) ? null : $data['parent_id']),
-                        (empty($data['parent_id']) ? 'null' : 'int')
+                        (empty($data['parent_id']) ? 'null' : 'int'),
                     ],
+                    ':section_id' => [$this->id, 'int'],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
                 ],
-                return: 'affected'
+                return: 'affected',
             );
             if ($affected > 0) {
                 $this->notifyAboutChange('move');
@@ -498,57 +509,61 @@ final class Section extends Entity
             $new_id = Query::query(
                 'INSERT INTO `talks__sections`(`section_id`, `name`, `description`, `parent_id`, `sequence`, `type`, `closed`, `private`, `published`, `author`, `editor`, `icon`) VALUES (NULL,:name,:description,:parent_id,:sequence,:type,:closed,:private,:time,:user_id,:user_id,:icon);',
                 [
-                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
-                    ':description' => \mb_trim($data['description'], null, 'UTF-8'),
-                    ':parent_id' => [
-                        (empty($data['parent_id']) ? null : $data['parent_id']),
-                        (empty($data['parent_id']) ? 'null' : 'int')
-                    ],
-                    ':sequence' => [$data['order'], 'int'],
-                    ':type' => [$data['type'], 'int'],
                     ':closed' => [
                         ($data['closed'] ? 'now' : null),
-                        ($data['closed'] ? 'datetime' : 'null')
+                        ($data['closed'] ? 'datetime' : 'null'),
                     ],
-                    ':private' => [$data['private'], 'bool'],
-                    ':time' => [
-                        (empty($data['time']) ? 'now' : $data['time']),
-                        'datetime'
-                    ],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                    ':description' => \mb_trim($data['description'], null, 'UTF-8'),
                     ':icon' => [
                         (empty($data['icon']) ? null : $data['icon']),
-                        (empty($data['icon']) ? 'null' : 'string')
+                        (empty($data['icon']) ? 'null' : 'string'),
                     ],
-                ], return: 'increment'
+                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
+                    ':parent_id' => [
+                        (empty($data['parent_id']) ? null : $data['parent_id']),
+                        (empty($data['parent_id']) ? 'null' : 'int'),
+                    ],
+                    ':private' => [$data['private'], 'bool'],
+                    ':sequence' => [$data['order'], 'int'],
+                    ':time' => [
+                        (empty($data['time']) ? 'now' : $data['time']),
+                        'datetime',
+                    ],
+                    ':type' => [$data['type'], 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+                return: 'increment',
             );
             // Link the section to the user, if it's required
             if (!empty($data['link_type'])) {
                 switch ($data['link_type']) {
                     case 2:
-                        Query::query('INSERT INTO `uc__user_to_section` (`user_id`, `blog`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `blog`=:section_id;',
+                        Query::query(
+                            'INSERT INTO `uc__user_to_section` (`user_id`, `blog`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `blog`=:section_id;',
                             [
-                                ':user_id' => [$_SESSION['user_id'], 'int'],
                                 ':section_id' => [$new_id, 'int'],
-                            ]
+                                ':user_id' => [$_SESSION['user_id'], 'int'],
+                            ],
                         );
 
                         break;
                     case 4:
-                        Query::query('INSERT INTO `uc__user_to_section` (`user_id`, `changelog`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `changelog`=:section_id;',
+                        Query::query(
+                            'INSERT INTO `uc__user_to_section` (`user_id`, `changelog`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `changelog`=:section_id;',
                             [
-                                ':user_id' => [$_SESSION['user_id'], 'int'],
                                 ':section_id' => [$new_id, 'int'],
-                            ]
+                                ':user_id' => [$_SESSION['user_id'], 'int'],
+                            ],
                         );
 
                         break;
                     case 6:
-                        Query::query('INSERT INTO `uc__user_to_section` (`user_id`, `knowledgebase`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `knowledgebase`=:section_id;',
+                        Query::query(
+                            'INSERT INTO `uc__user_to_section` (`user_id`, `knowledgebase`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `knowledgebase`=:section_id;',
                             [
-                                ':user_id' => [$_SESSION['user_id'], 'int'],
                                 ':section_id' => [$new_id, 'int'],
-                            ]
+                                ':user_id' => [$_SESSION['user_id'], 'int'],
+                            ],
                         );
 
                         break;
@@ -588,17 +603,17 @@ final class Section extends Entity
             $queries[] = [
                 'UPDATE `talks__sections` SET `name`=:name, `description`=:description, `sequence`=:sequence, `type`=:type, `editor`=:user_id, `icon`=COALESCE(:icon, `icon`) WHERE `section_id`=:section_id;',
                 [
-                    ':section_id' => [$this->id, 'int'],
-                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
                     ':description' => \mb_trim($data['description'], null, 'UTF-8'),
+                    ':icon' => [
+                        (empty($data['icon']) ? null : $data['icon']),
+                        (empty($data['icon']) ? 'null' : 'string'),
+                    ],
+                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
+                    ':section_id' => [$this->id, 'int'],
                     ':sequence' => [$data['order'], 'int'],
                     ':type' => [$data['type'], 'int'],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
-                    ':icon' => [
-                        (empty($data['icon']) ? null : $data['icon']),
-                        (empty($data['icon']) ? 'null' : 'string')
-                    ],
-                ]
+                ],
             ];
             $affected = Query::query($queries, return: 'affected');
             if ($affected > 0) {

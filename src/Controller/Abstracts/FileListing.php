@@ -8,9 +8,6 @@ use App\Service\Config;
 use JetBrains\PhpStorm\FileReference;
 use Simbiat\http20\Headers;
 use Simbiat\StringHelpers\Convert;
-use function array_slice;
-use function count;
-use function in_array;
 
 /**
  * Class to generate directory/file listing pages
@@ -19,18 +16,24 @@ class FileListing extends StaticPage
 {
     // Cache age set to for a day
     protected int $cache_age = 1440;
+
     // Directories relative to working dir
     // Expected format: ['URL_path_name' => ['path' => 'path', 'name' => 'name to use in UI', 'depth' => 0]]
     // Depth, when set and more than 0 will mean that, until folders up to this depth, will be scanned only for other folders and as such allow folder traversal
     protected array $dirs = [];
+
     // Items to display per page for lists
     public int $list_items = 100;
+
     // Flag whether to go recursive or not
     protected bool $recursive = false;
+
     // List of files that should be excluded
     protected array $exclude = [];
+
     // String to search for in file names
     protected string $search_for = '';
+
     // Page number
     protected int $page = 1;
 
@@ -281,14 +284,14 @@ class FileListing extends StaticPage
                         && $id <= $this->page * $this->list_items
                     ) {
                         $file_details = [
-                            'filename' => $file->getFilename(),
                             'basename' => $file->getBasename('.'.$file->getExtension()),
+                            'filename' => $file->getFilename(),
+                            'key' => $id++,
+                            'mime' => \mime_content_type($file->getPathname()),
                             // Path relative to the working directory
                             'path' => \str_replace(Config::$work_dir, '', $file->getPath()),
-                            'mime' => \mime_content_type($file->getPathname()),
                             'size' => $file->getSize(),
                             'time' => $file->getMTime(),
-                            'key' => $id++,
                         ];
                         // Extra processing, if required
                         $this->extra($file_details);

@@ -14,17 +14,17 @@ use App\Controller\FFXIV\Listing;
 use App\Controller\FFXIV\PvPTeam;
 use App\Controller\FFXIV\Search;
 use App\Controller\FFXIV\Track;
-use function array_slice;
 
 class FFTracker extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'crossworldlinkshells', 'achievements', 'statistics', 'crests', 'track', 'points',
         // legacy singular nodes
-        'character', 'freecompany', 'pvpteam', 'linkshell', 'crossworld_linkshell', 'crossworldlinkshell', 'achievement'];
+        'character', 'freecompany', 'pvpteam', 'linkshell', 'crossworld_linkshell', 'crossworldlinkshell', 'achievement',];
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/fftracker/', 'name' => 'FFXIV Tracker']
+        ['href' => '/fftracker/', 'name' => 'FFXIV Tracker'],
     ];
     protected string $title = 'Final Fantasy XIV Tracker';
     protected string $h1 = 'Final Fantasy XIV Tracker';

@@ -26,7 +26,6 @@ use App\Controller\SupOps\Problem;
 use App\Controller\SupOps\Resolution;
 use App\Controller\SupOps\Scale;
 use App\Controller\SupOps\Solution;
-use function array_slice;
 
 class SupOps extends Router
 {
@@ -34,9 +33,10 @@ class SupOps extends Router
     protected array $sub_routes = ['pitch', 'glossary', 'problem', 'solution', 'flow', 'metrics', 'resolution', 'interoperability', 'scale', 'comparison', 'needs',
         'facts', 'feedback', 'automation', 'collaboration', 'transparency', 'sustainability',
         'l0', 'l1', 'l2', 'l3', 'l4',];
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/supops/', 'name' => 'SupOps']
+        ['href' => '/supops/', 'name' => 'SupOps'],
     ];
     protected string $title = 'SupOps';
     protected string $h1 = 'SupOps';

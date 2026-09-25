@@ -11,6 +11,7 @@ class StaticPage extends Page
 {
     // Flag to indicate this is a static page
     protected bool $static = true;
+
     // Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cache_strategy = 'week';
 

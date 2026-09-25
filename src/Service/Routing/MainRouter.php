@@ -6,7 +6,6 @@ namespace App\Service\Routing;
 
 use App\Controller\About\Homepage;
 use App\Service\Feeds;
-use function array_slice;
 
 /**
  * Route web requests to other routers
@@ -32,8 +31,9 @@ class MainRouter extends Router
         // Feeds
         'sitemap', 'rss', 'atom',
         // Errors
-        'error', 'errors', 'httperror', 'httperrors'
+        'error', 'errors', 'httperror', 'httperrors',
     ];
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/', 'name' => 'Home page'],

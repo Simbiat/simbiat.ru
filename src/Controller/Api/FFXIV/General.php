@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api\FFXIV;
 
 use App\Controller\Api\Api;
+use App\Entity\FFXIV\Achievement;
 use App\Service\Errors;
 use Simbiat\http20\Headers;
 
@@ -12,14 +13,19 @@ abstract class General extends Api
 {
     // Flag to indicate that this is the lowest level
     protected bool $final_node = true;
+
     // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['GET' => '', 'PATCH' => 'update', 'POST' => 'register'];
+
     // Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = ['update' => 'Attempt updating entity', 'register' => 'Attempt to register entity to tracker', 'lodestone' => 'Show data grabbed directly from Lodestone'];
+
     // Entity class name
     protected string $entity_class = '';
+
     // Name to show in errors
     protected string $name_for_errors = '';
+
     // Name for links
     protected string $name_for_links = '';
 
@@ -48,9 +54,9 @@ abstract class General extends Api
             }
             if ($this->name_for_links === 'achievement') {
                 $data = match ($path[1]) {
-                    'update' => new \App\Entity\FFXIV\Achievement($path[0])->updateFromApi(),
-                    'lodestone' => new \App\Entity\FFXIV\Achievement($path[0])->getFromLodestone(),
-                    default => new \App\Entity\FFXIV\Achievement($path[0])->getArray(),
+                    'update' => new Achievement($path[0])->updateFromApi(),
+                    'lodestone' => new Achievement($path[0])->getFromLodestone(),
+                    default => new Achievement($path[0])->getArray(),
                 };
             } else {
                 $data = match ($path[1]) {

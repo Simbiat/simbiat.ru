@@ -19,6 +19,7 @@ class FFTracker extends Api
     protected array $sub_routes = [
         'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'achievements', 'merge_crest',
     ];
+
     // Description of the nodes (need to be in same order)
     protected array $routes_description = [
         'Node representing Final Fantasy XIV character',
@@ -29,8 +30,10 @@ class FFTracker extends Api
         'Node representing Final Fantasy XIV Achievement',
         'Node to merge crest components into a single image file',
     ];
+
     // Flag to indicate, that this is a top level node (false by default)
     protected bool $top_level = false;
+
     // Flag to indicate, that this is the lowest level
     protected bool $final_node = false;
 

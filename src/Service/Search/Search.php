@@ -14,35 +14,49 @@ abstract class Search
 {
     // Items to display per page for lists
     public int $list_items = 100;
+
     // Settings required for subclasses
     // Type of entity to return as static value in results (required for frontend routing)
     protected string $entity_type = '';
+
     // Name of the table to search use
     protected string $table = '';
+
     // List of fields
     protected string $fields = '';
+
     // Optional JOIN string, in case it is required
     protected string $join = '';
+
     // Optional WHERE clause for every SELECT
     protected string $where = '';
+
     // Optional WHERE clause for SELECT where the search term is defined
     protected string $where_search = '';
+
     // Optional GROUP BY
     protected string $group_by = '';
+
     // Optional bindings, in the case of more complex WHERE clauses. Needs to be set during construction, since this implies "unique" values
     protected array $bindings = [];
+
     // Count argument. In some cases you may want to count a certain column instead of using * (default).
     protected string $count_argument = '*';
+
     // Default order (for the main page, for example)
     protected string $order_default = '';
+
     // Order for list pages
     protected string $order_list = '';
+
     // The next 3 values are lists of columns to use in search. The order is important, since the higher in the list a field is,
     // the more weight/relevancy condition with it will have (if true)
     // List of FULLTEXT columns
     protected array $fulltext = [];
+
     // List of optional columns for exact comparison
     protected array $exact = [];
+
     // List of optional columns for LIKE %% comparison
     protected array $like = [];
 
@@ -57,7 +71,7 @@ abstract class Search
         // Check that subclass has set appropriate properties, except $where, which is ok to inherit
         foreach (['entity_type', 'table', 'fields', 'order_default', 'order_list'] as $property) {
             if (empty($this->{$property})) {
-                throw new \LogicException(\get_class($this).' must have a non-empty `'.$property.'` property.');
+                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
             }
         }
         if (empty($this->count_argument)) {

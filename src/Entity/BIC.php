@@ -19,58 +19,85 @@ class BIC extends Entity
 {
     // Bank code of the entity
     public string $BIC;
+
     // Name of the entity
     public string $NameP;
+
     // Bank code of parent entity
     public null|string|array $PrntBIC = null;
+
     // English name of the entity
     public ?string $EnglName = null;
+
     // Whether the entity is active or not
     public bool|int|string $XchType = false;
+
     // Old BIC, in case it was used by several organizations
     public ?string $OLD_NEWNUM = null;
+
     // UID for electronic messages used by the organization
     public ?string $UID = null;
+
     // Country code
     public ?string $CntrCd = null;
+
     // Address
     public ?string $Adr = null;
+
     // Date added
     public ?string $DateIn = null;
+
     // Date removed from the official library
     public ?string $DateOut = null;
+
     // Date of the latest update
     public ?string $Updated = null;
+
     // Postal index
     public ?string $Ind = null;
+
     // Types of services provided
     public ?string $Srvcs = null;
+
     // Name of the location
     public ?string $Nnp = null;
+
     // Type of location
     public ?string $Tnp = null;
+
     // Type of entity
     public ?string $PtType = null;
+
     // Registration number
     public ?string $RegN = null;
+
     // Location region
     public ?string $Rgn = null;
+
     // Processing center
     public ?string $CENTER = null;
+
     // List of branches if any
     public array $branches = [];
+
     // List of SWIFT codes if any
     public array $SWIFTs = [];
+
     // Restrictions on the whole organization
     public array $restrictions = [];
+
     // List of accounts
     public array $accounts = [];
+
     // List of organizations with the same BIC used in the past
     public array $same_bic = [];
+
     // List of organizations using the same address
     public array $same_address = [];
+
     // Number of entities serviced by entity
     public int $service_for = 0;
+
     // Old data from DBF files
     public array $DBF = [];
 
@@ -125,7 +152,8 @@ class BIC extends Entity
         $from_db['accounts'] = Query::query(
             'SELECT `Account`, `bic__acc_type`.`Description` as `AccountType`, `CK`, `DateIn`, `DateOut`, `AccountCBRBIC` FROM `bic__accounts`
                 LEFT JOIN `bic__acc_type` ON `bic__accounts`.`RegulationAccountType`=`bic__acc_type`.`RegulationAccountType` WHERE `bic__accounts`.`BIC`=:BIC',
-            [':BIC' => $this->id], return: 'all'
+            [':BIC' => $this->id],
+            return: 'all',
         );
         foreach ($from_db['accounts'] as $key => $account) {
             // Get restrictions

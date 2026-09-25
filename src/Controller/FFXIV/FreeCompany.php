@@ -11,16 +11,21 @@ class FreeCompany extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/fftracker/freecompanies', 'name' => 'Free Companies']
+        ['href' => '/fftracker/freecompanies', 'name' => 'Free Companies'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'freecompany';
+
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Free Company';
+
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Free Company';
+
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Free Company';
+
     // List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = ['view_ff'];
 

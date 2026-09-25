@@ -11,14 +11,19 @@ class Game extends Page
 {
     // Flag to indicate this is a static page
     protected bool $static = true;
+
     // Cache age set to 0 by default, because there is normally no need to cache static pages
     protected int $cache_age = 0;
+
     // Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cache_strategy = 'week';
+
     // Path to game's JS file
     protected string $gamemaker_js = '';
+
     // Flag to indicate the game has sound
     protected bool $has_sound = false;
+
     // Flag to indicate the game has music
     protected bool $has_music = false;
 

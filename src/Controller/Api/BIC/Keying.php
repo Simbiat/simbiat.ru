@@ -11,19 +11,22 @@ class Keying extends Api
 {
     // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ''];
+
     // Flag to indicate, that this is the lowest level
     protected bool $final_node = true;
+
     // Flag to indicate, that no database is required for this node
     protected bool $static = true;
+
     // Description of the node
     protected array $description = [
+        'ACC_regexp' => '/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/',
+        'BIC_regexp' => '/^\d{9}$/',
         'description' => 'Node for checking Russian account keying against a Russian Bank Identification Code',
         'POST' => [
-            'bic' => 'BIC_regexp',
             'account' => 'ACC_regexp',
+            'bic' => 'BIC_regexp',
         ],
-        'BIC_regexp' => '/^\d{9}$/',
-        'ACC_regexp' => '/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/',
     ];
 
     protected function genData(array $path): array

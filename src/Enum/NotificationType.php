@@ -11,14 +11,18 @@ enum NotificationType: int
 {
     // Maintenance-related notifications
     case Test = 0;
+
     #[\Deprecated(message: 'No longer sent from PHP')]
     case CronFailure = 1;
+
     #[\Deprecated(message: 'No longer sent from PHP')]
     case ErrorLog = 2;
     case DatabaseDown = 3;
     case DatabaseUp = 4;
+
     #[\Deprecated(message: 'No longer sent from PHP')]
     case NoSpace = 5;
+
     #[\Deprecated(message: 'No longer sent from PHP')]
     case EnoughSpace = 6;
 

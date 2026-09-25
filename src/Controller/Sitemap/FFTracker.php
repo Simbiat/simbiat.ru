@@ -8,10 +8,12 @@ class FFTracker extends Index
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/sitemap/xml/fftracker.xml', 'name' => 'Index']
+        ['href' => '/sitemap/xml/fftracker.xml', 'name' => 'Index'],
     ];
+
     // Flag indicating the main index file (index.xml)
     protected bool $main_index = false;
+
     // Query for countables
     protected string $query = '
                     SELECT \'ffxiv_characters\' AS `link`, \'FFXIV Characters\' AS `name`, COUNT(*) AS `count` FROM `ffxiv__character` WHERE `hidden` IS NULL

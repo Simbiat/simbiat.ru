@@ -20,9 +20,6 @@ use Simbiat\ArrayHelpers\Checkers;
 use Simbiat\ArrayHelpers\Editors;
 use Simbiat\Database\Query;
 use Simbiat\StringHelpers\Sanitize;
-use function count;
-use function in_array;
-use function is_array;
 
 /**
  * Forum thread
@@ -46,24 +43,34 @@ final class Thread extends Entity
     public int $last_page = 1;
     public ?string $og_image = null;
     public string $language = 'en';
+
     // List of parents for the thread
     public array $parents = [];
+
     // Direct parent
     public array $parent = [];
+
     // ID of direct parent
     public int $parent_id = 0;
+
     // List of posts
     public array $posts = [];
+
     // List of tags
     public array $tags = [];
+
     // List of external links
     public array $external_links = [];
+
     // Flag indicating if we are getting data for a post and can skip some details
     private bool $for_post = false;
+
     // Access token for support tickets from contact form
     public ?string $access_token = null;
+
     // Access token for support tickets from contact form
     public ?string $email = null;
+
     // List of subscribers
     public array $subscribers = [];
 
@@ -129,7 +136,7 @@ final class Thread extends Entity
                 }
             }
             // Get tags
-            $data['tags'] = Query::query('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tag_id`=`talks__tags`.`tag_id` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int'],], return: 'column');
+            $data['tags'] = Query::query('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tag_id`=`talks__tags`.`tag_id` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'column');
             // Get external links
             $data['links'] = $this->getAltLinks();
         }
@@ -186,12 +193,13 @@ final class Thread extends Entity
      */
     private function getAltLinks(): array
     {
-        $links = Query::query('SELECT `url`, `talks__alt_link_types`.`type`, `icon`
+        $links = Query::query(
+            'SELECT `url`, `talks__alt_link_types`.`type`, `icon`
                                         FROM `talks__alt_link_types`
                                         LEFT JOIN `talks__alt_links` ON `talks__alt_links`.`type`=`talks__alt_link_types`.`type_id`
                                             AND `thread_id`=:thread_id;',
-            [':thread_id' => [$this->id, 'int'],],
-            return: 'all'
+            [':thread_id' => [$this->id, 'int']],
+            return: 'all',
         );
 
         return Editors::digitToKey($links, 'type');
@@ -226,15 +234,17 @@ final class Thread extends Entity
     {
         if ($type === 'delete') {
             $for_notification = [
-                'thread_id' => $this->id,
                 'author' => $this->author,
+                'thread_id' => $this->id,
             ];
         } else {
-            $for_notification = Query::query('SELECT `thread_id`, `author`, `name` AS `new_name`, `section_id`,
+            $for_notification = Query::query(
+                'SELECT `thread_id`, `author`, `name` AS `new_name`, `section_id`,
                                                         (SELECT `name` FROM `talks__sections` WHERE `section_id`=`main_select`.`section_id`) AS `parent_name`,
                                                         (SELECT CONCAT(\'/assets/images/uploaded/\', SUBSTRING(`file_id`, 1, 2), \'/\', SUBSTRING(`file_id`, 3, 2), \'/\', SUBSTRING(`file_id`, 5, 2), \'/\', `file_id`, \'.\', `extension`) AS `icon` FROM `sys__files` WHERE `file_id`=`main_select`.`og_image`) AS `og_image`
                                                         FROM `talks__threads` AS `main_select` WHERE `thread_id`=:thread_id;',
-                [':thread_id' => [$this->id, 'int']], return: 'row'
+                [':thread_id' => [$this->id, 'int']],
+                return: 'row',
             );
         }
         $for_notification['reason'] = $_POST['thread_data']['change_reason'] ?? '';
@@ -254,15 +264,15 @@ final class Thread extends Entity
                             'name' => $this->name,
                             'og_image' => $this->og_image,
                         ],
-                        $this->external_links
+                        $this->external_links,
                     ),
                     \array_merge(
                         [
                             'name' => $for_notification['new_name'],
                             'og_image' => $for_notification['og_image'],
                         ],
-                        $links
-                    )
+                        $links,
+                    ),
                 );
                 // If no changes added to, skip sending notification, something was changed, that we do not track
                 if ($for_notification['changes'] === []) {
@@ -287,13 +297,14 @@ final class Thread extends Entity
             return ['http_error' => 403, 'reason' => 'No `mark_private` permission'];
         }
         try {
-            $affected = Query::query('UPDATE `talks__threads` SET `private`=:private, `editor`=:user_id WHERE `thread_id`=:thread_id;',
+            $affected = Query::query(
+                'UPDATE `talks__threads` SET `private`=:private, `editor`=:user_id WHERE `thread_id`=:thread_id;',
                 [
                     ':private' => [$private, 'bool'],
                     ':thread_id' => [$this->id, 'int'],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
                 ],
-                return: 'affected'
+                return: 'affected',
             );
             if ($affected > 0) {
                 $this->private = $private;
@@ -334,13 +345,14 @@ final class Thread extends Entity
             return ['http_error' => 403, 'reason' => 'No `close_others_threads` permission'];
         }
         try {
-            $affected = Query::query('UPDATE `talks__threads` SET `closed`=:closed, `editor`=:user_id WHERE `thread_id`=:thread_id;',
+            $affected = Query::query(
+                'UPDATE `talks__threads` SET `closed`=:closed, `editor`=:user_id WHERE `thread_id`=:thread_id;',
                 [
                     ':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')],
                     ':thread_id' => [$this->id, 'int'],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
                 ],
-                return: 'affected'
+                return: 'affected',
             );
             $this->closed = (!$closed ? null : \time());
             if ($affected > 0) {
@@ -383,14 +395,14 @@ final class Thread extends Entity
             $affected = Query::query(
                 'UPDATE `talks__threads` SET `section_id`=:parent_id, `editor`=:user_id WHERE `thread_id`=:thread_id;',
                 [
-                    ':thread_id' => [$this->id, 'int'],
                     ':parent_id' => [
                         (empty($data['parent_id']) ? null : $data['parent_id']),
-                        (empty($data['parent_id']) ? 'null' : 'int')
+                        (empty($data['parent_id']) ? 'null' : 'int'),
                     ],
+                    ':thread_id' => [$this->id, 'int'],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
                 ],
-                return: 'affected'
+                return: 'affected',
             );
             if ($affected > 0) {
                 $this->notifyAboutChange('move');
@@ -416,13 +428,14 @@ final class Thread extends Entity
             return ['http_error' => 403, 'reason' => 'No `can_pin` permission'];
         }
         try {
-            $affected = Query::query('UPDATE `talks__threads` SET `pinned`=:pinned, `editor`=:user_id WHERE `thread_id`=:thread_id;',
+            $affected = Query::query(
+                'UPDATE `talks__threads` SET `pinned`=:pinned, `editor`=:user_id WHERE `thread_id`=:thread_id;',
                 [
                     ':pinned' => [$pinned, 'bool'],
                     ':thread_id' => [$this->id, 'int'],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
                 ],
-                return: 'affected'
+                return: 'affected',
             );
             $this->pinned = $pinned;
             if ($affected > 0) {
@@ -493,25 +506,26 @@ final class Thread extends Entity
             $new_id = Query::query(
                 'INSERT INTO `talks__threads`(`thread_id`, `name`, `section_id`, `language`, `pinned`, `closed`, `private`, `og_image`, `published`, `author`, `editor`, `last_poster`) VALUES (NULL, :name, :parent_id, :language, COALESCE(:pinned, DEFAULT(`pinned`)), COALESCE(:closed, DEFAULT(`closed`)), COALESCE(:private, DEFAULT(`private`)), :og_image, :time,:user_id,:user_id,:user_id);',
                 [
-                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
-                    ':parent_id' => [$data['parent_id'], 'int'],
-                    ':language' => $data['language'],
                     ':closed' => [
                         ($data['closed'] ? 'now' : null),
-                        ($data['closed'] ? 'datetime' : 'null')
+                        ($data['closed'] ? 'datetime' : 'null'),
                     ],
+                    ':language' => $data['language'],
+                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
+                    ':og_image' => [
+                        (empty($data['og_image']) ? null : $data['og_image']),
+                        (empty($data['og_image']) ? 'null' : 'string'),
+                    ],
+                    ':parent_id' => [$data['parent_id'], 'int'],
                     ':pinned' => [$data['pinned'], 'bool'],
                     ':private' => [$data['private'], 'bool'],
                     ':time' => [
                         (empty($data['time']) ? 'now' : $data['time']),
-                        'datetime'
+                        'datetime',
                     ],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
-                    ':og_image' => [
-                        (empty($data['og_image']) ? null : $data['og_image']),
-                        (empty($data['og_image']) ? 'null' : 'string')
-                    ],
-                ], return: 'increment'
+                ],
+                return: 'increment',
             );
             // Add alt links
             $queries = [];
@@ -524,7 +538,7 @@ final class Thread extends Entity
                             ':type' => $key,
                             ':url' => $link,
                             ':user_id' => [$_SESSION['user_id'], 'int'],
-                        ]
+                        ],
                     ];
                 }
             }
@@ -559,7 +573,7 @@ final class Thread extends Entity
                     [
                         ':thread_id' => [$new_id, 'int'],
                         ':user_id' => [$_SESSION['user_id'], 'int'],
-                    ]
+                    ],
                 );
             }
 
@@ -592,7 +606,7 @@ final class Thread extends Entity
                         `threads`.`last_post` = COALESCE(`posts`.`published`, `threads`.`published`),
                         `threads`.`last_poster` = COALESCE(`posts`.`author`, `threads`.`author`)
                     WHERE `threads`.`thread_id` = :thread_id;',
-            [':thread_id' => [$this->id, 'int']]
+            [':thread_id' => [$this->id, 'int']],
         );
     }
 
@@ -639,15 +653,15 @@ final class Thread extends Entity
             $queries[] = [
                 'UPDATE `talks__threads` SET `name`=:name, `language`=:language, `editor`=:user_id, `og_image`=COALESCE(:og_image, `og_image`) WHERE `thread_id`=:thread_id;',
                 [
-                    ':thread_id' => [$this->id, 'int'],
-                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
                     ':language' => $data['language'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
                     ':og_image' => [
                         (empty($data['og_image']) ? null : $data['og_image']),
-                        (empty($data['og_image']) ? 'null' : 'string')
+                        (empty($data['og_image']) ? 'null' : 'string'),
                     ],
-                ]
+                    ':thread_id' => [$this->id, 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
             ];
             // Nullify the og_image if the `clear_og_image` flag was set
             if ($data['clear_og_image']) {
@@ -655,7 +669,7 @@ final class Thread extends Entity
                     'UPDATE `talks__threads` SET `og_image`=NULL, `updated`=`updated` WHERE `thread_id`=:thread_id;',
                     [
                         ':thread_id' => [$this->id, 'int'],
-                    ]
+                    ],
                 );
             }
             $data['alt_links'] = $this->altLinksSanitize($data['alt_links']);
@@ -668,7 +682,7 @@ final class Thread extends Entity
                         [
                             ':thread' => [$this->id, 'int'],
                             ':type' => $key,
-                        ]
+                        ],
                     ];
                 } elseif (
                     \array_key_exists($key, $this->external_links)
@@ -682,7 +696,7 @@ final class Thread extends Entity
                                 ':type' => $key,
                                 ':url' => $link,
                                 ':user_id' => [$_SESSION['user_id'], 'int'],
-                            ]
+                            ],
                         ];
                     }
                 } else {
@@ -693,7 +707,7 @@ final class Thread extends Entity
                             ':type' => $key,
                             ':url' => $link,
                             ':user_id' => [$_SESSION['user_id'], 'int'],
-                        ]
+                        ],
                     ];
                 }
             }

@@ -14,18 +14,24 @@ class Countables extends Page
 {
     // Cache age, in case we prefer the generated page to be cached
     protected int $cache_age = 1440;
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/sitemap/', 'name' => 'Sitemap: ']
+        ['href' => '/sitemap/', 'name' => 'Sitemap: '],
     ];
+
     // Sub service name
     protected string $subservice_name = 'sitemap';
+
     // Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $title = 'Sitemap: ';
+
     // Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $h1 = 'Sitemap: ';
+
     // Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $og_desc = 'Sitemap: ';
+
     // Max elements per sitemap page
     protected int $max_elements = 50000;
 

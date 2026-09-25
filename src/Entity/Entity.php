@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Service\Errors;
-use function get_class;
 
 /**
  * Generic entity class
@@ -14,10 +13,13 @@ abstract class Entity
 {
     // Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of same object for different sets of data
     protected bool $attempted = false;
+
     // If ID was retrieved, this needs to not be null
     public ?string $id = null;
+
     // Format for IDs
     protected string $id_format = '/^\d+$/m';
+
     // Debug flag
     protected bool $debug = false;
 
@@ -49,7 +51,7 @@ abstract class Entity
         // Convert to string for consistency
         $id = (string) $id;
         if (\preg_match($this->id_format, $id) !== 1) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.\get_class($this).'` has incorrect format.');
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
         }
         $this->id = $id;
 

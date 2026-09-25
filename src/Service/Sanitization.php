@@ -9,7 +9,6 @@ use JetBrains\PhpStorm\Pure;
 use Simbiat\SandClock;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
-use function in_array;
 
 /**
  * Class for some common sanitization function
@@ -71,12 +70,14 @@ class Sanitization
                                            ->allowRelativeLinks()->allowMediaHosts([Config::$http_host])->allowRelativeMedias()
                                            ->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
         // Block some extra elements
-        foreach (['acronym', 'applet', 'area', 'aside', 'base', 'basefont', 'bgsound', 'big', 'blink', 'body', 'button', 'canvas', 'center', 'content', 'datalist',
+        foreach (
+            ['acronym', 'applet', 'area', 'aside', 'base', 'basefont', 'bgsound', 'big', 'blink', 'body', 'button', 'canvas', 'center', 'content', 'datalist',
                      'dialog', 'dir', 'embed', 'fieldset', 'figure', 'figcaption', 'font', 'footer', 'form', 'frame', 'frameset', 'head', 'header', 'hgroup', 'html',
                      'iframe', 'input', 'image', 'keygen', 'legend', 'link', 'main', 'map', 'marquee', 'menuitem', 'meter', 'nav', 'nobr', 'noembed', 'noframes',
                      'noscript', 'object', 'optgroup', 'option', 'param', 'picture', 'plaintext', 'portal', 'pre', 'progress', 'rb', 'rp', 'rt', 'rtc', 'ruby', 'script',
-                     'select', 'selectmenu', 'shadow', 'slot', 'strike', 'style', 'spacer', 'template', 'textarea', 'title', 'tt', 'xmp']
-                 as $element) {
+                     'select', 'selectmenu', 'shadow', 'slot', 'strike', 'style', 'spacer', 'template', 'textarea', 'title', 'tt', 'xmp',]
+                 as $element
+        ) {
             // Need to update the original, because a clone is returned, instead of the same instance.
             $config = $config->blockElement($element);
         }
@@ -92,15 +93,17 @@ class Sanitization
         // Allow class attribute
         $config = $config->allowAttribute('class', '*');
         // Allow ARIA attributes
-        foreach (['aria-activedescendant', 'aria-atomic', 'aria-atomic', 'aria-autocomplete', 'aria-busy', 'aria-busy', 'aria-checked', 'aria-colcount', 'aria-colindex',
+        foreach (
+            ['aria-activedescendant', 'aria-atomic', 'aria-atomic', 'aria-autocomplete', 'aria-busy', 'aria-busy', 'aria-checked', 'aria-colcount', 'aria-colindex',
                      'aria-colspan', 'aria-controls', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-describedby', 'aria-description', 'aria-description',
                      'aria-details', 'aria-details', 'aria-disabled', 'aria-disabled', 'aria-dropeffect', 'aria-dropeffect', 'aria-errormessage', 'aria-errormessage',
                      'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-flowto', 'aria-grabbed', 'aria-grabbed', 'aria-haspopup', 'aria-haspopup', 'aria-hidden',
                      'aria-hidden', 'aria-invalid', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-label', 'aria-labelledby', 'aria-labelledby', 'aria-level',
                      'aria-live', 'aria-live', 'aria-modal', 'aria-multiline', 'aria-multiselectable', 'aria-orientation', 'aria-owns', 'aria-owns', 'aria-placeholder',
                      'aria-posinset', 'aria-pressed', 'aria-readonly', 'aria-relevant', 'aria-relevant', 'aria-required', 'aria-roledescription', 'aria-rowcount',
-                     'aria-rowindex', 'aria-rowspan', 'aria-selected', 'aria-setsize', 'aria-sort', 'aria-valuemax', 'aria-valuemin', 'aria-valuenow', 'aria-valuetext']
-                 as $attribute) {
+                     'aria-rowindex', 'aria-rowspan', 'aria-selected', 'aria-setsize', 'aria-sort', 'aria-valuemax', 'aria-valuemin', 'aria-valuenow', 'aria-valuetext',]
+                 as $attribute
+        ) {
             $config = $config->allowAttribute($attribute, '*');
         }
         // Allow data-* attributes in blockquotes, code and samp

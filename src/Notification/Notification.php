@@ -12,7 +12,6 @@ use App\Service\Images;
 use App\Service\Sanitization;
 use App\Twig\EnvironmentGenerator;
 use GeoIp2\Database\Reader;
-use Ramsey\Uuid\Uuid;
 use Simbiat\Database\Query;
 use Simbiat\http20\Common;
 use Simbiat\StringHelpers\Sanitize;
@@ -31,6 +30,7 @@ abstract class Notification extends Entity
 {
     // Format for IDs
     protected string $id_format = '/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/mui';
+
     /**
      * Subject for email
      */
@@ -61,20 +61,28 @@ abstract class Notification extends Entity
     final public const int MAX_ATTEMPTS = 10;
     // ID of the user the notification belongs to
     protected ?int $user = null;
+
     // Whether notification is supposed to be sent via email (if a valid email)
     protected(set) ?string $email = null;
+
     // Whether notification is supposed to be sent via push
     protected(set) bool $push = true;
+
     // When the notification was created
     protected(set) ?int $created = null;
+
     // When notification was sent
     protected(set) ?int $sent = null;
+
     // When notification was read
     protected(set) ?int $is_read = null;
+
     // Number of attempts so far
     protected(set) int $attempts = 0;
+
     // WHen was the last attempt
     protected(set) ?int $last_attempt = null;
+
     // Notification text
     protected(set) ?string $text = null;
 
@@ -272,9 +280,9 @@ abstract class Notification extends Entity
         // Add some sessional data
         if ($this::SECURITY_ALERT) {
             $session_details = [
+                'client' => $_SESSION['useragent']['client'] ?? null,
                 'ip' => $_SESSION['ip'] ?? null,
                 'os' => $_SESSION['useragent']['os'] ?? null,
-                'client' => $_SESSION['useragent']['client'] ?? null,
             ];
             if ($session_details['ip'] !== null) {
                 try {
@@ -325,12 +333,12 @@ abstract class Notification extends Entity
                         $result = Query::query(
                             'INSERT INTO `sys__notifications`(`uuid`, `user_id`, `type`, `text`, `email`, `push`) VALUES (:uuid, :user_id, :type, :text, :email, :push);',
                             [
-                                ':uuid' => $this->id,
-                                ':user_id' => [$this->user, 'int'],
-                                ':type' => [$type, 'int'],
-                                ':text' => $this->text,
                                 ':email' => [$address, 'string'],
                                 ':push' => [$this->push, 'bool'],
+                                ':text' => $this->text,
+                                ':type' => [$type, 'int'],
+                                ':user_id' => [$this->user, 'int'],
+                                ':uuid' => $this->id,
                             ],
                         );
                     }
@@ -339,12 +347,12 @@ abstract class Notification extends Entity
                     $result = Query::query(
                         'INSERT INTO `sys__notifications`(`uuid`, `user_id`, `type`, `text`, `email`, `push`) VALUES (:uuid, :user_id, :type, :text, :email, :push);',
                         [
-                            ':uuid' => $this->id,
-                            ':user_id' => [$this->user, 'int'],
-                            ':type' => [$type, 'int'],
-                            ':text' => $this->text,
                             ':email' => [null, 'null'],
                             ':push' => [$this->push, 'bool'],
+                            ':text' => $this->text,
+                            ':type' => [$type, 'int'],
+                            ':user_id' => [$this->user, 'int'],
+                            ':uuid' => $this->id,
                         ],
                     );
                 }

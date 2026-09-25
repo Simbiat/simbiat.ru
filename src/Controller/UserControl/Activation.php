@@ -16,16 +16,21 @@ class Activation extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/uc/activation', 'name' => 'Activation']
+        ['href' => '/uc/activation', 'name' => 'Activation'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'activation';
+
     // Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $title = 'User/email activation';
+
     // Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $h1 = 'User/email activation';
+
     // Page's description. Practically needed only for the main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Page used for user or email activation';
+
     // Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cache_strategy = 'private';
 

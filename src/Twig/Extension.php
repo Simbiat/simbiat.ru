@@ -55,12 +55,12 @@ final class Extension extends AbstractExtension implements GlobalsInterface
     public function getGlobals(): array
     {
         $defaults = [
-            'site_name' => Config::$site_name,
-            'domain' => Config::$base_url,
             'canonical' => HomePage::$canonical,
-            'url' => \mb_rtrim(Config::$base_url.($_SERVER['REQUEST_URI'] ?? ''), '/', 'UTF-8'),
+            'domain' => Config::$base_url,
             'maintenance' => 1,
             'registration' => 0,
+            'site_name' => Config::$site_name,
+            'url' => \mb_rtrim(Config::$base_url.($_SERVER['REQUEST_URI'] ?? ''), '/', 'UTF-8'),
         ];
         if (Config::$dbup) {
             // Update default variables with values from database
@@ -78,23 +78,23 @@ final class Extension extends AbstractExtension implements GlobalsInterface
         }
 
         return \array_merge($defaults, [
-            // PROD flag
-            'is_prod' => Config::$environment === 'prod',
-            // List of LINK tags
-            'link_tags' => HomePage::$links,
-            // Time used as a version of the JS file for cache busting
-            'js_version' => \filemtime(Config::$js_dir.'app.js'),
-            // Save data flag
-            'save_data' => $save_data,
-            'unsupported' => false,
             // Flag whether GET is present
             'has_get' => \count($_GET) !== 0,
             'http_method' => HomePage::$method,
+            // PROD flag
+            'is_prod' => Config::$environment === 'prod',
+            // Time used as a version of the JS file for cache busting
+            'js_version' => \filemtime(Config::$js_dir.'app.js'),
+            // List of LINK tags
+            'link_tags' => HomePage::$links,
+            // Save data flag
+            'save_data' => $save_data,
             // System users' IDs
             'system_users' => SystemUser::getSystemUsers(),
-            'tracking_query_parameters' => Config::$tracking_query_parameters ?? [],
             // Supported browsers for Teapot page:
             'teapot_browsers' => Config::$teapot_browsers ?? [],
+            'tracking_query_parameters' => Config::$tracking_query_parameters ?? [],
+            'unsupported' => false,
         ]);
     }
 }

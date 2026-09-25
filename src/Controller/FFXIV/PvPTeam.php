@@ -11,16 +11,21 @@ class PvPTeam extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/fftracker/pvpteams', 'name' => 'PvP Teams']
+        ['href' => '/fftracker/pvpteams', 'name' => 'PvP Teams'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'pvpteam';
+
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'PvP Team';
+
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'PvP Team';
+
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'PvP Team';
+
     // List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = ['view_ff'];
 

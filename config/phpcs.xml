@@ -30,17 +30,18 @@
     <!-- Base standards -->
     <rule ref="PSR12">
         <exclude name="PSR12.Operators.OperatorSpacing"/>
-    </rule>
-    <rule ref="PSR2.ControlStructures.ControlStructureSpacing">
         <!-- Prohibits multiline conditions, allowed by PSR12 -->
         <exclude name="PSR2.ControlStructures.ControlStructureSpacing"/>
     </rule>
 
     <!-- Symfony coding standard -->
-    <rule ref="Symfony"/>
-    <rule ref="Symfony.Commenting.License.Warning">
+    <rule ref="Symfony">
         <exclude name="Symfony.Commenting.License.Warning"/>
         <exclude name="Symfony.ControlStructure.YodaConditions"/>
+        <!-- Duplicates SlevomatCodingStandard.Arrays.TrailingArrayComma.MissingTrailingComma and highlights the first line in the array instead of last -->
+        <exclude name="Symfony.Arrays.MultiLineArrayComma.Invalid"/>
+        <!-- Duplicates PSR12.Classes.ClassInstantiation.MissingParentheses -->
+        <exclude name="Symfony.Objects.ObjectInstantiation.Invalid"/>
     </rule>
 
     <!-- PHP compatibility -->
@@ -81,16 +82,15 @@
     </rule>
 
     <!-- Namespaces -->
-    <rule ref="SlevomatCodingStandard.Namespaces"/>
+    <rule ref="SlevomatCodingStandard.Namespaces">
+        <exclude name="SlevomatCodingStandard.Namespaces.UseOnlyWhitelistedNamespaces.NonFullyQualified"/>
+    </rule>
     <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly">
         <properties>
             <property name="allowFullyQualifiedGlobalClasses" value="true"/>
             <property name="allowFullyQualifiedGlobalFunctions" value="true"/>
             <property name="allowFullyQualifiedGlobalConstants" value="true"/>
         </properties>
-    </rule>
-    <rule ref="SlevomatCodingStandard.Namespaces.UseOnlyWhitelistedNamespaces.NonFullyQualified">
-        <exclude name="SlevomatCodingStandard.Namespaces.UseOnlyWhitelistedNamespaces.NonFullyQualified"/>
     </rule>
 
     <!-- Classes -->
@@ -100,6 +100,11 @@
         <exclude name="SlevomatCodingStandard.Classes.ClassLength.ClassTooLong"/>
         <!-- Contradicts Symfony coding standards -->
         <exclude name="SlevomatCodingStandard.Classes.RequireMultiLineMethodSignature"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Classes.TraitUseSpacing">
+        <properties>
+            <property name="linesCountBeforeFirstUseWhenFirstInClass" value="0"/>
+        </properties>
     </rule>
 
     <!-- Functions -->
@@ -127,6 +132,8 @@
         <exclude name="SlevomatCodingStandard.ControlStructures.RequireYodaComparison.RequiredYodaComparison"/>
         <!-- Conflicts SlevomatCodingStandard.ControlStructures.RequireMultiLineCondition -->
         <exclude name="SlevomatCodingStandard.ControlStructures.RequireSingleLineCondition"/>
+        <!-- Duplicates PSR12.Classes.ClassInstantiation.MissingParentheses -->
+        <exclude name="SlevomatCodingStandard.ControlStructures.NewWithParentheses"/>
     </rule>
     <rule ref="SlevomatCodingStandard.ControlStructures.EarlyExit">
         <properties>
@@ -168,7 +175,10 @@
     </rule>
 
     <!-- Include PHPCSExtra rulesets -->
-    <rule ref="NormalizedArrays"/>
+    <rule ref="NormalizedArrays">
+        <!-- Duplicates SlevomatCodingStandard.Arrays.TrailingArrayComma.MissingTrailingComma -->
+        <exclude name="NormalizedArrays.Arrays.CommaAfterLast.MissingMultiLine"/>
+    </rule>
     <rule ref="Modernize"/>
     <rule ref="Universal">
         <exclude name="Universal.UseStatements.DisallowUseClass.FoundWithoutAlias"/>
@@ -223,12 +233,15 @@
             </property>
         </properties>
     </rule>
-    <rule ref="SlevomatCodingStandard.Files.LineLength.LineTooLong">
+    <rule ref="SlevomatCodingStandard.Files">
         <exclude name="SlevomatCodingStandard.Files.LineLength.LineTooLong"/>
-    </rule>
-    <rule ref="SlevomatCodingStandard.Files.FileLength.FileTooLong">
         <exclude name="SlevomatCodingStandard.Files.FileLength.FileTooLong"/>
     </rule>
+    <rule ref="SlevomatCodingStandard.Commenting">
+        <!-- Conflicts SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment -->
+        <exclude name="SlevomatCodingStandard.Commenting.RequireOneLineDocComment.MultiLineDocComment"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment"/>
     <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing">
         <properties>
             <property name="linesCountBetweenDescriptionAndAnnotations" value="1"/>

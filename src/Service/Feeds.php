@@ -7,7 +7,6 @@ namespace App\Service;
 use Simbiat\Database\Query;
 use Simbiat\http20\Atom;
 use Simbiat\http20\RSS;
-use function array_slice;
 
 /**
  * Class to generate various feeds (RSS, Atom, etc.)
@@ -58,24 +57,24 @@ class Feeds
                 if ($format === 'atom') {
                     $settings = [
                         'authors' => [[
-                            'name' => Config::$admin_name,
                             'email' => Config::$admin_email,
+                            'name' => Config::$admin_name,
                             'uri' => Config::$base_url.'/',
-                        ]],
+                        ],],
                         'icon' => Config::$base_url.'/assets/images/favicons/simbiat.png',
                         'logo' => Config::$base_url.'/assets/images/ogimages/default.png',
                     ];
                 } elseif ($format === 'rss') {
                     $settings = [
-                        'webMaster' => Config::$admin_email,
-                        'managingEditor' => Config::$admin_email,
-                        'language' => 'en-us',
-                        'ttl' => 3600,
                         'image' => [
+                            'height' => 144,
                             'url' => Config::$base_url.'/assets/images/favicons/android/144x144.png',
                             'width' => 144,
-                            'height' => 144,
                         ],
+                        'language' => 'en-us',
+                        'managingEditor' => Config::$admin_email,
+                        'ttl' => 3600,
+                        'webMaster' => Config::$admin_email,
                     ];
                 }
                 // Set description

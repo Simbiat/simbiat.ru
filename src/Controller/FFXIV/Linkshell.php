@@ -5,22 +5,27 @@ declare(strict_types=1);
 namespace App\Controller\FFXIV;
 
 use App\Controller\Abstracts\Page;
+use App\Entity\FFXIV\CrossworldLinkshell;
 
 class Linkshell extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/fftracker/linkshells', 'name' => 'Linkshells']
+        ['href' => '/fftracker/linkshells', 'name' => 'Linkshells'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'linkshell';
+
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Linkshell';
+
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Linkshell';
+
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Linkshell';
-    protected const CROSSWORLD = false;
+    protected const false CROSSWORLD = false;
     // List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = ['view_ff'];
 
@@ -31,7 +36,7 @@ class Linkshell extends Page
         $id = $path[0] ?? '';
         // Try to get details
         if ($this::CROSSWORLD) {
-            $entity = new \App\Entity\FFXIV\CrossworldLinkshell($id);
+            $entity = new CrossworldLinkshell($id);
         } else {
             $entity = new \App\Entity\FFXIV\Linkshell($id);
         }

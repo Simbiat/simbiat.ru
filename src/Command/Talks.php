@@ -47,9 +47,10 @@ final class Talks
                     $to_delete = Query::query(
                         'SELECT `uc__avatars`.`file_id` FROM `uc__avatars` INNER JOIN `sys__files` ON `uc__avatars`.`file_id`=`sys__files`.`file_id` WHERE `uc__avatars`.`user_id`=:user_id AND `current`=0 ORDER BY `size` DESC, `added` LIMIT :limit;',
                         [
-                            ':user_id' => [$user, 'int'],
                             ':limit' => [$excess, 'int'],
-                        ], return: 'column'
+                            ':user_id' => [$user, 'int'],
+                        ],
+                        return: 'column',
                     );
                     // Log the change
                     Security::log(LogType::Avatar->value, 'Automatically deleted avatars', $to_delete, user_id: $user);
@@ -57,9 +58,9 @@ final class Talks
                     Query::query(
                         'DELETE FROM `uc__avatars` WHERE `user_id`=:user_id AND `current`=0 AND `file_id` IN (:toDelete);',
                         [
-                            ':user_id' => [$user, 'int'],
                             ':toDelete' => [$to_delete, 'in', 'string'],
-                        ]
+                            ':user_id' => [$user, 'int'],
+                        ],
                     );
                 }
             }

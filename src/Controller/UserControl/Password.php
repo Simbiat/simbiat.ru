@@ -10,18 +10,24 @@ class Password extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/uc/password', 'name' => 'Password']
+        ['href' => '/uc/password', 'name' => 'Password'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'password';
+
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Password';
+
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Password change';
+
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Page to change password';
+
     // Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cache_strategy = 'private';
+
     // Flag indicating that authentication is required
     protected bool $authentication_needed = false;
 

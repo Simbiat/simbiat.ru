@@ -16,12 +16,16 @@ class User extends Page
     protected array $breadcrumb = [
         ['href' => '/talks/users/', 'name' => 'Users'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'user';
+
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'User profile';
+
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'User profile';
+
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'User profile';
 

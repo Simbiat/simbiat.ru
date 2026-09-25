@@ -13,9 +13,10 @@ class Tests extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['mail', 'styling'];
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/tests/', 'name' => 'Tests']
+        ['href' => '/tests/', 'name' => 'Tests'],
     ];
     protected string $title = 'Tests';
     protected string $h1 = 'Tests';

@@ -16,14 +16,18 @@ class Homepage extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/', 'name' => 'Home']
+        ['href' => '/', 'name' => 'Home'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'homepage';
+
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Home';
+
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Homepage of Simbiat Software';
+
     // List of images to H2 push
     protected array $h2_push_extra = [
         '/assets/images/ogimages/jiangshi.webp',

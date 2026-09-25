@@ -7,12 +7,12 @@ namespace App\Service\Routing;
 use App\Controller\Games\DDEN;
 use App\Controller\Games\Jiangshi;
 use App\Controller\Games\RadicalResonance;
-use function array_slice;
 
 class Games extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['jiangshi', 'dden', 'radicalresonance', 'anti'];
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/games/', 'name' => 'Games'],

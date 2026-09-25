@@ -26,7 +26,6 @@ use Simbiat\http20\Common;
 use Simbiat\http20\Headers;
 use Simbiat\http20\Links;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
-use function in_array;
 
 /**
  * Class to generate pages. "HomePage" is a legacy name
@@ -35,14 +34,19 @@ class HomePage
 {
     // Cache object
     private(set) static ?Caching $data_cache = null;
+
     // HTTP headers object
     private(set) static ?Headers $headers = null;
+
     // Flag indicating that cached view has been served already
     private(set) static bool $stale_return = false;
+
     // HTTP method being used
     public static ?string $method = null;
+
     // Array that can contain variables indicating common HTTP errors
     private(set) static ?array $http_error = [];
+
     // User agent details from
     private(set) static array $user_agent = [];
     public static array $links = [];
@@ -90,16 +94,16 @@ class HomePage
 
         // Set default Session shape
         $_SESSION = [
-            'user_id' => SystemUser::Unknown->value,
+            'banned' => false,
+            'csrf' => null,
             'permissions' => [
                 'view_bic',
                 'view_ff',
                 'view_posts',
             ],
-            'csrf' => null,
             'prev_page' => null,
-            'banned' => false,
             'timezone' => 'UTC',
+            'user_id' => SystemUser::Unknown->value,
         ];
         try {
             // Maybe a client is using HTTP1.0, and there is little to worry about, but maybe there is.
@@ -326,7 +330,8 @@ class HomePage
         } else {
             // TODO: Needs to be cleaned up during refactor of pages
             // Handling strict variables
-            foreach ([
+            foreach (
+                [
                          // common/layout/metatags.twig
                          'og_image', 'ogtype', 'ogextra', 'favicon', 'service_name', 'title', 'error_page', 'static_page', 'cached_page', 'construction', 'suggested_link',
                          // index.twig
@@ -337,7 +342,8 @@ class HomePage
                          'cache_reset',
                          // talks/forms/thread.twig
                          'contact_form',
-                     ] as $variable) {
+                     ] as $variable
+            ) {
                 if (!\array_key_exists($variable, $twig_vars)) {
                     $twig_vars[$variable] = null;
                 }
@@ -351,15 +357,32 @@ class HomePage
                 try {
                     // TODO: Needs to be cleaned up during refactor of pages
                     $output = EnvironmentGenerator::getTwig()->render('index.twig', [
-                        'http_error' => 500, 'reason' => (\preg_match('/(Variable "[^"]+" does not exist)|(Key "[^"]+" does not exist as the sequence)|(Key "[^"]+" for sequence\/mapping with keys "[^"]+" does not exist)/ui', $exception->getMessage()) === 1 ? $exception->getMessage() : 'Twig failure'), 'session_data' => $_SESSION ?? null, 'error_page' => 500,
-                        // common/layout/metatags.twig
-                        'og_image' => null, 'ogtype' => null, 'ogextra' => null, 'favicon' => null, 'service_name' => null, 'title' => null, 'request_from_bot' => null,
-                        // index.twig
-                        'link_extra' => null, 'pagination' => null, 'static_page' => false, 'cached_page' => false, 'construction' => false,
-                        // common/layout/navigation.twig
-                        'type' => null, 'detailed_type' => null, 'section_id' => null, 'subservice_name' => null, 'breadcrumbs' => [],
-                        // common/layout/header.twig
+'breadcrumbs' => [],
+'cached_page' => false,
+// common/layout/header.twig
                         'cache_reset' => null,
+'construction' => false,
+'detailed_type' => null,
+'error_page' => 500,
+'favicon' => null,
+'http_error' => 500,
+// index.twig
+                        'link_extra' => null,
+'ogextra' => null,
+'ogtype' => null,
+// common/layout/metatags.twig
+                        'og_image' => null,
+'pagination' => null,
+'reason' => (\preg_match('/(Variable "[^"]+" does not exist)|(Key "[^"]+" does not exist as the sequence)|(Key "[^"]+" for sequence\/mapping with keys "[^"]+" does not exist)/ui', $exception->getMessage()) === 1 ? $exception->getMessage() : 'Twig failure'),
+'request_from_bot' => null,
+'section_id' => null,
+'service_name' => null,
+'session_data' => $_SESSION ?? null,
+'static_page' => false,
+'subservice_name' => null,
+'title' => null,
+// common/layout/navigation.twig
+                        'type' => null,
                     ]);
                 } catch (\Throwable $twig_error) {
                     Errors::error_log($twig_error);

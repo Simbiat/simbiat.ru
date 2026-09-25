@@ -15,7 +15,6 @@ use App\Service\Sanitization;
 use Simbiat\Cron\TaskInstance;
 use Simbiat\Database\Query;
 use Simbiat\FFXIV\Lodestone;
-use function is_array;
 
 /**
  * Class representing a FFXIV character
@@ -81,13 +80,14 @@ class Character extends AbstractEntity
             $data['following'] = Query::query('SELECT \'character\' AS `type`, `outer`.`following` AS `id`, `ffxiv__character`.`name` AS `name`, `avatar` AS `icon`, `current`, EXISTS(SELECT `character_id` FROM `ffxiv__character_following` WHERE `ffxiv__character_following`.`character_id`=`outer`.`following` AND `ffxiv__character_following`.`following`=`outer`.`character_id` AND `ffxiv__character_following`.`current`=`outer`.`current`) AS `mutual`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`) AS `user_id`, NULL AS `rank_id` FROM `ffxiv__character_following` AS `outer` LEFT JOIN `ffxiv__character` ON `outer`.`following`=`ffxiv__character`.`character_id` WHERE `outer`.`character_id`=:id', [':id' => $this->id], return: 'all');
             // Get affiliated groups' details
             $data['groups'] = AbstractEntity::cleanCrestResults(Query::query(
-            /** @lang SQL */ '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `current`, `ffxiv__freecompany_character`.`rank_id`, `ffxiv__freecompany_rank`.`rankname` AS `rank`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id)
+            /** @lang SQL */                '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `current`, `ffxiv__freecompany_character`.`rank_id`, `ffxiv__freecompany_rank`.`rankname` AS `rank`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id)
             UNION ALL
             (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`ls_id` AS `id`, `ffxiv__linkshell`.`name` AS `name`, `current`, `ffxiv__linkshell_character`.`rank_id`, `ffxiv__linkshell_rank`.`rank` AS `rank`, NULL AS `crest_part_1`, NULL AS `crest_part_2`, NULL AS `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rank_id`=`ffxiv__linkshell_rank`.`ls_rank_id` WHERE `character_id`=:id)
             UNION ALL
             (SELECT \'pvpteam\' AS `type`, 1 AS `crossworld`, `ffxiv__pvpteam_character`.`pvp_id` AS `id`, `ffxiv__pvpteam`.`name` AS `name`, `current`, `ffxiv__pvpteam_character`.`rank_id`, `ffxiv__pvpteam_rank`.`rank` AS `rank`, `crest_part_1`, `crest_part_2`, `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam` ON `ffxiv__pvpteam_character`.`pvp_id`=`ffxiv__pvpteam`.`pvp_id` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_character`.`rank_id`=`ffxiv__pvpteam_rank`.`pvp_rank_id` WHERE `character_id`=:id)
             ORDER BY `current` DESC, `name`;',
-                [':id' => $this->id], return: 'all',
+                [':id' => $this->id],
+                return: 'all',
             ));
             // Clean up the data from unnecessary (technical) clutter
             unset($data['clan_id'], $data['nameday_id'], $data['achievement_id'], $data['category'], $data['subcategory'], $data['how_to'], $data['points'], $data['icon'], $data['item'], $data['item_icon'], $data['item_id'], $data['server_id']);
@@ -194,46 +194,46 @@ class Character extends AbstractEntity
         $this->name = $from_db['name'];
         $this->avatar_id = $from_db['avatar'];
         $this->dates = [
-            'registered' => \strtotime($from_db['registered']),
-            'updated' => \strtotime($from_db['updated']),
+            'deleted' => (empty($from_db['deleted']) ? null : \strtotime($from_db['deleted'])),
             'hidden' => (empty($from_db['hidden']) ? null : \strtotime($from_db['hidden'])),
             'hidden_achievements' => (empty($from_db['hidden_achievements']) ? null : \strtotime($from_db['hidden_achievements'])),
-            'hidden_friends' => (empty($from_db['hidden_friends']) ? null : \strtotime($from_db['hidden_friends'])),
             'hidden_following' => (empty($from_db['hidden_following']) ? null : \strtotime($from_db['hidden_following'])),
-            'deleted' => (empty($from_db['deleted']) ? null : \strtotime($from_db['deleted'])),
+            'hidden_friends' => (empty($from_db['hidden_friends']) ? null : \strtotime($from_db['hidden_friends'])),
+            'registered' => \strtotime($from_db['registered']),
+            'updated' => \strtotime($from_db['updated']),
         ];
         $this->biology = [
-            'gender' => (int) ($from_db['gender'] ?? 0),
-            'race' => $from_db['race'] ?? null,
             'clan' => $from_db['clan'] ?? null,
-            'nameday' => $from_db['nameday'] ?? null,
+            'gender' => (int) ($from_db['gender'] ?? 0),
             'guardian' => $from_db['guardian'] ?? null,
             'guardian_id' => $from_db['guardian_id'] ?? null,
             'incarnations' => $from_db['incarnations'] ?? null,
+            'nameday' => $from_db['nameday'] ?? null,
             'old_names' => $from_db['old_names'] ?? [],
+            'race' => $from_db['race'] ?? null,
         ];
         $this->location = [
-            'data_center' => $from_db['data_center'] ?? null,
-            'server' => $from_db['server'] ?? null,
-            'region' => $from_db['region'] ?? null,
             'city' => $from_db['city'] ?? null,
             'city_id' => $from_db['city_id'] ?? null,
+            'data_center' => $from_db['data_center'] ?? null,
             'previous_servers' => $from_db['servers'] ?? [],
+            'region' => $from_db['region'] ?? null,
+            'server' => $from_db['server'] ?? null,
         ];
         $this->biography = $from_db['biography'] ?? null;
         if ($this->biography) {
             $this->biography = Sanitization::sanitizeHTML($this->biography);
         }
         $this->title = [
-            'title' => $from_db['title'] ?? null,
             'icon' => $from_db['title_icon'] ?? null,
             'id' => $from_db['title_id'] ?? null,
+            'title' => $from_db['title'] ?? null,
         ];
         $this->grand_company = [
-            'name' => $from_db['gc_name'] ?? null,
-            'rank' => $from_db['gc_rank'] ?? null,
             'gc_id' => $from_db['gc_id'] ?? null,
             'gc_rank_id' => $from_db['gc_rank_id'] ?? null,
+            'name' => $from_db['gc_name'] ?? null,
+            'rank' => $from_db['gc_rank'] ?? null,
         ];
         $this->pvp = (int) ($from_db['pvp_matches'] ?? 0);
         $this->groups = $from_db['groups'] ?? [];
@@ -383,25 +383,25 @@ class Character extends AbstractEntity
                 ON DUPLICATE KEY UPDATE
                     `server_id`=(SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server), `name`=:name, `updated`=CURRENT_TIMESTAMP(6), `hidden`=NULL, `hidden_achievements`=:hidden_achievements, `hidden_friends`=:hidden_friends, `hidden_following`=:hidden_following, `deleted`=NULL, `biography`=:biography, `title_id`=(SELECT `achievement_id` AS `title_id` FROM `ffxiv__achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), `avatar`=:avatar, `clan_id`=(SELECT `clan_id` FROM `ffxiv__clan` WHERE `clan`=:clan), `gender`=:gender, `nameday_id`=(SELECT `nameday_id` FROM `ffxiv__nameday` WHERE `nameday`=:nameday), `guardian_id`=(SELECT `guardian_id` FROM `ffxiv__guardian` WHERE `guardian`=:guardian), `city_id`=(SELECT `city_id` FROM `ffxiv__city` WHERE `city`=:city), `gc_rank_id`=(SELECT `gc_rank_id` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gc_rank_id` LIMIT 1), `achievement_points`=:achievement_points;',
                 [
-                    ':character_id' => $this->id,
-                    ':server' => $this->lodestone['server'],
-                    ':name' => $this->lodestone['name'],
+                    ':achievement_points' => [$achievement_points, 'int'],
                     ':avatar' => \str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg', 'c0.jpg'], '', $this->lodestone['avatar']),
                     ':biography' => [
                         (empty($this->lodestone['bio']) ? null : $this->lodestone['bio']),
                         (empty($this->lodestone['bio']) ? 'null' : 'string'),
                     ],
-                    ':title' => (empty($this->lodestone['title']) ? '' : $this->lodestone['title']),
-                    ':clan' => $this->lodestone['clan'],
-                    ':gender' => ($this->lodestone['gender'] === 'male' ? '1' : '0'),
-                    ':nameday' => $this->lodestone['nameday'],
-                    ':guardian' => $this->lodestone['guardian']['name'],
+                    ':character_id' => $this->id,
                     ':city' => $this->lodestone['city']['name'],
+                    ':clan' => $this->lodestone['clan'],
                     ':gcRank' => (empty($this->lodestone['grand_company']['rank']) ? '' : $this->lodestone['grand_company']['rank']),
-                    ':achievement_points' => [$achievement_points, 'int'],
+                    ':gender' => ($this->lodestone['gender'] === 'male' ? '1' : '0'),
+                    ':guardian' => $this->lodestone['guardian']['name'],
                     ':hidden_achievements' => [$hidden_achievements ? \microtime(true) : null, $hidden_achievements ? 'datetime' : 'null'],
-                    ':hidden_friends' => [$hidden_friends ? \microtime(true) : null, $hidden_friends ? 'datetime' : 'null'],
                     ':hidden_following' => [$hidden_following ? \microtime(true) : null, $hidden_following ? 'datetime' : 'null'],
+                    ':hidden_friends' => [$hidden_friends ? \microtime(true) : null, $hidden_friends ? 'datetime' : 'null'],
+                    ':name' => $this->lodestone['name'],
+                    ':nameday' => $this->lodestone['nameday'],
+                    ':server' => $this->lodestone['server'],
+                    ':title' => (empty($this->lodestone['title']) ? '' : $this->lodestone['title']),
                 ],
             ];
             // Update levels. Doing this in a cycle since columns can vary. This can reduce performance, but so far this is the best idea I have to make it as automated as possible
@@ -429,8 +429,8 @@ class Character extends AbstractEntity
                     'INSERT IGNORE INTO `ffxiv__character_clans`(`character_id`, `gender`, `clan_id`) VALUES (:character_id, :gender, (SELECT `clan_id` FROM `ffxiv__clan` WHERE `clan`=:clan));',
                     [
                         ':character_id' => $this->id,
-                        ':gender' => ($this->lodestone['gender'] === 'male' ? '1' : '0'),
                         ':clan' => $this->lodestone['clan'],
+                        ':gender' => ($this->lodestone['gender'] === 'male' ? '1' : '0'),
                     ],
                 ];
             }
@@ -476,16 +476,16 @@ class Character extends AbstractEntity
                             'INSERT INTO `ffxiv__achievement` SET `achievement_id`=:achievement_id, `name`=:name, `icon`=:icon, `points`=:points ON DUPLICATE KEY UPDATE `updated`=`updated`, `name`=:name, `icon`=:icon, `points`=:points;',
                             [
                                 ':achievement_id' => $achievement_id,
-                                ':name' => $item['name'],
                                 ':icon' => $icon,
+                                ':name' => $item['name'],
                                 ':points' => $item['points'],
                             ],
                         ];
                         $queries[] = [
                             'INSERT INTO `ffxiv__character_achievement` SET `character_id`=:character_id, `achievement_id`=:achievement_id, `time`=:time ON DUPLICATE KEY UPDATE `time`=:time;',
                             [
-                                ':character_id' => $this->id,
                                 ':achievement_id' => $achievement_id,
+                                ':character_id' => $this->id,
                                 ':time' => [$item['time'], 'datetime'],
                             ],
                         ];
@@ -518,8 +518,8 @@ class Character extends AbstractEntity
                         $queries[] = [
                             'UPDATE `ffxiv__character_friends` SET `current`=0 WHERE `character_id`=:character_id AND `friend`=:friend_id;',
                             [
-                                ':friend_id' => $friend,
                                 ':character_id' => $this->id,
+                                ':friend_id' => $friend,
                             ],
                         ];
                     }
@@ -548,8 +548,8 @@ class Character extends AbstractEntity
                         $queries[] = [
                             'UPDATE `ffxiv__character_following` SET `current`=0 WHERE `character_id`=:character_id AND `following`=:following_id;',
                             [
-                                ':following_id' => $following,
                                 ':character_id' => $this->id,
+                                ':following_id' => $following,
                             ],
                         ];
                     }
@@ -636,10 +636,10 @@ class Character extends AbstractEntity
                 $queries[] = [
                     'UPDATE `ffxiv__character` SET `hidden` = COALESCE(`hidden`, CURRENT_TIMESTAMP(6)), `updated`=CURRENT_TIMESTAMP(6) WHERE `character_id` = :character_id',
                     [
-                        ':character_id' => $this->id,
-                        ':server' => $this->lodestone['server'],
-                        ':name' => $this->lodestone['name'],
                         ':avatar' => \str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg', 'c0.jpg'], '', $this->lodestone['avatar']),
+                        ':character_id' => $this->id,
+                        ':name' => $this->lodestone['name'],
+                        ':server' => $this->lodestone['server'],
                     ],
                 ];
                 $this->insertServerAndName($queries);

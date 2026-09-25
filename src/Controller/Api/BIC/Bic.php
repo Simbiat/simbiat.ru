@@ -12,6 +12,7 @@ class Bic extends Api
 {
     // Flag to indicate, that this is the lowest level
     protected bool $final_node = true;
+
     // Description of the node
     protected array $description = [
         'description' => 'JSON representation of a Russian organization based on Bank Identification Code',

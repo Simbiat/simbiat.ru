@@ -10,6 +10,7 @@ class SimplePages extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['devicedetector'];
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/simplepages/', 'name' => 'Simple Pages'],

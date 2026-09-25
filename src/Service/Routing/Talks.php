@@ -8,12 +8,12 @@ use App\Controller\Talks\Post;
 use App\Controller\Talks\Section;
 use App\Controller\Talks\Thread;
 use App\Controller\Talks\User;
-use function array_slice;
 
 class Talks extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['sections', 'threads', 'posts', 'users', 'edit'];
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
         ['href' => '/talks/', 'name' => 'Talks'],

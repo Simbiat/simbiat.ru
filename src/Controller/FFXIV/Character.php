@@ -10,16 +10,21 @@ class Character extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/fftracker/characters', 'name' => 'Characters']
+        ['href' => '/fftracker/characters', 'name' => 'Characters'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'character';
+
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Character';
+
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Character';
+
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Character';
+
     // List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = ['view_ff'];
 

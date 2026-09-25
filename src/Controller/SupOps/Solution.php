@@ -10,16 +10,21 @@ class Solution extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/supops/solution', 'name' => 'The Solution']
+        ['href' => '/supops/solution', 'name' => 'The Solution'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'solution';
+
     // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $title = 'SupOps: The Solution';
+
     // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'SupOps: The Solution';
+
     // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'SupOps: What can improve tech support?';
+
     // List of images to H2 push
     protected array $h2_push_extra = [
         '/assets/images/supops/memes/money_flow.avif',

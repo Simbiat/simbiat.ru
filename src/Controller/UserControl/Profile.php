@@ -11,18 +11,24 @@ class Profile extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/uc/profile', 'name' => 'Profile']
+        ['href' => '/uc/profile', 'name' => 'Profile'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'profile';
+
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Profile';
+
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Your profile';
+
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Page to edit your profile';
+
     // Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cache_strategy = 'private';
+
     // Flag indicating that authentication is required
     protected bool $authentication_needed = true;
 

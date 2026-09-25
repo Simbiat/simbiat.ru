@@ -120,10 +120,10 @@ class PvPTeam extends AbstractEntity
     {
         $this->name = $from_db['name'];
         $this->dates = [
+            'deleted' => (empty($from_db['deleted']) ? null : \strtotime($from_db['deleted'])),
             'formed' => (empty($from_db['formed']) ? null : \strtotime($from_db['formed'])),
             'registered' => \strtotime($from_db['registered']),
             'updated' => \strtotime($from_db['updated']),
-            'deleted' => (empty($from_db['deleted']) ? null : \strtotime($from_db['deleted'])),
         ];
         $this->community = $from_db['community_id'];
         $this->crest = [
@@ -155,10 +155,6 @@ class PvPTeam extends AbstractEntity
             $queries[] = [
                 'INSERT INTO `ffxiv__pvpteam` (`pvp_id`, `name`, `formed`, `registered`, `updated`, `deleted`, `data_center_id`, `community_id`, `crest_part_1`, `crest_part_2`, `crest_part_3`) VALUES (:pvp_id, :name, :formed, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), NULL, (SELECT `server_id` FROM `ffxiv__server` WHERE `data_center`=:data_center ORDER BY `server_id` LIMIT 1), :community_id, :crest_part_1, :crest_part_2, :crest_part_3) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(6), `deleted`=NULL, `data_center_id`=(SELECT `server_id` FROM `ffxiv__server` WHERE `data_center`=:data_center ORDER BY `server_id` LIMIT 1), `community_id`=:community_id, `crest_part_1`=:crest_part_1, `crest_part_2`=:crest_part_2, `crest_part_3`=:crest_part_3;',
                 [
-                    ':pvp_id' => $this->id,
-                    ':data_center' => $this->lodestone['data_center'],
-                    ':name' => $this->lodestone['name'],
-                    ':formed' => [$this->lodestone['formed'], 'datetime'],
                     ':community_id' => [
                         (empty($this->lodestone['community_id']) ? null : $this->lodestone['community_id']),
                         (empty($this->lodestone['community_id']) ? 'null' : 'string'),
@@ -175,14 +171,18 @@ class PvPTeam extends AbstractEntity
                         (empty($this->lodestone['crest'][2]) ? null : $this->lodestone['crest'][2]),
                         (empty($this->lodestone['crest'][2]) ? 'null' : 'string'),
                     ],
+                    ':data_center' => $this->lodestone['data_center'],
+                    ':formed' => [$this->lodestone['formed'], 'datetime'],
+                    ':name' => $this->lodestone['name'],
+                    ':pvp_id' => $this->id,
                 ],
             ];
             // Register PvP Team name if it's not registered already
             $queries[] = [
                 'INSERT IGNORE INTO `ffxiv__pvpteam_names`(`pvp_id`, `name`) VALUES (:pvp_id, :name);',
                 [
-                    ':pvp_id' => $this->id,
                     ':name' => $this->lodestone['name'],
+                    ':pvp_id' => $this->id,
                 ],
             ];
             // Get members as registered on the tracker
@@ -246,7 +246,7 @@ class PvPTeam extends AbstractEntity
             // Remove characters from the group
             $queries[] = [
                 'UPDATE `ffxiv__pvpteam_character` SET `current`=0 WHERE `pvp_id`=:group_id;',
-                [':group_id' => $this->id,]
+                [':group_id' => $this->id],
             ];
             // Update PvP Team
             $queries[] = [

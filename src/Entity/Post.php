@@ -16,8 +16,6 @@ use App\Service\Search\Posts;
 use JetBrains\PhpStorm\ExpectedValues;
 use Simbiat\Database\Query;
 use Simbiat\StringHelpers\Sanitize;
-use function in_array;
-use function is_array;
 
 /**
  * Forum post
@@ -42,15 +40,19 @@ final class Post extends Entity
     public array $reply_to = [];
     public string $text = '';
     public string $avatar = '/assets/images/avatar.svg';
+
     // List of parents for the section
     public array $parents = [];
+
     // Likes of the post
     public int $likes = 0;
     public int $dislikes = 0;
     public ?int $is_liked = null;
+
     // Number of the page to which the post belongs (at the time of access)
     public int $page = 1;
     public array $attachments = [];
+
     // Access token for support tickets from contact form
     public ?string $access_token = null;
 
@@ -192,15 +194,17 @@ final class Post extends Entity
     {
         if ($type === 'delete') {
             $for_notification = [
-                'post_id' => $this->id,
                 'author' => $this->author,
                 'parent_name' => Query::query('SELECT `name` FROM `talks__threads` WHERE `thread_id`=:thread_id', [':thread_id' => $this->thread_id], return: 'value'),
+                'post_id' => $this->id,
             ];
         } else {
-            $for_notification = Query::query('SELECT `post_id`, `author`, `thread_id`,
+            $for_notification = Query::query(
+                'SELECT `post_id`, `author`, `thread_id`,
                                                         (SELECT `name` FROM `talks__threads` WHERE `thread_id`=`main_select`.`thread_id`) AS `parent_name`
                                                         FROM `talks__posts` AS `main_select` WHERE `post_id`=:post_id;',
-                [':post_id' => [$this->id, 'int']], return: 'row'
+                [':post_id' => [$this->id, 'int']],
+                return: 'row',
             );
         }
         $for_notification['reason'] = $_POST['post_data']['change_reason'] ?? '';
@@ -237,8 +241,10 @@ final class Post extends Entity
             return ['http_error' => 400, 'reason' => 'This is not the site for self-pleasuring'];
         }
         // Get the current value (if any)
-        $is_liked = (int) (Query::query('SELECT `like_value` FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
-            [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], return: 'value'
+        $is_liked = (int) (Query::query(
+            'SELECT `like_value` FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
+            [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']],
+            return: 'value',
         ) ?? 0);
         if (
             (
@@ -252,8 +258,9 @@ final class Post extends Entity
         ) {
             // Remove the (dis)like
             try {
-                $result = Query::query('DELETE FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
-                    [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']]
+                $result = Query::query(
+                    'DELETE FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
+                    [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']],
                 );
             } catch (\Throwable) {
                 $result = false;
@@ -266,8 +273,9 @@ final class Post extends Entity
         }
         // Insert/update the value
         try {
-            $result = Query::query('INSERT INTO `talks__likes` (`post_id`, `user_id`, `like_value`) VALUES (:post_id, :user_id, :like) ON DUPLICATE KEY UPDATE `like_value`=:like;',
-                [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int'], ':like' => [($dislike ? -1 : 1), 'int']]
+            $result = Query::query(
+                'INSERT INTO `talks__likes` (`post_id`, `user_id`, `like_value`) VALUES (:post_id, :user_id, :like) ON DUPLICATE KEY UPDATE `like_value`=:like;',
+                [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int'], ':like' => [($dislike ? -1 : 1), 'int']],
             );
         } catch (\Throwable) {
             $result = false;
@@ -311,7 +319,7 @@ final class Post extends Entity
                     ':post_id' => [$this->id, 'int'],
                     ':thread_id' => [$data['thread_id'], 'int'],
                 ],
-                return: 'affected'
+                return: 'affected',
             );
             if ($affected > 0) {
                 new Thread($this->thread_id)->updateStats();
@@ -352,18 +360,19 @@ final class Post extends Entity
             $new_id = Query::query(
                 'INSERT INTO `talks__posts`(`post_id`, `thread_id`, `reply_to`, `published`, `updated`, `author`, `editor`, `text`) VALUES (NULL,:thread_id,:reply_to,:time,:time,:user_id,:user_id,:text);',
                 [
-                    ':thread_id' => [$data['thread_id'], 'int'],
                     ':reply_to' => [
                         (empty($data['reply_to']) ? null : $data['reply_to']),
-                        (empty($data['reply_to']) ? 'null' : 'int')
+                        (empty($data['reply_to']) ? 'null' : 'int'),
                     ],
+                    ':text' => $data['text'],
+                    ':thread_id' => [$data['thread_id'], 'int'],
                     ':time' => [
                         (empty($data['time']) ? 'now' : $data['time']),
-                        'datetime'
+                        'datetime',
                     ],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
-                    ':text' => $data['text'],
-                ], return: 'increment'
+                ],
+                return: 'increment',
             );
             // Refresh data
             $this->setId($new_id)->get();
@@ -409,11 +418,11 @@ final class Post extends Entity
                 !Query::query(
                     'SELECT `author` FROM `talks__posts` WHERE `thread_id`=:thread_id AND `author`=:user_id AND `post_id`!=:post_id;',
                     [
+                        ':post_id' => [$new_id, 'int'],
                         ':thread_id' => [$data['thread_id'], 'int'],
                         ':user_id' => [$_SESSION['user_id'], 'int'],
-                        ':post_id' => [$new_id, 'int'],
                     ],
-                    return: 'check'
+                    return: 'check',
                 )
             ) {
                 Query::query(
@@ -421,7 +430,7 @@ final class Post extends Entity
                     [
                         ':thread_id' => [$data['thread_id'], 'int'],
                         ':user_id' => [$_SESSION['user_id'], 'int'],
-                    ]
+                    ],
                 );
             }
 
@@ -509,8 +518,8 @@ final class Post extends Entity
                 $file_queries[] = [
                     'INSERT INTO `talks__attachments` (`post_id`, `file_id`, `inline`) VALUES (:post_id, :file_id, 0);',
                     [
-                        ':post_id' => [$this->id, 'int'],
                         ':file_id' => $file,
+                        ':post_id' => [$this->id, 'int'],
                     ],
                 ];
             }
@@ -518,8 +527,8 @@ final class Post extends Entity
                 $file_queries[] = [
                     'INSERT INTO `talks__attachments` (`post_id`, `file_id`, `inline`) VALUES (:post_id, :file_id, 1);',
                     [
-                        ':post_id' => [$this->id, 'int'],
                         ':file_id' => $file,
+                        ':post_id' => [$this->id, 'int'],
                     ],
                 ];
             }
@@ -539,12 +548,13 @@ final class Post extends Entity
     private function addHistory(string $text): void
     {
         try {
-            Query::query('INSERT INTO `talks__posts_history` (`post_id`, `user_id`, `text`) VALUES (:post_id, :user_id, :text);',
+            Query::query(
+                'INSERT INTO `talks__posts_history` (`post_id`, `user_id`, `text`) VALUES (:post_id, :user_id, :text);',
                 [
                     ':post_id' => [$this->id, 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
                     ':text' => $text,
-                ]
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
             );
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
@@ -612,9 +622,9 @@ final class Post extends Entity
                 'UPDATE `talks__posts` SET `editor`=:user_id,`text`=:text, `updated`=GREATEST(`published`, `updated`) WHERE `post_id`=:post_id;',
                 [
                     ':post_id' => [$this->id, 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
                     ':text' => $data['text'],
-                ]
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
             ];
             // Update time
             if (!$data['hide_update']) {
@@ -622,7 +632,7 @@ final class Post extends Entity
                     'UPDATE `talks__posts` SET `updated`=CURRENT_TIMESTAMP(6) WHERE `post_id`=:post_id;',
                     [
                         ':post_id' => [$this->id, 'int'],
-                    ]
+                    ],
                 ];
             }
             // Run queries
@@ -790,7 +800,7 @@ final class Post extends Entity
             $affected = Query::query(
                 'DELETE FROM `talks__posts` WHERE `post_id`=:post_id;',
                 [':post_id' => [$this->id, 'int']],
-                return: 'affected'
+                return: 'affected',
             );
             if ($affected > 0) {
                 new Thread($this->thread_id)->updateStats();

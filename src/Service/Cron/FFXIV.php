@@ -63,7 +63,8 @@ class FFXIV
             $limit = 1;
         }
         try {
-            $entities = Query::query('
+            $entities = Query::query(
+                '
                     SELECT `type`, `id`, `priority`, `updated` FROM (
                         (SELECT \'character\' AS `type`, `ffxiv__character`.`character_id` AS `id`, `updated`, IF(`deleted` IS NULL AND `hidden` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND EXISTS(SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`), 1, 0) as `priority` FROM `ffxiv__character` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
                         UNION ALL
@@ -79,7 +80,8 @@ class FFXIV
                 [
                     ':max_lines' => [$limit, 'int'],
                     ':offset' => [($instance - 1) * $limit, 'int'],
-                ], return: 'all'
+                ],
+                return: 'all',
             );
             $cron_agent = new Agent();
             foreach ($entities as $entity) {
@@ -125,7 +127,8 @@ class FFXIV
             $worlds = Query::query(
                 'SELECT `server` AS `world`, \'linkshell\' AS `entity` FROM `ffxiv__server`
                             UNION ALL
-                            SELECT UNIQUE(`data_center`) AS `world`, \'crossworldlinkshell\' AS `entity` FROM `ffxiv__server`;', return: 'all'
+                            SELECT UNIQUE(`data_center`) AS `world`, \'crossworldlinkshell\' AS `entity` FROM `ffxiv__server`;',
+                return: 'all',
             );
             // Get cache
             $cache_path = Config::$statistics.'linkshellPages.json';
@@ -141,7 +144,8 @@ class FFXIV
                         // Loop through pages
                         $cron_agent->log('Parsing '.$world['entity'].'s on '.$world['world'].' (pages for count '.$count.', order '.$order.')...', EventTypes::CustomInformation);
                         for ($page = 1; $page <= 20; $page++) {
-                            if (!\array_key_exists($page, $json[$world['entity']][$world['world']][$order][$count]) ||
+                            if (
+                                !\array_key_exists($page, $json[$world['entity']][$world['world']][$order][$count]) ||
                                 // Count of 0 may mean that the last attempt failed (rate limit or maintenance)
                                 $json[$world['entity']][$world['world']][$order][$count][$page]['count'] === 0 ||
                                 // Cycle through everything every 5 days. At the time of writing, there should be less than 30000 pages, with 500 pages per hourly scan; the full cycle finishes in less than 3 days

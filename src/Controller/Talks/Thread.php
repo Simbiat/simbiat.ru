@@ -10,22 +10,26 @@ use App\Service\Config;
 use App\Service\Images;
 use Simbiat\http20\Headers;
 use Simbiat\StringHelpers\Sanitize;
-use function in_array;
 
 class Thread extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/talks/sections/', 'name' => 'Sections']
+        ['href' => '/talks/sections/', 'name' => 'Sections'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'thread';
+
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Talks';
+
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Talks';
+
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Talks';
+
     // List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = ['view_posts'];
 

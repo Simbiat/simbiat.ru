@@ -10,16 +10,21 @@ class Automation extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/supops/automation', 'name' => 'Automation']
+        ['href' => '/supops/automation', 'name' => 'Automation'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'automation';
+
     // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $title = 'SupOps: Automation';
+
     // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'SupOps: Automation';
+
     // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'SupOps: Automate the routine, amplify the human';
+
     // List of images to H2 push
     protected array $h2_push_extra = [
         '/assets/images/supops/facts/automation.svg',

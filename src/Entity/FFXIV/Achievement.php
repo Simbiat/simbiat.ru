@@ -45,7 +45,8 @@ class Achievement extends AbstractEntity
             return [];
         }
         // Get last characters with this achievement
-        $data['characters'] = Query::query('SELECT
+        $data['characters'] = Query::query(
+            'SELECT
                                                         \'character\' AS `type`,
                                                         c.`character_id` AS `id`,
                                                         c.`name`,
@@ -62,7 +63,9 @@ class Achievement extends AbstractEntity
                                                       ON c.`character_id` = ca.`character_id`
                                                     WHERE c.`hidden_achievements` IS NULL
                                                     ORDER BY c.`name`;',
-            [':id' => $this->id], return: 'all');
+            [':id' => $this->id],
+            return: 'all',
+        );
 
         return $data;
     }
@@ -218,17 +221,17 @@ class Achievement extends AbstractEntity
         $this->how_to = Sanitization::sanitizeHTML($from_db['how_to'] ?? '');
         $this->db_id = $from_db['db_id'];
         $this->rewards = [
-            'points' => (int) $from_db['points'],
-            'title' => $from_db['title'],
             'item' => [
-                'name' => $from_db['item'],
                 'icon' => $from_db['item_icon'],
                 'id' => $from_db['item_id'],
+                'name' => $from_db['item'],
             ],
+            'points' => (int) $from_db['points'],
+            'title' => $from_db['title'],
         ];
         $this->characters = [
-            'total' => (int) $from_db['earned_by'],
             'last' => $from_db['characters'],
+            'total' => (int) $from_db['earned_by'],
         ];
     }
 

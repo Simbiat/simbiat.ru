@@ -25,9 +25,6 @@ use GeoIp2\Database\Reader;
 use Simbiat\ArrayHelpers\Converters;
 use Simbiat\ArrayHelpers\Editors;
 use Simbiat\Database\Query;
-use function in_array;
-use function is_array;
-use function is_string;
 
 /**
  * Main user class
@@ -40,62 +37,82 @@ final class User extends Entity
     public const int AVATAR_LIMIT = 10;
     // Entity's properties
     public string $username;
+
     // System flag, if true, user can't be deleted
     public bool $system = false;
+
     // Real name
     public array $name = [
+        'father_name' => null,
         'first_name' => null,
         'last_name' => null,
         'middle_name' => null,
-        'father_name' => null,
         'prefix' => null,
         'suffix' => null,
     ];
+
     // Dates
     public array $dates = [
+        'birthday' => null,
         'registered' => null,
         'updated' => null,
-        'birthday' => null,
     ];
+
     // Parent details
     public array $parent = [
         'id' => null,
         'name' => null,
     ];
+
     // Personal sections
     public array $sections = [
         'blog' => null,
         'changelog' => null,
         'knowledgebase' => null,
     ];
+
     // FF Token
     public ?string $ff_token = null;
+
     // Sex
     public ?int $sex = null;
+
     // About
     public ?string $about = null;
+
     // Time zone
     public ?string $timezone = null;
+
     // Country
     public ?string $country = null;
+
     // City
     public ?string $city = null;
+
     // Website
     public ?string $website = null;
+
     // Groups
     public array $groups = [];
+
     // Permissions
     public array $permissions = ['view_posts', 'view_bic', 'view_ff'];
+
     // Whether the account is activated
     public bool $activated = false;
+
     // Whether the account is banned
     public bool $banned = false;
+
     // Emails
     public array $emails = [];
+
     // Avatars
     public array $avatars = [];
+
     // Current avatar
     public ?string $current_avatar = null;
+
     // Number of strikes
     public int $strikes = 0;
 
@@ -160,8 +177,23 @@ final class User extends Entity
         ];
         $this->system = (bool) $from_db['system'];
         // Clean up the array
-        unset($from_db['system'], $from_db['parent_id'], $from_db['parentname'], $from_db['first_name'], $from_db['last_name'], $from_db['middle_name'], $from_db['father_name'], $from_db['prefix'],
-            $from_db['suffix'], $from_db['registered'], $from_db['updated'], $from_db['birthday'], $from_db['blog'], $from_db['changelog'], $from_db['knowledgebase']);
+        unset(
+            $from_db['system'],
+            $from_db['parent_id'],
+            $from_db['parentname'],
+            $from_db['first_name'],
+            $from_db['last_name'],
+            $from_db['middle_name'],
+            $from_db['father_name'],
+            $from_db['prefix'],
+            $from_db['suffix'],
+            $from_db['registered'],
+            $from_db['updated'],
+            $from_db['birthday'],
+            $from_db['blog'],
+            $from_db['changelog'],
+            $from_db['knowledgebase'],
+        );
         // Populate the rest properties
         Converters::arrayToProperties($this, $from_db);
     }
@@ -285,13 +317,13 @@ final class User extends Entity
             Query::query(
                 'INSERT IGNORE INTO `uc__avatars` (`user_id`, `file_id`, `character_id`, `current`) VALUES (:user_id, :file_id, :character, 0);',
                 [
-                    ':user_id' => [$this->id, 'int'],
-                    ':file_id' => $upload['hash'],
                     ':character' => [
                         $character,
-                        ($character === null ? 'null' : 'int')
-                    ]
-                ]
+                        ($character === null ? 'null' : 'int'),
+                    ],
+                    ':file_id' => $upload['hash'],
+                    ':user_id' => [$this->id, 'int'],
+                ],
             );
             if ($set_active) {
                 return $this->setAvatar($upload['hash']);
@@ -378,13 +410,14 @@ final class User extends Entity
         if (!empty($output_array['characters'])) {
             foreach ($output_array['characters'] as $character) {
                 $output_array['groups'][$character['id']] = AbstractEntity::cleanCrestResults(Query::query(
-                /** @lang SQL */ '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rank_id`=0)
+                /** @lang SQL */                    '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rank_id`=0)
                 UNION ALL
                 (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`ls_id` AS `id`, `ffxiv__linkshell`.`name` AS `name`, NULL AS `crest_part_1`, NULL AS `crest_part_2`, NULL AS `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rank_id`=`ffxiv__linkshell_rank`.`ls_rank_id` WHERE `character_id`=:id AND `ffxiv__linkshell_character`.`current`=1 AND `ffxiv__linkshell_character`.`rank_id`=1)
                 UNION ALL
                 (SELECT \'pvpteam\' AS `type`, 1 AS `crossworld`, `ffxiv__pvpteam_character`.`pvp_id` AS `id`, `ffxiv__pvpteam`.`name` AS `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam` ON `ffxiv__pvpteam_character`.`pvp_id`=`ffxiv__pvpteam`.`pvp_id` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_character`.`rank_id`=`ffxiv__pvpteam_rank`.`pvp_rank_id` WHERE `character_id`=:id AND `ffxiv__pvpteam_character`.`current`=1 AND `ffxiv__pvpteam_character`.`rank_id`=1)
                 ORDER BY `name`;',
-                    [':id' => [$character['id'], 'int']], return: 'all'
+                    [':id' => [$character['id'], 'int']],
+                    return: 'all',
                 ));
             }
         }
@@ -422,8 +455,8 @@ final class User extends Entity
         }
         try {
             $result = Query::query('UPDATE `uc__users` SET `username`=:username WHERE `user_id`=:user_id;', [
-                ':user_id' => [$this->id, 'int'],
                 ':username' => $new_name,
+                ':user_id' => [$this->id, 'int'],
             ]);
             if ($result) {
                 $_SESSION['username'] = $new_name;
@@ -466,12 +499,12 @@ final class User extends Entity
                 $queries[] = [
                     'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `user_id`=:user_id;',
                     [
-                        ':user_id' => [$this->id, 'int'],
                         ':'.$field => [
                             (empty($_POST['details']['name'][$field]) ? null : $_POST['details']['name'][$field]),
                             (empty($_POST['details']['name'][$field]) ? 'null' : 'string'),
                         ],
-                    ]
+                        ':user_id' => [$this->id, 'int'],
+                    ],
                 ];
             }
         }
@@ -484,12 +517,12 @@ final class User extends Entity
             $queries[] = [
                 'UPDATE `uc__users` SET `birthday`=:birthday WHERE `user_id`=:user_id;',
                 [
-                    ':user_id' => [$this->id, 'int'],
                     ':birthday' => [
                         (empty($_POST['details']['dates']['birthday']) ? null : $_POST['details']['dates']['birthday']),
                         (empty($_POST['details']['dates']['birthday']) ? 'null' : 'date'),
                     ],
-                ]
+                    ':user_id' => [$this->id, 'int'],
+                ],
             ];
         }
         // Query for time zone
@@ -502,12 +535,12 @@ final class User extends Entity
             $queries[] = [
                 'UPDATE `uc__users` SET `timezone`=:timezone WHERE `user_id`=:user_id;',
                 [
-                    ':user_id' => [$this->id, 'int'],
                     ':timezone' => [
                         (empty($_POST['details']['timezone']) ? null : $_POST['details']['timezone']),
                         (empty($_POST['details']['timezone']) ? 'null' : 'string'),
                     ],
-                ]
+                    ':user_id' => [$this->id, 'int'],
+                ],
             ];
         }
         // Query for sex
@@ -524,12 +557,12 @@ final class User extends Entity
                 $queries[] = [
                     'UPDATE `uc__users` SET `sex`=:sex WHERE `user_id`=:user_id;',
                     [
-                        ':user_id' => [$this->id, 'int'],
                         ':sex' => [
                             $_POST['details']['sex'],
                             ($_POST['details']['sex'] === null ? 'null' : 'int'),
                         ],
-                    ]
+                        ':user_id' => [$this->id, 'int'],
+                    ],
                 ];
             }
         }
@@ -547,12 +580,12 @@ final class User extends Entity
                 $queries[] = [
                     'UPDATE `uc__users` SET `timezone`=:timezone WHERE `user_id`=:user_id;',
                     [
-                        ':user_id' => [$this->id, 'int'],
                         ':timezone' => [
                             (empty($_POST['details']['timezone']) ? null : $_POST['details']['timezone']),
                             (empty($_POST['details']['timezone']) ? 'null' : 'string'),
                         ],
-                    ]
+                        ':user_id' => [$this->id, 'int'],
+                    ],
                 ];
             }
         }
@@ -564,12 +597,12 @@ final class User extends Entity
                 $queries[] = [
                     'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `user_id`=:user_id;',
                     [
-                        ':user_id' => [$this->id, 'int'],
                         ':'.$field => [
                             (empty($_POST['details'][$field]) ? null : $_POST['details'][$field]),
                             (empty($_POST['details'][$field]) ? 'null' : 'string'),
                         ],
-                    ]
+                        ':user_id' => [$this->id, 'int'],
+                    ],
                 ];
             }
         }
@@ -671,8 +704,10 @@ final class User extends Entity
         }
         // Get the password of the user while also checking if it exists
         try {
-            $credentials = Query::query('SELECT `uc__users`.`user_id`, `uc__users`.`username`, `uc__users`.`password`, `uc__users`.`strikes` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__users`.`user_id`=`uc__emails`.`user_id` WHERE `uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail LIMIT 1',
-                [':mail' => $_POST['signinup']['email']], return: 'row'
+            $credentials = Query::query(
+                'SELECT `uc__users`.`user_id`, `uc__users`.`username`, `uc__users`.`password`, `uc__users`.`strikes` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__users`.`user_id`=`uc__emails`.`user_id` WHERE `uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail LIMIT 1',
+                [':mail' => $_POST['signinup']['email']],
+                return: 'row',
             );
         } catch (\Throwable) {
             $credentials = null;
@@ -743,8 +778,10 @@ final class User extends Entity
         }
         // Get the password of the user while also checking if it exists
         try {
-            $credentials = Query::query('SELECT `uc__users`.`user_id`, `uc__users`.`username`, `uc__emails`.`email` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__users`.`user_id`=`uc__emails`.`user_id` WHERE (`uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail) AND `uc__emails`.`activation` IS NULL AND `uc__users`.`system`=0  LIMIT 1',
-                [':mail' => $_POST['signinup']['email']], return: 'row'
+            $credentials = Query::query(
+                'SELECT `uc__users`.`user_id`, `uc__users`.`username`, `uc__emails`.`email` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__users`.`user_id`=`uc__emails`.`user_id` WHERE (`uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail) AND `uc__emails`.`activation` IS NULL AND `uc__users`.`system`=0  LIMIT 1',
+                [':mail' => $_POST['signinup']['email']],
+                return: 'row',
             );
         } catch (\Throwable) {
             $credentials = null;
@@ -810,28 +847,33 @@ final class User extends Entity
                 )
             ) {
                 // Check if a cookie exists and get its `validator`. This also helps with race conditions a bit
-                $current_pass = Query::query('SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
+                $current_pass = Query::query(
+                    'SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
                     [
+                        ':cookie' => $cookie_id,
                         ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
-                        ':cookie' => $cookie_id
-                    ], return: 'value'
+                    ],
+                    return: 'value',
                 );
                 if (empty($current_pass)) {
-                    $affected = Query::query('INSERT IGNORE INTO `uc__cookies` (`cookie_id`, `validator`, `user_id`) VALUES (:cookie, :pass, :id);',
+                    $affected = Query::query(
+                        'INSERT IGNORE INTO `uc__cookies` (`cookie_id`, `validator`, `user_id`) VALUES (:cookie, :pass, :id);',
                         [
                             ':cookie' => $cookie_id,
-                            ':pass' => $hashed_pass,
                             ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
-                        ]
+                            ':pass' => $hashed_pass,
+                        ],
                     );
                 } else {
-                    $affected = Query::query('UPDATE `uc__cookies` SET `validator`=:pass, `time`=CURRENT_TIMESTAMP(6) WHERE `user_id`=:id AND `cookie_id`=:cookie AND `validator`=:validator;',
+                    $affected = Query::query(
+                        'UPDATE `uc__cookies` SET `validator`=:pass, `time`=CURRENT_TIMESTAMP(6) WHERE `user_id`=:id AND `cookie_id`=:cookie AND `validator`=:validator;',
                         [
                             ':cookie' => $cookie_id,
-                            ':pass' => $hashed_pass,
                             ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
+                            ':pass' => $hashed_pass,
                             ':validator' => $current_pass,
-                        ], return: 'affected'
+                        ],
+                        return: 'affected',
                     );
                 }
                 // Update stuff only if we did insert a cookie or update the validator value
@@ -844,16 +886,19 @@ final class User extends Entity
                         $_SESSION['cookie_id'] = $cookie_id;
                     }
                     // Set cookie
-                    $current_pass = Query::query('SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
+                    $current_pass = Query::query(
+                        'SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
                         [
+                            ':cookie' => $cookie_id,
                             ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
-                            ':cookie' => $cookie_id
-                        ], return: 'value'
+                        ],
+                        return: 'value',
                     );
                     // Another attempt to prevent race conditions
                     if ($current_pass === $hashed_pass) {
                         /** @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
-                        \setcookie('rememberme_'.Config::$http_host,
+                        \setcookie(
+                            'rememberme_'.Config::$http_host,
                             \json_encode(['cookie_id' => Security::encrypt($cookie_id), 'pass' => Security::encrypt($pass)], \JSON_THROW_ON_ERROR | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION),
                             \array_merge(Config::$cookie_settings, ['expires' => \time() + 2592000]),
                         );
@@ -902,7 +947,8 @@ final class User extends Entity
             $this->strikes++;
             Query::query(
                 'UPDATE `uc__users` SET `strikes`=`strikes`+1 WHERE `user_id`=:user_id',
-                [':user_id' => [$this->id, 'string']]);
+                [':user_id' => [$this->id, 'string']],
+            );
             Security::log(LogType::FailedLogin->value, 'Strike added');
             if ($this->strikes === 5) {
                 new UserLock()->save($this->id)->send();
@@ -938,9 +984,9 @@ final class User extends Entity
         $result = Query::query(
             'UPDATE `uc__users` SET `password`=:password, `strikes`=0, `password_reset`=NULL WHERE `user_id`=:user_id;',
             [
-                ':user_id' => [$this->id, 'string'],
                 ':password' => [Security::passHash($password), 'string'],
-            ]
+                ':user_id' => [$this->id, 'string'],
+            ],
         );
         if (\session_status() === \PHP_SESSION_ACTIVE) {
             Security::session_regenerate_id(true);
@@ -973,8 +1019,8 @@ final class User extends Entity
         return Query::query(
             'UPDATE `uc__users` SET `strikes`=0, `password_reset`=NULL WHERE `user_id`=:user_id;',
             [
-                ':user_id' => [(string) $this->id, 'string']
-            ]
+                ':user_id' => [(string) $this->id, 'string'],
+            ],
         );
     }
 
@@ -1000,9 +1046,10 @@ final class User extends Entity
         $result = Query::query(
             'DELETE FROM `uc__cookies` WHERE `user_id`=:user_id AND `cookie_id`=:cookie;',
             [
-                ':user_id' => [$this->id, 'int'],
                 ':cookie' => $_POST['cookie'],
-            ], return: 'affected'
+                ':user_id' => [$this->id, 'int'],
+            ],
+            return: 'affected',
         );
         if ($result > 0) {
             Security::log(LogType::Logout->value, $logout ? 'Cookie deleted during logout' : 'Manually deleted a cookie', 'Cookie ID deleted is '.$_POST['cookie']);
@@ -1031,9 +1078,10 @@ final class User extends Entity
         $result = Query::query(
             'DELETE FROM `uc__sessions` WHERE `user_id`=:user_id AND `session_id`=:session;',
             [
-                ':user_id' => [(string) $this->id, 'string'],
                 ':session' => $_POST['session'],
-            ], return: 'affected'
+                ':user_id' => [(string) $this->id, 'string'],
+            ],
+            return: 'affected',
         );
         if ($result > 0) {
             Security::log(LogType::Logout->value, 'Manually deleted a session', 'Session ID deleted is '.$_POST['session']);
@@ -1050,7 +1098,7 @@ final class User extends Entity
     public function getThreads(): array
     {
         $where = '`talks__threads`.`author`=:user_id';
-        $bindings = [':user_id' => [$this->id, 'int'],];
+        $bindings = [':user_id' => [$this->id, 'int']];
         if (!\in_array('view_scheduled', $_SESSION['permissions'], true)) {
             $where .= ' AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6)';
         }
@@ -1089,7 +1137,7 @@ final class User extends Entity
     public function getPosts(): array
     {
         $where = '`talks__posts`.`author`=:author';
-        $bindings = [':author' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int'],];
+        $bindings = [':author' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']];
         if (
             !$this->id !== $_SESSION['user_id']
             && !\in_array('view_scheduled', $_SESSION['permissions'], true)
@@ -1196,8 +1244,10 @@ final class User extends Entity
         // Remove rememberme cookie
         // From browser
         /** @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
-        \setcookie('rememberme_'.Config::$http_host, '',
-            \array_merge(Config::$cookie_settings, ['expires' => \time() - 3600])
+        \setcookie(
+            'rememberme_'.Config::$http_host,
+            '',
+            \array_merge(Config::$cookie_settings, ['expires' => \time() - 3600]),
         );
         // From DB
         if (!empty($_SESSION['cookie_id'])) {
@@ -1278,30 +1328,30 @@ final class User extends Entity
                 [
                     'INSERT INTO `uc__users`(`username`, `password`, `ff_token`, `timezone`, `country`, `city`) VALUES (:username, :password, :ff_token, :timezone, :country, :city)',
                     [
-                        ':username' => $_POST['signinup']['username'],
-                        ':password' => $password,
-                        ':ff_token' => $ff_token,
-                        ':timezone' => $timezone,
-                        ':country' => $geoip->country->name ?? '',
                         ':city' => $geoip->city->name ?? '',
+                        ':country' => $geoip->country->name ?? '',
+                        ':ff_token' => $ff_token,
                         ':ip' => $_SESSION['ip'] ?? '',
+                        ':password' => $password,
+                        ':timezone' => $timezone,
+                        ':username' => $_POST['signinup']['username'],
                     ],
                 ],
                 // Update the user ID
                 [
                     'UPDATE `uc__emails` SET `user_id`=(SELECT `user_id` FROM `uc__users` WHERE `username`=:username) WHERE `email`=:mail',
                     [
-                        ':username' => $_POST['signinup']['username'],
                         ':mail' => $_POST['signinup']['email'],
-                    ]
+                        ':username' => $_POST['signinup']['username'],
+                    ],
                 ],
                 // Insert into the group table
                 [
                     'INSERT INTO `uc__user_to_group` (`user_id`, `group_id`) VALUES ((SELECT `user_id` FROM `uc__users` WHERE `username`=:username), :group_id)',
                     [
-                        ':username' => $_POST['signinup']['username'],
                         ':group_id' => [Config::$group_ids['Unverified'], 'int'],
-                    ]
+                        ':username' => $_POST['signinup']['username'],
+                    ],
                 ],
             ];
             Query::query($queries);
@@ -1339,55 +1389,55 @@ final class User extends Entity
                 $queries = [
                     [
                         'UPDATE `talks__sections` SET `author`=:deleted WHERE `author`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']],
                     ],
                     [
                         'UPDATE `talks__sections` SET `editor`=:deleted WHERE `editor`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']],
                     ],
                     [
                         'UPDATE `talks__threads` SET `author`=:deleted WHERE `author`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']],
                     ],
                     [
                         'UPDATE `talks__threads` SET `editor`=:deleted WHERE `editor`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']],
                     ],
                     [
                         'UPDATE `talks__threads` SET `last_poster`=:deleted WHERE `last_poster`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']],
                     ],
                     [
                         'UPDATE `talks__posts` SET `author`=:deleted WHERE `author`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']],
                     ],
                     [
                         'UPDATE `talks__posts` SET `editor`=:deleted WHERE `editor`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']],
                     ],
                     [
                         'UPDATE `talks__posts_history` SET `user_id`=:deleted WHERE `user_id`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']],
                     ],
                     [
                         'UPDATE `sys__files` SET `user_id`=:deleted WHERE `user_id`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUser::Deleted->value, 'int']],
                     ],
                     [
                         'DELETE FROM `talks__likes` WHERE `user_id`=:user_id;',
-                        [':user_id' => [$this->id, 'int']]
+                        [':user_id' => [$this->id, 'int']],
                     ],
                     [
                         'DELETE FROM `uc__avatars` WHERE `user_id`=:user_id;',
-                        [':user_id' => [$this->id, 'int']]
+                        [':user_id' => [$this->id, 'int']],
                     ],
                     [
                         'DELETE FROM `uc__emails` WHERE `user_id`=:user_id;',
-                        [':user_id' => [$this->id, 'int']]
+                        [':user_id' => [$this->id, 'int']],
                     ],
                     [
                         'DELETE FROM `uc__users` WHERE `user_id`=:user_id;',
-                        [':user_id' => [$this->id, 'int']]
+                        [':user_id' => [$this->id, 'int']],
                     ],
                 ];
             } else {
@@ -1395,25 +1445,25 @@ final class User extends Entity
                 $queries = [
                     [
                         'DELETE FROM `uc__user_to_group` WHERE `user_id`=:user_id;',
-                        [':user_id' => [$this->id, 'int']]
+                        [':user_id' => [$this->id, 'int']],
                     ],
                     [
                         'INSERT INTO `uc__user_to_group` (`user_id`, `group_id`) VALUES (:user_id, :group_id);',
                         [
-                            ':user_id' => [$this->id, 'int'],
                             ':group_id' => [Config::$group_ids['Deleted'], 'int'],
-                        ]
+                            ':user_id' => [$this->id, 'int'],
+                        ],
                     ],
                 ];
             }
             // We also remove all cookies and sessions
             $queries[] = [
                 'DELETE FROM `uc__cookies` WHERE `user_id`=:user_id;',
-                [':user_id' => $this->id]
+                [':user_id' => $this->id],
             ];
             $queries[] = [
                 'DELETE FROM `uc__sessions` WHERE `user_id`=:user_id;',
-                [':user_id' => $this->id]
+                [':user_id' => $this->id],
             ];
             // If queries ran successfully - logout properly
             if (Query::query($queries)) {

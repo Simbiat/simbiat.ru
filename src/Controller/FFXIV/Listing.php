@@ -16,30 +16,38 @@ class Listing extends \App\Controller\Abstracts\Listing
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/fftracker/search', 'name' => 'Search']
+        ['href' => '/fftracker/search', 'name' => 'Search'],
     ];
+
     // Service name for breadcrumbs
     protected string $service_name = 'fftracker';
+
     // Sub service name
     protected string $subservice_name = 'search';
+
     // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $title = 'FFXIV Tracker Search';
+
     // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'FFXIV Tracker Search';
+
     // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'FFXIV Tracker Search';
+
     // Linking types to classes
     protected array $types = [
-        'characters' => ['name' => 'Characters', 'class' => Characters::class],
-        'freecompanies' => ['name' => 'Free Companies', 'class' => Companies::class],
-        'pvpteams' => ['name' => 'PvP Teams', 'class' => PVP::class],
-        'linkshells' => ['name' => 'Linkshells', 'class' => Linkshells::class],
-        'crossworld_linkshells' => ['name' => 'Crossworld Linkshells', 'class' => CrossworldLinkshells::class],
         'achievements' => ['name' => 'Achievements', 'class' => Achievements::class],
+        'characters' => ['name' => 'Characters', 'class' => Characters::class],
+        'crossworld_linkshells' => ['name' => 'Crossworld Linkshells', 'class' => CrossworldLinkshells::class],
+        'freecompanies' => ['name' => 'Free Companies', 'class' => Companies::class],
+        'linkshells' => ['name' => 'Linkshells', 'class' => Linkshells::class],
         'points' => ['name' => 'Achievements Leaderboard', 'class' => AchievementPoints::class, 'numbered' => true],
+        'pvpteams' => ['name' => 'PvP Teams', 'class' => PVP::class],
     ];
+
     // Full title to be used for description metatags when having a search value
     protected string $full_title = 'Search for `%s` on Final Fantasy XIV Tracker';
+
     // List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = ['view_ff'];
 }

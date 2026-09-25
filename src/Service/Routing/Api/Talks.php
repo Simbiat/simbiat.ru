@@ -17,12 +17,14 @@ class Talks extends Api
         'threads',
         'posts',
     ];
+
     // Description of the nodes (need to be in same order)
     protected array $routes_description = [
         'Endpoint to manage sections',
         'Endpoint to manage threads',
         'Endpoint to manage posts',
     ];
+
     // Flag to indicate, that this is a top level node (false by default)
     protected bool $top_level = false;
 

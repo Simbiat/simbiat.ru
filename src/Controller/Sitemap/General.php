@@ -10,14 +10,18 @@ class General extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/sitemap/general.xml', 'name' => 'Static pages']
+        ['href' => '/sitemap/general.xml', 'name' => 'Static pages'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'sitemap';
+
     // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $title = 'Static pages';
+
     // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'Static pages';
+
     // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'Static pages';
 

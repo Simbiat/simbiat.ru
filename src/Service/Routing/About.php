@@ -10,15 +10,15 @@ use App\Controller\About\Privacy;
 use App\Controller\About\Security;
 use App\Controller\About\Tech;
 use App\Controller\About\ToS;
-use function array_slice;
 
 class About extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['tech', 'tos', 'privacy', 'security', 'website', 'me', 'resume', 'contacts'];
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/about/', 'name' => 'About']
+        ['href' => '/about/', 'name' => 'About'],
     ];
     protected string $title = 'About Simbiat Software';
     protected string $h1 = 'About Simbiat Software';

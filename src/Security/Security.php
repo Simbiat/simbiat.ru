@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Security;
@@ -153,22 +154,22 @@ class Security
             Query::query(
                 'INSERT INTO `sys__logs` (`time`, `type`, `action`, `user_id`, `ip`, `user_agent`, `extra`) VALUES (CURRENT_TIMESTAMP(6), :type, :action, :user_id, :ip, :ua, :extras);',
                 [
-                    ':type' => [$type, 'int'],
                     ':action' => $action,
-                    ':user_id' => [$user_id, 'int'],
-                    ':ip' => [
-                        ($ip ?? null),
-                        ($ip === null ? 'null' : 'string'),
-                    ],
-                    ':ua' => [
-                        ($ua ?? null),
-                        ($ua === null ? 'null' : 'string'),
-                    ],
                     ':extras' => [
                         ($extras ?? null),
                         ($extras === null ? 'null' : 'string'),
                     ],
-                ]
+                    ':ip' => [
+                        ($ip ?? null),
+                        ($ip === null ? 'null' : 'string'),
+                    ],
+                    ':type' => [$type, 'int'],
+                    ':ua' => [
+                        ($ua ?? null),
+                        ($ua === null ? 'null' : 'string'),
+                    ],
+                    ':user_id' => [$user_id, 'int'],
+                ],
             );
 
             return true;

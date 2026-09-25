@@ -11,8 +11,7 @@
     </laravel_pint_settings>
   </component>
   <component name="LaravelPintOptionsConfiguration">
-    <option name="idleDelayMs" value="1000" />
-    <option name="minIntervalMs" value="1000" />
+    <option name="idleDelayMs" value="5000" />
     <option name="runMode" value="ON_SAVE" />
   </component>
   <component name="MessDetector">
@@ -22,16 +21,14 @@
     </phpmd_settings>
   </component>
   <component name="MessDetectorOptionsConfiguration">
-    <option name="idleDelayMs" value="1000" />
-    <option name="minIntervalMs" value="1000" />
+    <option name="idleDelayMs" value="5000" />
     <option name="runMode" value="ON_SAVE" />
     <option name="transferred" value="true" />
   </component>
   <component name="PHPCSFixerOptionsConfiguration">
     <option name="allowRiskyRules" value="true" />
     <option name="codingStandard" value="Custom" />
-    <option name="idleDelayMs" value="1000" />
-    <option name="minIntervalMs" value="1000" />
+    <option name="idleDelayMs" value="5000" />
     <option name="runMode" value="ON_SAVE" />
     <option name="rulesetPath" value="/app/config/php-cs-fixer.php" />
     <option name="transferred" value="true" />
@@ -41,8 +38,7 @@
     <option name="customRuleset" value="/app/config/phpcs.xml" />
     <option name="extensions" value="php,inc" />
     <option name="installedPaths" value="$PROJECT_DIR$/vendor/escapestudios/symfony2-coding-standard" />
-    <option name="idleDelayMs" value="1000" />
-    <option name="minIntervalMs" value="1000" />
+    <option name="idleDelayMs" value="5000" />
     <option name="runMode" value="ON_SAVE" />
     <option name="showSniffs" value="true" />
     <option name="transferred" value="true" />
@@ -460,8 +456,7 @@
   </component>
   <component name="PhpStanOptionsConfiguration">
     <option name="config" value="/app/config/phpstan.neon" />
-    <option name="idleDelayMs" value="1000" />
-    <option name="minIntervalMs" value="1000" />
+    <option name="idleDelayMs" value="5000" />
     <option name="runMode" value="ON_SAVE" />
     <option name="transferred" value="true" />
   </component>
@@ -479,8 +474,7 @@
   </component>
   <component name="PsalmOptionsConfiguration">
     <option name="config" value="/app/config/psalm.xml" />
-    <option name="idleDelayMs" value="1000" />
-    <option name="minIntervalMs" value="1000" />
+    <option name="idleDelayMs" value="5000" />
     <option name="runMode" value="ON_SAVE" />
     <option name="transferred" value="true" />
   </component>

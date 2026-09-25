@@ -91,7 +91,7 @@ final class Database
             // Clean up SQL files but do not touch manually maintained files with prefixes `000` and `999`
             \array_map(
                 '\unlink',
-                \preg_grep('/\/(000|999)[^\/]*\.sql$/u', \glob(Config::$ddl_dir.'*.sql'), \PREG_GREP_INVERT)
+                \preg_grep('/\/(000|999)[^\/]*\.sql$/u', \glob(Config::$ddl_dir.'*.sql'), \PREG_GREP_INVERT),
             );
             // Get tables in order
             new Manage($pdo);

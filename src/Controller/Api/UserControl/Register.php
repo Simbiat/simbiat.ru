@@ -14,6 +14,7 @@ class Register extends Api
 {
     // Flag to indicate that this is the lowest level
     protected bool $final_node = true;
+
     // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ''];
 

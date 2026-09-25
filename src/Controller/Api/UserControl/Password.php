@@ -17,8 +17,10 @@ class Password extends Api
 {
     // Flag to indicate that this is the lowest level
     protected bool $final_node = true;
+
     // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['PATCH' => ''];
+
     // Flag to indicate need to validate CSRF
     protected bool $csrf = true;
 
@@ -56,8 +58,10 @@ class Password extends Api
         if (empty($_POST['pass_reset'])) {
             // Get password
             try {
-                $password = Query::query('SELECT `password` FROM `uc__users` WHERE `user_id`=:user_id',
-                    [':user_id' => $id], return: 'value'
+                $password = Query::query(
+                    'SELECT `password` FROM `uc__users` WHERE `user_id`=:user_id',
+                    [':user_id' => $id],
+                    return: 'value',
                 );
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
@@ -72,8 +76,10 @@ class Password extends Api
         } else {
             // Get activation code
             try {
-                $pw_reset = Query::query('SELECT `password_reset` FROM `uc__users` WHERE `user_id`=:user_id',
-                    [':user_id' => $id], return: 'value'
+                $pw_reset = Query::query(
+                    'SELECT `password_reset` FROM `uc__users` WHERE `user_id`=:user_id',
+                    [':user_id' => $id],
+                    return: 'value',
                 );
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];

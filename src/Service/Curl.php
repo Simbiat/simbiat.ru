@@ -11,7 +11,6 @@ use App\Security\Security;
 use Simbiat\Database\Query;
 use Simbiat\http20\Common;
 use Simbiat\http20\Sharing;
-use function in_array;
 
 /**
  * Common Curl-related functions
@@ -20,25 +19,25 @@ class Curl
 {
     // cURL options
     protected array $curl_options = [
-        \CURLOPT_POST => false,
-        \CURLOPT_HEADER => true,
-        \CURLOPT_RETURNTRANSFER => true,
+        \CURLOPT_CONNECTTIMEOUT => 10,
+        \CURLOPT_DEFAULT_PROTOCOL => 'https',
+        \CURLOPT_ENCODING => '',
+        \CURLOPT_FOLLOWLOCATION => true,
+        \CURLOPT_FORBID_REUSE => false,
         // Allow caching and reuse of already open connections
         \CURLOPT_FRESH_CONNECT => false,
-        \CURLOPT_FORBID_REUSE => false,
+        \CURLOPT_HEADER => true,
+        \CURLOPT_HTTPHEADER => [],
         // Let cURL determine appropriate HTTP version
         \CURLOPT_HTTP_VERSION => \CURL_HTTP_VERSION_NONE,
-        \CURLOPT_CONNECTTIMEOUT => 10,
-        \CURLOPT_TIMEOUT => 30,
-        \CURLOPT_FOLLOWLOCATION => true,
         \CURLOPT_MAXREDIRS => 3,
-        \CURLOPT_HTTPHEADER => [],
-        \CURLOPT_USERAGENT => 'Simbiat Software',
-        \CURLOPT_ENCODING => '',
-        \CURLOPT_SSL_VERIFYPEER => true,
-        \CURLOPT_SSLVERSION => \CURL_SSLVERSION_TLSv1_2 | \CURL_SSLVERSION_MAX_TLSv1_3,
-        \CURLOPT_DEFAULT_PROTOCOL => 'https',
+        \CURLOPT_POST => false,
         \CURLOPT_PROTOCOLS => \CURLPROTO_HTTPS,
+        \CURLOPT_RETURNTRANSFER => true,
+        \CURLOPT_SSLVERSION => \CURL_SSLVERSION_TLSv1_2 | \CURL_SSLVERSION_MAX_TLSv1_3,
+        \CURLOPT_SSL_VERIFYPEER => true,
+        \CURLOPT_TIMEOUT => 30,
+        \CURLOPT_USERAGENT => 'Simbiat Software',
         // These options are supposed to improve speed, but do not seem to work for websites that I parse at the moment
         // CURLOPT_SSL_FALSESTART => true,
         // CURLOPT_TCP_FASTOPEN => true,
@@ -51,12 +50,13 @@ class Curl
         'Sec-Fetch-Site: none',
         'Sec-Fetch-Mode: cors',
     ];
+
     // cURL Handle is static to allow reuse of a single instance, if possible and needed
     private(set) static \CurlHandle|null|false $curl_handle = null;
     // Allowed MIME types
     public const array ALLOWED_MIME = [
         // For now only images
-        'image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'
+        'image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp', 'image/svg+xml',
     ];
 
     /**
@@ -159,12 +159,12 @@ class Curl
         $filepath = \sys_get_temp_dir().'/'.$new_name;
 
         return [
+            'hash' => \hash_file('sha3-512', $filepath),
             'server_name' => $new_name,
             'server_path' => \sys_get_temp_dir(),
-            'user_name' => \preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$1$2', \basename($link)),
             'size' => \filesize($filepath),
             'type' => $mime,
-            'hash' => \hash_file('sha3-512', $filepath),
+            'user_name' => \preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$1$2', \basename($link)),
         ];
     }
 
@@ -326,7 +326,7 @@ class Curl
                         409, 403 => 'Failed to write file',
                         411 => 'Length required',
                         default => 'Failed to upload the file'.$upload,
-                    }];
+                    },];
                 }
                 // If $upload had more than 1 file - remove all except the 1st one
                 if (\count($upload) > 1) {
@@ -399,13 +399,13 @@ class Curl
             Query::query(
                 'INSERT IGNORE INTO `sys__files`(`file_id`, `user_id`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :user_id, :filename, :extension, :mime, :size);',
                 [
-                    ':hash' => $upload['hash'],
-                    ':user_id' => [(int) ($_SESSION['user_id'] ?? SystemUser::System->value), 'int'],
-                    ':filename' => $upload['user_name'],
                     ':extension' => $upload['extension'],
+                    ':filename' => $upload['user_name'],
+                    ':hash' => $upload['hash'],
                     ':mime' => $upload['type'],
                     ':size' => [$upload['size'], 'int'],
-                ]
+                    ':user_id' => [(int) ($_SESSION['user_id'] ?? SystemUser::System->value), 'int'],
+                ],
             );
 
             return $upload;

@@ -13,7 +13,6 @@ use Simbiat\ArrayHelpers\Converters;
 use Simbiat\Database\Query;
 use Simbiat\StringHelpers\Sanitize;
 
-
 /**
  * Class to process the BIC library
  */
@@ -23,6 +22,7 @@ final class BICLibrary
      * Date from the XML file
      */
     private string $file_date;
+
     /**
      * Base link where we download BIC files
      */
@@ -192,7 +192,7 @@ final class BICLibrary
                                         ':BIC' => $bic,
                                         ':Rstr' => $restriction['Rstr'],
                                         ':RstrDate' => $restriction['RstrDate'],
-                                    ]
+                                    ],
                                 ];
                             }
                         }
@@ -218,10 +218,10 @@ final class BICLibrary
                                     'INSERT INTO `bic__swift` (`BIC`, `SWBIC`, `DefaultSWBIC`, `DateIn`) VALUES (:BIC, :SWBIC, :DefaultSWBIC, :file_date) ON DUPLICATE KEY UPDATE `DefaultSWBIC`=:DefaultSWBIC;',
                                     [
                                         ':BIC' => $bic,
-                                        ':SWBIC' => $swift['SWBIC'],
                                         ':DefaultSWBIC' => $swift['DefaultSWBIC'],
                                         ':file_date' => $this->file_date,
-                                    ]
+                                        ':SWBIC' => $swift['SWBIC'],
+                                    ],
                                 ];
                             }
                         }
@@ -274,17 +274,17 @@ final class BICLibrary
                             $this->queries[] = [
                                 'INSERT INTO `bic__accounts` (`BIC`, `Account`, `AccountCBRBIC`, `RegulationAccountType`, `CK`, `DateIn`) VALUES (:BIC, :Account, :AccountCBRBIC, :RegulationAccountType, :CK, :DateIn) ON DUPLICATE KEY UPDATE `AccountCBRBIC`=:AccountCBRBIC, `RegulationAccountType`=:RegulationAccountType, `CK`=:CK, `DateIn`=:DateIn, `DateOut`=NULL;',
                                 [
-                                    ':BIC' => $bic,
                                     ':Account' => $account['Account'],
                                     // There are known cases when BIC was set to '000000000' for some reason, thus we need to replace it with NULL. We also cover the possibility that it will not be present at all.
                                     ':AccountCBRBIC' => [
                                         ((int) $account['AccountCBRBIC'] === 0 ? null : $account['AccountCBRBIC']),
                                         ((int) $account['AccountCBRBIC'] === 0 ? 'null' : 'string'),
                                     ],
-                                    ':RegulationAccountType' => $account['RegulationAccountType'],
+                                    ':BIC' => $bic,
                                     ':CK' => $account['CK'],
                                     ':DateIn' => $account['DateIn'],
-                                ]
+                                    ':RegulationAccountType' => $account['RegulationAccountType'],
+                                ],
                             ];
                             if (!empty($library_accounts_rest[$account['Account']])) {
                                 // Get current restrictions
@@ -313,7 +313,7 @@ final class BICLibrary
                                                 ':AccRstr' => $restriction['AccRstr'],
                                                 ':AccRstrDate' => $restriction['AccRstrDate'],
                                                 ':SuccessorBIC' => $restriction['SuccessorBIC'],
-                                            ]
+                                            ],
                                         ];
                                     }
                                 }
@@ -321,7 +321,7 @@ final class BICLibrary
                                 foreach ($current_rest as $restriction) {
                                     if (!\in_array($restriction, $library_accounts_rest[$account['Account']], true)) {
                                         // End restriction
-                                        $this->queries[] = $this->endAccountRestriction($account['Account'], true, ['AccRstr' => $restriction['AccRstr'], 'AccRstrDate' => $restriction['AccRstrDate'],]);
+                                        $this->queries[] = $this->endAccountRestriction($account['Account'], true, ['AccRstr' => $restriction['AccRstr'], 'AccRstrDate' => $restriction['AccRstrDate']]);
                                     }
                                 }
                             } else {
@@ -394,7 +394,8 @@ final class BICLibrary
     {
         $result = Query::query(
             'SELECT `BIC`, `DateIn`, `DateOut`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr` FROM `bic__list` WHERE `BIC`=:BIC;',
-            [':BIC' => $bic,], return: 'row'
+            [':BIC' => $bic],
+            return: 'row',
         );
         if ($result !== []) {
             \ksort($result, \SORT_NATURAL);
@@ -415,7 +416,8 @@ final class BICLibrary
     {
         return Query::query(
             'SELECT `Rstr`, `RstrDate` FROM `bic__bic_rstr` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
-            [':BIC' => $bic,], return: 'all'
+            [':BIC' => $bic],
+            return: 'all',
         );
     }
 
@@ -426,7 +428,8 @@ final class BICLibrary
     {
         return Query::query(
             'SELECT `DefaultSWBIC`, `SWBIC` FROM `bic__swift` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
-            [':BIC' => $bic,], return: 'all'
+            [':BIC' => $bic],
+            return: 'all',
         );
     }
 
@@ -437,7 +440,8 @@ final class BICLibrary
     {
         $result = Query::query(
             'SELECT `Account`, `AccountCBRBIC`, `CK`, `DateIn`, `RegulationAccountType` FROM `bic__accounts` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
-            [':BIC' => $bic,], return: 'all'
+            [':BIC' => $bic],
+            return: 'all',
         );
         // Pad BICs with zeros
         foreach ($result as $key => $account) {
@@ -456,7 +460,8 @@ final class BICLibrary
     {
         $result = Query::query(
             'SELECT `AccRstr`, `AccRstrDate`, `SuccessorBIC` FROM `bic__acc_rstr` WHERE `Account`=:Account;',
-            [':Account' => $account,], return: 'all'
+            [':Account' => $account],
+            return: 'all',
         );
         foreach ($result as $key => $restriction) {
             if ($restriction['SuccessorBIC'] !== null) {
@@ -500,7 +505,7 @@ final class BICLibrary
             [
                 ':BIC' => $bic,
                 ':file_date' => $this->file_date,
-            ]
+            ],
         ];
     }
 
@@ -527,7 +532,7 @@ final class BICLibrary
                 [
                     ':BIC' => $bic,
                     ':file_date' => $this->file_date,
-                ]
+                ],
             ];
         }
         // Otherwise, use details to narrow down
@@ -539,10 +544,10 @@ final class BICLibrary
             'UPDATE `bic__bic_rstr` SET `DateOut`=:file_date WHERE `BIC`=:BIC AND `Rstr`=:Rstr AND `RstrDate`=:RstrDate;',
             [
                 ':BIC' => $bic,
+                ':file_date' => $this->file_date,
                 ':Rstr' => $restriction['Rstr'],
                 ':RstrDate' => $restriction['RstrDate'],
-                ':file_date' => $this->file_date,
-            ]
+            ],
         ];
     }
 
@@ -570,7 +575,7 @@ final class BICLibrary
                 [
                     ':BIC' => $bic,
                     ':file_date' => $this->file_date,
-                ]
+                ],
             ];
         }
 
@@ -578,10 +583,10 @@ final class BICLibrary
             'UPDATE `bic__swift` SET `DateOut`=:file_date, `DefaultSWBIC`=0 WHERE `BIC`=:BIC AND `SWBIC`=:SWBIC AND `DefaultSWBIC`=:DefaultSWBIC;',
             [
                 ':BIC' => $bic,
-                ':SWBIC' => $swift,
                 ':DefaultSWBIC' => [$default, 'bool'],
                 ':file_date' => $this->file_date,
-            ]
+                ':SWBIC' => $swift,
+            ],
         ];
     }
 
@@ -608,7 +613,7 @@ final class BICLibrary
                 [
                     ':BIC' => $bic,
                     ':file_date' => $this->file_date,
-                ]
+                ],
             ];
         } else {
             // End restrictions
@@ -617,10 +622,10 @@ final class BICLibrary
             $this->queries[] = [
                 'UPDATE `bic__accounts` SET `DateOut`=:file_date WHERE `BIC`=:BIC AND `Account`=:Account AND `DateOut` IS NULL;',
                 [
-                    ':BIC' => $bic,
                     ':Account' => $account,
+                    ':BIC' => $bic,
                     ':file_date' => $this->file_date,
-                ]
+                ],
             ];
         }
     }
@@ -651,7 +656,7 @@ final class BICLibrary
                     [
                         ':Account' => $bic,
                         ':file_date' => $this->file_date,
-                    ]
+                    ],
                 ];
             }
             // Otherwise, use details to narrow down
@@ -666,7 +671,7 @@ final class BICLibrary
                     ':AccRstr' => $restriction['AccRstr'],
                     ':AccRstrDate' => $restriction['AccRstrDate'],
                     ':file_date' => $this->file_date,
-                ]
+                ],
             ];
         }
 
@@ -676,7 +681,7 @@ final class BICLibrary
             [
                 ':BIC' => $bic,
                 ':file_date' => $this->file_date,
-            ]
+            ],
         ];
     }
 

@@ -21,16 +21,22 @@ final class Email extends Entity
 {
     // Whether mail is registered
     private(set) bool $registered = false;
+
     // User id that the email is linked to
     private(set) ?int $user_id = null;
+
     // Username linked to the email
     private(set) ?string $username = null;
+
     // Whether this is anonymous user
     private(set) bool $anonymous = true;
+
     // Whether mail is banned
     private(set) bool $banned = false;
+
     // Whether email is subscribed to notifications (when not null)
     private ?string $subscribed = null;
+
     // Whether email is activated (when null)
     private ?string $activation = 'not yet activated';
 
@@ -49,7 +55,7 @@ final class Email extends Entity
         // Validate that string is email
         if (\filter_var($id, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
             // Not an email, something is wrong, protect ourselves
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.\get_class($this).'` has incorrect format.');
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
         }
         $this->id = $id;
         /** @noinspection UnusedFunctionResultInspection */
@@ -133,17 +139,17 @@ final class Email extends Entity
             $queries[] = [
                 'UPDATE `uc__emails` SET `subscribed`=NULL WHERE `user_id`=:user_id AND `subscribed` IS NOT NULL;',
                 [
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
                     ':email' => $this->id,
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
                 ],
             ];
         }
         $queries[] = [
             'UPDATE `uc__emails` SET `subscribed`=:subscribed WHERE `user_id`=:user_id AND `email`=:email;',
             [
-                ':user_id' => [$_SESSION['user_id'], 'int'],
                 ':email' => $this->id,
                 ':subscribed' => $subscribed,
+                ':user_id' => [$_SESSION['user_id'], 'int'],
             ],
         ];
         $result = Query::query($queries);
@@ -363,7 +369,7 @@ final class Email extends Entity
             ['UPDATE `talks__posts` SET `editor`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `editor`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown->value, 'int']]],
             ['UPDATE `talks__posts_history` SET `user_id`=:user_id WHERE `post_id` IN (SELECT `post_id` FROM `talks__posts` WHERE `author`=:user_id) AND `user_id`=:anonymous', [':user_id' => [$user_id, 'int'], ':anonymous' => [SystemUser::Unknown->value, 'int']]],
             // Remove the access token for respective Contact Form threads
-            ['DELETE FROM `talks__contact_form` WHERE `email`=:email;', [':email' => $this->id,]],
+            ['DELETE FROM `talks__contact_form` WHERE `email`=:email;', [':email' => $this->id]],
         ];
         try {
             $result = Query::query($queries);
@@ -402,9 +408,9 @@ final class Email extends Entity
             Query::query(
                 'UPDATE `uc__emails` SET `activation`=:activation WHERE `user_id`=:user_id AND `email`=:mail',
                 [
-                    ':user_id' => [$this->user_id, 'int'],
-                    ':mail' => $this->id,
                     ':activation' => Security::passHash($activation),
+                    ':mail' => $this->id,
+                    ':user_id' => [$this->user_id, 'int'],
                 ],
             );
         } catch (\Throwable) {

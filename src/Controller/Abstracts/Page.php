@@ -13,7 +13,6 @@ use Simbiat\http20\Headers;
 use Simbiat\http20\IRI;
 use Simbiat\http20\Links;
 use Simbiat\StringHelpers\Sanitize;
-use function in_array;
 
 /**
  * General page class
@@ -22,38 +21,55 @@ abstract class Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [];
+
     // Alternative representations of the content
     protected array $alt_links = [];
+
     // Sub service name
     protected string $subservice_name = '';
+
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = '';
+
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = '';
+
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = '';
+
     // Page's banner. Defaults to website's banner. Needs to be inside /assets/images directory and start with /
     protected string $og_image = '';
+
     // Cache age, in case we prefer the generated page to be cached
     protected int $cache_age = 0;
+
     // Time of last data modification (defaults to current time on initialization)
     protected int $last_modified = 0;
+
     // Flag to check if the Last Modified header was sent already
     protected bool $header_sent = false;
+
     // Language override, to be sent in header (if present)
     protected string $language = '';
+
     // Flag to indicate this is a static page
     protected bool $static = false;
+
     // Flag to indicate that session data change is possible on this page
     protected bool $session_change = false;
+
     // Allowed methods
     protected array $methods = ['GET', 'POST', 'HEAD', 'OPTIONS'];
+
     // Cache strategy: aggressive, private, none, live, month, week, day, hour
     protected string $cache_strategy = 'hour';
+
     // Flag indicating that authentication is required
     protected bool $authentication_needed = false;
+
     // List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = [];
+
     // Static list of images to H2 push, which are common for the page type
     protected array $h2_push = [
         '/assets/images/logo.svg',
@@ -67,8 +83,9 @@ abstract class Page
         '/assets/images/navigation/about.svg',
         '/assets/images/navigation/simplepages.svg',
         '/assets/images/navigation/gamepad.svg',
-        '/assets/images/supops/logo/square_navigation.svg'
+        '/assets/images/supops/logo/square_navigation.svg',
     ];
+
     // List of images to H2 push, which are dependent on data grabbed by the page during generation
     protected array $h2_push_extra = [];
 
@@ -77,7 +94,7 @@ abstract class Page
         // Check that subclass has set appropriate properties
         foreach (['subservice_name', 'breadcrumb'] as $property) {
             if (empty($this->{$property})) {
-                throw new \LogicException(\get_class($this).' must have a non-empty `'.$property.'` property.');
+                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
             }
         }
         // Set last modified data

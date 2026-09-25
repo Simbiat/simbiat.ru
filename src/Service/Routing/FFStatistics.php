@@ -16,9 +16,10 @@ class FFStatistics extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['raw', 'achievements', 'bugs', 'characters', 'groups', 'other', 'timelines'];
+
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/fftracker/statistics', 'name' => 'FFXIV Statistics']
+        ['href' => '/fftracker/statistics', 'name' => 'FFXIV Statistics'],
     ];
     protected string $title = 'Final Fantasy XIV Statistics';
     protected string $h1 = 'Final Fantasy XIV Statistics';

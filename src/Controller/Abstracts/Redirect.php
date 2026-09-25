@@ -13,8 +13,10 @@ use Simbiat\http20\Headers;
 class Redirect extends StaticPage
 {
     protected string $subservice_name = 'redirect';
+
     // Regex match pattern with / and flags
     protected string $search_for = '';
+
     // Regex replace pattern
     protected string $replace_with = '';
 

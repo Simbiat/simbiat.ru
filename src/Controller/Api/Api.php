@@ -12,8 +12,6 @@ use App\Service\Config;
 use App\Service\Errors;
 use Simbiat\ArrayHelpers\Sorters;
 use Simbiat\http20\Headers;
-use function in_array;
-use function is_array;
 
 /**
  * Abstract class to handle API stuff
@@ -22,30 +20,43 @@ abstract class Api
 {
     // Supported edges
     protected array $sub_routes = [];
+
     // Description of the nodes (need to be in the same order)
     protected array $routes_description = [];
+
     // Flag to indicate that this is a top level node (false by default)
     protected bool $top_level = false;
+
     // Flag to indicate that this is the lowest level
     protected bool $final_node = false;
+
     // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['GET' => ''];
+
     // Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = [];
+
     // Flag to indicate, that no database is required for this node
     protected bool $static = false;
+
     // Cache age, in case we prefer the generated page to be cached
     protected int $cache_age = 0;
+
     // Description of the node
     protected array $description = [];
+
     // Flag indicating, that authentication is required
     protected bool $authentication_needed = false;
+
     // Flag indicating, that lack of authentication can be bypassed by an access_token
     protected bool $access_token_possible = false;
+
     // List of permissions, from which at least 1 is required to have access the node
     protected array $required_permission = [];
+
     // Flag to indicate need to validate CSRF
     protected bool $csrf = false;
+
     // List of allowed origins, if we want to limit them
     protected array $allowed_origins = [];
 
@@ -287,7 +298,8 @@ abstract class Api
                 if (\hash_equals($_SESSION['csrf'], $token)) {
                     // Check if HTTP Origin is among allowed ones if we want to restrict them.
                     // Note that this will be applied to forms or APIs you want to restrict. For global restriction use \Simbiat\http20\headers->security()
-                    if (\count($allow_origins) === 0 ||
+                    if (
+                        \count($allow_origins) === 0 ||
                         // If origins are limited, check if origin is present
                         (!empty($origin) &&
                             // Check if it's a valid origin and is allowed
@@ -314,9 +326,9 @@ abstract class Api
         }
         // Log attack details. Suppressing errors, so that values will be turned into NULLs if they are not set
         Security::log(LogType::CSRF->value, 'CSRF attack detected', [
-            'reason' => $reason,
-            'page' => $_SERVER['REQUEST_URI'] ?? null,
             'origin' => $_SERVER['HTTP_ORIGIN'] ?? null,
+            'page' => $_SERVER['REQUEST_URI'] ?? null,
+            'reason' => $reason,
             'referer' => $_SERVER['HTTP_REFERER'] ?? null,
         ]);
         // Send `403` error code in header, with an option to force close connection

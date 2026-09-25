@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Service;
 
 use JetBrains\PhpStorm\NoReturn;
-use function dirname;
-use function in_array;
 
 /**
  * Collection of classes to work with image files

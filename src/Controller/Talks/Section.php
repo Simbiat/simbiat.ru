@@ -5,24 +5,29 @@ declare(strict_types=1);
 namespace App\Controller\Talks;
 
 use App\Controller\Abstracts\Page;
+use App\Entity\Thread;
 use App\Service\Config;
 use Simbiat\http20\Headers;
-use function in_array;
 
 class Section extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/talks/sections/', 'name' => 'Sections']
+        ['href' => '/talks/sections/', 'name' => 'Sections'],
     ];
+
     // Sub service name
     protected string $subservice_name = 'section';
+
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Talks';
+
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Talks';
+
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Talks: forums, blogs and other ways of communication';
+
     // List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = ['view_posts'];
 
@@ -120,8 +125,8 @@ class Section extends Page
             $output_array['owned']
             || \in_array('can_post', $_SESSION['permissions'], true)
         ) {
-            $output_array['thread_languages'] = \App\Entity\Thread::getLanguages();
-            $output_array['thread_link_types'] = \App\Entity\Thread::getAltLinkTypes();
+            $output_array['thread_languages'] = Thread::getLanguages();
+            $output_array['thread_link_types'] = Thread::getAltLinkTypes();
         }
 
         return $output_array;

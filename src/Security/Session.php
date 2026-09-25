@@ -205,29 +205,29 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             $queries[] = [
                 'INSERT INTO `uc__sessions` SET `session_id`=:id, `cookie_id`=:cookie_id, `user_id`=:user_id, `ip`=:ip, `user_agent`=:user_agent, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=CURRENT_TIMESTAMP(6), `user_id`=:user_id, `ip`=:ip, `user_agent`=:user_agent, `page`=:page, `data`=:data;',
                 [
-                    ':id' => $id,
                     // Whether a cookie is associated with this session
                     ':cookie_id' => [
                         (empty($data['cookie_id']) ? null : $data['cookie_id']),
                         (empty($data['cookie_id']) ? 'null' : 'string'),
                     ],
+                    // Actual session data
+                    ':data' => [
+                        (empty($data) ? '' : Security::encrypt(\serialize($data))),
+                        'string',
+                    ],
+                    ':id' => $id,
                     ':ip' => [
                         (empty($data['ip']) ? null : $data['ip']),
                         (empty($data['ip']) ? 'null' : 'string'),
                     ],
+                    // What page is being viewed
+                    ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : \mb_substr(\mb_ltrim($_SERVER['REQUEST_URI'], '/', 'UTF-8'), 0, 256, 'UTF-8')),
                     // user_agent details only for logged-in users for the ability to review active sessions
                     ':user_agent' => [
                         (empty($data['useragent']['full']) ? null : $data['useragent']['full']),
                         (empty($data['useragent']['full']) ? 'null' : 'string'),
                     ],
                     ':user_id' => [$data['user_id'], 'int'],
-                    // What page is being viewed
-                    ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : \mb_substr(\mb_ltrim($_SERVER['REQUEST_URI'], '/', 'UTF-8'), 0, 256, 'UTF-8')),
-                    // Actual session data
-                    ':data' => [
-                        (empty($data) ? '' : Security::encrypt(\serialize($data))),
-                        'string',
-                    ],
                 ],
             ];
             // Try to update client information for cookie
@@ -244,7 +244,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                             (empty($data['useragent']['full']) ? null : $data['useragent']['full']),
                             (empty($data['useragent']['full']) ? 'null' : 'string'),
                         ],
-                    ]
+                    ],
                 ];
             }
         }
@@ -411,8 +411,10 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             $data['cookie_id'] = Security::decrypt($data['cookie_id']);
             $data['pass'] = Security::decrypt($data['pass']);
             // Get user data
-            $saved_data = Query::query('SELECT `validator`, `user_id` FROM `uc__cookies` WHERE `uc__cookies`.`cookie_id`=:id',
-                [':id' => $data['cookie_id']], return: 'row'
+            $saved_data = Query::query(
+                'SELECT `validator`, `user_id` FROM `uc__cookies` WHERE `uc__cookies`.`cookie_id`=:id',
+                [':id' => $data['cookie_id']],
+                return: 'row',
             );
             if (
                 empty($saved_data)

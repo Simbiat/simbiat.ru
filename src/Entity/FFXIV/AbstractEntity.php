@@ -20,13 +20,16 @@ abstract class AbstractEntity
 {
     // Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of the same object for different sets of data
     protected bool $attempted = false;
+
     // If ID was retrieved, this needs to not be null
     public ?string $id = null;
+
     // Format for IDs
     protected string $id_format = '/^\d+$/m';
+
     // Debug flag
     protected bool $debug = false;
-    protected const ENTITY_TYPE = 'character';
+    protected const string ENTITY_TYPE = 'character';
     public string $name = '';
 
     protected null|array $lodestone = null;
@@ -479,12 +482,12 @@ abstract class AbstractEntity
                                 :character_id, (SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server), :name, CURRENT_TIMESTAMP(6), TIMESTAMPADD(SECOND, -3600, CURRENT_TIMESTAMP(6)), :avatar, `gc_rank_id` = (SELECT `gc_rank_id` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gc_rank_id` LIMIT 1), :matches
                             ) ON DUPLICATE KEY UPDATE `deleted`=NULL;',
                 [
-                    ':character_id' => $character_id,
-                    ':server' => $lodestone_data[$character_id]['server'],
-                    ':name' => $lodestone_data[$character_id]['name'],
                     ':avatar' => \str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0.jpg'], '', $lodestone_data[$character_id]['avatar']),
+                    ':character_id' => $character_id,
                     ':gcRank' => (empty($lodestone_data[$character_id]['grand_company']['rank']) ? '' : $lodestone_data[$character_id]['grand_company']['rank']),
                     ':matches' => (empty($lodestone_data[$character_id]['feasts']) ? 0 : $lodestone_data[$character_id]['feasts']),
+                    ':name' => $lodestone_data[$character_id]['name'],
+                    ':server' => $lodestone_data[$character_id]['server'],
                 ],
             ];
         }

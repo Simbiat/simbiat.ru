@@ -65,8 +65,8 @@ final class Kernel extends BaseKernel
             $decoded_path = \rawurldecode($request->getPathInfo());
             if (!\mb_check_encoding($decoded_path, 'UTF-8')) {
                 $request = Request::create(
-                            '/httperror/404',
-                            $request->getMethod(),
+                    '/httperror/404',
+                    $request->getMethod(),
                     server: $request->server->all(),
                 );
             }
