@@ -8,7 +8,7 @@ use App\Service\BICLibrary;
 use App\Service\Search\ClosedBics;
 use App\Service\Search\OpenBics;
 
-class Search extends \App\Controller\Abstracts\Search
+final class Search extends \App\Controller\Abstracts\Search
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

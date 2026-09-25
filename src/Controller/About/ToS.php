@@ -6,7 +6,7 @@ namespace App\Controller\About;
 
 use App\Controller\Abstracts\StaticPage;
 
-class ToS extends StaticPage
+final class ToS extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

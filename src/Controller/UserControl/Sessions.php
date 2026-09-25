@@ -16,7 +16,7 @@ use Simbiat\DDCIcons;
 /**
  * Page to manage user sessions
  */
-class Sessions extends Page
+final class Sessions extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
@@ -90,25 +90,13 @@ class Sessions extends Page
                 // Get client
                 $output_array[$type][$key]['client'] = HomePage::$device_detector->getClient();
                 // Set OS and client icon if they exist
-                if (!empty($output_array[$type][$key]['os'])) {
-                    $output_array[$type][$key]['os']['icon'] = DDCIcons::getOS($output_array[$type][$key]['os']['name'], $output_array[$type][$key]['os']['family']);
-                } else {
-                    $output_array[$type][$key]['os']['icon'] = null;
-                }
-                if (!empty($output_array[$type][$key]['client'])) {
-                    $output_array[$type][$key]['client']['icon'] = DDCIcons::getClient($output_array[$type][$key]['client']['name'], $output_array[$type][$key]['client']['type']);
-                } else {
-                    $output_array[$type][$key]['client']['icon'] = null;
-                }
+                $output_array[$type][$key]['os']['icon'] = !empty($output_array[$type][$key]['os']) ? DDCIcons::getOS($output_array[$type][$key]['os']['name'], $output_array[$type][$key]['os']['family']) : null;
+                $output_array[$type][$key]['client']['icon'] = !empty($output_array[$type][$key]['client']) ? DDCIcons::getClient($output_array[$type][$key]['client']['name'], $output_array[$type][$key]['client']['type']) : null;
                 // Set country icon if a flag exists
-                if (
+                $output_array[$type][$key]['country_icon'] = 
                     !empty($output_array[$type][$key]['country'])
                     && \is_file(Config::$img_dir.'flags/'.$output_array[$type][$key]['country'].'.svg')
-                ) {
-                    $output_array[$type][$key]['country_icon'] = '/assets/images/flags/'.$output_array[$type][$key]['country'].'.svg';
-                } else {
-                    $output_array[$type][$key]['country_icon'] = null;
-                }
+                 ? '/assets/images/flags/'.$output_array[$type][$key]['country'].'.svg' : null;
             }
         }
         $output_array['current_session'] = \session_id();

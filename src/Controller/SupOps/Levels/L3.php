@@ -6,7 +6,7 @@ namespace App\Controller\SupOps\Levels;
 
 use App\Controller\Abstracts\StaticPage;
 
-class L3 extends StaticPage
+final class L3 extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

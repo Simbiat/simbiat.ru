@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Search;
 
-class Characters extends Search
+final class Characters extends Search
 {
     // Type of entity to return as static value in results (required for frontend routing)
     protected string $entity_type = 'character';

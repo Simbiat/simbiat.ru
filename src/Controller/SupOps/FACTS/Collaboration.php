@@ -6,7 +6,7 @@ namespace App\Controller\SupOps\FACTS;
 
 use App\Controller\Abstracts\StaticPage;
 
-class Collaboration extends StaticPage
+final class Collaboration extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\FFXIV\Statistics;
 
-class Characters extends General
+final class Characters extends General
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

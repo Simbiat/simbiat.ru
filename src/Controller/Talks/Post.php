@@ -8,7 +8,7 @@ use App\Controller\Abstracts\Page;
 use App\Enum\SystemUser;
 use App\Service\Config;
 
-class Post extends Page
+final class Post extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

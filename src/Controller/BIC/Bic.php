@@ -9,7 +9,7 @@ use App\Controller\Abstracts\Page;
 /**
  * Class to generate pages for individual BICs
  */
-class Bic extends Page
+final class Bic extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

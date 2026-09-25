@@ -108,11 +108,7 @@ abstract class Search
             // Count first
             $results = ['count' => $this->countEntities($what)];
             // Do actual search only if the count is not 0
-            if ($results['count'] > 0) {
-                $results['results'] = $this->selectEntities($what, $limit);
-            } else {
-                $results['results'] = [];
-            }
+            $results['results'] = $results['count'] > 0 ? $this->selectEntities($what, $limit) : [];
 
             return $results;
         } catch (\Throwable $e) {
@@ -168,11 +164,7 @@ abstract class Search
         try {
             if ($what !== '') {
                 // Check if the search term has %
-                if (\preg_match('/%/', $what) === 1) {
-                    $like = true;
-                } else {
-                    $like = false;
-                }
+                $like = \preg_match('/%/', $what) === 1 ? true : false;
                 // String for exact and LIKE searches. Just so that PHPStorm does not complain about duplicates
                 $exactly_like = 'SELECT COUNT('.$this->count_argument.') FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->where_search) ? '' : $this->where_search.' OR ');
                 // Prepare results
@@ -227,11 +219,7 @@ abstract class Search
         try {
             if ($what !== '') {
                 // Check if the search term has %
-                if (\preg_match('/%/', $what) === 1) {
-                    $like = true;
-                } else {
-                    $like = false;
-                }
+                $like = \preg_match('/%/', $what) === 1 ? true : false;
                 // String for exact and LIKE searches. Just so that PHPStorm does not complain about duplicates
                 $exactly_like = 'SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->where_search) ? '' : $this->where_search.' OR ');
                 // Prepare the results array

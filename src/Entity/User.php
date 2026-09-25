@@ -494,19 +494,21 @@ final class User extends Entity
         // Queries for names
         foreach (['first_name', 'last_name', 'middle_name', 'father_name', 'prefix', 'suffix'] as $field) {
             $_POST['details']['name'][$field] = Sanitization::removeNonPrintable($_POST['details']['name'][$field] ?? '', true);
-            if ($this->name[$field] !== $_POST['details']['name'][$field]) {
-                $log[$field] = ['old' => $this->name[$field], 'new' => $_POST['details']['name'][$field]];
-                $queries[] = [
-                    'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `user_id`=:user_id;',
-                    [
-                        ':'.$field => [
-                            (empty($_POST['details']['name'][$field]) ? null : $_POST['details']['name'][$field]),
-                            (empty($_POST['details']['name'][$field]) ? 'null' : 'string'),
-                        ],
-                        ':user_id' => [$this->id, 'int'],
-                    ],
-                ];
+            if ($this->name[$field] === $_POST['details']['name'][$field]) {
+                continue;
             }
+
+            $log[$field] = ['old' => $this->name[$field], 'new' => $_POST['details']['name'][$field]];
+            $queries[] = [
+                'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `user_id`=:user_id;',
+                [
+                    ':'.$field => [
+                        (empty($_POST['details']['name'][$field]) ? null : $_POST['details']['name'][$field]),
+                        (empty($_POST['details']['name'][$field]) ? 'null' : 'string'),
+                    ],
+                    ':user_id' => [$this->id, 'int'],
+                ],
+            ];
         }
         // Query for a birthday
         if (
@@ -592,19 +594,21 @@ final class User extends Entity
         // Queries for other fields
         foreach (['country', 'city', 'about'] as $field) {
             $_POST['details'][$field] = Sanitization::removeNonPrintable($_POST['details'][$field] ?? '', true);
-            if ($this->$field !== $_POST['details'][$field]) {
-                $log[$field] = ['old' => $this->$field, 'new' => $_POST['details'][$field]];
-                $queries[] = [
-                    'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `user_id`=:user_id;',
-                    [
-                        ':'.$field => [
-                            (empty($_POST['details'][$field]) ? null : $_POST['details'][$field]),
-                            (empty($_POST['details'][$field]) ? 'null' : 'string'),
-                        ],
-                        ':user_id' => [$this->id, 'int'],
-                    ],
-                ];
+            if ($this->$field === $_POST['details'][$field]) {
+                continue;
             }
+
+            $log[$field] = ['old' => $this->$field, 'new' => $_POST['details'][$field]];
+            $queries[] = [
+                'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `user_id`=:user_id;',
+                [
+                    ':'.$field => [
+                        (empty($_POST['details'][$field]) ? null : $_POST['details'][$field]),
+                        (empty($_POST['details'][$field]) ? 'null' : 'string'),
+                    ],
+                    ':user_id' => [$this->id, 'int'],
+                ],
+            ];
         }
         if (\count($queries) === 0) {
             return ['http_error' => 400, 'reason' => 'No changes detected'];
@@ -855,17 +859,14 @@ final class User extends Entity
                     ],
                     return: 'value',
                 );
-                if (empty($current_pass)) {
-                    $affected = Query::query(
+                $affected = empty($current_pass) ? Query::query(
                         'INSERT IGNORE INTO `uc__cookies` (`cookie_id`, `validator`, `user_id`) VALUES (:cookie, :pass, :id);',
                         [
                             ':cookie' => $cookie_id,
                             ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
                             ':pass' => $hashed_pass,
                         ],
-                    );
-                } else {
-                    $affected = Query::query(
+                    ) : Query::query(
                         'UPDATE `uc__cookies` SET `validator`=:pass, `time`=CURRENT_TIMESTAMP(6) WHERE `user_id`=:id AND `cookie_id`=:cookie AND `validator`=:validator;',
                         [
                             ':cookie' => $cookie_id,
@@ -875,7 +876,6 @@ final class User extends Entity
                         ],
                         return: 'affected',
                     );
-                }
                 // Update stuff only if we did insert a cookie or update the validator value
                 if ($affected > 0) {
                     // Set cookie ID to session if it's not already linked or if it was linked to another cookie (not sure if that would even be possible)
@@ -1175,32 +1175,32 @@ final class User extends Entity
         // Can't think of a good way to get this in 1 query, thus first getting the latest threads
         $threads = $this->getThreads();
         // Now we get post's details
-        if (\count($threads) !== 0) {
-            // Keep only items with og_image
-            if ($only_with_banner) {
-                foreach ($threads as $key => $thread) {
+        if (\count($threads) === 0) {
+            return [];
+        }
+
+        // Keep only items with og_image
+        if ($only_with_banner) {
+            foreach ($threads as $key => $thread) {
+                if (empty($thread['og_image'])) {
+                    unset($threads[$key]);
+                } else {
+                    $thread['og_image'] = Images::ogImage($thread['og_image']);
                     if (empty($thread['og_image'])) {
                         unset($threads[$key]);
                     } else {
-                        $thread['og_image'] = Images::ogImage($thread['og_image']);
-                        if (empty($thread['og_image'])) {
-                            unset($threads[$key]);
-                        } else {
-                            $threads[$key]['og_image'] = $thread['og_image'];
-                        }
+                        $threads[$key]['og_image'] = $thread['og_image'];
                     }
                 }
-                if (\count($threads) === 0) {
-                    return [];
-                }
             }
-            // Convert regular 0, 1, ... n IDs to real thread IDs for later use
-            $threads = Editors::digitToKey($threads, 'id');
-            // Get the posts' IDs
-            $ids = \array_column($threads, 'first_post');
-        } else {
-            return [];
+            if (\count($threads) === 0) {
+                return [];
+            }
         }
+        // Convert regular 0, 1, ... n IDs to real thread IDs for later use
+        $threads = Editors::digitToKey($threads, 'id');
+        // Get the posts' IDs
+        $ids = \array_column($threads, 'first_post');
         // Get posts
         $where = '';
         $bindings = [':user_id' => [$_SESSION['user_id'], 'int']];

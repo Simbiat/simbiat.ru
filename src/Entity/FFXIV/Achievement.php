@@ -15,7 +15,7 @@ use Simbiat\FFXIV\Lodestone;
 /**
  * Class representing a FFXIV achievement
  */
-class Achievement extends AbstractEntity
+final class Achievement extends AbstractEntity
 {
     // Custom properties
     protected const string ENTITY_TYPE = 'achievement';
@@ -256,21 +256,9 @@ class Achievement extends AbstractEntity
         $bindings[':points'] = $this->lodestone['points'];
         $bindings[':category'] = $this->lodestone['category'];
         $bindings[':subcategory'] = $this->lodestone['subcategory'];
-        if (empty($this->lodestone['how_to'])) {
-            $bindings[':how_to'] = [null, 'null'];
-        } else {
-            $bindings[':how_to'] = Sanitization::sanitizeHTML($this->lodestone['how_to']);
-        }
-        if (empty($this->lodestone['title'])) {
-            $bindings[':title'] = [null, 'null'];
-        } else {
-            $bindings[':title'] = $this->lodestone['title'];
-        }
-        if (empty($this->lodestone['item']['name'])) {
-            $bindings[':item'] = [null, 'null'];
-        } else {
-            $bindings[':item'] = $this->lodestone['item']['name'];
-        }
+        $bindings[':how_to'] = empty($this->lodestone['how_to']) ? [null, 'null'] : Sanitization::sanitizeHTML($this->lodestone['how_to']);
+        $bindings[':title'] = empty($this->lodestone['title']) ? [null, 'null'] : $this->lodestone['title'];
+        $bindings[':item'] = empty($this->lodestone['item']['name']) ? [null, 'null'] : $this->lodestone['item']['name'];
         if (empty($this->lodestone['item']['icon'])) {
             $bindings[':item_icon'] = [null, 'null'];
         } else {
@@ -281,16 +269,8 @@ class Achievement extends AbstractEntity
                 $bindings[':item_icon'] = \str_replace('.png', '.webp', $bindings[':item_icon']);
             }
         }
-        if (empty($this->lodestone['item']['id'])) {
-            $bindings[':item_id'] = [null, 'null'];
-        } else {
-            $bindings[':item_id'] = $this->lodestone['item']['id'];
-        }
-        if (empty($this->lodestone['db_id'])) {
-            $bindings[':db_id'] = [null, 'null'];
-        } else {
-            $bindings[':db_id'] = $this->lodestone['db_id'];
-        }
+        $bindings[':item_id'] = empty($this->lodestone['item']['id']) ? [null, 'null'] : $this->lodestone['item']['id'];
+        $bindings[':db_id'] = empty($this->lodestone['db_id']) ? [null, 'null'] : $this->lodestone['db_id'];
         try {
             return Query::query('INSERT INTO `ffxiv__achievement` SET `achievement_id`=:achievement_id, `name`=:name, `icon`=:icon, `points`=:points, `category`=:category, `subcategory`=:subcategory, `how_to`=:how_to, `title`=:title, `item`=:item, `item_icon`=:item_icon, `item_id`=:item_id, `db_id`=:db_id ON DUPLICATE KEY UPDATE `achievement_id`=:achievement_id, `name`=:name, `icon`=:icon, `points`=:points, `category`=:category, `subcategory`=:subcategory, `how_to`=:how_to, `title`=:title, `item`=:item, `item_icon`=:item_icon, `item_id`=:item_id, `db_id`=:db_id, `updated`=CURRENT_TIMESTAMP(6)', $bindings);
         } catch (\Throwable $exception) {

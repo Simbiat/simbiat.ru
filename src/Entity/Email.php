@@ -174,11 +174,11 @@ final class Email extends Entity
         try {
             /* @noinspection PhpUsageOfSilenceOperatorInspection Suppressing to avoid warnings in log, which are pointless in this case */
             $email = \explode("\n", @\gzinflate(@\hex2bin($token)));
-            if (\array_key_exists(0, $email)) {
-                $email = \mb_rtrim($email[0], "\0", 'UTF-8');
-            } else {
+            if (!\array_key_exists(0, $email)) {
                 throw new \UnexpectedValueException('Malformed token');
             }
+
+            $email = \mb_rtrim($email[0], "\0", 'UTF-8');
         } catch (\Throwable) {
             return ['http_error' => 400, 'reason' => 'Token provided looks malformed'];
         }
@@ -264,20 +264,20 @@ final class Email extends Entity
     {
         $emails = new User($_SESSION['user_id'])->getEmails();
         $exists = \array_search($this->id, \array_column($emails['emails'], 'email'), true);
-        if ($exists !== false) {
-            if (
-                // Safe to delete if it's not activated
-                $emails['emails'][$exists]['activation'] !== null ||
-                // Safe to delete if it is activated, but not the only one
-                $emails['count_activated'] === 1 ||
-                // Safe to delete if it's not the only one subscribed
-                ($emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1)
-            ) {
-                return false;
-            }
-        } else {
+        if ($exists === false) {
             // Emails is not in the list, so nothing to remove
             return true;
+        }
+
+        if (
+            // Safe to delete if it's not activated
+            $emails['emails'][$exists]['activation'] !== null ||
+            // Safe to delete if it is activated, but not the only one
+            $emails['count_activated'] === 1 ||
+            // Safe to delete if it's not the only one subscribed
+            ($emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1)
+        ) {
+            return false;
         }
 
         return true;
@@ -304,14 +304,14 @@ final class Email extends Entity
         // Add email
         if ($this->registered) {
             if (
-                $this->anonymous
-                || $this->activation !== null
+                !$this->anonymous
+                && $this->activation === null
             ) {
-                $result = Query::query('UPDATE `uc__emails` SET `user_id`=:user_id, `subscribed`=DEFAULT, `activation`=DEFAULT WHERE `email`=:email;', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
-            } else {
                 // Should not get here, but still return an error at this point
                 return ['http_error' => 403, 'reason' => 'Bad email provided'];
             }
+
+            $result = Query::query('UPDATE `uc__emails` SET `user_id`=:user_id, `subscribed`=DEFAULT, `activation`=DEFAULT WHERE `email`=:email;', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
         } else {
             try {
                 $result = Query::query('INSERT INTO `uc__emails` (`user_id`, `email`) VALUE (:user_id, :email);', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);

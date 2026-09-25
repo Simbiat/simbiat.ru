@@ -12,7 +12,7 @@ use Simbiat\StringHelpers\Convert;
 /**
  * Class to generate directory/file listing pages
  */
-class FileListing extends StaticPage
+abstract class FileListing extends StaticPage
 {
     // Cache age set to for a day
     protected int $cache_age = 1440;

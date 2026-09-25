@@ -9,7 +9,7 @@ use App\Controller\Api\Talks\Posts;
 use App\Controller\Api\Talks\Sections;
 use App\Controller\Api\Talks\Threads;
 
-class Talks extends Api
+final class Talks extends Api
 {
     // Supported edges
     protected array $sub_routes = [

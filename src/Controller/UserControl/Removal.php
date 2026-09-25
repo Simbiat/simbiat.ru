@@ -6,7 +6,7 @@ namespace App\Controller\UserControl;
 
 use App\Controller\Abstracts\Page;
 
-class Removal extends Page
+final class Removal extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

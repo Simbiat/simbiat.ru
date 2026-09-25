@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\FFXIV;
 
-class CrossworldLinkshell extends General
+final class CrossworldLinkshell extends General
 {
     // Entity class name
     protected string $entity_class = \App\Entity\FFXIV\CrossworldLinkshell::class;

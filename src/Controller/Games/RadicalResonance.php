@@ -6,7 +6,7 @@ namespace App\Controller\Games;
 
 use App\Controller\Abstracts\Game;
 
-class RadicalResonance extends Game
+final class RadicalResonance extends Game
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

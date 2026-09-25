@@ -6,7 +6,7 @@ namespace App\Controller;
 
 use App\Controller\Abstracts\FileListing;
 
-class DeviceDetector extends FileListing
+final class DeviceDetector extends FileListing
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

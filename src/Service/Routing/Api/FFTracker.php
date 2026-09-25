@@ -13,7 +13,7 @@ use App\Controller\Api\FFXIV\Linkshell;
 use App\Controller\Api\FFXIV\MergeCrest;
 use App\Controller\Api\FFXIV\PvPTeam;
 
-class FFTracker extends Api
+final class FFTracker extends Api
 {
     // Supported edges
     protected array $sub_routes = [

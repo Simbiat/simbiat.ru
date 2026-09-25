@@ -6,7 +6,7 @@ namespace App\Controller\FFXIV;
 
 use App\Controller\Abstracts\StaticPage;
 
-class Track extends StaticPage
+final class Track extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

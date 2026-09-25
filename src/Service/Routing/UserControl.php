@@ -14,7 +14,7 @@ use App\Controller\UserControl\Removal;
 use App\Controller\UserControl\Sessions;
 use App\Controller\UserControl\Unsubscribe;
 
-class UserControl extends Router
+final class UserControl extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['activate', 'register', 'emails', 'unsubscribe', 'profile', 'password', 'removal', 'sessions', 'fftracker', 'avatars'];

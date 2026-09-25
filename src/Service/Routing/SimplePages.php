@@ -6,7 +6,7 @@ namespace App\Service\Routing;
 
 use App\Controller\DeviceDetector;
 
-class SimplePages extends Router
+final class SimplePages extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['devicedetector'];

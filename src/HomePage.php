@@ -30,7 +30,7 @@ use Symfony\Component\Cache\Adapter\ApcuAdapter;
 /**
  * Class to generate pages. "HomePage" is a legacy name
  */
-class HomePage
+final class HomePage
 {
     // Cache object
     private(set) static ?Caching $data_cache = null;
@@ -192,20 +192,20 @@ class HomePage
                         && \session_status() === \PHP_SESSION_NONE
                     ) {
                         \session_set_save_handler(new Session(), true);
-                        if (\session_start()) {
-                            // Check if banned IP
-                            if (!empty($_SESSION['banned_ip'])) {
-                                self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
-                            }
-                            if (
-                                \array_key_exists('banned', $_SESSION)
-                                && $_SESSION['banned'] === true
-                                && \preg_match('/^\/about\/contacts$/ui', $_SERVER['REQUEST_URI']) !== 1
-                            ) {
-                                self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
-                            }
-                        } else {
+                        if (!\session_start()) {
                             throw new \RunTimeException('Failed to start session');
+                        }
+
+                        // Check if banned IP
+                        if (!empty($_SESSION['banned_ip'])) {
+                            self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
+                        }
+                        if (
+                            \array_key_exists('banned', $_SESSION)
+                            && $_SESSION['banned'] === true
+                            && \preg_match('/^\/about\/contacts$/ui', $_SERVER['REQUEST_URI']) !== 1
+                        ) {
+                            self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
                         }
                     }
                     // Check if we have cached the results already
@@ -245,20 +245,22 @@ class HomePage
     {
         // Remove query string, if present (that is everything after ?)
         $request = \preg_replace('/^(.*)(\?.*)?$/u', '$1', $_SERVER['REQUEST_URI']);
-        if (\preg_match('/^\/\.well-known\/security\.txt$/iu', $request) === 1) {
-            // Send headers that will identify this as an actual file
-            if (!\headers_sent()) {
-                \header('Content-Type: text/plain; charset=utf-8');
-                \header('Content-Disposition: inline; filename="security.txt"');
-            }
-            if (
-                self::$method !== 'HEAD'
-                && self::$method !== 'OPTIONS'
-            ) {
-                $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => \date(DateTimeInterface::RFC3339_EXTENDED, \strtotime('last Monday of next month midnight'))]);
-            }
-            exit(0);
+        if (\preg_match('/^\/\.well-known\/security\.txt$/iu', $request) !== 1) {
+            return;
         }
+
+        // Send headers that will identify this as an actual file
+        if (!\headers_sent()) {
+            \header('Content-Type: text/plain; charset=utf-8');
+            \header('Content-Disposition: inline; filename="security.txt"');
+        }
+        if (
+            self::$method !== 'HEAD'
+            && self::$method !== 'OPTIONS'
+        ) {
+            $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => \date(DateTimeInterface::RFC3339_EXTENDED, \strtotime('last Monday of next month midnight'))]);
+        }
+        exit(0);
     }
 
     /**
@@ -450,7 +452,7 @@ class HomePage
         $browser = self::$device_detector->isBrowser();
         $client = self::$device_detector->getClient();
         // Check if a client is supported
-        if (
+        $unsupported = 
             \preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser)/ui', $client['name'] ?? '') === 1 ||
             (
                 \array_key_exists($client['name'] ?? '', Config::$teapot_browsers) &&
@@ -459,11 +461,7 @@ class HomePage
                     \version_compare($client['version'], Config::$teapot_browsers[$client['name']], 'lt')
                 )
             )
-        ) {
-            $unsupported = true;
-        } else {
-            $unsupported = false;
-        }
+         ? true : false;
         // Concat client and version
         $client = \mb_trim(($client['name'] ?? '').' '.($client['version'] ?? ''), null, 'UTF-8');
         // Force the client to be NULL if it's empty

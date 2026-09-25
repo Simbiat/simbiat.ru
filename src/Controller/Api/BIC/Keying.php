@@ -7,7 +7,7 @@ namespace App\Controller\Api\BIC;
 use App\Controller\Api\Api;
 use Simbiat\BIC\AccountKeying;
 
-class Keying extends Api
+final class Keying extends Api
 {
     // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ''];

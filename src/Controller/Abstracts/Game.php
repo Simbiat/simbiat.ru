@@ -7,7 +7,7 @@ namespace App\Controller\Abstracts;
 /**
  * Game page class
  */
-class Game extends Page
+abstract class Game extends Page
 {
     // Flag to indicate this is a static page
     protected bool $static = true;

@@ -66,11 +66,7 @@ abstract class Router
             // Generate page
             $page_data = $this->pageGen($path);
             // Update breadcrumbs
-            if (!empty($page_data['breadcrumbs'])) {
-                $page_data['breadcrumbs'] = \array_merge($this->breadcrumb, $page_data['breadcrumbs']);
-            } else {
-                $page_data['breadcrumbs'] = $this->breadcrumb;
-            }
+            $page_data['breadcrumbs'] = !empty($page_data['breadcrumbs']) ? \array_merge($this->breadcrumb, $page_data['breadcrumbs']) : $this->breadcrumb;
         } else {
             // Not existent endpoint
             $page_data['breadcrumbs'] = $this->breadcrumb;

@@ -8,7 +8,7 @@ use App\Controller\Api\Api;
 use App\Entity\Thread;
 use App\HomePage;
 
-class Threads extends Api
+final class Threads extends Api
 {
     // Flag to indicate, that this is the lowest level
     protected bool $final_node = true;

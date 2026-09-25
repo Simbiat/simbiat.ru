@@ -7,7 +7,7 @@ namespace App\Controller\Api\UserControl;
 use App\Controller\Api\Api;
 use App\Entity\Email;
 
-class Emails extends Api
+final class Emails extends Api
 {
     // Flag to indicate, that this is the lowest level
     protected bool $final_node = true;

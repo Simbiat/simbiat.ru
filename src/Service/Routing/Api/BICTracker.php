@@ -9,7 +9,7 @@ use App\Controller\Api\BIC\Bic;
 use App\Controller\Api\BIC\DBUpdate;
 use App\Controller\Api\BIC\Keying;
 
-class BICTracker extends Api
+final class BICTracker extends Api
 {
     // Supported edges
     protected array $sub_routes = [

@@ -10,7 +10,7 @@ use Simbiat\Database\Query;
 /**
  * Class for the main sitemap index file
  */
-class Index extends Page
+final class Index extends Page
 {
     // Cache age, in case we prefer the generated page to be cached
     protected int $cache_age = 1440;
@@ -64,13 +64,9 @@ class Index extends Page
         }
         $this->h2_push = [];
         // Sitemap for general links (non-countable)
-        if ($this->main_index) {
-            $links = [
+        $links = $this->main_index ? [
                 ['loc' => 'general.xml', 'name' => 'General links'],
-            ];
-        } else {
-            $links = [];
-        }
+            ] : [];
         // Get countable links
         try {
             $counts = Query::query($this->query, return: 'all');

@@ -11,7 +11,7 @@ use Simbiat\http20\RSS;
 /**
  * Class to generate various feeds (RSS, Atom, etc.)
  */
-class Feeds
+final class Feeds
 {
     /**
      * Function to parse URI and generate appropriate feed

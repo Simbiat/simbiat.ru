@@ -144,14 +144,10 @@ final class Section extends Entity
                     default => $data['detailed_type'],
                 };
             }
-            if (
+            $data['owned'] =
                 $inherited_ownership
                 || $data['author'] === $_SESSION['user_id']
-            ) {
-                $data['owned'] = true;
-            } else {
-                $data['owned'] = false;
-            }
+             ? true : false;
             // Get children
             $where = '';
             $bindings = [':section_id' => [$this->id, 'int']];
@@ -292,11 +288,13 @@ final class Section extends Entity
         $this->parents = $from_db['parents'];
         $this->parent_id = (int) ($from_db['parent_id'] ?? 0);
         $this->description = $from_db['description'] ?? '';
-        if (!$this->for_thread) {
-            $this->subscribers = $from_db['subscribers'];
-            $this->children = (\is_array($from_db['children']) ? $from_db['children'] : ['pages' => $from_db['children'], 'entities' => []]);
-            $this->threads = (\is_array($from_db['threads']) ? $from_db['threads'] : ['pages' => $from_db['threads'], 'entities' => []]);
+        if ($this->for_thread) {
+            return;
         }
+
+        $this->subscribers = $from_db['subscribers'];
+        $this->children = (\is_array($from_db['children']) ? $from_db['children'] : ['pages' => $from_db['children'], 'entities' => []]);
+        $this->threads = (\is_array($from_db['threads']) ? $from_db['threads'] : ['pages' => $from_db['threads'], 'entities' => []]);
     }
 
     /**
@@ -315,11 +313,7 @@ final class Section extends Entity
             return [];
         }
         // If the parent has its own parent - get it and add to array
-        if (!empty($parents[0]['parent_id'])) {
-            $parents = \array_merge($parents, $this->getParents((int) $parents[0]['parent_id']));
-        } else {
-            $parents = \array_reverse($parents);
-        }
+        $parents = !empty($parents[0]['parent_id']) ? \array_merge($parents, $this->getParents((int) $parents[0]['parent_id'])) : \array_reverse($parents);
 
         // Reverse array to make it from top to bottom
         return $parents;
@@ -332,13 +326,10 @@ final class Section extends Entity
      */
     private function notifyAboutChange(#[ExpectedValues(['private', 'public', 'close', 'open', 'change', 'delete', 'move'])] string $type): void
     {
-        if ($type === 'delete') {
-            $for_notification = [
+        $for_notification = $type === 'delete' ? [
                 'author' => $this->author,
                 'section_id' => $this->id,
-            ];
-        } else {
-            $for_notification = Query::query(
+            ] : Query::query(
                 'SELECT `section_id`, `author`, `name` AS `new_name`, `description`, `parent_id`,
                                                         (SELECT `name` FROM `talks__sections` WHERE `section_id`=`main_select`.`parent_id`) AS `parent_name`,
                                                         (SELECT `type` FROM `talks__types` WHERE `type_id`=`main_select`.`type`) AS `type`,
@@ -347,38 +338,39 @@ final class Section extends Entity
                 [':section_id' => [$this->id, 'int']],
                 return: 'row',
             );
-        }
         $for_notification['reason'] = $_POST['section_data']['change_reason'] ?? '';
         $for_notification['name'] = $this->name;
         $for_notification['change_type'] = $type;
         $for_notification['editor_id'] = $_SESSION['user_id'];
         $for_notification['editor_name'] = $_SESSION['username'];
         if (
-            $for_notification['author'] !== $_SESSION['user_id']
-            && !\in_array($for_notification['author'], SystemUser::getSystemUsers(), true)
+            $for_notification['author'] === $_SESSION['user_id']
+            || \in_array($for_notification['author'], SystemUser::getSystemUsers(), true)
         ) {
-            if ($type === 'change') {
-                $for_notification['changes'] = Checkers::getChanges(
-                    [
-                        'description' => $this->description,
-                        'icon' => $this->icon,
-                        'name' => $this->name,
-                        'type' => $this->type,
-                    ],
-                    [
-                        'description' => $for_notification['description'],
-                        'icon' => $for_notification['icon'],
-                        'name' => $for_notification['new_name'],
-                        'type' => $for_notification['type'],
-                    ],
-                );
-                // If no changes added to, skip sending notification, something was changed, that we do not track
-                if ($for_notification['changes'] === []) {
-                    return;
-                }
-            }
-            (void) new SectionChange()->save($for_notification['author'], $for_notification);
+            return;
         }
+
+        if ($type === 'change') {
+            $for_notification['changes'] = Checkers::getChanges(
+                [
+                    'description' => $this->description,
+                    'icon' => $this->icon,
+                    'name' => $this->name,
+                    'type' => $this->type,
+                ],
+                [
+                    'description' => $for_notification['description'],
+                    'icon' => $for_notification['icon'],
+                    'name' => $for_notification['new_name'],
+                    'type' => $for_notification['type'],
+                ],
+            );
+            // If no changes added to, skip sending notification, something was changed, that we do not track
+            if ($for_notification['changes'] === []) {
+                return;
+            }
+        }
+        (void) new SectionChange()->save($for_notification['author'], $for_notification);
     }
 
     /**
@@ -853,11 +845,7 @@ final class Section extends Entity
             return ['http_error' => 400, 'reason' => 'Can\'t delete non-empty section'];
         }
         // Set location for successful removal
-        if ($this->parent_id === 0) {
-            $location = '/talks/edit/sections/';
-        } else {
-            $location = '/talks/edit/sections/'.$this->parent_id.'/';
-        }
+        $location = $this->parent_id === 0 ? '/talks/edit/sections/' : '/talks/edit/sections/'.$this->parent_id.'/';
         // Attempt removal
         try {
             $affected = Query::query('DELETE FROM `talks__sections` WHERE `section_id`=:section_id;', [':section_id' => [$this->id, 'int']], return: 'affected');

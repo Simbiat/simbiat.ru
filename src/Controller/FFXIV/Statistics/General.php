@@ -7,7 +7,7 @@ namespace App\Controller\FFXIV\Statistics;
 use App\Controller\Abstracts\Page;
 use App\Service\Config;
 
-class General extends Page
+final class General extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
@@ -43,12 +43,12 @@ class General extends Page
                 return ['http_error' => 500, 'reason' => 'No JSON file defined for category'];
             }
             $output_array['ffstats']['category'] = $this->json_to_ingest;
-            if (\is_file(Config::$statistics.$this->json_to_ingest.'.json')) {
-                $output_array['ffstats']['data'] = \json_decode(\file_get_contents(Config::$statistics.$this->json_to_ingest.'.json'), flags: \JSON_THROW_ON_ERROR | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_BIGINT_AS_STRING | \JSON_OBJECT_AS_ARRAY);
-                $this->lastModified($output_array['ffstats']['data']['time'] ?? 0);
-            } else {
+            if (!\is_file(Config::$statistics.$this->json_to_ingest.'.json')) {
                 return ['http_error' => 500, 'reason' => 'File `'.$this->json_to_ingest.'.json` not found'];
             }
+
+            $output_array['ffstats']['data'] = \json_decode(\file_get_contents(Config::$statistics.$this->json_to_ingest.'.json'), flags: \JSON_THROW_ON_ERROR | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_BIGINT_AS_STRING | \JSON_OBJECT_AS_ARRAY);
+            $this->lastModified($output_array['ffstats']['data']['time'] ?? 0);
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Failed to read `'.$this->json_to_ingest.'.json` file'];
         }

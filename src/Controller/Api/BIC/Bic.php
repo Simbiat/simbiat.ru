@@ -8,7 +8,7 @@ use App\Controller\Api\Api;
 use App\Service\Errors;
 use Simbiat\http20\Headers;
 
-class Bic extends Api
+final class Bic extends Api
 {
     // Flag to indicate, that this is the lowest level
     protected bool $final_node = true;

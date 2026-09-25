@@ -6,7 +6,7 @@ namespace App\Controller\SupOps;
 
 use App\Controller\Abstracts\StaticPage;
 
-class Resolution extends StaticPage
+final class Resolution extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

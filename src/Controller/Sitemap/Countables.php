@@ -10,7 +10,7 @@ use Simbiat\Database\Query;
 /**
  * Class for pages that can be counted (that is, they have multiple items)
  */
-class Countables extends Page
+final class Countables extends Page
 {
     // Cache age, in case we prefer the generated page to be cached
     protected int $cache_age = 1440;
@@ -56,15 +56,11 @@ class Countables extends Page
             $path[1] = \preg_replace('/\.xml$/ui', '', $path[1]);
         }
         // Get page
-        if (
+        $path[1] = 
             empty($path[1])
             || !\is_numeric($path[1])
             || $path[1] < 1
-        ) {
-            $path[1] = 1;
-        } else {
-            $path[1] = (int) $path[1];
-        }
+         ? 1 : (int) $path[1];
         // Update the link of breadcrumb
         $this->breadcrumb[0]['href'] .= $path[0].'/';
         // Set the starting position for the query

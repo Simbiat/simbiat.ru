@@ -19,7 +19,7 @@ use Simbiat\FFXIV\Lodestone;
 /**
  * Class representing a FFXIV character
  */
-class Character extends AbstractEntity
+final class Character extends AbstractEntity
 {
     // Custom properties
     public ?string $avatar_id = '';
@@ -59,11 +59,7 @@ class Character extends AbstractEntity
                 return [];
             }
             // Get username if character is linked to a user
-            if (!empty($data['user_id'])) {
-                $data['username'] = Query::query('SELECT `username` FROM `uc__users` WHERE `user_id`=:user_id;', [':user_id' => $data['user_id']], return: 'value');
-            } else {
-                $data['username'] = null;
-            }
+            $data['username'] = !empty($data['user_id']) ? Query::query('SELECT `username` FROM `uc__users` WHERE `user_id`=:user_id;', [':user_id' => $data['user_id']], return: 'value') : null;
             // Get jobs
             $data['jobs'] = Query::query('SELECT `name`, `level`, `last_change` FROM `ffxiv__character_jobs` LEFT JOIN `ffxiv__jobs` ON `ffxiv__character_jobs`.`job_id`=`ffxiv__jobs`.`job_id` WHERE `ffxiv__character_jobs`.`character_id`=:id ORDER BY `name`;', [':id' => $this->id], return: 'all');
             // Get old names. For now, returning only the count due to cases of bullying, when the old names are learnt. They are still being collected, though, for statistical purposes.
@@ -465,42 +461,40 @@ class Character extends AbstractEntity
                 foreach ($this->lodestone['achievements'] as $achievement_id => $item) {
                     $icon = self::removeLodestoneDomain($item['icon']);
                     // Download the icon if it's not already present
-                    if (\is_file(\str_replace('.png', '.webp', Config::$icons.$icon))) {
-                        $webp = true;
-                    } else {
-                        $webp = Images::download($item['icon'], Config::$icons.$icon);
+                    $webp = \is_file(\str_replace('.png', '.webp', Config::$icons.$icon)) ? true : Images::download($item['icon'], Config::$icons.$icon);
+                    if (!$webp) {
+                        continue;
                     }
-                    if ($webp) {
-                        $icon = \str_replace('.png', '.webp', $icon);
+
+                    $icon = \str_replace('.png', '.webp', $icon);
+                    $queries[] = [
+                        'INSERT INTO `ffxiv__achievement` SET `achievement_id`=:achievement_id, `name`=:name, `icon`=:icon, `points`=:points ON DUPLICATE KEY UPDATE `updated`=`updated`, `name`=:name, `icon`=:icon, `points`=:points;',
+                        [
+                            ':achievement_id' => $achievement_id,
+                            ':icon' => $icon,
+                            ':name' => $item['name'],
+                            ':points' => $item['points'],
+                        ],
+                    ];
+                    $queries[] = [
+                        'INSERT INTO `ffxiv__character_achievement` SET `character_id`=:character_id, `achievement_id`=:achievement_id, `time`=:time ON DUPLICATE KEY UPDATE `time`=:time;',
+                        [
+                            ':achievement_id' => $achievement_id,
+                            ':character_id' => $this->id,
+                            ':time' => [$item['time'], 'datetime'],
+                        ],
+                    ];
+                    // If the achievement is new since the last check, or if this is the first time the character is being processed, add and count the achievement
+                    if (
+                        !empty($updated)
+                        && (int) $item['time'] > \strtotime($updated)
+                    ) {
                         $queries[] = [
-                            'INSERT INTO `ffxiv__achievement` SET `achievement_id`=:achievement_id, `name`=:name, `icon`=:icon, `points`=:points ON DUPLICATE KEY UPDATE `updated`=`updated`, `name`=:name, `icon`=:icon, `points`=:points;',
+                            'UPDATE `ffxiv__achievement` SET `earned_by`=`earned_by`+1 WHERE `achievement_id`=:achievement_id;',
                             [
                                 ':achievement_id' => $achievement_id,
-                                ':icon' => $icon,
-                                ':name' => $item['name'],
-                                ':points' => $item['points'],
                             ],
                         ];
-                        $queries[] = [
-                            'INSERT INTO `ffxiv__character_achievement` SET `character_id`=:character_id, `achievement_id`=:achievement_id, `time`=:time ON DUPLICATE KEY UPDATE `time`=:time;',
-                            [
-                                ':achievement_id' => $achievement_id,
-                                ':character_id' => $this->id,
-                                ':time' => [$item['time'], 'datetime'],
-                            ],
-                        ];
-                        // If the achievement is new since the last check, or if this is the first time the character is being processed, add and count the achievement
-                        if (
-                            !empty($updated)
-                            && (int) $item['time'] > \strtotime($updated)
-                        ) {
-                            $queries[] = [
-                                'UPDATE `ffxiv__achievement` SET `earned_by`=`earned_by`+1 WHERE `achievement_id`=:achievement_id;',
-                                [
-                                    ':achievement_id' => $achievement_id,
-                                ],
-                            ];
-                        }
                     }
                 }
             }

@@ -10,7 +10,7 @@ use App\Service\Config;
 use Simbiat\HTML\Cut;
 use Simbiat\http20\Headers;
 
-class User extends Page
+final class User extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

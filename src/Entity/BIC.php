@@ -15,7 +15,7 @@ use Simbiat\Database\Query;
 /**
  * Class representing a Bank Identification Code (BIC)
  */
-class BIC extends Entity
+final class BIC extends Entity
 {
     // Bank code of the entity
     public string $BIC;
@@ -176,11 +176,7 @@ class BIC extends Entity
 
         // Old DBF data processing
         // Gets a list of phones
-        if (!empty($from_db['TELEF'])) {
-            $from_db['TELEF'] = $this->phoneList($from_db['TELEF']);
-        } else {
-            $from_db['TELEF'] = [];
-        }
+        $from_db['TELEF'] = !empty($from_db['TELEF']) ? $this->phoneList($from_db['TELEF']) : [];
         // If RKC is the same as BIC, it means that the current bank is RKC and does not have a bank above it
         if ($from_db['RKC'] === $from_db['BIC']) {
             $from_db['RKC'] = null;
@@ -416,11 +412,7 @@ class BIC extends Entity
         $phones = \explode(',', $dob[0]);
         // Attempting to sanitize the phone numbers to use +7 code only
         \preg_match('/\((\d*)\)/', $phones[0], $code);
-        if (empty($code[1])) {
-            $code = '+7 ';
-        } else {
-            $code = '+7 ('.$code[1].') ';
-        }
+        $code = empty($code[1]) ? '+7 ' : '+7 ('.$code[1].') ';
         foreach ($phones as $key => $phone) {
             if (\preg_match('/\((\d*)\)/', $phone)) {
                 $phone = '+7 '.$phone;

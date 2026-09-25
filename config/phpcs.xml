@@ -66,6 +66,12 @@
             <property name="orderAlphabetically" value="true"/>
         </properties>
     </rule>
+    <rule ref="SlevomatCodingStandard.Attributes.AttributeAndTargetSpacing">
+        <properties>
+            <!-- Can conflict Symfony.Functions.Arguments if below is not true -->
+            <property name="allowOnSameLine" value="true"/>
+        </properties>
+    </rule>
 
     <!-- Type declarations -->
     <rule ref="SlevomatCodingStandard.TypeHints">

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Sitemap;
 
-class FFTracker extends Index
+final class FFTracker extends Index
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\FFXIV\Statistics;
 
-class Achievements extends General
+final class Achievements extends General
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

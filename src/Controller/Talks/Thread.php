@@ -11,7 +11,7 @@ use App\Service\Images;
 use Simbiat\http20\Headers;
 use Simbiat\StringHelpers\Sanitize;
 
-class Thread extends Page
+final class Thread extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
@@ -185,14 +185,10 @@ class Thread extends Page
             $output_array['thread_link_types'] = \App\Entity\Thread::getAltLinkTypes();
         }
         // Add access token
-        if (
+        $output_array['get_access_token'] = 
             $output_array['author'] === SystemUser::Unknown->value
             && $_SESSION['user_id'] === SystemUser::Unknown->value
-        ) {
-            $output_array['get_access_token'] = $_GET['access_token'] ?? null;
-        } else {
-            $output_array['get_access_token'] = null;
-        }
+         ? $_GET['access_token'] ?? null : null;
 
         return $output_array;
     }

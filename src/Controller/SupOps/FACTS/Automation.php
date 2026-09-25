@@ -6,7 +6,7 @@ namespace App\Controller\SupOps\FACTS;
 
 use App\Controller\Abstracts\StaticPage;
 
-class Automation extends StaticPage
+final class Automation extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

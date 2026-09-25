@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\FFXIV\Statistics;
 
-class Groups extends General
+final class Groups extends General
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

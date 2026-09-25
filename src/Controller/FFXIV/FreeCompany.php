@@ -7,7 +7,7 @@ namespace App\Controller\FFXIV;
 use App\Controller\Abstracts\Page;
 use App\Entity\FFXIV\AbstractEntity;
 
-class FreeCompany extends Page
+final class FreeCompany extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
@@ -45,15 +45,11 @@ class FreeCompany extends Page
         $this->lastModified($output_array['freecompany']['dates']['updated']);
         $output_array['freecompany']['dates']['scheduled'] = $entity->scheduleUpdate();
         // Check if linked to the current user
-        if (
+        $output_array['freecompany']['linked'] = 
             $_SESSION['user_id'] !== 1
             && \in_array($_SESSION['user_id'], \array_column($output_array['freecompany']['members'], 'user_id'), true)
-        ) {
-            $output_array['freecompany']['linked'] = true;
-        } else {
-            $output_array['freecompany']['linked'] = false;
-        }
-        if (
+         ? true : false;
+        $output_array['freecompany']['can_refresh'] = 
             (
                 empty($output_array['freecompany']['dates']['deleted']) && (
                     empty($output_array['freecompany']['dates']['scheduled']) ||
@@ -61,11 +57,7 @@ class FreeCompany extends Page
                 )
             ) ||
             \in_array('refresh_all_ff', $_SESSION['permissions'], true)
-        ) {
-            $output_array['freecompany']['can_refresh'] = true;
-        } else {
-            $output_array['freecompany']['can_refresh'] = false;
-        }
+         ? true : false;
         // Continue breadcrumbs
         $this->breadcrumb[] = ['href' => '/fftracker/freecompanies/'.$id, 'name' => $output_array['freecompany']['name']];
         // Update meta

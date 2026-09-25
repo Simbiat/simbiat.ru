@@ -20,7 +20,7 @@ use App\Controller\Api\UserControl\Remove;
 use App\Controller\Api\UserControl\Sessions;
 use App\Controller\Api\UserControl\Username;
 
-class UserControl extends Api
+final class UserControl extends Api
 {
     // Supported edges
     protected array $sub_routes = [

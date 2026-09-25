@@ -10,7 +10,7 @@ use App\Entity\User;
 /**
  * Password reminder
  */
-class Remind extends Api
+final class Remind extends Api
 {
     // Flag to indicate that this is the lowest level
     protected bool $final_node = true;

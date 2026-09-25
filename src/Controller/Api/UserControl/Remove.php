@@ -8,7 +8,7 @@ use App\Controller\Api\Api;
 use App\Entity\User;
 use App\HomePage;
 
-class Remove extends Api
+final class Remove extends Api
 {
     // Flag to indicate that this is the lowest level
     protected bool $final_node = true;

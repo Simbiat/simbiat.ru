@@ -8,7 +8,7 @@ use App\Controller\Games\DDEN;
 use App\Controller\Games\Jiangshi;
 use App\Controller\Games\RadicalResonance;
 
-class Games extends Router
+final class Games extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['jiangshi', 'dden', 'radicalresonance', 'anti'];

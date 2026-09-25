@@ -12,7 +12,7 @@ use App\Service\Search\CrossworldLinkshells;
 use App\Service\Search\Linkshells;
 use App\Service\Search\PVP;
 
-class Listing extends \App\Controller\Abstracts\Listing
+final class Listing extends \App\Controller\Abstracts\Listing
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

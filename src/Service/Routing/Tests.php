@@ -9,7 +9,7 @@ use App\Notification\Test;
 use App\Service\Config;
 use App\Service\Errors;
 
-class Tests extends Router
+final class Tests extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['mail', 'styling'];

@@ -13,7 +13,7 @@ use Simbiat\Database\Query;
 /**
  * Function to change password through API
  */
-class Password extends Api
+final class Password extends Api
 {
     // Flag to indicate that this is the lowest level
     protected bool $final_node = true;

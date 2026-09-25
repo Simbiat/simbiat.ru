@@ -9,7 +9,7 @@ use App\Controller\Abstracts\StaticPage;
 /**
  * Class for the page which is currently used as a home page
  */
-class Me extends StaticPage
+final class Me extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

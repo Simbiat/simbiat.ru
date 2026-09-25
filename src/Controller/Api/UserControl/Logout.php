@@ -7,7 +7,7 @@ namespace App\Controller\Api\UserControl;
 use App\Controller\Api\Api;
 use App\Entity\User;
 
-class Logout extends Api
+final class Logout extends Api
 {
     // Flag to indicate that this is the lowest level
     protected bool $final_node = true;

@@ -12,7 +12,7 @@ use App\Controller\FFXIV\Statistics\Other;
 use App\Controller\FFXIV\Statistics\Raw;
 use App\Controller\FFXIV\Statistics\Timelines;
 
-class FFStatistics extends Router
+final class FFStatistics extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['raw', 'achievements', 'bugs', 'characters', 'groups', 'other', 'timelines'];

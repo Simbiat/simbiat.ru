@@ -15,7 +15,7 @@ use Simbiat\StringHelpers\Encode;
 /**
  * Various security stuff
  */
-class Security
+final class Security
 {
     public const string EMAIL_REGEX = '/^[a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/u';
 

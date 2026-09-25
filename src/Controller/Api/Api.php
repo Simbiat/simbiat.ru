@@ -125,14 +125,10 @@ abstract class Api
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
             try {
-                if (
+                $data = 
                     \count($this->required_permission) !== 0
                     && \count(\array_intersect($this->required_permission, $_SESSION['permissions'])) === 0
-                ) {
-                    $data = ['http_error' => 403, 'reason' => 'No `'.\implode('` or `', $this->required_permission).'` permission'];
-                } else {
-                    $data = $this->getData($path);
-                }
+                 ? ['http_error' => 403, 'reason' => 'No `'.\implode('` or `', $this->required_permission).'` permission'] : $this->getData($path);
             } catch (\Throwable $exception) {
                 if (\preg_match('/(ID `.*` for entity `.*` has incorrect format\.)|(ID can\'t be empty\.)/ui', $exception->getMessage()) === 1) {
                     $data = ['http_error' => 400, 'reason' => $exception->getMessage()];
@@ -240,14 +236,18 @@ abstract class Api
     final protected function fieldFilter(array &$array): void
     {
         $fields = $_GET['fields'] ?? $_POST['fields'] ?? null;
-        if (!empty($fields)) {
-            $filter = \explode(',', $fields);
-            if (\count($filter) !== 0) {
-                foreach ($array as $field => $value) {
-                    if (!\in_array($field, $filter, true)) {
-                        unset($array[$field]);
-                    }
-                }
+        if (empty($fields)) {
+            return;
+        }
+
+        $filter = \explode(',', $fields);
+        if (\count($filter) === 0) {
+            return;
+        }
+
+        foreach ($array as $field => $value) {
+            if (!\in_array($field, $filter, true)) {
+                unset($array[$field]);
             }
         }
     }

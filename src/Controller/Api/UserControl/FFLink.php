@@ -7,7 +7,7 @@ namespace App\Controller\Api\UserControl;
 use App\Controller\Api\Api;
 use App\Entity\FFXIV\Character;
 
-class FFLink extends Api
+final class FFLink extends Api
 {
     // Flag to indicate that this is the lowest level
     protected bool $final_node = true;

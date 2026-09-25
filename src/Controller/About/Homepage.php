@@ -12,7 +12,7 @@ use Simbiat\HTML\Cut;
 /**
  * Class for page which is currently used as home page
  */
-class Homepage extends Page
+final class Homepage extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

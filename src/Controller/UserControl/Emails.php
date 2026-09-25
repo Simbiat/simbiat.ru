@@ -7,7 +7,7 @@ namespace App\Controller\UserControl;
 use App\Controller\Abstracts\Page;
 use App\Entity\User;
 
-class Emails extends Page
+final class Emails extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

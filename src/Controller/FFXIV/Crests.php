@@ -6,7 +6,7 @@ namespace App\Controller\FFXIV;
 
 use App\Controller\Abstracts\FileListing;
 
-class Crests extends FileListing
+final class Crests extends FileListing
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

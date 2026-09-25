@@ -6,7 +6,7 @@ namespace App\Controller\SupOps\FACTS;
 
 use App\Controller\Abstracts\StaticPage;
 
-class Sustainability extends StaticPage
+final class Sustainability extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

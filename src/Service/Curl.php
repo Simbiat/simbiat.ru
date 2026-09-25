@@ -15,7 +15,7 @@ use Simbiat\http20\Sharing;
 /**
  * Common Curl-related functions
  */
-class Curl
+final class Curl
 {
     // cURL options
     protected array $curl_options = [
@@ -347,11 +347,7 @@ class Curl
             // Check if we have an image
             if (\preg_match('/^image\/.+/ui', $upload['type']) === 1) {
                 // Convert to webp if it's a supported format, unless we chose not to
-                if ($to_webp) {
-                    $converted = Images::toWebP($upload['server_path'].'/'.$upload['server_name']);
-                } else {
-                    $converted = false;
-                }
+                $converted = $to_webp ? Images::toWebP($upload['server_path'].'/'.$upload['server_name']) : false;
                 if ($converted) {
                     $upload['hash'] = \hash_file('sha3-512', $converted);
                     $upload['size'] = \filesize($converted);

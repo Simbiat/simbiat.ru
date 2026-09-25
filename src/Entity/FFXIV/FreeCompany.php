@@ -14,7 +14,7 @@ use Simbiat\FFXIV\Lodestone;
 /**
  * Class representing a FFXIV free company (guild)
  */
-class FreeCompany extends AbstractEntity
+final class FreeCompany extends AbstractEntity
 {
     // Custom properties
     protected const string ENTITY_TYPE = 'freecompany';

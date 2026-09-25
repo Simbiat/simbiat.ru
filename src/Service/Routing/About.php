@@ -11,7 +11,7 @@ use App\Controller\About\Security;
 use App\Controller\About\Tech;
 use App\Controller\About\ToS;
 
-class About extends Router
+final class About extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['tech', 'tos', 'privacy', 'security', 'website', 'me', 'resume', 'contacts'];

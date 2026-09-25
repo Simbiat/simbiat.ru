@@ -11,7 +11,7 @@ use JetBrains\PhpStorm\NoReturn;
 use Simbiat\http20\Common;
 use Simbiat\http20\Sharing;
 
-class Tests
+final class Tests
 {
     // Function to test Lodestone
     // Incorporate below ones, when and if required

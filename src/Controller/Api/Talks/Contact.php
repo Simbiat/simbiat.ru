@@ -8,7 +8,7 @@ use App\Controller\Api\Api;
 use App\Entity\Thread;
 use App\Security\Security;
 
-class Contact extends Api
+final class Contact extends Api
 {
     // Flag to indicate, that this is the lowest level
     protected bool $final_node = true;

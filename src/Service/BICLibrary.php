@@ -249,11 +249,13 @@ final class BICLibrary
                             unset($library_accounts[$last_key]['AccountStatus']);
                             \ksort($library_accounts[$last_key]);
                             // Convert restrictions
-                            if (\count($account->getElementsByTagName('AccRstrList')) > 0) {
-                                foreach ($account->getElementsByTagName('AccRstrList') as $restriction) {
-                                    $library_accounts_rest[$library_accounts[$last_key]['Account']][] = Converters::attributesToArray($restriction, true, ['SuccessorBIC']);
-                                    \ksort($library_accounts_rest[$library_accounts[$last_key]['Account']]);
-                                }
+                            if (\count($account->getElementsByTagName('AccRstrList')) <= 0) {
+                                continue;
+                            }
+
+                            foreach ($account->getElementsByTagName('AccRstrList') as $restriction) {
+                                $library_accounts_rest[$library_accounts[$last_key]['Account']][] = Converters::attributesToArray($restriction, true, ['SuccessorBIC']);
+                                \ksort($library_accounts_rest[$library_accounts[$last_key]['Account']]);
                             }
                         }
                         // "Remove" accounts
@@ -728,13 +730,13 @@ final class BICLibrary
                     // Attempt to actually download the zip file
                     $bic_file = new Curl('BIC Tracker (https://github.com/Simbiat/BIC-Tracker)')->getFile($href);
                     if (
-                        \is_array($bic_file)
-                        && !empty($bic_file['server_name'])
+                        !\is_array($bic_file)
+                        || empty($bic_file['server_name'])
                     ) {
-                        $bic_file = $bic_file['server_path'].'/'.$bic_file['server_name'];
-                    } else {
                         return false;
                     }
+
+                    $bic_file = $bic_file['server_path'].'/'.$bic_file['server_name'];
                     // Unzip the file
                     if (\is_file($bic_file)) {
                         $zip = new \ZipArchive();

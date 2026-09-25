@@ -6,7 +6,7 @@ namespace App\Controller\SupOps;
 
 use App\Controller\Abstracts\StaticPage;
 
-class Pitch extends StaticPage
+final class Pitch extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

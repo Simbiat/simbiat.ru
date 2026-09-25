@@ -10,7 +10,7 @@ use App\Entity\Email;
 /**
  * Page to unsubscribe email addresses from messages
  */
-class Unsubscribe extends Page
+final class Unsubscribe extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

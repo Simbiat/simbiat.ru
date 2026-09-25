@@ -6,7 +6,7 @@ namespace App\Controller\SupOps\FACTS;
 
 use App\Controller\Abstracts\StaticPage;
 
-class Transparency extends StaticPage
+final class Transparency extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

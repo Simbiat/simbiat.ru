@@ -11,7 +11,7 @@ use App\Service\Routing\Api\Talks;
 use App\Service\Routing\Api\UserControl;
 use App\Service\Upload;
 
-class Api extends \App\Controller\Api\Api
+final class Api extends \App\Controller\Api\Api
 {
     // Supported edges
     protected array $sub_routes = [

@@ -6,7 +6,7 @@ namespace App\Controller\SupOps\FACTS;
 
 use App\Controller\Abstracts\StaticPage;
 
-class Feedback extends StaticPage
+final class Feedback extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

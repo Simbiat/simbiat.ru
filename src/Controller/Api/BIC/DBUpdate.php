@@ -12,7 +12,7 @@ use App\Service\Errors;
 /**
  * API endpoint to update BIC library
  */
-class DBUpdate extends Api
+final class DBUpdate extends Api
 {
     // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['PUT' => ''];

@@ -208,11 +208,7 @@ final class Clean
                 // Iterate through the list
                 foreach ($db_files as $file) {
                     // Get the expected full path of the file
-                    if (\preg_match('/^image\/.+$/ui', $file['mime']) === 1) {
-                        $full_path = Config::$uploaded_img;
-                    } else {
-                        $full_path = Config::$uploaded;
-                    }
+                    $full_path = \preg_match('/^image\/.+$/ui', $file['mime']) === 1 ? Config::$uploaded_img : Config::$uploaded;
                     $full_path .= '/'.\mb_substr($file['file_id'], 0, 2, 'UTF-8').'/'.\mb_substr($file['file_id'], 2, 2, 'UTF-8').'/'.\mb_substr($file['file_id'], 4, 2, 'UTF-8').'/'.$file['file_id'].'.'.$file['extension'];
                     // Log the removal
                     Security::log(LogType::FileUpload->value, 'Automatically deleted file', $file['file_id'].'.'.$file['extension'], user_id: $file['user_id']);

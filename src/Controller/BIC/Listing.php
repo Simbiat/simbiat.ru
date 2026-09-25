@@ -7,7 +7,7 @@ namespace App\Controller\BIC;
 use App\Service\Search\ClosedBics;
 use App\Service\Search\OpenBics;
 
-class Listing extends \App\Controller\Abstracts\Listing
+final class Listing extends \App\Controller\Abstracts\Listing
 {
     // How pages are called (at the moment required only for bictracker for translation)
     protected string $page_word = 'страница';

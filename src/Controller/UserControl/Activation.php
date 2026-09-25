@@ -12,7 +12,7 @@ use Simbiat\Database\Query;
 /**
  * User activation
  */
-class Activation extends Page
+final class Activation extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
@@ -45,11 +45,7 @@ class Activation extends Page
     {
         // Get user ID
         if (empty($_SESSION['user_id'])) {
-            if (empty($path[0])) {
-                $user_id = null;
-            } else {
-                $user_id = (int) $path[0];
-            }
+            $user_id = empty($path[0]) ? null : (int) $path[0];
         } else {
             $user_id = (int) $_SESSION['user_id'];
         }

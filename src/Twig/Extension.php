@@ -71,11 +71,7 @@ final class Extension extends AbstractExtension implements GlobalsInterface
             }
         }
         // Flag for Save-Data header
-        if (\preg_match('/^on$/i', $_SERVER['HTTP_SAVE_DATA'] ?? '') === 1) {
-            $save_data = 'true';
-        } else {
-            $save_data = 'false';
-        }
+        $save_data = \preg_match('/^on$/i', $_SERVER['HTTP_SAVE_DATA'] ?? '') === 1 ? 'true' : 'false';
 
         return \array_merge($defaults, [
             // Flag whether GET is present

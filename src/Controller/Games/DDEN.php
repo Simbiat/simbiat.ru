@@ -6,7 +6,7 @@ namespace App\Controller\Games;
 
 use App\Controller\Abstracts\Game;
 
-class DDEN extends Game
+final class DDEN extends Game
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

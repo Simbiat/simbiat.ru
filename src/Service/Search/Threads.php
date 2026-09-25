@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Search;
 
-class Threads extends Search
+final class Threads extends Search
 {
     // Items to display per page for lists
     public int $list_items = 25;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\FFXIV;
 
-class Achievement extends General
+final class Achievement extends General
 {
     // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['GET' => '', 'PATCH' => 'update'];

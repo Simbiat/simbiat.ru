@@ -166,11 +166,7 @@ final class Post extends Entity
     {
         try {
             if (\in_array('view_posts_history', $_SESSION['permissions'], true)) {
-                if ($time > 0) {
-                    $data = Query::query('SELECT UNIX_TIMESTAMP(`time`) AS `time`, `text` FROM `talks__posts_history` WHERE `post_id`=:post_id AND `time`=:time LIMIT 1;', [':post_id' => [$this->id, 'int'], ':time' => [$time, 'datetime']], return: 'row');
-                } else {
-                    $data = Query::query('SELECT UNIX_TIMESTAMP(`time`) AS `time`, `text` FROM `talks__posts_history` WHERE `post_id`=:post_id AND `text`!=(SELECT `text` FROM `talks__posts` WHERE `post_id`=:post_id) ORDER BY `time` DESC;', [':post_id' => [$this->id, 'int']], return: 'pair');
-                }
+                $data = $time > 0 ? Query::query('SELECT UNIX_TIMESTAMP(`time`) AS `time`, `text` FROM `talks__posts_history` WHERE `post_id`=:post_id AND `time`=:time LIMIT 1;', [':post_id' => [$this->id, 'int'], ':time' => [$time, 'datetime']], return: 'row') : Query::query('SELECT UNIX_TIMESTAMP(`time`) AS `time`, `text` FROM `talks__posts_history` WHERE `post_id`=:post_id AND `text`!=(SELECT `text` FROM `talks__posts` WHERE `post_id`=:post_id) ORDER BY `time` DESC;', [':post_id' => [$this->id, 'int']], return: 'pair');
             } else {
                 $data = [];
             }
@@ -192,21 +188,17 @@ final class Post extends Entity
      */
     private function notifyAboutChange(#[ExpectedValues(['change', 'delete', 'move'])] string $type): void
     {
-        if ($type === 'delete') {
-            $for_notification = [
+        $for_notification = $type === 'delete' ? [
                 'author' => $this->author,
                 'parent_name' => Query::query('SELECT `name` FROM `talks__threads` WHERE `thread_id`=:thread_id', [':thread_id' => $this->thread_id], return: 'value'),
                 'post_id' => $this->id,
-            ];
-        } else {
-            $for_notification = Query::query(
+            ] : Query::query(
                 'SELECT `post_id`, `author`, `thread_id`,
                                                         (SELECT `name` FROM `talks__threads` WHERE `thread_id`=`main_select`.`thread_id`) AS `parent_name`
                                                         FROM `talks__posts` AS `main_select` WHERE `post_id`=:post_id;',
                 [':post_id' => [$this->id, 'int']],
                 return: 'row',
             );
-        }
         $for_notification['reason'] = $_POST['post_data']['change_reason'] ?? '';
         $for_notification['change_type'] = $type;
         $for_notification['editor_id'] = $_SESSION['user_id'];
@@ -302,11 +294,11 @@ final class Post extends Entity
         if (empty($data['thread_id'])) {
             return ['http_error' => 400, 'reason' => 'No thread ID provided'];
         }
-        if (\is_numeric($data['thread_id'])) {
-            $data['thread_id'] = (int) $data['thread_id'];
-        } else {
+        if (!\is_numeric($data['thread_id'])) {
             return ['http_error' => 400, 'reason' => 'Parent ID `'.$data['thread_id'].'` is not numeric'];
         }
+
+        $data['thread_id'] = (int) $data['thread_id'];
         // Check if parent exists
         $parent = new Thread($data['thread_id'])->setForPost(true)->get();
         if ($parent->id === null) {
@@ -688,17 +680,21 @@ final class Post extends Entity
         foreach ($inline_images[2] as $key => $image) {
             $filename = Query::query('SELECT `name` FROM `sys__files` WHERE `file_id`=:file_id;', [':file_id' => $image], return: 'value');
             // If no filename - no file exists
-            if (!empty($filename)) {
-                // Add the file to the list
-                $data['inline_files'][] = $image;
-                // Check if the `alt` attribute is set for the original
-                if (\preg_match('/ alt=".*\S.*"/ui', $inline_images[0][$key]) === 0) {
-                    // Set `alt` to the human-readable name
-                    $new_img_string = \preg_replace('/( alt(="\s*")?)/ui', ' alt="'.$filename.'"', $inline_images[0][$key]);
-                    // Replace the original string in the text
-                    $data['text'] = \str_replace($inline_images[0][$key], $new_img_string, $data['text']);
-                }
+            if (empty($filename)) {
+                continue;
             }
+
+            // Add the file to the list
+            $data['inline_files'][] = $image;
+            // Check if the `alt` attribute is set for the original
+            if (\preg_match('/ alt=".*\S.*"/ui', $inline_images[0][$key]) !== 0) {
+                continue;
+            }
+
+            // Set `alt` to the human-readable name
+            $new_img_string = \preg_replace('/( alt(="\s*")?)/ui', ' alt="'.$filename.'"', $inline_images[0][$key]);
+            // Replace the original string in the text
+            $data['text'] = \str_replace($inline_images[0][$key], $new_img_string, $data['text']);
         }
         // Attempt to get the thread
         $parent = new Thread($data['thread_id'])->setForPost(true)->get();
@@ -790,11 +786,7 @@ final class Post extends Entity
             return ['http_error' => 403, 'reason' => 'Can\'t delete system post'];
         }
         // Set location for successful removal
-        if (!empty($this->thread_id)) {
-            $location = '/talks/threads/'.$this->thread_id.'/';
-        } else {
-            $location = '/talks/sections/';
-        }
+        $location = !empty($this->thread_id) ? '/talks/threads/'.$this->thread_id.'/' : '/talks/sections/';
         // Attempt removal. We also need to update thread details
         try {
             $affected = Query::query(

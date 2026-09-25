@@ -8,7 +8,7 @@ use App\Controller\Api\Api;
 use App\Entity\Section;
 use App\HomePage;
 
-class Sections extends Api
+final class Sections extends Api
 {
     // Flag to indicate, that this is the lowest level
     protected bool $final_node = true;

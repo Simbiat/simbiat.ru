@@ -10,7 +10,7 @@ use App\Controller\Sitemap\General;
 use App\Controller\Sitemap\Index;
 use Simbiat\http20\Headers;
 
-class Sitemap extends Router
+final class Sitemap extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['index', 'fftracker',

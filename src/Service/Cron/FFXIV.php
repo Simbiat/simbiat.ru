@@ -23,7 +23,7 @@ use Simbiat\FFXIV\Lodestone;
 /**
  * Class handling regular tasks for FFXIV tracker
  */
-class FFXIV
+final class FFXIV
 {
     /**
      * Update a FFXIV entity

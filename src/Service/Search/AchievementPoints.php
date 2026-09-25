@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Search;
 
-class AchievementPoints extends Search
+final class AchievementPoints extends Search
 {
     // Type of entity to return as static value in results (required for frontend routing)
     protected string $entity_type = 'character';

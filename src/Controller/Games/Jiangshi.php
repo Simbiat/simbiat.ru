@@ -6,7 +6,7 @@ namespace App\Controller\Games;
 
 use App\Controller\Abstracts\Game;
 
-class Jiangshi extends Game
+final class Jiangshi extends Game
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

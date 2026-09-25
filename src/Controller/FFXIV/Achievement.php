@@ -7,7 +7,7 @@ namespace App\Controller\FFXIV;
 use App\Controller\Abstracts\Page;
 use App\Service\Config;
 
-class Achievement extends Page
+final class Achievement extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
@@ -44,11 +44,7 @@ class Achievement extends Page
         // Try to exit early based on the modification date
         $this->lastModified($output_array['achievement']['updated']);
         $output_array['achievement']['scheduled'] = $entity->scheduleUpdate();
-        if (\in_array('refresh_all_ff', $_SESSION['permissions'], true)) {
-            $output_array['achievement']['can_refresh'] = true;
-        } else {
-            $output_array['achievement']['can_refresh'] = false;
-        }
+        $output_array['achievement']['can_refresh'] = \in_array('refresh_all_ff', $_SESSION['permissions'], true) ? true : false;
         // Continue breadcrumbs
         $this->breadcrumb[] = ['href' => '/fftracker/achievements/'.$id, 'name' => $output_array['achievement']['name']];
         // Update meta

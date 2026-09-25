@@ -13,11 +13,10 @@ use Simbiat\FFXIV\Lodestone;
 /**
  * Class representing a FFXIV linkshell (chat group)
  */
-class Linkshell extends AbstractEntity
+final class Linkshell extends AbstractEntity
 {
     // Custom properties
     protected const string ENTITY_TYPE = 'linkshell';
-    protected const bool CROSSWORLD = false;
     public array $dates = [];
     public ?string $community = null;
     public ?string $server = null;
@@ -105,9 +104,9 @@ class Linkshell extends AbstractEntity
                 || !\array_key_exists('page_total', $data['linkshells'][$this->id])
                 || $data['linkshells'][$this->id]['page_total'] !== 0
             ) {
-                Errors::error_log(new \RuntimeException('Failed to get all necessary data for '.($this::CROSSWORLD ? 'Crossworld ' : '').'Linkshell '.$this->id), ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
+                Errors::error_log(new \RuntimeException('Failed to get all necessary data for Linkshell '.$this->id), ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
 
-                return 'Failed to get all necessary data for '.($this::CROSSWORLD ? 'Crossworld ' : '').'Linkshell '.$this->id;
+                return 'Failed to get all necessary data for Linkshell '.$this->id;
             }
             // At some point, empty linkshells became possible on lodestone, those that have a page, but no members at all, and are not searchable by name. Possibly private linkshells or something like that
             $data['linkshells'][$this->id]['empty'] = true;
@@ -141,11 +140,7 @@ class Linkshell extends AbstractEntity
         $members = Splitters::splitByKey($from_db['members'], 'current');
         $this->members = $members[1] ?? [];
         $this->past_members = $members[0] ?? [];
-        if ($this::CROSSWORLD) {
-            $this->data_center = $from_db['data_center'];
-        } else {
-            $this->server = $from_db['server'];
-        }
+        $this->server = $from_db['server'];
     }
 
     /**
@@ -164,7 +159,7 @@ class Linkshell extends AbstractEntity
                 $queries[] = [
                     'UPDATE `ffxiv__linkshell` SET `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(6), `deleted`=NULL WHERE `ls_id`=:ls_id',
                     [
-                        ':crossworld' => [$this::CROSSWORLD, 'bool'],
+                        ':crossworld' => [false, 'bool'],
                         ':formed' => [
                             (empty($this->lodestone['formed']) ? null : $this->lodestone['formed']),
                             (empty($this->lodestone['formed']) ? 'null' : 'datetime'),
@@ -182,7 +177,7 @@ class Linkshell extends AbstractEntity
                             (empty($this->lodestone['community_id']) ? null : $this->lodestone['community_id']),
                             (empty($this->lodestone['community_id']) ? 'null' : 'string'),
                         ],
-                        ':crossworld' => [$this::CROSSWORLD, 'bool'],
+                        ':crossworld' => [false, 'bool'],
                         ':formed' => [
                             (empty($this->lodestone['formed']) ? null : $this->lodestone['formed']),
                             (empty($this->lodestone['formed']) ? 'null' : 'datetime'),

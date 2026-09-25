@@ -180,11 +180,7 @@ abstract class Notification extends Entity
         $this->is_read = $from_db['is_read'] !== null ? \strtotime($from_db['is_read']) : null;
         $this->last_attempt = $from_db['last_attempt'] !== null ? \strtotime($from_db['last_attempt']) : null;
         $this->attempts = (int) $from_db['attempts'];
-        if (Sanitize::whiteString($from_db['text'] ?? '')) {
-            $this->text = null;
-        } else {
-            $this->text = Sanitization::sanitizeHTML($from_db['text']);
-        }
+        $this->text = Sanitize::whiteString($from_db['text'] ?? '') ? null : Sanitization::sanitizeHTML($from_db['text']);
     }
 
     /**
@@ -253,23 +249,23 @@ abstract class Notification extends Entity
         // Get email
         if ($email) {
             if ($email_override === null) {
-                if ($this->user !== null) {
-                    try {
-                        $emails = Query::query('SELECT `email` FROM `uc__emails` WHERE `user_id`=:user_id AND `activation` IS NULL AND `subscribed` IS NOT NULL ORDER BY `email`;', [':user_id' => [$this->user, 'int']], return: 'column');
-                        if (\count($emails) > 0) {
-                            if (!$this::ALL_EMAILS) {
-                                $emails = \array_slice($emails, 0, 1);
-                            }
-                        } else {
-                            throw new \RuntimeException('No valid addresses for the user found');
-                        }
-                    } catch (\Throwable $throwable) {
-                        Errors::error_log($throwable);
-
-                        throw new \RuntimeException('Failed to get valid addresses for the notification');
-                    }
-                } else {
+                if ($this->user === null) {
                     throw new \UnexpectedValueException('No email is set for notification, and no valid user ID provided');
+                }
+
+                try {
+                    $emails = Query::query('SELECT `email` FROM `uc__emails` WHERE `user_id`=:user_id AND `activation` IS NULL AND `subscribed` IS NOT NULL ORDER BY `email`;', [':user_id' => [$this->user, 'int']], return: 'column');
+                    if (\count($emails) <= 0) {
+                        throw new \RuntimeException('No valid addresses for the user found');
+                    }
+
+                    if (!$this::ALL_EMAILS) {
+                        $emails = \array_slice($emails, 0, 1);
+                    }
+                } catch (\Throwable $throwable) {
+                    Errors::error_log($throwable);
+
+                    throw new \RuntimeException('Failed to get valid addresses for the notification');
                 }
             } else {
                 $emails = [$email_override];

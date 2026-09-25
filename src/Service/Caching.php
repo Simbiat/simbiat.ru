@@ -11,7 +11,7 @@ use Simbiat\StringHelpers\Sanitize;
 /**
  * Class to handle page caching
  */
-class Caching
+final class Caching
 {
     /**
      * @param string $cache_dir Directory to use for cache files
@@ -167,29 +167,29 @@ class Caching
     public function getArrayFromFile(#[FileReference] string $cache_path): array
     {
         // Check if the cache file exists
-        if (\is_file($cache_path)) {
-            // Read the cache
-            $json = \file_get_contents($cache_path);
-            if (
-                $json !== false
-                && $json !== ''
-            ) {
-                try {
-                    $json = \json_decode($json, true, 512, \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR);
-                } catch (\Throwable) {
-                    $json = [];
-                }
-                if ($json !== null) {
-                    if (!\is_array($json)) {
-                        return [];
-                    }
-                } else {
-                    return [];
-                }
-            } else {
-                return [];
-            }
-        } else {
+        if (!\is_file($cache_path)) {
+            return [];
+        }
+
+        // Read the cache
+        $json = \file_get_contents($cache_path);
+        if (
+            $json === false
+            || $json === ''
+        ) {
+            return [];
+        }
+
+        try {
+            $json = \json_decode($json, true, 512, \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR);
+        } catch (\Throwable) {
+            $json = [];
+        }
+        if ($json === null) {
+            return [];
+        }
+
+        if (!\is_array($json)) {
             return [];
         }
 

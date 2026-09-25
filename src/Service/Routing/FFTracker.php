@@ -15,7 +15,7 @@ use App\Controller\FFXIV\PvPTeam;
 use App\Controller\FFXIV\Search;
 use App\Controller\FFXIV\Track;
 
-class FFTracker extends Router
+final class FFTracker extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'crossworldlinkshells', 'achievements', 'statistics', 'crests', 'track', 'points',

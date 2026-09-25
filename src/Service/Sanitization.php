@@ -13,7 +13,7 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 /**
  * Class for some common sanitization function
  */
-class Sanitization
+final class Sanitization
 {
 
     // Static sanitizer configs for a little bit of performance
@@ -38,20 +38,12 @@ class Sanitization
             return '';
         }
         // Check if config has been created already
-        if (self::$sanitizer_config[$for]) {
-            $config = self::$sanitizer_config[$for];
-        } else {
-            $config = self::initSanitizer($for);
-        }
+        $config = self::$sanitizer_config[$for] ? self::$sanitizer_config[$for] : self::initSanitizer($for);
         // Remove excessive new lines
         $string = \preg_replace(['/(\s*<br \/>\s*){5,}/mi', '/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi'], ['<br>', ''], $string);
         // Run the sanitizer
         $sanitizer = new HtmlSanitizer($config);
-        if ($for === 'head') {
-            $string = $sanitizer->sanitizeFor('head', $string);
-        } else {
-            $string = $sanitizer->sanitize($string);
-        }
+        $string = $for === 'head' ? $sanitizer->sanitizeFor('head', $string) : $sanitizer->sanitize($string);
 
         // TODO add loading="lazy" decoding="async" to all images
         return $string;

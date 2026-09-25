@@ -6,7 +6,7 @@ namespace App\Service\Search;
 
 use App\Entity\FFXIV\AbstractEntity;
 
-class PVP extends Search
+final class PVP extends Search
 {
     // Type of entity to return as static value in results (required for frontend routing)
     protected string $entity_type = 'pvpteam';

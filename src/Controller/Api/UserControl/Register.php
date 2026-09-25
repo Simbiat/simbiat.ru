@@ -10,7 +10,7 @@ use App\Entity\User;
 /**
  * Handle user registration
  */
-class Register extends Api
+final class Register extends Api
 {
     // Flag to indicate that this is the lowest level
     protected bool $final_node = true;

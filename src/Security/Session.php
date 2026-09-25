@@ -27,19 +27,21 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         if ($this->session_life < 0) {
             $this->session_life = 300;
         }
-        if (!\headers_sent()) {
-            // Set the session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
-            \session_name('__Host-session_'.\preg_replace('/[^a-zA-Z\d\-_]/', '', Config::$http_host ?? 'simbiat'));
-            // Set session cookie parameters
-            \ini_set('session.cookie_lifetime', $this->session_life);
-            \ini_set('session.cookie_secure', Config::$cookie_settings['secure']);
-            \ini_set('session.cookie_partitioned', Config::$cookie_settings['partitioned']);
-            \ini_set('session.cookie_httponly', Config::$cookie_settings['httponly']);
-            \ini_set('session.cookie_path', Config::$cookie_settings['path']);
-            \ini_set('session.cookie_samesite', Config::$cookie_settings['samesite']);
-            \ini_set('session.use_strict_mode', true);
-            \ini_set('session.use_only_cookies', true);
+        if (\headers_sent()) {
+            return;
         }
+
+        // Set the session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
+        \session_name('__Host-session_'.\preg_replace('/[^a-zA-Z\d\-_]/', '', Config::$http_host ?? 'simbiat'));
+        // Set session cookie parameters
+        \ini_set('session.cookie_lifetime', $this->session_life);
+        \ini_set('session.cookie_secure', Config::$cookie_settings['secure']);
+        \ini_set('session.cookie_partitioned', Config::$cookie_settings['partitioned']);
+        \ini_set('session.cookie_httponly', Config::$cookie_settings['httponly']);
+        \ini_set('session.cookie_path', Config::$cookie_settings['path']);
+        \ini_set('session.cookie_samesite', Config::$cookie_settings['samesite']);
+        \ini_set('session.use_strict_mode', true);
+        \ini_set('session.use_only_cookies', true);
     }
 
     // #########################

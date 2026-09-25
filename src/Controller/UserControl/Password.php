@@ -6,7 +6,7 @@ namespace App\Controller\UserControl;
 
 use App\Controller\Abstracts\Page;
 
-class Password extends Page
+final class Password extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
@@ -38,18 +38,18 @@ class Password extends Page
         if ($_SESSION['user_id'] === 1) {
             // Check if password reset is being attempted
             if (
-                !empty($path[0])
-                && \preg_match('/\d+/u', $path[0]) === 1
+                empty($path[0])
+                || \preg_match('/\d+/u', $path[0]) !== 1
             ) {
-                // Check token
-                if (empty($path[1])) {
-                    return ['http_error' => 403];
-                }
-                $output_array = ['user_id' => $path[0], 'token' => $path[1]];
-            } else {
                 // Not authorized
                 return ['http_error' => 403];
             }
+
+            // Check token
+            if (empty($path[1])) {
+                return ['http_error' => 403];
+            }
+            $output_array = ['user_id' => $path[0], 'token' => $path[1]];
         }
 
         return $output_array;

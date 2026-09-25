@@ -27,7 +27,7 @@ use App\Controller\SupOps\Resolution;
 use App\Controller\SupOps\Scale;
 use App\Controller\SupOps\Solution;
 
-class SupOps extends Router
+final class SupOps extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['pitch', 'glossary', 'problem', 'solution', 'flow', 'metrics', 'resolution', 'interoperability', 'scale', 'comparison', 'needs',

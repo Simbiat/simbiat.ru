@@ -9,7 +9,7 @@ use JetBrains\PhpStorm\NoReturn;
 /**
  * Collection of classes to work with image files
  */
-class Images
+final class Images
 {
     /**
      * Function to download images
@@ -69,14 +69,16 @@ class Images
         $layers = [];
         foreach ($images as $key => $image) {
             $layers[$key] = self::open($image);
-            if ($layers[$key] === false) {
-                if ($output) {
-                    self::noImage();
-                }
-
-                // This means that we failed to get the image thus a final object will either fail or be corrupt, thus exiting early
-                throw new \RuntimeException('Failed to open `'.$image.'`');
+            if ($layers[$key] !== false) {
+                continue;
             }
+
+            if ($output) {
+                self::noImage();
+            }
+
+            // This means that we failed to get the image thus a final object will either fail or be corrupt, thus exiting early
+            throw new \RuntimeException('Failed to open `'.$image.'`');
         }
         try {
             // Create image object
@@ -230,11 +232,7 @@ class Images
                 return false;
             }
             $length = \unpack('N', $bytes);
-            if ($length) {
-                $length = $length[1];
-            } else {
-                $length = 0;
-            }
+            $length = $length ? $length[1] : 0;
             $chunk_name = $f->fread(4);
             switch ($chunk_name) {
                 case 'acTL':

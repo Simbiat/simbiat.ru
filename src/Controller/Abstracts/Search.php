@@ -11,7 +11,7 @@ use Simbiat\http20\Headers;
 /**
  * Search page
  */
-class Search extends Page
+abstract class Search extends Page
 {
     // Cache age, in case we prefer the generated page to be cached
     protected int $cache_age = 1440;

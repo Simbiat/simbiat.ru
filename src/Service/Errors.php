@@ -196,11 +196,7 @@ final class Errors
      */
     private static function getRequest(): string
     {
-        if (\preg_match('/^cli(-server)?$/i', \PHP_SAPI) === 1) {
-            $request = 'CLI';
-        } else {
-            $request = $_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
-        }
+        $request = \preg_match('/^cli(-server)?$/i', \PHP_SAPI) === 1 ? 'CLI' : $_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
 
         return $request;
     }

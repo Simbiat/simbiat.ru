@@ -9,7 +9,7 @@ use App\Controller\BIC\Keying;
 use App\Controller\BIC\Listing;
 use App\Controller\BIC\Search;
 
-class BICTracker extends Router
+final class BICTracker extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['keying', 'search', 'bics', 'openbics', 'closedbics', 'bic'];

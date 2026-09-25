@@ -7,7 +7,7 @@ namespace App\Exception;
 /**
  * Something went wrong with saving the notification to database
  */
-class NotificationSaveException extends \Exception
+final class NotificationSaveException extends \Exception
 {
 
 }

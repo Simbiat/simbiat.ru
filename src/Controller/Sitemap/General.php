@@ -6,7 +6,7 @@ namespace App\Controller\Sitemap;
 
 use App\Controller\Abstracts\StaticPage;
 
-class General extends StaticPage
+final class General extends StaticPage
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

@@ -7,7 +7,7 @@ namespace App\Controller\Abstracts;
 /**
  * Class for static pages, not requiring database connection
  */
-class StaticPage extends Page
+abstract class StaticPage extends Page
 {
     // Flag to indicate this is a static page
     protected bool $static = true;

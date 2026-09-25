@@ -7,7 +7,7 @@ namespace App\Controller\BIC;
 use App\Controller\Abstracts\Page;
 use Simbiat\BIC\AccountKeying;
 
-class Keying extends Page
+final class Keying extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

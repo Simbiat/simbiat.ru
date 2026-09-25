@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\FFXIV\Statistics;
 
-class Timelines extends General
+final class Timelines extends General
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

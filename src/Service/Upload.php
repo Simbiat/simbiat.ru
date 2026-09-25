@@ -6,7 +6,7 @@ namespace App\Service;
 
 use App\Controller\Api\Api;
 
-class Upload extends Api
+final class Upload extends Api
 {
     // Flag to indicate, that this is the lowest level
     protected bool $final_node = true;

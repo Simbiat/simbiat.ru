@@ -13,7 +13,7 @@ use Simbiat\FFXIV\Lodestone;
 /**
  * Class representing a FFXIV PvP Team
  */
-class PvPTeam extends AbstractEntity
+final class PvPTeam extends AbstractEntity
 {
     // Custom properties
     protected const string ENTITY_TYPE = 'pvpteam';

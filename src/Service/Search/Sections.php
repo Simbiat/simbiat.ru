@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Search;
 
-class Sections extends Search
+final class Sections extends Search
 {
     // Items to display per page for lists
     public int $list_items = 25;

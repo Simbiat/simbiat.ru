@@ -35,22 +35,24 @@ final class Kernel extends BaseKernel
     public function boot(): void
     {
         parent::boot();
-        if (!$this->app_bootstrapped) {
-            $this->app_bootstrapped = true;
-            // Check if we are in CLI
-            if (\preg_match('/^cli(-server)?$/iu', \PHP_SAPI) === 1) {
-                // Impersonate system user
-                $_SESSION['user_id'] = SystemUser::System->value;
-                $_SESSION['username'] = 'System user';
-                $_SESSION['permissions'] = ['close_own_threads', 'close_others_threads'];
-            }
-            // Generate basic settings
-            new Config($this->getContainer());
-            // Set error handling
-            \set_error_handler('\App\Service\Errors::error_handler');
-            \set_exception_handler('\App\Service\Errors::error_log');
-            \register_shutdown_function('\App\Service\Errors::shutdown');
+        if ($this->app_bootstrapped) {
+            return;
         }
+
+        $this->app_bootstrapped = true;
+        // Check if we are in CLI
+        if (\preg_match('/^cli(-server)?$/iu', \PHP_SAPI) === 1) {
+            // Impersonate system user
+            $_SESSION['user_id'] = SystemUser::System->value;
+            $_SESSION['username'] = 'System user';
+            $_SESSION['permissions'] = ['close_own_threads', 'close_others_threads'];
+        }
+        // Generate basic settings
+        new Config($this->getContainer());
+        // Set error handling
+        \set_error_handler('\App\Service\Errors::error_handler');
+        \set_exception_handler('\App\Service\Errors::error_log');
+        \register_shutdown_function('\App\Service\Errors::shutdown');
     }
 
     /**

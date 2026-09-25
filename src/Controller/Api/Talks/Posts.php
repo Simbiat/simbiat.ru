@@ -8,7 +8,7 @@ use App\Controller\Api\Api;
 use App\Entity\Post;
 use App\HomePage;
 
-class Posts extends Api
+final class Posts extends Api
 {
     // Flag to indicate, that this is the lowest level
     protected bool $final_node = true;

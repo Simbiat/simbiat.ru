@@ -9,7 +9,7 @@ use App\Entity\Thread;
 use App\Service\Config;
 use Simbiat\http20\Headers;
 
-class Section extends Page
+final class Section extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
