@@ -8,7 +8,6 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     .container.dumper.inline_factories: true
-    debug.container.dump: false
 
     # Mail for admin of the service
     app.admin_email: "%env(ADMIN_EMAIL)%"

@@ -254,6 +254,7 @@
       <path value="$PROJECT_DIR$/vendor/friendsofphp/php-cs-fixer" />
       <path value="$PROJECT_DIR$/vendor/vincentlanglet/twig-cs-fixer" />
       <path value="$PROJECT_DIR$/vendor/phildaiguille/twig-a11y-rules" />
+      <path value="$PROJECT_DIR$/vendor/rector/rector" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

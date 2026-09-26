@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!--TODO: May require extra setup for Symfony https://github.com/psalm/psalm-plugin-symfony-->
 <psalm
     autoloader="/app/vendor/autoload.php"
     errorLevel="1"
@@ -28,7 +27,17 @@
                    checker="../vendor/psalm/plugin-symfony/src/Twig/TemplateFileAnalyzer.php"/>
     </fileExtensions>
     <plugins>
-        <pluginClass xmlns="https://getpsalm.org/schema/config" class="Psalm\PhpUnitPlugin\Plugin"/>
-        <pluginClass xmlns="https://getpsalm.org/schema/config" class="Psalm\SymfonyPsalmPlugin\Plugin"/>
+        <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
+        <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin">
+            <containerXml>/app/var/cache/dev/App_KernelDevDebugContainer.xml</containerXml>
+        </pluginClass>
     </plugins>
+    <!-- #TODO: uncomment when moving to PHP configs
+        <extraFiles>
+            <directory name="/app/var/cache/dev/Symfony/Config" />
+        </extraFiles>
+        <stubs>
+            <file name="/app/vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php" />
+        </stubs>
+    -->
 </psalm>

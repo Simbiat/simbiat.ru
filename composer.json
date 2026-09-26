@@ -57,6 +57,7 @@
             "App\\": "./src"
         },
         "classmap": [
+            "./config",
             "./packages"
         ]
     },
@@ -188,30 +189,32 @@
         "phpmd/phpmd": "^3.0.0@dev",
         "pdepend/pdepend": "^3.0.0@dev",
         "vincentlanglet/twig-cs-fixer": "^4.1.1",
-        "phildaiguille/twig-a11y-rules": ">=0.9"
+        "phildaiguille/twig-a11y-rules": "^0.9",
+        "rector/rector": "^2.6.7"
     },
     "scripts": {
-        "phpstan": "phpstan analyse -c /app/config/phpstan.neon --memory-limit 1G",
-        "psalm": "psalm --config=/app/config/psalm.xml --memory-limit=1G",
-        "phpcs": "phpcs --standard=/app/config/phpcs.xml -s",
-        "phpcbf": "phpcbf --standard=/app/config/phpcs.xml",
-        "php-cs-fixer": "php-cs-fixer fix --dry-run --config=/app/config/php-cs-fixer.php --using-cache=yes --cache-file=/app/data/temp/.php-cs-fixer.cache --verbose --allow-risky=yes --path-mode=intersection",
-        "twig-cs-inspection": "twig-cs-fixer lint --config=/app/config/twig-cs-fixer.php --report=github",
-        "twig-cs": "twig-cs-fixer lint --config=/app/config/twig-cs-fixer.php",
-        "phpmd": "phpmd analyze --cache --cache-file=/app/data/temp/.phpmd.result-cache.php --cache-strategy=content --ruleset=/app/config/phpmd.xml --threads=4 --jetbrains=simbiat.eu",
         "auto-scripts": {
-            "php -d xdebug.mode=off bin/console cache:clear": "script",
+            "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd",
             "importmap:install": "symfony-cmd",
             "app:db:ddl": "symfony-cmd"
         },
+        "cache:clear_dev": "bin/console cache:clear --env=dev",
+        "php-cs-fixer": "php-cs-fixer fix --dry-run --config=/app/config/php-cs-fixer.php --using-cache=yes --cache-file=/app/data/temp/.php-cs-fixer.cache --verbose --allow-risky=yes --path-mode=intersection",
+        "phpcbf": "phpcbf --standard=/app/config/phpcs.xml",
+        "phpcs": "phpcs --standard=/app/config/phpcs.xml -s",
+        "phpmd": "phpmd analyze --cache --cache-file=/app/data/temp/.phpmd.result-cache.php --cache-strategy=content --ruleset=/app/config/phpmd.xml --threads=4 --jetbrains=simbiat.eu",
+        "phpstan": "phpstan analyse -c /app/config/phpstan.neon --memory-limit 1G",
         "post-install-cmd": [
             "@auto-scripts"
         ],
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "cache:clear_dev": "php -d xdebug.mode=off bin/console cache:clear --env=dev"
+        "psalm": "psalm --config=/app/config/psalm.xml --memory-limit=1G",
+        "rector": "rector --config=/app/config/rector.php --dry-run",
+        "twig-cs": "twig-cs-fixer lint --config=/app/config/twig-cs-fixer.php",
+        "twig-cs-inspection": "twig-cs-fixer lint --config=/app/config/twig-cs-fixer.php --report=github"
     },
     "version": "1.0.0"
 }

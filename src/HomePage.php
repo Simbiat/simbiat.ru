@@ -452,7 +452,7 @@ final class HomePage
         $browser = self::$device_detector->isBrowser();
         $client = self::$device_detector->getClient();
         // Check if a client is supported
-        $unsupported = 
+        $unsupported =
             \preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser)/ui', $client['name'] ?? '') === 1 ||
             (
                 \array_key_exists($client['name'] ?? '', Config::$teapot_browsers) &&

@@ -49,6 +49,7 @@ H /config/phpmd.xml
 H /config/phpstan.neon
 H /config/phpunit.xml
 H /config/psalm.xml
+H /config/rector.php
 H /config/stylelint.config.ts
 H /config/twig-cs-fixer.php
 + /data/
