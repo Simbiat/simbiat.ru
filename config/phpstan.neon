@@ -7,6 +7,8 @@ includes:
     - /app/vendor/phpstan/phpstan-phpunit/rules.neon
     - /app/vendor/phpstan/phpstan-symfony/extension.neon
     - /app/vendor/phpstan/phpstan-symfony/rules.neon
+    - /app/vendor/symplify/phpstan-rules/config/phpstan-extensions.neon
+
 parameters:
     level: max
     excludePaths:
@@ -60,3 +62,6 @@ parameters:
     polluteScopeWithLoopInitialAssignments: true
     polluteScopeWithAlwaysIterableForeach: true
     polluteScopeWithBlock: true
+    symplify:
+        symfonyReturnType: true
+        pathStrings: true

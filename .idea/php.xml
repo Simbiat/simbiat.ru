@@ -255,6 +255,9 @@
       <path value="$PROJECT_DIR$/vendor/vincentlanglet/twig-cs-fixer" />
       <path value="$PROJECT_DIR$/vendor/phildaiguille/twig-a11y-rules" />
       <path value="$PROJECT_DIR$/vendor/rector/rector" />
+      <path value="$PROJECT_DIR$/vendor/symplify/phpstan-rules" />
+      <path value="$PROJECT_DIR$/vendor/nette/utils" />
+      <path value="$PROJECT_DIR$/vendor/shipmonk/composer-dependency-analyser" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

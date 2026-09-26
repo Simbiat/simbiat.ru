@@ -190,9 +190,12 @@
         "pdepend/pdepend": "^3.0.0@dev",
         "vincentlanglet/twig-cs-fixer": "^4.1.1",
         "phildaiguille/twig-a11y-rules": "^0.9",
-        "rector/rector": "^2.6.7"
+        "rector/rector": "^2.6.7",
+        "symplify/phpstan-rules": "^14.17",
+        "shipmonk/composer-dependency-analyser": "^1.8.4"
     },
     "scripts": {
+        "analyze-dependencies": "composer-dependency-analyser --composer-json /app/composer.json --config /app/config/composer-dependency-analyser.php",
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd",

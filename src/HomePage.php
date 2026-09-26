@@ -193,7 +193,7 @@ final class HomePage
                     ) {
                         \session_set_save_handler(new Session(), true);
                         if (!\session_start()) {
-                            throw new \RunTimeException('Failed to start session');
+                            throw new \RuntimeException('Failed to start session');
                         }
 
                         // Check if banned IP
