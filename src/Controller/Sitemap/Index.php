@@ -10,7 +10,7 @@ use Simbiat\Database\Query;
 /**
  * Class for the main sitemap index file
  */
-final class Index extends Page
+abstract class Index extends Page
 {
     // Cache age, in case we prefer the generated page to be cached
     protected int $cache_age = 1440;

@@ -7,7 +7,7 @@ namespace App\Controller\FFXIV\Statistics;
 use App\Controller\Abstracts\Page;
 use App\Service\Config;
 
-final class General extends Page
+abstract class General extends Page
 {
     // Current breadcrumb for navigation
     protected array $breadcrumb = [
