@@ -21,8 +21,9 @@ parameters:
         nodesByStringCountMax: 1024
         resolvedPhpDocBlockCacheCountMax: 4056
         nameScopeMapMemoryCacheCountMax: 4056
-    symfony:
-        containerXmlPath: /app/var/cache/dev/App_KernelDevDebugContainer.xml
+    #TODO: uncomment when moving to APP_DEBUG issue is resolved
+    #symfony:
+        #containerXmlPath: /app/var/cache/dev/App_KernelDevDebugContainer.xml
     #TODO: Consider using PHP configs, when they become *the* standard (used by recipes, at least)
     #scanDirectories:
         #- /app/var/cache/dev/Symfony/Config

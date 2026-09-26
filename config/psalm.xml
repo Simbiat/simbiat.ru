@@ -29,15 +29,17 @@
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
         <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin">
-            <containerXml>/app/var/cache/dev/App_KernelDevDebugContainer.xml</containerXml>
+            <!-- #TODO: uncomment when moving to APP_DEBUG issue is resolved
+                <containerXml>/app/var/cache/dev/App_KernelDevDebugContainer.xml</containerXml>
+            -->
         </pluginClass>
     </plugins>
     <!-- #TODO: uncomment when moving to PHP configs
-        <extraFiles>
-            <directory name="/app/var/cache/dev/Symfony/Config" />
-        </extraFiles>
-        <stubs>
-            <file name="/app/vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php" />
-        </stubs>
+    <extraFiles>
+        <directory name="/app/var/cache/dev/Symfony/Config" />
+    </extraFiles>
+    <stubs>
+        <file name="/app/vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php" />
+    </stubs>
     -->
 </psalm>
