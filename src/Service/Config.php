@@ -120,5 +120,4 @@ final class Config
 
         return true;
     }
-
 }

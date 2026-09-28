@@ -37,17 +37,13 @@ abstract class Router
     // If no path[0] is provided, but we want to show a specific page, instead of a stub - redirect to page with this address
     protected string $redirect_main = '';
 
-    final public function __construct()
-    {
-        // Check that subclass has set appropriate properties
-        foreach (['sub_routes', 'breadcrumb'] as $property) {
-            if (empty($this->{$property})) {
-                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
-            }
-        }
-    }
-
-    // This is a general routing check for supported page
+    /**
+     * This is a general routing check for supported page
+     *
+     * @param array $path
+     *
+     * @return array
+     */
     final public function route(array $path): array
     {
         // Start data
@@ -66,7 +62,9 @@ abstract class Router
             // Generate page
             $page_data = $this->pageGen($path);
             // Update breadcrumbs
-            $page_data['breadcrumbs'] = !empty($page_data['breadcrumbs']) ? \array_merge($this->breadcrumb, $page_data['breadcrumbs']) : $this->breadcrumb;
+            $page_data['breadcrumbs'] = !empty($page_data['breadcrumbs'])
+                ? \array_merge($this->breadcrumb, $page_data['breadcrumbs'])
+                : $this->breadcrumb;
         } else {
             // Not existent endpoint
             $page_data['breadcrumbs'] = $this->breadcrumb;
@@ -116,4 +114,14 @@ abstract class Router
      * @return array
      */
     abstract protected function pageGen(array $path): array;
+
+    final public function __construct()
+    {
+        // Check that subclass has set appropriate properties
+        foreach (['sub_routes', 'breadcrumb'] as $property) {
+            if (empty($this->{$property})) {
+                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
+            }
+        }
+    }
 }

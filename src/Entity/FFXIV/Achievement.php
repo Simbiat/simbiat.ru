@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 // TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
+
 namespace App\Entity\FFXIV;
 
 use App\Service\Config;
@@ -19,6 +20,7 @@ final class Achievement extends AbstractEntity
 {
     // Custom properties
     protected const string ENTITY_TYPE = 'achievement';
+
     public int $updated;
     public int $registered;
     public ?string $category = null;
@@ -28,47 +30,6 @@ final class Achievement extends AbstractEntity
     public ?string $db_id = null;
     public array $rewards = [];
     public array $characters = [];
-
-    /**
-     * Function to get initial data from DB
-     *
-     * @param bool $non_private Whether selection of characters is only for non-private characters
-     *
-     * @return array
-     */
-    protected function getFromDB(bool $non_private = false): array
-    {
-        // Get general information
-        $data = Query::query('SELECT * FROM `ffxiv__achievement` WHERE `ffxiv__achievement`.`achievement_id` = :id', [':id' => $this->id], return: 'row');
-        // Return empty if nothing was found
-        if ($data === []) {
-            return [];
-        }
-        // Get last characters with this achievement
-        $data['characters'] = Query::query(
-            'SELECT
-                                                        \'character\' AS `type`,
-                                                        c.`character_id` AS `id`,
-                                                        c.`name`,
-                                                        c.`avatar`      AS `icon`,
-                                                        (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`c`.`character_id`) AS `user_id`
-                                                    FROM `ffxiv__character` AS c
-                                                    JOIN (
-                                                            SELECT `character_id`
-                                                            FROM `ffxiv__character_achievement`
-                                                            WHERE `achievement_id` = :id
-                                                            ORDER BY `time` DESC
-                                                            LIMIT 50
-                                                         ) AS ca
-                                                      ON c.`character_id` = ca.`character_id`
-                                                    WHERE c.`hidden_achievements` IS NULL
-                                                    ORDER BY c.`name`;',
-            [':id' => $this->id],
-            return: 'all',
-        );
-
-        return $data;
-    }
 
     /**
      * Get data from Lodestone
@@ -176,31 +137,44 @@ final class Achievement extends AbstractEntity
     }
 
     /**
-     * Helper function to get db_id from Lodestone based on the achievement name
+     * Function to get initial data from DB
      *
-     * @param string $search_for
+     * @param bool $non_private Whether selection of characters is only for non-private characters
      *
-     * @return string|null
+     * @return array
      */
-    private function getDBID(string $search_for): string|null
+    protected function getFromDB(bool $non_private = false): array
     {
-        try {
-            $db_search_result = new Lodestone()->searchDatabase('achievement', 0, 0, $search_for)->getResult();
-        } catch (\Throwable) {
-            return null;
+        // Get general information
+        $data = Query::query('SELECT * FROM `ffxiv__achievement` WHERE `ffxiv__achievement`.`achievement_id` = :id', [':id' => $this->id], return: 'row');
+        // Return empty if nothing was found
+        if ($data === []) {
+            return [];
         }
-        // Remove counts elements from achievement database
-        unset($db_search_result['database']['achievement']['page_current'], $db_search_result['database']['achievement']['page_total'], $db_search_result['database']['achievement']['total']);
-        if (\count($db_search_result) === 0) {
-            return null;
-        }
-        // Flip the array of achievements (if any) to ease searching for the right element
-        $db_search_result['database']['achievement'] = \array_flip(\array_combine(\array_keys($db_search_result['database']['achievement']), \array_column($db_search_result['database']['achievement'], 'name')));
-        if (!empty($db_search_result['database']['achievement'][$search_for])) {
-            return $db_search_result['database']['achievement'][$search_for];
-        }
+        // Get last characters with this achievement
+        $data['characters'] = Query::query(
+            'SELECT
+                                                        \'character\' AS `type`,
+                                                        c.`character_id` AS `id`,
+                                                        c.`name`,
+                                                        c.`avatar`      AS `icon`,
+                                                        (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`c`.`character_id`) AS `user_id`
+                                                    FROM `ffxiv__character` AS c
+                                                    JOIN (
+                                                            SELECT `character_id`
+                                                            FROM `ffxiv__character_achievement`
+                                                            WHERE `achievement_id` = :id
+                                                            ORDER BY `time` DESC
+                                                            LIMIT 50
+                                                         ) AS ca
+                                                      ON c.`character_id` = ca.`character_id`
+                                                    WHERE c.`hidden_achievements` IS NULL
+                                                    ORDER BY c.`name`;',
+            [':id' => $this->id],
+            return: 'all',
+        );
 
-        return null;
+        return $data;
     }
 
     /**
@@ -256,9 +230,15 @@ final class Achievement extends AbstractEntity
         $bindings[':points'] = $this->lodestone['points'];
         $bindings[':category'] = $this->lodestone['category'];
         $bindings[':subcategory'] = $this->lodestone['subcategory'];
-        $bindings[':how_to'] = empty($this->lodestone['how_to']) ? [null, 'null'] : Sanitization::sanitizeHTML($this->lodestone['how_to']);
-        $bindings[':title'] = empty($this->lodestone['title']) ? [null, 'null'] : $this->lodestone['title'];
-        $bindings[':item'] = empty($this->lodestone['item']['name']) ? [null, 'null'] : $this->lodestone['item']['name'];
+        $bindings[':how_to'] = empty($this->lodestone['how_to'])
+            ? [null, 'null']
+            : Sanitization::sanitizeHTML($this->lodestone['how_to']);
+        $bindings[':title'] = empty($this->lodestone['title'])
+            ? [null, 'null']
+            : $this->lodestone['title'];
+        $bindings[':item'] = empty($this->lodestone['item']['name'])
+            ? [null, 'null']
+            : $this->lodestone['item']['name'];
         if (empty($this->lodestone['item']['icon'])) {
             $bindings[':item_icon'] = [null, 'null'];
         } else {
@@ -269,8 +249,12 @@ final class Achievement extends AbstractEntity
                 $bindings[':item_icon'] = \str_replace('.png', '.webp', $bindings[':item_icon']);
             }
         }
-        $bindings[':item_id'] = empty($this->lodestone['item']['id']) ? [null, 'null'] : $this->lodestone['item']['id'];
-        $bindings[':db_id'] = empty($this->lodestone['db_id']) ? [null, 'null'] : $this->lodestone['db_id'];
+        $bindings[':item_id'] = empty($this->lodestone['item']['id'])
+            ? [null, 'null']
+            : $this->lodestone['item']['id'];
+        $bindings[':db_id'] = empty($this->lodestone['db_id'])
+            ? [null, 'null']
+            : $this->lodestone['db_id'];
         try {
             return Query::query('INSERT INTO `ffxiv__achievement` SET `achievement_id`=:achievement_id, `name`=:name, `icon`=:icon, `points`=:points, `category`=:category, `subcategory`=:subcategory, `how_to`=:how_to, `title`=:title, `item`=:item, `item_icon`=:item_icon, `item_id`=:item_id, `db_id`=:db_id ON DUPLICATE KEY UPDATE `achievement_id`=:achievement_id, `name`=:name, `icon`=:icon, `points`=:points, `category`=:category, `subcategory`=:subcategory, `how_to`=:how_to, `title`=:title, `item`=:item, `item_icon`=:item_icon, `item_id`=:item_id, `db_id`=:db_id, `updated`=CURRENT_TIMESTAMP(6)', $bindings);
         } catch (\Throwable $exception) {
@@ -278,5 +262,33 @@ final class Achievement extends AbstractEntity
 
             return false;
         }
+    }
+
+    /**
+     * Helper function to get db_id from Lodestone based on the achievement name
+     *
+     * @param string $search_for
+     *
+     * @return string|null
+     */
+    private function getDBID(string $search_for): string|null
+    {
+        try {
+            $db_search_result = new Lodestone()->searchDatabase('achievement', 0, 0, $search_for)->getResult();
+        } catch (\Throwable) {
+            return null;
+        }
+        // Remove counts elements from achievement database
+        unset($db_search_result['database']['achievement']['page_current'], $db_search_result['database']['achievement']['page_total'], $db_search_result['database']['achievement']['total']);
+        if (\count($db_search_result) === 0) {
+            return null;
+        }
+        // Flip the array of achievements (if any) to ease searching for the right element
+        $db_search_result['database']['achievement'] = \array_flip(\array_combine(\array_keys($db_search_result['database']['achievement']), \array_column($db_search_result['database']['achievement'], 'name')));
+        if (!empty($db_search_result['database']['achievement'][$search_for])) {
+            return $db_search_result['database']['achievement'][$search_for];
+        }
+
+        return null;
     }
 }

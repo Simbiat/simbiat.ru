@@ -42,11 +42,20 @@
         <exclude name="Symfony.Arrays.MultiLineArrayComma.Invalid"/>
         <!-- Duplicates PSR12.Classes.ClassInstantiation.MissingParentheses -->
         <exclude name="Symfony.Objects.ObjectInstantiation.Invalid"/>
+        <!-- Duplicates SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing -->
+        <exclude name="Symfony.Formatting.BlankLineBeforeReturn"/>
     </rule>
 
     <!-- PHP compatibility -->
     <rule ref="PHPCompatibility"/>
     <config name="testVersion" value="8.5-"/>
+    <rule ref="PHPCompatibility.Syntax.RemovedCurlyBraceArrayAccess">
+        <!-- False-positive for hooks https://github.com/PHPCSStandards/PHP_CodeSniffer/issues/734 -->
+        <exclude-pattern>/app/packages/Cron/Task.php</exclude-pattern>
+        <exclude-pattern>/app/packages/Cron/TaskInstance.php</exclude-pattern>
+        <exclude-pattern>/app/packages/Cron/TraitForCron.php</exclude-pattern>
+        <exclude-pattern>/app/packages/Database/Maintainer/TraitForMaintainer.php</exclude-pattern>
+    </rule>
 
     <!-- Slevomat quality rules -->
     <rule ref="SlevomatCodingStandard"/>
@@ -58,6 +67,15 @@
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
 
     <rule ref="Squiz.PHP.CommentedOutCode"/>
+
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
+        <!-- Duplicates Symfony.Whitespace.DiscourageFitzinator.Invalid -->
+        <exclude name="Squiz.WhiteSpace.SuperfluousWhitespace.EndLine"/>
+    </rule>
+    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpacingBeforeAs">
+        <!-- This conflicts with multi-line for loops -->
+        <exclude name="Squiz.ControlStructures.ForEachLoopDeclaration.SpacingBeforeAs"/>
+    </rule>
 
     <!-- Symfony projects typically use attributes -->
     <rule ref="SlevomatCodingStandard.Attributes"/>
@@ -80,6 +98,8 @@
         <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.UselessAnnotation"/>
         <!-- This sniff has been deprecated since Slevomat Coding Standard 8.16.0 and will be removed in Slevomat Coding Standard 9.0.0. Use SlevomatCodingStandard.TypeHints.DNFTypeHintFormat instead -->
         <exclude name="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat"/>
+        <!-- Seems inconsistent -->
+        <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.UselessAnnotation"/>
     </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
         <properties>
@@ -98,9 +118,24 @@
             <property name="allowFullyQualifiedGlobalConstants" value="true"/>
         </properties>
     </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalFunctions">
+        <properties>
+            <property name="include" type="array"/>
+            <property name="includeSpecialFunctions" value="true"/>
+            <property name="exclude" type="array"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants">
+        <!-- False-positive for hooks https://github.com/slevomat/coding-standard/issues/1864 -->
+        <exclude-pattern>/app/packages/Cron/Task.php</exclude-pattern>
+        <exclude-pattern>/app/packages/Cron/TaskInstance.php</exclude-pattern>
+        <exclude-pattern>/app/packages/Cron/TraitForCron.php</exclude-pattern>
+        <exclude-pattern>/app/packages/Database/Maintainer/TraitForMaintainer.php</exclude-pattern>
+    </rule>
 
     <!-- Classes -->
     <rule ref="SlevomatCodingStandard.Classes">
+        <!-- Following 2 rules react to empty constructors used for dependency injections -->
         <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineAfterOpeningBrace"/>
         <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineBeforeClosingBrace"/>
         <exclude name="SlevomatCodingStandard.Classes.ClassLength.ClassTooLong"/>
@@ -119,13 +154,18 @@
         <exclude name="SlevomatCodingStandard.Functions.FunctionLength.FunctionLength"/>
         <!-- Conflicts with SlevomatCodingStandard.Functions.RequireTrailingCommaInCall -->
         <exclude name="SlevomatCodingStandard.Functions.DisallowTrailingCommaInCall"/>
-        <!-- Contradicts Symfony coding standards -->
+        <!-- Partially contradicts Symfony coding standards, also do not want to bother with fine-tuning -->
         <exclude name="SlevomatCodingStandard.Functions.RequireMultiLineCall"/>
         <exclude name="SlevomatCodingStandard.Functions.DisallowArrowFunction"/>
     </rule>
     <rule ref="SlevomatCodingStandard.Functions.ArrowFunctionDeclaration">
         <properties>
             <property name="spacesCountAfterKeyword" value="0"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Functions.DisallowTrailingCommaInDeclaration">
+        <properties>
+            <property name="onlySingleLine" value="true"/>
         </properties>
     </rule>
 
@@ -140,6 +180,7 @@
         <exclude name="SlevomatCodingStandard.ControlStructures.RequireSingleLineCondition"/>
         <!-- Duplicates PSR12.Classes.ClassInstantiation.MissingParentheses -->
         <exclude name="SlevomatCodingStandard.ControlStructures.NewWithParentheses"/>
+        <exclude name="SlevomatCodingStandard.ControlStructures.DisallowShortTernaryOperator"/>
     </rule>
     <rule ref="SlevomatCodingStandard.ControlStructures.EarlyExit">
         <properties>
@@ -197,6 +238,14 @@
         <exclude name="Universal.PHP.RequireExitDieParentheses"/>
         <!-- Duplicates SlevomatCodingStandard.Classes.RequireAbstractOrFinal -->
         <exclude name="Universal.Classes.RequireFinalClass"/>
+        <!-- Conflicts with some of other alignments, including those done by IDE -->
+        <exclude name="Universal.WhiteSpace.PrecisionAlignment"/>
+        <!-- I just do not like parentheses after empty attributes. And it does conflict IDE -->
+        <exclude name="Universal.Attributes.RequireAttributeParentheses"/>
+        <!-- Conflicts Universal.Lists.DisallowLongListSyntax -->
+        <exclude name="Universal.Lists.DisallowShortListSyntax"/>
+        <!-- Duplicates Symfony.Whitespace.CommaSpacing.Invalid -->
+        <exclude name="Universal.WhiteSpace.CommaSpacing.NoSpaceAfterInFunctionCall"/>
     </rule>
 
     <rule ref="Zend">
@@ -234,7 +283,7 @@
                 <element key="packages/HTTP/SSE" value="Simbiat\HTTP"/>
                 <element key="packages/http20" value="Simbiat\htt20"/>
                 <element key="packages/SandClock" value="Simbiat"/>
-                <element key="packages/Sniffs" value=""/>
+                <element key="packages/Sniffs/Simbiat" value="Simbiat"/>
                 <element key="packages/StringHelpers" value="Simbiat\StringHelpers"/>
             </property>
         </properties>
@@ -245,8 +294,13 @@
     </rule>
     <rule ref="SlevomatCodingStandard.Commenting">
         <!-- Conflicts SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment -->
+        <exclude name="SlevomatCodingStandard.Commenting.RequireOneLinePropertyDocComment"/>
+        <!-- Reacts to inspection suppressions a lot -->
         <exclude name="SlevomatCodingStandard.Commenting.RequireOneLineDocComment.MultiLineDocComment"/>
+        <!-- Everything needs to have comments, and this can remove them, but it helps find comments without description -->
+        <exclude phpcbf-only="true" name="SlevomatCodingStandard.Commenting.UselessFunctionDocComment"/>
     </rule>
+    <!-- This is mostly for the sake of standardization -->
     <rule ref="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment"/>
     <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing">
         <properties>
@@ -254,9 +308,11 @@
             <property name="linesCountBetweenDifferentAnnotationsTypes" value="1"/>
         </properties>
     </rule>
-    <!-- PHPDoc is usually much cleaner than assert() -->
-    <rule ref="SlevomatCodingStandard.PHP.RequireExplicitAssertion.RequiredExplicitAssertion">
+    <rule ref="SlevomatCodingStandard.PHP">
+        <!-- PHPDoc is usually much cleaner than assert() -->
         <exclude name="SlevomatCodingStandard.PHP.RequireExplicitAssertion.RequiredExplicitAssertion"/>
+        <!-- Duplicates Universal.Lists.DisallowLongListSyntax -->
+        <exclude name="SlevomatCodingStandard.PHP.ShortList"/>
     </rule>
     <rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces">
         <properties>
@@ -276,7 +332,33 @@
             <property name="indent" value="4"/>
         </properties>
     </rule>
+    <rule ref="Generic.WhiteSpace.ScopeIndent.IncorrectExact">
+        <!-- False-positive for hooks https://github.com/PHPCSStandards/PHP_CodeSniffer/issues/1493 -->
+        <exclude-pattern>/app/packages/Cron/Task.php</exclude-pattern>
+        <exclude-pattern>/app/packages/Cron/TaskInstance.php</exclude-pattern>
+        <exclude-pattern>/app/packages/Cron/TraitForCron.php</exclude-pattern>
+        <exclude-pattern>/app/packages/Database/Maintainer/TraitForMaintainer.php</exclude-pattern>
+    </rule>
     <rule ref="Universal.WhiteSpace.DisallowInlineTabs"/>
+
+    <!-- Duplicates Symfony.Whitespace.CommaSpacing.Invalid -->
+    <rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceAfterComma">
+        <exclude name="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceAfterComma"/>
+    </rule>
+
+    <!-- Following 2 rules react to empty constructors used for dependency injections -->
+    <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore">
+        <exclude name="Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore"/>
+    </rule>
+    <!-- This one also duplicates several sniffs, and seems to be flaky with ignoring, too -->
+    <rule ref="PEAR.WhiteSpace.ScopeClosingBrace">
+        <exclude name="PEAR.WhiteSpace.ScopeClosingBrace"/>
+    </rule>
+
+    <!-- Reacts to empty functions in abstracts -->
+    <rule ref="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine">
+        <exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine"/>
+    </rule>
 
     <!-- My own sniffs -->
     <rule ref="/app/packages/Sniffs/Simbiat/ruleset.xml"/>

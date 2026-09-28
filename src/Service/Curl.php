@@ -17,6 +17,15 @@ use Simbiat\http20\Sharing;
  */
 final class Curl
 {
+    // Allowed MIME types
+    public const array ALLOWED_MIME = [
+        // For now only images
+        'image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp', 'image/svg+xml',
+    ];
+
+    // cURL Handle is static to allow reuse of a single instance, if possible and needed
+    private(set) static \CurlHandle|null|false $curl_handle = null;
+
     // cURL options
     protected array $curl_options = [
         \CURLOPT_CONNECTTIMEOUT => 10,
@@ -51,18 +60,10 @@ final class Curl
         'Sec-Fetch-Mode: cors',
     ];
 
-    // cURL Handle is static to allow reuse of a single instance, if possible and needed
-    private(set) static \CurlHandle|null|false $curl_handle = null;
-    // Allowed MIME types
-    public const array ALLOWED_MIME = [
-        // For now only images
-        'image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp', 'image/svg+xml',
-    ];
-
     /**
      * @param string $user_agent Optional user agent
      */
-    final public function __construct(string $user_agent = 'Simbiat Software')
+    public function __construct(string $user_agent = 'Simbiat Software')
     {
         // Check if cURL handle already created and create it if not
         if (self::$curl_handle instanceof \CurlHandle) {
@@ -316,17 +317,20 @@ final class Curl
                     !\is_array($upload)
                     || empty($upload[0]['server_name'])
                 ) {
-                    return ['http_error' => $upload, 'reason' => match ($upload) {
-                        405 => 'Unsupported method',
-                        415 => 'Unsupported file format',
-                        501 => 'Uploads are disabled',
-                        507 => 'Not enough space',
-                        400 => 'Empty request or file',
-                        413 => 'Too large or too many files',
-                        409, 403 => 'Failed to write file',
-                        411 => 'Length required',
-                        default => 'Failed to upload the file'.$upload,
-                    },];
+                    return [
+                        'http_error' => $upload,
+                        'reason' => match ($upload) {
+                            405 => 'Unsupported method',
+                            415 => 'Unsupported file format',
+                            501 => 'Uploads are disabled',
+                            507 => 'Not enough space',
+                            400 => 'Empty request or file',
+                            413 => 'Too large or too many files',
+                            409, 403 => 'Failed to write file',
+                            411 => 'Length required',
+                            default => 'Failed to upload the file'.$upload,
+                        },
+                    ];
                 }
                 // If $upload had more than 1 file - remove all except the 1st one
                 if (\count($upload) > 1) {
@@ -347,7 +351,9 @@ final class Curl
             // Check if we have an image
             if (\preg_match('/^image\/.+/ui', $upload['type']) === 1) {
                 // Convert to webp if it's a supported format, unless we chose not to
-                $converted = $to_webp ? Images::toWebP($upload['server_path'].'/'.$upload['server_name']) : false;
+                $converted = $to_webp
+                    ? Images::toWebP($upload['server_path'].'/'.$upload['server_name'])
+                    : false;
                 if ($converted) {
                     $upload['hash'] = \hash_file('sha3-512', $converted);
                     $upload['size'] = \filesize($converted);

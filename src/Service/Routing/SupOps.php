@@ -30,9 +30,11 @@ use App\Controller\SupOps\Solution;
 final class SupOps extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $sub_routes = ['pitch', 'glossary', 'problem', 'solution', 'flow', 'metrics', 'resolution', 'interoperability', 'scale', 'comparison', 'needs',
+    protected array $sub_routes = [
+        'pitch', 'glossary', 'problem', 'solution', 'flow', 'metrics', 'resolution', 'interoperability', 'scale', 'comparison', 'needs',
         'facts', 'feedback', 'automation', 'collaboration', 'transparency', 'sustainability',
-        'l0', 'l1', 'l2', 'l3', 'l4',];
+        'l0', 'l1', 'l2', 'l3', 'l4',
+    ];
 
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

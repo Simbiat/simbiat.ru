@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 // TODO: Consider moving this to `/app/tests`
+
 namespace App\Service;
 
-use App\Service\Config;
 use JetBrains\PhpStorm\FileReference;
 use JetBrains\PhpStorm\NoReturn;
 use Simbiat\http20\Common;
@@ -26,7 +26,7 @@ final class Tests
     #[NoReturn]
     public function uploadPut(#[FileReference] string $filepath): void
     {
-        $curl = (new Curl())::$curl_handle;
+        $curl = new Curl()::$curl_handle;
         \curl_setopt($curl, \CURLOPT_URL, Config::$base_url);
         \curl_setopt($curl, \CURLOPT_UPLOAD, true);
         \curl_setopt($curl, \CURLOPT_HEADER, false);

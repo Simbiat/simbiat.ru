@@ -23,6 +23,8 @@ use Symfony\Component\Routing\Attribute\Route;
 final class LegacyController
 {
     /**
+     * Old page bootstrap
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     #[Route('/{path}', name: 'app_legacy', requirements: ['path' => '.*'], priority: -100)]

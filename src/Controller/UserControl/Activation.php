@@ -45,7 +45,9 @@ final class Activation extends Page
     {
         // Get user ID
         if (empty($_SESSION['user_id'])) {
-            $user_id = empty($path[0]) ? null : (int) $path[0];
+            $user_id = empty($path[0])
+                ? null
+                : (int) $path[0];
         } else {
             $user_id = (int) $_SESSION['user_id'];
         }

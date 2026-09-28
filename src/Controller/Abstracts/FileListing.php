@@ -15,15 +15,15 @@ use Simbiat\StringHelpers\Convert;
 abstract class FileListing extends StaticPage
 {
     // Cache age set to for a day
+    public int $list_items = 100;
+
     protected int $cache_age = 1440;
 
     // Directories relative to working dir
     // Expected format: ['URL_path_name' => ['path' => 'path', 'name' => 'name to use in UI', 'depth' => 0]]
     // Depth, when set and more than 0 will mean that, until folders up to this depth, will be scanned only for other folders and as such allow folder traversal
-    protected array $dirs = [];
-
     // Items to display per page for lists
-    public int $list_items = 100;
+    protected array $dirs = [];
 
     // Flag whether to go recursive or not
     protected bool $recursive = false;
@@ -50,7 +50,7 @@ abstract class FileListing extends StaticPage
         // Set the page number
         $this->page = (int) ($_GET['page'] ?? 1);
         $this->search_for = Convert::safeFileName($_GET['search'] ?? '', true, true);
-        if (empty($this->dirs)) {
+        if (\count($this->dirs) === 0) {
             return ['http_error' => 503, 'reason' => 'No directories are setup for this endpoint'];
         }
         if (empty($path[0])) {
@@ -114,6 +114,77 @@ abstract class FileListing extends StaticPage
 
         return $output_array;
     }
+
+    /**
+     * Get a list of files
+     *
+     * @param string $path       Base path
+     * @param bool   $count_only Whether we just count or generate a full list with details
+     *
+     * @return array
+     */
+    protected function getFiles(#[FileReference] string $path, bool $count_only = false): array
+    {
+        $iterator = $this->recursive
+            ? new \CallbackFilterIterator(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST), static fn($cur) => $cur->isFile());
+            : new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), static fn($cur) => $cur->isFile());
+        // Order results
+        /* @noinspection IteratorToArrayKeysCollisionInspection */
+        $iterator = \iterator_to_array($iterator);
+        \ksort($iterator, \SORT_NATURAL);
+        // Prepare the array
+        $result = [];
+        $result['files'] = [];
+        if ($count_only) {
+            $result['count'] = \iterator_count($iterator);
+        } else {
+            $id = 1;
+            foreach ($iterator as $key => $file) {
+                if (
+                    !\in_array($key, $this->exclude, true)
+                    && (
+                        empty($this->search_for)
+                        || \mb_stripos($key, $this->search_for, 0, 'UTF-8') !== false
+                    )
+                ) {
+                    if (
+                        $id >= ((($this->page - 1) * $this->list_items) + 1)
+                        && $id <= $this->page * $this->list_items
+                    ) {
+                        $file_details = [
+                            'basename' => $file->getBasename('.'.$file->getExtension()),
+                            'filename' => $file->getFilename(),
+                            'key' => $id++,
+                            'mime' => \mime_content_type($file->getPathname()),
+                            // Path relative to the working directory
+                            'path' => \str_replace(Config::$work_dir, '', $file->getPath()),
+                            'size' => $file->getSize(),
+                            'time' => $file->getMTime(),
+                        ];
+                        // Extra processing, if required
+                        $this->extra($file_details);
+                    } else {
+                        $file_details = [
+                            'key' => $id++,
+                        ];
+                    }
+                    $result['files'][] = $file_details;
+                }
+            }
+            $result['count'] = \count($result['files']);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Override the function to do some extra processing over the array
+     *
+     * @param array $file_details
+     *
+     * @return void
+     */
+    protected function extra(array &$file_details): void {}
 
     /**
      * Try to get the actual subdirectory path, based on an actual case of the name, and not the lower case as was passed in URL
@@ -214,9 +285,7 @@ abstract class FileListing extends StaticPage
     {
         // Order results
         /* @noinspection IteratorToArrayKeysCollisionInspection */
-        $iterator = \iterator_to_array(new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), function ($cur) {
-            return $cur->isDir();
-        }));
+        $iterator = \iterator_to_array(new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), static fn($cur) => $cur->isDir()));
         \ksort($iterator, \SORT_NATURAL);
         // Prepare the array
         $result = [];
@@ -240,81 +309,4 @@ abstract class FileListing extends StaticPage
 
         return $result;
     }
-
-    /**
-     * Get a list of files
-     *
-     * @param string $path       Base path
-     * @param bool   $count_only Whether we just count or generate a full list with details
-     *
-     * @return array
-     */
-    protected function getFiles(#[FileReference] string $path, bool $count_only = false): array
-    {
-        if ($this->recursive) {
-            $iterator = new \CallbackFilterIterator(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST), function ($cur) {
-                return $cur->isFile();
-            });
-        } else {
-            $iterator = new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), function ($cur) {
-                return $cur->isFile();
-            });
-        }
-        // Order results
-        /* @noinspection IteratorToArrayKeysCollisionInspection */
-        $iterator = \iterator_to_array($iterator);
-        \ksort($iterator, \SORT_NATURAL);
-        // Prepare the array
-        $result = [];
-        $result['files'] = [];
-        if ($count_only) {
-            $result['count'] = \iterator_count($iterator);
-        } else {
-            $id = 1;
-            foreach ($iterator as $key => $file) {
-                if (
-                    !\in_array($key, $this->exclude, true)
-                    && (
-                        empty($this->search_for)
-                        || \mb_stripos($key, $this->search_for, 0, 'UTF-8') !== false
-                    )
-                ) {
-                    if (
-                        $id >= ((($this->page - 1) * $this->list_items) + 1)
-                        && $id <= $this->page * $this->list_items
-                    ) {
-                        $file_details = [
-                            'basename' => $file->getBasename('.'.$file->getExtension()),
-                            'filename' => $file->getFilename(),
-                            'key' => $id++,
-                            'mime' => \mime_content_type($file->getPathname()),
-                            // Path relative to the working directory
-                            'path' => \str_replace(Config::$work_dir, '', $file->getPath()),
-                            'size' => $file->getSize(),
-                            'time' => $file->getMTime(),
-                        ];
-                        // Extra processing, if required
-                        $this->extra($file_details);
-                    } else {
-                        $file_details = [
-                            'key' => $id++,
-                        ];
-                    }
-                    $result['files'][] = $file_details;
-                }
-            }
-            $result['count'] = \count($result['files']);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Override the function to do some extra processing over the array
-     *
-     * @param array $file_details
-     *
-     * @return void
-     */
-    protected function extra(array &$file_details): void {}
 }

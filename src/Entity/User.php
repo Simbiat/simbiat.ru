@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 // TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
+
 namespace App\Entity;
 
 use App\Entity\FFXIV\AbstractEntity;
@@ -36,6 +37,7 @@ final class User extends Entity
      */
     public const int AVATAR_LIMIT = 10;
     // Entity's properties
+
     public string $username;
 
     // System flag, if true, user can't be deleted
@@ -117,108 +119,6 @@ final class User extends Entity
     public int $strikes = 0;
 
     /**
-     * Function to get initial data from DB
-     *
-     * @return array
-     */
-    protected function getFromDB(): array
-    {
-
-        $db_data = Query::query('SELECT `username`, `system`, `strikes`, `ff_token`, `registered`, `updated`, `parent_id`, (IF(`parent_id` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `user_id`=:user_id))) AS `parentname`, `birthday`, `first_name`, `last_name`, `middle_name`, `father_name`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`user_id`=`uc__user_to_section`.`user_id` WHERE `uc__users`.`user_id`=:user_id', ['user_id' => [$this->id, 'int']], return: 'row');
-        if (empty($db_data)) {
-            return [];
-        }
-        // Get user's groups
-        $db_data['groups'] = Query::query('SELECT `group_id` FROM `uc__user_to_group` WHERE `user_id`=:user_id', ['user_id' => [$this->id, 'int']], return: 'column');
-        if (\in_array(5, $db_data['groups'], true)) {
-            $this->banned = true;
-        }
-        // Get permissions
-        $db_data['permissions'] = $this->getPermissions();
-        if ($this->system) {
-            // System users need to be treated as not activated
-            $db_data['activated'] = false;
-        } else {
-            $db_data['activated'] = !\in_array(Config::$group_ids['Unverified'], $db_data['groups'], true);
-        }
-        $db_data['current_avatar'] = $this->getAvatar();
-
-        return $db_data;
-    }
-
-    /**
-     * Function process database data
-     *
-     * @param array $from_db
-     *
-     * @return void
-     */
-    protected function process(array $from_db): void
-    {
-        // Populate names
-        $this->name['first_name'] = $from_db['first_name'];
-        $this->name['last_name'] = $from_db['last_name'];
-        $this->name['middle_name'] = $from_db['middle_name'];
-        $this->name['father_name'] = $from_db['father_name'];
-        $this->name['prefix'] = $from_db['prefix'];
-        $this->name['suffix'] = $from_db['suffix'];
-        // Populate dates
-        $this->dates['registered'] = $from_db['registered'];
-        $this->dates['updated'] = $from_db['updated'];
-        $this->dates['birthday'] = $from_db['birthday'];
-        // Populate parent details
-        $this->parent['id'] = $from_db['parent_id'];
-        $this->parent['name'] = $from_db['parentname'];
-        // Pupulate personal sections
-        $this->sections = [
-            'blog' => empty($from_db['blog']) ? null : $from_db['blog'],
-            'changelog' => empty($from_db['changelog']) ? null : $from_db['changelog'],
-            'knowledgebase' => empty($from_db['knowledgebase']) ? null : $from_db['knowledgebase'],
-        ];
-        $this->system = (bool) $from_db['system'];
-        // Clean up the array
-        unset(
-            $from_db['system'],
-            $from_db['parent_id'],
-            $from_db['parentname'],
-            $from_db['first_name'],
-            $from_db['last_name'],
-            $from_db['middle_name'],
-            $from_db['father_name'],
-            $from_db['prefix'],
-            $from_db['suffix'],
-            $from_db['registered'],
-            $from_db['updated'],
-            $from_db['birthday'],
-            $from_db['blog'],
-            $from_db['changelog'],
-            $from_db['knowledgebase'],
-        );
-        // Populate the rest properties
-        Converters::arrayToProperties($this, $from_db);
-    }
-
-    /**
-     * Get user permissions
-     *
-     * @return array
-     */
-    private function getPermissions(): array
-    {
-        try {
-            return Query::query('
-                SELECT * FROM (
-                    SELECT `uc__group_to_permission`.`permission` FROM `uc__group_to_permission` LEFT JOIN `uc__groups` ON `uc__group_to_permission`.`group_id`=`uc__groups`.`group_id` LEFT JOIN `uc__permissions` ON `uc__group_to_permission`.`permission`=`uc__permissions`.`permission` LEFT JOIN `uc__user_to_group` ON `uc__group_to_permission`.`group_id`=`uc__user_to_group`.`group_id` WHERE `user_id`=:user_id
-                    UNION ALL
-                    SELECT `permission` FROM `uc__user_to_permission` WHERE `user_id`=:user_id
-                ) AS `temp` GROUP BY `permission`;
-            ', ['user_id' => [$this->id, 'int']], return: 'column');
-        } catch (\Throwable) {
-            return [];
-        }
-    }
-
-    /**
      * Get user email addresses
      *
      * @return array
@@ -229,9 +129,7 @@ final class User extends Entity
             $result['emails'] = Query::query('SELECT `email`, `subscribed`, `activation` FROM `uc__emails` WHERE `user_id`=:user_id ORDER BY `email`;', [':user_id' => [$this->id, 'int']], return: 'all');
             // Count how many emails are activated (to restrict removal of emails)
             $result['count_activated'] = \count(\array_filter(\array_column($result['emails'], 'activation'), '\is_null'));
-            $result['count_subscribed'] = \count(\array_filter(\array_column($result['emails'], 'subscribed'), static function ($x) {
-                return $x !== null;
-            }));
+            $result['count_subscribed'] = \count(\array_filter(\array_column($result['emails'], 'subscribed'), static fn($x) => $x !== null));
             $this->emails = $result;
 
             return $result;
@@ -409,16 +307,19 @@ final class User extends Entity
         // Get linked groups
         if (!empty($output_array['characters'])) {
             foreach ($output_array['characters'] as $character) {
-                $output_array['groups'][$character['id']] = AbstractEntity::cleanCrestResults(Query::query(
-                /** @lang SQL */                    '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rank_id`=0)
+                $output_array['groups'][$character['id']] = AbstractEntity::cleanCrestResults(
+                    Query::query(
+                    /** @lang SQL */
+                        '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rank_id`=0)
                 UNION ALL
                 (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`ls_id` AS `id`, `ffxiv__linkshell`.`name` AS `name`, NULL AS `crest_part_1`, NULL AS `crest_part_2`, NULL AS `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rank_id`=`ffxiv__linkshell_rank`.`ls_rank_id` WHERE `character_id`=:id AND `ffxiv__linkshell_character`.`current`=1 AND `ffxiv__linkshell_character`.`rank_id`=1)
                 UNION ALL
                 (SELECT \'pvpteam\' AS `type`, 1 AS `crossworld`, `ffxiv__pvpteam_character`.`pvp_id` AS `id`, `ffxiv__pvpteam`.`name` AS `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam` ON `ffxiv__pvpteam_character`.`pvp_id`=`ffxiv__pvpteam`.`pvp_id` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_character`.`rank_id`=`ffxiv__pvpteam_rank`.`pvp_rank_id` WHERE `character_id`=:id AND `ffxiv__pvpteam_character`.`current`=1 AND `ffxiv__pvpteam_character`.`rank_id`=1)
                 ORDER BY `name`;',
-                    [':id' => [$character['id'], 'int']],
-                    return: 'all',
-                ));
+                        [':id' => [$character['id'], 'int']],
+                        return: 'all',
+                    ),
+                );
             }
         }
 
@@ -430,7 +331,7 @@ final class User extends Entity
      *
      * @param string $new_name
      *
-     * @return array|true[]
+     * @return array<string, bool|int|string>
      */
     public function changeUsername(string $new_name): array
     {
@@ -663,7 +564,7 @@ final class User extends Entity
      *
      * @param bool $after_registration Flag indicating if login is being done after initial registration
      *
-     * @return array|true[]
+     * @return array<string, bool|int|string>
      */
     public function login(bool $after_registration = false): array
     {
@@ -859,14 +760,16 @@ final class User extends Entity
                     ],
                     return: 'value',
                 );
-                $affected = empty($current_pass) ? Query::query(
+                $affected = empty($current_pass)
+                    ? Query::query(
                         'INSERT IGNORE INTO `uc__cookies` (`cookie_id`, `validator`, `user_id`) VALUES (:cookie, :pass, :id);',
                         [
                             ':cookie' => $cookie_id,
                             ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
                             ':pass' => $hashed_pass,
                         ],
-                    ) : Query::query(
+                    )
+                    : Query::query(
                         'UPDATE `uc__cookies` SET `validator`=:pass, `time`=CURRENT_TIMESTAMP(6) WHERE `user_id`=:id AND `cookie_id`=:cookie AND `validator`=:validator;',
                         [
                             ':cookie' => $cookie_id,
@@ -944,7 +847,7 @@ final class User extends Entity
                 return true;
             }
             // Increase strike count
-            $this->strikes++;
+            ++$this->strikes;
             Query::query(
                 'UPDATE `uc__users` SET `strikes`=`strikes`+1 WHERE `user_id`=:user_id',
                 [':user_id' => [$this->id, 'string']],
@@ -1266,6 +1169,8 @@ final class User extends Entity
     }
 
     /**
+     * Register a new user
+     *
      * @return array
      */
     public function register(): array
@@ -1480,5 +1385,107 @@ final class User extends Entity
         Security::log(LogType::UserRemoval->value, 'Removal', ['user_id' => $this->id, 'hard' => $hard, 'result' => $result], ($hard ? SystemUser::Deleted->value : $this->id));
 
         return $result;
+    }
+
+    /**
+     * Function to get initial data from DB
+     *
+     * @return array
+     */
+    protected function getFromDB(): array
+    {
+
+        $db_data = Query::query('SELECT `username`, `system`, `strikes`, `ff_token`, `registered`, `updated`, `parent_id`, (IF(`parent_id` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `user_id`=:user_id))) AS `parentname`, `birthday`, `first_name`, `last_name`, `middle_name`, `father_name`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`user_id`=`uc__user_to_section`.`user_id` WHERE `uc__users`.`user_id`=:user_id', ['user_id' => [$this->id, 'int']], return: 'row');
+        if (empty($db_data)) {
+            return [];
+        }
+        // Get user's groups
+        $db_data['groups'] = Query::query('SELECT `group_id` FROM `uc__user_to_group` WHERE `user_id`=:user_id', ['user_id' => [$this->id, 'int']], return: 'column');
+        if (\in_array(5, $db_data['groups'], true)) {
+            $this->banned = true;
+        }
+        // Get permissions
+        $db_data['permissions'] = $this->getPermissions();
+        if ($this->system) {
+            // System users need to be treated as not activated
+            $db_data['activated'] = false;
+        } else {
+            $db_data['activated'] = !\in_array(Config::$group_ids['Unverified'], $db_data['groups'], true);
+        }
+        $db_data['current_avatar'] = $this->getAvatar();
+
+        return $db_data;
+    }
+
+    /**
+     * Function process database data
+     *
+     * @param array $from_db
+     *
+     * @return void
+     */
+    protected function process(array $from_db): void
+    {
+        // Populate names
+        $this->name['first_name'] = $from_db['first_name'];
+        $this->name['last_name'] = $from_db['last_name'];
+        $this->name['middle_name'] = $from_db['middle_name'];
+        $this->name['father_name'] = $from_db['father_name'];
+        $this->name['prefix'] = $from_db['prefix'];
+        $this->name['suffix'] = $from_db['suffix'];
+        // Populate dates
+        $this->dates['registered'] = $from_db['registered'];
+        $this->dates['updated'] = $from_db['updated'];
+        $this->dates['birthday'] = $from_db['birthday'];
+        // Populate parent details
+        $this->parent['id'] = $from_db['parent_id'];
+        $this->parent['name'] = $from_db['parentname'];
+        // Pupulate personal sections
+        $this->sections = [
+            'blog' => empty($from_db['blog']) ? null : $from_db['blog'],
+            'changelog' => empty($from_db['changelog']) ? null : $from_db['changelog'],
+            'knowledgebase' => empty($from_db['knowledgebase']) ? null : $from_db['knowledgebase'],
+        ];
+        $this->system = (bool) $from_db['system'];
+        // Clean up the array
+        unset(
+            $from_db['system'],
+            $from_db['parent_id'],
+            $from_db['parentname'],
+            $from_db['first_name'],
+            $from_db['last_name'],
+            $from_db['middle_name'],
+            $from_db['father_name'],
+            $from_db['prefix'],
+            $from_db['suffix'],
+            $from_db['registered'],
+            $from_db['updated'],
+            $from_db['birthday'],
+            $from_db['blog'],
+            $from_db['changelog'],
+            $from_db['knowledgebase'],
+        );
+        // Populate the rest properties
+        Converters::arrayToProperties($this, $from_db);
+    }
+
+    /**
+     * Get user permissions
+     *
+     * @return array
+     */
+    private function getPermissions(): array
+    {
+        try {
+            return Query::query('
+                SELECT * FROM (
+                    SELECT `uc__group_to_permission`.`permission` FROM `uc__group_to_permission` LEFT JOIN `uc__groups` ON `uc__group_to_permission`.`group_id`=`uc__groups`.`group_id` LEFT JOIN `uc__permissions` ON `uc__group_to_permission`.`permission`=`uc__permissions`.`permission` LEFT JOIN `uc__user_to_group` ON `uc__group_to_permission`.`group_id`=`uc__user_to_group`.`group_id` WHERE `user_id`=:user_id
+                    UNION ALL
+                    SELECT `permission` FROM `uc__user_to_permission` WHERE `user_id`=:user_id
+                ) AS `temp` GROUP BY `permission`;
+            ', ['user_id' => [$this->id, 'int']], return: 'column');
+        } catch (\Throwable) {
+            return [];
+        }
     }
 }

@@ -49,7 +49,7 @@ final class Character extends Page
         // Try to exit early based on the modification date
         $this->lastModified($output_array['character']['dates']['updated']);
         $output_array['character']['dates']['scheduled'] = $entity->scheduleUpdate();
-        $output_array['character']['can_refresh'] = 
+        $output_array['character']['can_refresh'] =
             (
                 empty($output_array['character']['dates']['deleted']) && (
                     empty($output_array['character']['dates']['scheduled']) ||
@@ -57,7 +57,8 @@ final class Character extends Page
                 )
             ) ||
             \in_array('refresh_all_ff', $_SESSION['permissions'], true)
-         ? true : false;
+            ? true
+            : false;
         // Continue breadcrumbs
         $this->breadcrumb[] = ['href' => '/fftracker/characters/'.$id, 'name' => $output_array['character']['name']];
         // Update meta

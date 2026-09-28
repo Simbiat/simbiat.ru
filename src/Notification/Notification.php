@@ -29,40 +29,41 @@ use Symfony\Component\Mime\Address;
 abstract class Notification extends Entity
 {
     // Format for IDs
-    protected string $id_format = '/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/mui';
+    /**
+     * Maximum attempts for sending notifications over email
+     */
+    final public const int MAX_ATTEMPTS = 10;
 
     /**
      * Subject for email
      */
     protected const string SUBJECT = '';
+
     /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
      */
     protected const int PRIORITY = 1;
+
     /**
      * Whether a non-empty array of Twig variables is required
      */
     protected const bool TWIG_REQUIRED = false;
+
     /**
      * Whether this is a security alert, and we need to collect session details and pass them to Twig
      */
     protected const bool SECURITY_ALERT = false;
+
     /**
      * Whether to send the notification to all emails registered for the user
      */
     protected const bool ALL_EMAILS = false;
+
     /**
      * Whether to send the notification to email even if some details fail to be retrieved
      */
     protected const bool ALWAYS_SEND = false;
-    /**
-     * Maximum attempts for sending notifications over email
-     */
-    final public const int MAX_ATTEMPTS = 10;
-    // ID of the user the notification belongs to
-    protected ?int $user = null;
 
-    // Whether notification is supposed to be sent via email (if a valid email)
     protected(set) ?string $email = null;
 
     // Whether notification is supposed to be sent via push
@@ -86,25 +87,11 @@ abstract class Notification extends Entity
     // Notification text
     protected(set) ?string $text = null;
 
-    /**
-     * Set entity ID
-     *
-     * @param string|int $id
-     *
-     * @return $this
-     */
-    final public function setId(string|int $id): self
-    {
-        if (\is_int($id)) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
-        }
-        if (!\uuid_is_valid($id)) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
-        }
-        $this->id = $id;
+    protected string $id_format = '/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/mui';
 
-        return $this;
-    }
+    // ID of the user the notification belongs to
+    // Whether notification is supposed to be sent via email (if a valid email)
+    protected ?int $user = null;
 
     /**
      * Mark the notification as read
@@ -137,6 +124,26 @@ abstract class Notification extends Entity
     }
 
     /**
+     * Set entity ID
+     *
+     * @param string|int $id
+     *
+     * @return $this
+     */
+    final public function setId(string|int $id): self
+    {
+        if (\is_int($id)) {
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
+        }
+        if (!\uuid_is_valid($id)) {
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
+        }
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
      * Delete the notification
      *
      * @return bool
@@ -149,48 +156,6 @@ abstract class Notification extends Entity
 
         return false;
     }
-
-    /**
-     * Get data from DB
-     *
-     * @return array
-     */
-    protected function getFromDB(): array
-    {
-        return Query::query('SELECT * FROM `sys__notifications` WHERE `uuid`=:id;', [':id' => $this->id], return: 'row');
-    }
-
-    /**
-     * Function process database data
-     *
-     * @param array $from_db
-     *
-     * @return void
-     */
-    protected function process(array $from_db): void
-    {
-        $this->user = $from_db['user_id'] ?? null;
-        $this->email = $from_db['email'] ?? null;
-        $this->push = (bool) $from_db['push'];
-        $this->created = $from_db['created'] !== null ? \strtotime($from_db['created']) : null;
-        if ($this->created === null) {
-            $this->id = null;
-        }
-        $this->sent = $from_db['sent'] !== null ? \strtotime($from_db['sent']) : null;
-        $this->is_read = $from_db['is_read'] !== null ? \strtotime($from_db['is_read']) : null;
-        $this->last_attempt = $from_db['last_attempt'] !== null ? \strtotime($from_db['last_attempt']) : null;
-        $this->attempts = (int) $from_db['attempts'];
-        $this->text = Sanitize::whiteString($from_db['text'] ?? '') ? null : Sanitization::sanitizeHTML($from_db['text']);
-    }
-
-    /**
-     * Generate text for message
-     *
-     * @param array $twig_vars Array of variables for Twig
-     *
-     * @return self
-     */
-    abstract protected function setText(array $twig_vars = []): self;
 
     /**
      * Generate and save the notification to database (if available)
@@ -285,7 +250,7 @@ abstract class Notification extends Entity
                     $geoip = new Reader(Config::$geoip.'GeoLite2-City.mmdb')->city($session_details['ip']);
                     $session_details['country'] = $geoip->country->name ?? null;
                     $session_details['city'] = $geoip->city->name ?? null;
-                } catch (\Throwable $throwable) {
+                } catch (\Throwable) {
                     $session_details['country'] = null;
                     $session_details['city'] = null;
                 }
@@ -513,8 +478,8 @@ abstract class Notification extends Entity
         try {
             // Add content
             $email->subject((Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT)
-                  ->htmlTemplate('email.twig')
-                  ->context(['subject' => (Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT, 'username' => $username, 'unsubscribe_all' => $subscribed, 'text' => $this->text, 'tracker' => $this->id, 'created' => $this->created, 'sent' => \time()]);
+                    ->htmlTemplate('email.twig')
+                    ->context(['subject' => (Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT, 'username' => $username, 'unsubscribe_all' => $subscribed, 'text' => $this->text, 'tracker' => $this->id, 'created' => $this->created, 'sent' => \time()]);
             try {
                 Query::query('UPDATE `sys__notifications` SET `attempts`=`attempts`+1, `last_attempt`=CURRENT_TIMESTAMP(6) WHERE `uuid` = :uuid;', [':uuid' => $this->id]);
             } catch (\Throwable $exception) {
@@ -549,5 +514,57 @@ abstract class Notification extends Entity
         }
 
         return true;
+    }
+
+    /**
+     * Generate text for message
+     *
+     * @param array $twig_vars Array of variables for Twig
+     *
+     * @return self
+     */
+    abstract protected function setText(array $twig_vars = []): self;
+
+    /**
+     * Get data from DB
+     *
+     * @return array
+     */
+    protected function getFromDB(): array
+    {
+        return Query::query('SELECT * FROM `sys__notifications` WHERE `uuid`=:id;', [':id' => $this->id], return: 'row');
+    }
+
+    /**
+     * Function process database data
+     *
+     * @param array $from_db
+     *
+     * @return void
+     */
+    protected function process(array $from_db): void
+    {
+        $this->user = $from_db['user_id'] ?? null;
+        $this->email = $from_db['email'] ?? null;
+        $this->push = (bool) $from_db['push'];
+        $this->created = $from_db['created'] !== null
+            ? \strtotime($from_db['created'])
+            : null;
+        if ($this->created === null) {
+            $this->id = null;
+        }
+        $this->sent = $from_db['sent'] !== null
+            ? \strtotime($from_db['sent'])
+            : null;
+        $this->is_read = $from_db['is_read'] !== null
+            ? \strtotime($from_db['is_read'])
+            : null;
+        $this->last_attempt = $from_db['last_attempt'] !== null
+            ? \strtotime($from_db['last_attempt'])
+            : null;
+        $this->attempts = (int) $from_db['attempts'];
+        $this->text = Sanitize::whiteString($from_db['text'] ?? '')
+            ? null
+            : Sanitization::sanitizeHTML($from_db['text']);
     }
 }

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 // TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
+
 namespace App\Entity\FFXIV;
 
 use App\Service\Errors;
@@ -17,7 +18,7 @@ final class PvPTeam extends AbstractEntity
 {
     // Custom properties
     protected const string ENTITY_TYPE = 'pvpteam';
-    protected string $id_format = '/^[a-z\d]{40}$/m';
+
     public array $dates = [];
     public ?string $community = null;
     public array $crest = [];
@@ -25,29 +26,7 @@ final class PvPTeam extends AbstractEntity
     public array $old_names = [];
     public array $members = [];
     public array $past_members = [];
-
-    /**
-     * Function to get initial data from DB
-     *
-     * @throws \Exception
-     */
-    protected function getFromDB(): array
-    {
-        // Get general information
-        $data = Query::query('SELECT * FROM `ffxiv__pvpteam` LEFT JOIN `ffxiv__server` ON `ffxiv__pvpteam`.`data_center_id`=`ffxiv__server`.`server_id` WHERE `pvp_id`=:id', [':id' => $this->id], return: 'row');
-        // Return empty if nothing was found
-        if ($data === []) {
-            return [];
-        }
-        // Get old names
-        $data['old_names'] = Query::query('SELECT `name` FROM `ffxiv__pvpteam_names` WHERE `pvp_id`=:id AND `name`<>:name', [':id' => $this->id, ':name' => $data['name']], return: 'column');
-        // Get members
-        $data['members'] = Query::query('SELECT \'character\' AS `type`, `ffxiv__pvpteam_character`.`character_id` AS `id`, `ffxiv__character`.`pvp_matches` AS `matches`, `ffxiv__character`.`name`, `current`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__pvpteam_rank`.`rank`, `ffxiv__pvpteam_rank`.`pvp_rank_id`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE uc__user_to_ff_character.`character_id`=`ffxiv__pvpteam_character`.`character_id`) AS `user_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_rank`.`pvp_rank_id`=`ffxiv__pvpteam_character`.`rank_id` LEFT JOIN `ffxiv__character` ON `ffxiv__pvpteam_character`.`character_id`=`ffxiv__character`.`character_id` WHERE `ffxiv__pvpteam_character`.`pvp_id`=:id ORDER BY `ffxiv__pvpteam_character`.`rank_id` , `ffxiv__character`.`name` ', [':id' => $this->id], return: 'all');
-        // Clean up the data from unnecessary (technical) clutter
-        unset($data['data_center_id'], $data['server_id'], $data['server']);
-
-        return $data;
-    }
+    protected string $id_format = '/^[a-z\d]{40}$/m';
 
     /**
      * Get PvP team data from Lodestone
@@ -105,6 +84,29 @@ final class PvPTeam extends AbstractEntity
         $data['id'] = $this->id;
         $data['404'] = false;
         unset($data['page_current'], $data['page_total']);
+
+        return $data;
+    }
+
+    /**
+     * Function to get initial data from DB
+     *
+     * @throws \Exception
+     */
+    protected function getFromDB(): array
+    {
+        // Get general information
+        $data = Query::query('SELECT * FROM `ffxiv__pvpteam` LEFT JOIN `ffxiv__server` ON `ffxiv__pvpteam`.`data_center_id`=`ffxiv__server`.`server_id` WHERE `pvp_id`=:id', [':id' => $this->id], return: 'row');
+        // Return empty if nothing was found
+        if ($data === []) {
+            return [];
+        }
+        // Get old names
+        $data['old_names'] = Query::query('SELECT `name` FROM `ffxiv__pvpteam_names` WHERE `pvp_id`=:id AND `name`<>:name', [':id' => $this->id, ':name' => $data['name']], return: 'column');
+        // Get members
+        $data['members'] = Query::query('SELECT \'character\' AS `type`, `ffxiv__pvpteam_character`.`character_id` AS `id`, `ffxiv__character`.`pvp_matches` AS `matches`, `ffxiv__character`.`name`, `current`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__pvpteam_rank`.`rank`, `ffxiv__pvpteam_rank`.`pvp_rank_id`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE uc__user_to_ff_character.`character_id`=`ffxiv__pvpteam_character`.`character_id`) AS `user_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_rank`.`pvp_rank_id`=`ffxiv__pvpteam_character`.`rank_id` LEFT JOIN `ffxiv__character` ON `ffxiv__pvpteam_character`.`character_id`=`ffxiv__character`.`character_id` WHERE `ffxiv__pvpteam_character`.`pvp_id`=:id ORDER BY `ffxiv__pvpteam_character`.`rank_id` , `ffxiv__character`.`name` ', [':id' => $this->id], return: 'all');
+        // Clean up the data from unnecessary (technical) clutter
+        unset($data['data_center_id'], $data['server_id'], $data['server']);
 
         return $data;
     }

@@ -17,14 +17,15 @@ final class Sections extends Api
     protected array $methods = ['POST' => ['add', 'edit'], 'DELETE' => 'delete', 'PATCH' => ['move', 'close', 'open', 'mark_private', 'mark_public']];
 
     // Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
-    protected array $verbs = ['add' => 'Add section',
-'close' => 'Close section',
-'delete' => 'Delete section',
-'edit' => 'Edit section',
-'mark_private' => 'Mark the section as private',
-'mark_public' => 'Mark the section as public',
-'move' => 'Move section to another subsection',
-'open' => 'Open section',
+    protected array $verbs = [
+        'add' => 'Add section',
+        'close' => 'Close section',
+        'delete' => 'Delete section',
+        'edit' => 'Edit section',
+        'mark_private' => 'Mark the section as private',
+        'mark_public' => 'Mark the section as public',
+        'move' => 'Move section to another subsection',
+        'open' => 'Open section',
     ];
 
     // Flag indicating that authentication is required

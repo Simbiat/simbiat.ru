@@ -35,6 +35,52 @@ abstract class Search extends Page
     protected string $search_for = '';
 
     /**
+     * Check if types are properly set
+     *
+     * @return void
+     */
+    final protected function typesCheck(): void
+    {
+        // Bad if the array is empty
+        if (\count($this->types) === 0) {
+            throw new \RuntimeException('Search types are not set');
+        }
+        // Check that classes are available
+        foreach ($this->types as $type) {
+            if (!\is_subclass_of($type['class'], \App\Service\Search\Search::class)) {
+                throw new \RuntimeException('`'.$type['class'].'` class does not extend `\Simbiat\Website\Abstracts\Search`');
+            }
+        }
+    }
+
+    /**
+     * Sanitize search term
+     *
+     * @param string $term
+     *
+     * @return bool
+     */
+    final protected function sanitize(string $term): bool
+    {
+        if (empty($term)) {
+            return true;
+        }
+        $sanitized = Sanitization::removeNonPrintable($term, true);
+        // Remove disallowed characters. Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in the future
+        $decoded_search = \preg_replace([$this->regex_search, '/:/'], '', $sanitized);
+        // Check if the new value is just the set of operators and if it is - consider a bad request
+        if (\preg_match('/^[+\-<>~()"*]+$/', $decoded_search)) {
+            return false;
+        }
+        // If the value is empty, ensure it's an empty string
+        if (!empty($decoded_search)) {
+            $this->search_for = $decoded_search;
+        }
+
+        return true;
+    }
+
+    /**
      * Generation of the page data
      *
      * @param array $path
@@ -86,25 +132,6 @@ abstract class Search extends Page
     }
 
     /**
-     * Check if types are properly set
-     *
-     * @return void
-     */
-    final protected function typesCheck(): void
-    {
-        // Bad if the array is empty
-        if (empty($this->types)) {
-            throw new \RuntimeException('Search types are not set');
-        }
-        // Check that classes are available
-        foreach ($this->types as $type) {
-            if (!\is_subclass_of($type['class'], \App\Service\Search\Search::class)) {
-                throw new \RuntimeException('`'.$type['class'].'` class does not extend `\Simbiat\Website\Abstracts\Search`');
-            }
-        }
-    }
-
-    /**
      * Get date from results
      *
      * @param array $results
@@ -125,31 +152,6 @@ abstract class Search extends Page
         }
 
         return \max($dates);
-    }
-
-    /**
-     * @param string $term
-     *
-     * @return bool
-     */
-    final protected function sanitize(string $term): bool
-    {
-        if (empty($term)) {
-            return true;
-        }
-        $sanitized = Sanitization::removeNonPrintable($term, true);
-        // Remove disallowed characters. Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in the future
-        $decoded_search = \preg_replace([$this->regex_search, '/:/'], '', $sanitized);
-        // Check if the new value is just the set of operators and if it is - consider a bad request
-        if (\preg_match('/^[+\-<>~()"*]+$/', $decoded_search)) {
-            return false;
-        }
-        // If the value is empty, ensure it's an empty string
-        if (!empty($decoded_search)) {
-            $this->search_for = $decoded_search;
-        }
-
-        return true;
     }
 
     /**

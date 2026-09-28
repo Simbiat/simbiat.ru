@@ -19,18 +19,20 @@ use Simbiat\StringHelpers\Sanitize;
 final class BICLibrary
 {
     /**
-     * Date from the XML file
-     */
-    private string $file_date;
-
-    /**
      * Base link where we download BIC files
      */
     public const string BIC_DOWN_BASE = 'https://www.cbr.ru/PSystem/payment_system/?UniDbQuery.Posted=True&UniDbQuery.To=';
+
     /**
      * Base link for href attribute
      */
     public const string BIC_BASE_HREF = 'https://www.cbr.ru';
+
+    /**
+     * Date from the XML file
+     */
+    private string $file_date;
+
     /**
      * Queries to process
      */
@@ -386,9 +388,22 @@ final class BICLibrary
         return true;
     }
 
-    // ############################
-    // Helper functions to get data
-    // ############################
+    /**
+     * Function to get the current library date
+     *
+     * @return \DateTime
+     */
+    public function bicDate(): \DateTime
+    {
+        try {
+            $date = Query::query('SELECT `value` FROM `bic__settings` WHERE `setting`=\'date\';', return: 'value');
+
+            return \DateTime::createFromFormat('d.m.Y', $date);
+        } catch (\Throwable) {
+            return \DateTime::createFromTimestamp(\time());
+        }
+    }
+
     /**
      * Get a BIC from DB
      */
@@ -481,10 +496,6 @@ final class BICLibrary
     {
         return Query::query('SELECT `BIC` FROM `bic__list` WHERE `DateOut` IS NULL;', return: 'column');
     }
-
-    // ##################################
-    // Helper functions to close entities
-    // ##################################
 
     /**
      * Close BIC
@@ -762,21 +773,5 @@ final class BICLibrary
 
         // This means that no file was found for the date (which is not necessarily a problem)
         return true;
-    }
-
-    /**
-     * Function to get the current library date
-     *
-     * @return \DateTime
-     */
-    public function bicDate(): \DateTime
-    {
-        try {
-            $date = Query::query('SELECT `value` FROM `bic__settings` WHERE `setting`=\'date\';', return: 'value');
-
-            return \DateTime::createFromFormat('d.m.Y', $date);
-        } catch (\Throwable) {
-            return \DateTime::createFromTimestamp(\time());
-        }
     }
 }

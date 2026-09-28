@@ -61,21 +61,6 @@ abstract class Api
     protected array $allowed_origins = [];
 
     /**
-     * Send API headers
-     *
-     * @return void
-     */
-    public static function headers(): void
-    {
-        // Send headers
-        if (!\headers_sent()) {
-            \header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
-            \header('Allow: GET, HEAD, OPTIONS');
-            \header('Content-Type: application/json; charset=utf-8');
-        }
-    }
-
-    /**
      * This is a general routing check for supported node
      *
      * @param array $path
@@ -125,10 +110,11 @@ abstract class Api
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
             try {
-                $data = 
+                $data =
                     \count($this->required_permission) !== 0
                     && \count(\array_intersect($this->required_permission, $_SESSION['permissions'])) === 0
-                 ? ['http_error' => 403, 'reason' => 'No `'.\implode('` or `', $this->required_permission).'` permission'] : $this->getData($path);
+                    ? ['http_error' => 403, 'reason' => 'No `'.\implode('` or `', $this->required_permission).'` permission']
+                    : $this->getData($path);
             } catch (\Throwable $exception) {
                 if (\preg_match('/(ID `.*` for entity `.*` has incorrect format\.)|(ID can\'t be empty\.)/ui', $exception->getMessage()) === 1) {
                     $data = ['http_error' => 400, 'reason' => $exception->getMessage()];
@@ -344,6 +330,30 @@ abstract class Api
     }
 
     /**
+     * This is an actual API response generation based on further details of the $path
+     *
+     * @param array $path
+     *
+     * @return array<string>
+     */
+    abstract protected function genData(array $path): array;
+
+    /**
+     * Send API headers
+     *
+     * @return void
+     */
+    public static function headers(): void
+    {
+        // Send headers
+        if (!\headers_sent()) {
+            \header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
+            \header('Allow: GET, HEAD, OPTIONS');
+            \header('Content-Type: application/json; charset=utf-8');
+        }
+    }
+
+    /**
      * This is a wrapper to allow some common checks
      *
      * @param array $path
@@ -416,13 +426,4 @@ abstract class Api
 
         return $result;
     }
-
-    /**
-     * This is an actual API response generation based on further details of the $path
-     *
-     * @param array $path
-     *
-     * @return array
-     */
-    abstract protected function genData(array $path): array;
 }

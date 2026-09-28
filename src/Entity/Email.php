@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 // TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
+
 namespace App\Entity;
 
 use App\Enum\LogType;
@@ -55,53 +56,13 @@ final class Email extends Entity
         // Validate that string is email
         if (\filter_var($id, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
             // Not an email, something is wrong, protect ourselves
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.self::class.'` has incorrect format.');
         }
         $this->id = $id;
         /** @noinspection UnusedFunctionResultInspection */
         $this->getFromDB();
 
         return $this;
-    }
-
-    /**
-     * Function to get initial data from DB
-     *
-     * @return array
-     */
-    protected function getFromDB(): array
-    {
-        $details = Query::query('SELECT `email`, `uc__emails`.`user_id`, `username`, `subscribed`, `activation` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__emails`.`user_id`=`uc__users`.`user_id` WHERE `email`=:mail', [':mail' => $this->id], return: 'row');
-        if (
-            \is_array($details)
-            && \array_key_exists('email', $details)
-        ) {
-            $this->registered = true;
-            $this->subscribed = $details['subscribed'];
-            $this->activation = $details['activation'];
-            $this->user_id = $details['user_id'];
-            if ($this->user_id === SystemUser::Unknown->value) {
-                $this->anonymous = true;
-            } else {
-                $this->anonymous = false;
-                $this->username = $details['username'];
-            }
-        }
-        $this->banned = Query::query('SELECT `mail` FROM `uc__bad_mails` WHERE `mail`=:mail', [':mail' => $this->id], return: 'check');
-
-        return [];
-    }
-
-    /**
-     * Function process database data
-     *
-     * @param array $from_db
-     *
-     * @return void
-     */
-    protected function process(array $from_db): void
-    {
-        Converters::arrayToProperties($this, $from_db);
     }
 
     /**
@@ -118,7 +79,7 @@ final class Email extends Entity
             return true;
         }
 
-        return ($this->banned || ($this->registered && !$this->anonymous && $this->activation === null));
+        return $this->banned || ($this->registered && !$this->anonymous && $this->activation === null);
     }
 
     /**
@@ -214,24 +175,6 @@ final class Email extends Entity
     }
 
     /**
-     * Check if it's safe to unsubscribe the email
-     *
-     * @return bool
-     */
-    private function safeToUnsubscribe(): bool
-    {
-        $emails = new User($_SESSION['user_id'])->getEmails();
-        $exists = \array_search($this->id, \array_column($emails['emails'], 'email'), true);
-
-        return !(
-            // Safe to unsubscribe if mail does not exist for the user
-            $exists !== false &&
-            // Safe to unsubscribe only if there are other emails that are subscribed
-            $emails['emails'][$exists]['activation'] === null && $emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1
-        );
-    }
-
-    /**
      * Delete email
      *
      * @return bool
@@ -253,34 +196,6 @@ final class Email extends Entity
         Security::log(LogType::UserDetailsChanged->value, 'Attempted to delete email', ['email' => $this->id, 'result' => $result]);
 
         return $result;
-    }
-
-    /**
-     * Check if it's safe to remove the email
-     *
-     * @return bool
-     */
-    private function safeToDelete(): bool
-    {
-        $emails = new User($_SESSION['user_id'])->getEmails();
-        $exists = \array_search($this->id, \array_column($emails['emails'], 'email'), true);
-        if ($exists === false) {
-            // Emails is not in the list, so nothing to remove
-            return true;
-        }
-
-        if (
-            // Safe to delete if it's not activated
-            $emails['emails'][$exists]['activation'] !== null ||
-            // Safe to delete if it is activated, but not the only one
-            $emails['count_activated'] === 1 ||
-            // Safe to delete if it's not the only one subscribed
-            ($emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1)
-        ) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -417,6 +332,92 @@ final class Email extends Entity
             return false;
         }
         new UserActivation()->save($this->id, ['activation' => $activation, 'user_id' => $this->user_id], true, false, $this->id)->send();
+
+        return true;
+    }
+
+    /**
+     * Function to get initial data from DB
+     *
+     * @return array
+     */
+    protected function getFromDB(): array
+    {
+        $details = Query::query('SELECT `email`, `uc__emails`.`user_id`, `username`, `subscribed`, `activation` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__emails`.`user_id`=`uc__users`.`user_id` WHERE `email`=:mail', [':mail' => $this->id], return: 'row');
+        if (
+            \is_array($details)
+            && \array_key_exists('email', $details)
+        ) {
+            $this->registered = true;
+            $this->subscribed = $details['subscribed'];
+            $this->activation = $details['activation'];
+            $this->user_id = $details['user_id'];
+            if ($this->user_id === SystemUser::Unknown->value) {
+                $this->anonymous = true;
+            } else {
+                $this->anonymous = false;
+                $this->username = $details['username'];
+            }
+        }
+        $this->banned = Query::query('SELECT `mail` FROM `uc__bad_mails` WHERE `mail`=:mail', [':mail' => $this->id], return: 'check');
+
+        return [];
+    }
+
+    /**
+     * Function process database data
+     *
+     * @param array $from_db
+     *
+     * @return void
+     */
+    protected function process(array $from_db): void
+    {
+        Converters::arrayToProperties($this, $from_db);
+    }
+
+    /**
+     * Check if it's safe to unsubscribe the email
+     *
+     * @return bool
+     */
+    private function safeToUnsubscribe(): bool
+    {
+        $emails = new User($_SESSION['user_id'])->getEmails();
+        $exists = \array_search($this->id, \array_column($emails['emails'], 'email'), true);
+
+        return !(
+            // Safe to unsubscribe if mail does not exist for the user
+            $exists !== false &&
+            // Safe to unsubscribe only if there are other emails that are subscribed
+            $emails['emails'][$exists]['activation'] === null && $emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1
+        );
+    }
+
+    /**
+     * Check if it's safe to remove the email
+     *
+     * @return bool
+     */
+    private function safeToDelete(): bool
+    {
+        $emails = new User($_SESSION['user_id'])->getEmails();
+        $exists = \array_search($this->id, \array_column($emails['emails'], 'email'), true);
+        if ($exists === false) {
+            // Emails is not in the list, so nothing to remove
+            return true;
+        }
+
+        if (
+            // Safe to delete if it's not activated
+            $emails['emails'][$exists]['activation'] !== null ||
+            // Safe to delete if it is activated, but not the only one
+            $emails['count_activated'] === 1 ||
+            // Safe to delete if it's not the only one subscribed
+            ($emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1)
+        ) {
+            return false;
+        }
 
         return true;
     }

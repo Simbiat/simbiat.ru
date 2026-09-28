@@ -37,9 +37,6 @@ abstract class Search
     // Optional GROUP BY
     protected string $group_by = '';
 
-    // Optional bindings, in the case of more complex WHERE clauses. Needs to be set during construction, since this implies "unique" values
-    protected array $bindings = [];
-
     // Count argument. In some cases you may want to count a certain column instead of using * (default).
     protected string $count_argument = '*';
 
@@ -61,46 +58,12 @@ abstract class Search
     protected array $like = [];
 
     /**
-     * @param array       $bindings SQL attributes to bind
-     * @param string|null $where    WHERE clause
-     * @param string|null $order    ORDER BY clause
-     * @param string|null $group    GROUP BY clause
-     */
-    final public function __construct(array $bindings = [], ?string $where = null, ?string $order = null, ?string $group = null)
-    {
-        // Check that subclass has set appropriate properties, except $where, which is ok to inherit
-        foreach (['entity_type', 'table', 'fields', 'order_default', 'order_list'] as $property) {
-            if (empty($this->{$property})) {
-                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
-            }
-        }
-        if (empty($this->count_argument)) {
-            $this->count_argument = '*';
-        }
-        // Set bindings
-        $this->bindings = $bindings;
-        // Override WHERE
-        if ($where !== null) {
-            $this->where = $where;
-        }
-        // Override ORDER BY
-        if ($order !== null) {
-            $this->order_list = $order;
-            $this->order_default = $order;
-        }
-        // Override GROUP BY
-        if ($group !== null) {
-            $this->group_by = $group;
-        }
-    }
-
-    /**
      * Actually run the search
      *
      * @param string $what  What to search for
      * @param int    $limit How many results to provide
      *
-     * @return array|int[]
+     * @return array<array>
      */
     final public function search(string $what = '', int $limit = 15): array
     {
@@ -108,7 +71,9 @@ abstract class Search
             // Count first
             $results = ['count' => $this->countEntities($what)];
             // Do actual search only if the count is not 0
-            $results['results'] = $results['count'] > 0 ? $this->selectEntities($what, $limit) : [];
+            $results['results'] = $results['count'] > 0
+                ? $this->selectEntities($what, $limit)
+                : [];
 
             return $results;
         } catch (\Throwable $e) {
@@ -164,7 +129,7 @@ abstract class Search
         try {
             if ($what !== '') {
                 // Check if the search term has %
-                $like = \preg_match('/%/', $what) === 1 ? true : false;
+                $like = \preg_match('/%/', $what) === 1;
                 // String for exact and LIKE searches. Just so that PHPStorm does not complain about duplicates
                 $exactly_like = 'SELECT COUNT('.$this->count_argument.') FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->where_search) ? '' : $this->where_search.' OR ');
                 // Prepare results
@@ -219,7 +184,7 @@ abstract class Search
         try {
             if ($what !== '') {
                 // Check if the search term has %
-                $like = \preg_match('/%/', $what) === 1 ? true : false;
+                $like = \preg_match('/%/', $what) === 1;
                 // String for exact and LIKE searches. Just so that PHPStorm does not complain about duplicates
                 $exactly_like = 'SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->where_search) ? '' : $this->where_search.' OR ');
                 // Prepare the results array
@@ -260,18 +225,6 @@ abstract class Search
     }
 
     /**
-     * Optional post-processing. Override to apply. Is not meant for removing results.
-     *
-     * @param array $results
-     *
-     * @return array
-     */
-    protected function postProcess(array $results): array
-    {
-        return $results;
-    }
-
-    /**
      * Generate WHERE for direct comparison
      *
      * @return string
@@ -307,5 +260,49 @@ abstract class Search
 
         // Remove the last +, close the brackets and return
         return \mb_trim($result, ' +', 'UTF-8').')';
+    }
+
+    /**
+     * @param array       $bindings Optional bindings, in the case of more complex WHERE clauses. Needs to be set during construction, since this implies "unique" values.
+     * @param string|null $where    WHERE clause
+     * @param string|null $order    ORDER BY clause
+     * @param string|null $group    GROUP BY clause
+     */
+    final public function __construct(protected array $bindings = [], ?string $where = null, ?string $order = null, ?string $group = null)
+    {
+        // Check that subclass has set appropriate properties, except $where, which is ok to inherit
+        foreach (['entity_type', 'table', 'fields', 'order_default', 'order_list'] as $property) {
+            if (empty($this->{$property})) {
+                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
+            }
+        }
+        if (empty($this->count_argument)) {
+            $this->count_argument = '*';
+        }
+        // Override WHERE
+        if ($where !== null) {
+            $this->where = $where;
+        }
+        // Override ORDER BY
+        if ($order !== null) {
+            $this->order_list = $order;
+            $this->order_default = $order;
+        }
+        // Override GROUP BY
+        if ($group !== null) {
+            $this->group_by = $group;
+        }
+    }
+
+    /**
+     * Optional post-processing. Override to apply. Is not meant for removing results.
+     *
+     * @param array $results
+     *
+     * @return array
+     */
+    protected function postProcess(array $results): array
+    {
+        return $results;
     }
 }

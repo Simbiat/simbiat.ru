@@ -13,7 +13,8 @@ use Simbiat\http20\Headers;
 final class Sitemap extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $sub_routes = ['index', 'fftracker',
+    protected array $sub_routes = [
+        'index', 'fftracker',
         'general', 'bics', 'threads', 'users',
         'ffxiv_characters', 'ffxiv_freecompanies', 'ffxiv_linkshells', 'ffxiv_pvpteams', 'ffxiv_achievements',
     ];

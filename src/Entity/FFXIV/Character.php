@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 // TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
+
 namespace App\Entity\FFXIV;
 
 use App\Entity\User;
@@ -37,60 +38,6 @@ final class Character extends AbstractEntity
     public array $following = [];
     public int $achievement_points = 0;
     public array $owned = [];
-
-    /**
-     * Function to get initial data from DB
-     *
-     * @throws \Exception
-     */
-    protected function getFromDB(): array
-    {
-        // Get general information. Using *, but add name, because otherwise Achievement name overrides Character name, and we do not want that
-        $data = Query::query('SELECT *, `ffxiv__character`.`character_id`, `ffxiv__achievement`.`icon` AS `title_icon`, `ffxiv__character`.`name`, `ffxiv__character`.`registered`, `ffxiv__character`.`updated`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`) AS `user_id` FROM `ffxiv__character` LEFT JOIN `ffxiv__clan` ON `ffxiv__character`.`clan_id` = `ffxiv__clan`.`clan_id` LEFT JOIN `ffxiv__guardian` ON `ffxiv__character`.`guardian_id` = `ffxiv__guardian`.`guardian_id` LEFT JOIN `ffxiv__nameday` ON `ffxiv__character`.`nameday_id` = `ffxiv__nameday`.`nameday_id` LEFT JOIN `ffxiv__city` ON `ffxiv__character`.`city_id` = `ffxiv__city`.`city_id` LEFT JOIN `ffxiv__server` ON `ffxiv__character`.`server_id` = `ffxiv__server`.`server_id` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__character`.`gc_rank_id` = `ffxiv__grandcompany_rank`.`gc_rank_id` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__grandcompany_rank`.`gc_id` = `ffxiv__grandcompany`.`gc_id` LEFT JOIN `ffxiv__achievement` ON `ffxiv__character`.`title_id` = `ffxiv__achievement`.`achievement_id` WHERE `ffxiv__character`.`character_id` = :id;', [':id' => $this->id], return: 'row');
-        if (!empty($data['hidden'])) {
-            foreach ($data as $key => $value) {
-                if (!\in_array($key, ['avatar', 'registered', 'updated', 'deleted', 'hidden', 'name'])) {
-                    unset($data[$key]);
-                }
-            }
-        } else {
-            // Return empty if nothing was found
-            if ($data === []) {
-                return [];
-            }
-            // Get username if character is linked to a user
-            $data['username'] = !empty($data['user_id']) ? Query::query('SELECT `username` FROM `uc__users` WHERE `user_id`=:user_id;', [':user_id' => $data['user_id']], return: 'value') : null;
-            // Get jobs
-            $data['jobs'] = Query::query('SELECT `name`, `level`, `last_change` FROM `ffxiv__character_jobs` LEFT JOIN `ffxiv__jobs` ON `ffxiv__character_jobs`.`job_id`=`ffxiv__jobs`.`job_id` WHERE `ffxiv__character_jobs`.`character_id`=:id ORDER BY `name`;', [':id' => $this->id], return: 'all');
-            // Get old names. For now, returning only the count due to cases of bullying, when the old names are learnt. They are still being collected, though, for statistical purposes.
-            $data['old_names'] = Query::query('SELECT `name` FROM `ffxiv__character_names` WHERE `character_id`=:id AND `name`!=:name', [':id' => $this->id, ':name' => $data['name']], return: 'column');
-            // Get previous known incarnations (combination of gender and race/clan)
-            $data['incarnations'] = Query::query('SELECT `gender`, `ffxiv__clan`.`race`, `ffxiv__clan`.`clan` FROM `ffxiv__character_clans` LEFT JOIN `ffxiv__clan` ON `ffxiv__character_clans`.`clan_id` = `ffxiv__clan`.`clan_id` WHERE `ffxiv__character_clans`.`character_id`=:id AND !(`ffxiv__character_clans`.`clan_id`=:clan_id AND `ffxiv__character_clans`.`gender`=:gender) ORDER BY `gender` , `race` , `clan` ', [':id' => $this->id, ':clan_id' => $data['clan_id'], ':gender' => $data['gender']], return: 'all');
-            // Get old servers
-            $data['servers'] = Query::query('SELECT `ffxiv__server`.`data_center`, `ffxiv__server`.`server` FROM `ffxiv__character_servers` LEFT JOIN `ffxiv__server` ON `ffxiv__server`.`server_id`=`ffxiv__character_servers`.`server_id` WHERE `ffxiv__character_servers`.`character_id`=:id AND `ffxiv__character_servers`.`server_id` != :server_id ORDER BY `data_center` , `server` ', [':id' => $this->id, ':server_id' => $data['server_id']], return: 'all');
-            // Get achievements
-            $data['achievements'] = Query::query('SELECT \'achievement\' AS `type`, `achievement_id` AS `id`, `category`, `subcategory`,`name`, `points`, (SELECT `time` FROM `ffxiv__character_achievement` WHERE `character_id` = :id AND `ffxiv__character_achievement`.`achievement_id`=`ffxiv__achievement`.`achievement_id`) AS `time`, `icon` FROM `ffxiv__achievement` WHERE `ffxiv__achievement`.`category` IS NOT NULL AND `achievement_id` IN (SELECT `achievement_id` FROM `ffxiv__character_achievement` WHERE `character_id` = :id) ORDER BY `time` DESC, `name`;', [':id' => $this->id], return: 'all');
-            // Get friends
-            $data['friends'] = Query::query('SELECT \'character\' AS `type`, `outer`.`friend` AS `id`, `ffxiv__character`.`name` AS `name`, `avatar` AS `icon`, `current`, EXISTS(SELECT `character_id` FROM `ffxiv__character_friends` WHERE `ffxiv__character_friends`.`character_id`=`outer`.`friend` AND `ffxiv__character_friends`.`friend`=`outer`.`character_id` AND `ffxiv__character_friends`.`current`=`outer`.`current`) AS `mutual`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`) AS `user_id`, NULL AS `rank_id` FROM `ffxiv__character_friends` AS `outer` LEFT JOIN `ffxiv__character` ON `outer`.`friend`=`ffxiv__character`.`character_id` WHERE `outer`.`character_id`=:id', [':id' => $this->id], return: 'all');
-            // Get characters being followed by the character
-            $data['following'] = Query::query('SELECT \'character\' AS `type`, `outer`.`following` AS `id`, `ffxiv__character`.`name` AS `name`, `avatar` AS `icon`, `current`, EXISTS(SELECT `character_id` FROM `ffxiv__character_following` WHERE `ffxiv__character_following`.`character_id`=`outer`.`following` AND `ffxiv__character_following`.`following`=`outer`.`character_id` AND `ffxiv__character_following`.`current`=`outer`.`current`) AS `mutual`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`) AS `user_id`, NULL AS `rank_id` FROM `ffxiv__character_following` AS `outer` LEFT JOIN `ffxiv__character` ON `outer`.`following`=`ffxiv__character`.`character_id` WHERE `outer`.`character_id`=:id', [':id' => $this->id], return: 'all');
-            // Get affiliated groups' details
-            $data['groups'] = AbstractEntity::cleanCrestResults(Query::query(
-            /** @lang SQL */                '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `current`, `ffxiv__freecompany_character`.`rank_id`, `ffxiv__freecompany_rank`.`rankname` AS `rank`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id)
-            UNION ALL
-            (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`ls_id` AS `id`, `ffxiv__linkshell`.`name` AS `name`, `current`, `ffxiv__linkshell_character`.`rank_id`, `ffxiv__linkshell_rank`.`rank` AS `rank`, NULL AS `crest_part_1`, NULL AS `crest_part_2`, NULL AS `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rank_id`=`ffxiv__linkshell_rank`.`ls_rank_id` WHERE `character_id`=:id)
-            UNION ALL
-            (SELECT \'pvpteam\' AS `type`, 1 AS `crossworld`, `ffxiv__pvpteam_character`.`pvp_id` AS `id`, `ffxiv__pvpteam`.`name` AS `name`, `current`, `ffxiv__pvpteam_character`.`rank_id`, `ffxiv__pvpteam_rank`.`rank` AS `rank`, `crest_part_1`, `crest_part_2`, `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam` ON `ffxiv__pvpteam_character`.`pvp_id`=`ffxiv__pvpteam`.`pvp_id` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_character`.`rank_id`=`ffxiv__pvpteam_rank`.`pvp_rank_id` WHERE `character_id`=:id)
-            ORDER BY `current` DESC, `name`;',
-                [':id' => $this->id],
-                return: 'all',
-            ));
-            // Clean up the data from unnecessary (technical) clutter
-            unset($data['clan_id'], $data['nameday_id'], $data['achievement_id'], $data['category'], $data['subcategory'], $data['how_to'], $data['points'], $data['icon'], $data['item'], $data['item_icon'], $data['item_id'], $data['server_id']);
-        }
-
-        return $data;
-    }
 
     /**
      * Get character data from Lodestone
@@ -174,6 +121,121 @@ final class Character extends AbstractEntity
         $data = $data['characters'][$this->id];
         $data['id'] = $this->id;
         $data['404'] = false;
+
+        return $data;
+    }
+
+    /**
+     * Link user to character
+     *
+     * @return array
+     *
+     * @internal
+     */
+    public function linkUser(): array
+    {
+        try {
+            // Check if a character exists and is linked already
+            $character = Query::query('SELECT `character_id`, `user_id` FROM `uc__user_to_ff_character` WHERE `character_id`=:id;', [':id' => $this->id], return: 'row');
+            if (
+                $character !== []
+                && $character['user_id']
+            ) {
+                return ['http_error' => 409, 'reason' => 'Character already linked'];
+            }
+            // Register or update the character
+            $this->update();
+            if (!empty($this->lodestone['id'])) {
+                // Something went wrong with getting data
+                if (!empty($this->lodestone['404'])) {
+                    return ['http_error' => 400, 'reason' => 'No character found with id `'.$this->id.'`'];
+                }
+
+                return ['http_error' => 500, 'reason' => 'Failed to get fresh data for character with id `'.$this->id.'`'];
+            }
+            // Check if biography is set
+            if (empty($this->lodestone['bio'])) {
+                return ['http_error' => 424, 'reason' => 'No biography found for character with id `'.$this->id.'`'];
+            }
+            // Check if the biography contains the respected text
+            $token = \preg_replace('/(.*)(fftracker:([a-z\d]{64}))(.*)/uis', '$3', $this->lodestone['bio']);
+            if (empty($token)) {
+                return ['http_error' => 424, 'reason' => 'No tracker token found for character with id `'.$this->id.'`'];
+            }
+            // Check if the ID of the current user is the same as the user who has this token
+            if (!Query::query('SELECT `user_id` FROM `uc__users` WHERE `user_id`=:user_id AND `ff_token`=:token;', [':user_id' => $_SESSION['user_id'], ':token' => $token], return: 'check')) {
+                return ['http_error' => 403, 'reason' => 'Wrong token or user provided'];
+            }
+            // Link character to user
+            $result = Query::query([
+                'INSERT IGNORE INTO `uc__user_to_ff_character` (`user_id`, `character_id`) VALUES (:user_id, :character_id);', [':user_id' => $_SESSION['user_id'], ':character_id' => $this->id],
+                'INSERT IGNORE INTO `uc__user_to_group` (`user_id`, `group_id`) VALUES (:user_id, :group_id);', [':user_id' => $_SESSION['user_id'], ':group_id' => [Config::$group_ids['Linked to FF'], 'int']],
+            ]);
+            Security::log(LogType::UserDetailsChanged->value, 'Attempted to link FFXIV character', ['id' => $this->id, 'result' => $result]);
+            // Download avatar
+            new User($_SESSION['user_id'])->addAvatar(false, 'https://img2.finalfantasyxiv.com/f/'.$this->avatar_id.'c0.jpg', $this->id);
+
+            return ['response' => $result];
+        } catch (\Throwable $exception) {
+            return ['http_error' => 500, 'reason' => $exception->getMessage()];
+        }
+    }
+
+    /**
+     * Function to get initial data from DB
+     *
+     * @throws \Exception
+     */
+    protected function getFromDB(): array
+    {
+        // Get general information. Using *, but add name, because otherwise Achievement name overrides Character name, and we do not want that
+        $data = Query::query('SELECT *, `ffxiv__character`.`character_id`, `ffxiv__achievement`.`icon` AS `title_icon`, `ffxiv__character`.`name`, `ffxiv__character`.`registered`, `ffxiv__character`.`updated`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`) AS `user_id` FROM `ffxiv__character` LEFT JOIN `ffxiv__clan` ON `ffxiv__character`.`clan_id` = `ffxiv__clan`.`clan_id` LEFT JOIN `ffxiv__guardian` ON `ffxiv__character`.`guardian_id` = `ffxiv__guardian`.`guardian_id` LEFT JOIN `ffxiv__nameday` ON `ffxiv__character`.`nameday_id` = `ffxiv__nameday`.`nameday_id` LEFT JOIN `ffxiv__city` ON `ffxiv__character`.`city_id` = `ffxiv__city`.`city_id` LEFT JOIN `ffxiv__server` ON `ffxiv__character`.`server_id` = `ffxiv__server`.`server_id` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__character`.`gc_rank_id` = `ffxiv__grandcompany_rank`.`gc_rank_id` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__grandcompany_rank`.`gc_id` = `ffxiv__grandcompany`.`gc_id` LEFT JOIN `ffxiv__achievement` ON `ffxiv__character`.`title_id` = `ffxiv__achievement`.`achievement_id` WHERE `ffxiv__character`.`character_id` = :id;', [':id' => $this->id], return: 'row');
+        if (!empty($data['hidden'])) {
+            foreach ($data as $key => $value) {
+                if (!\in_array($key, ['avatar', 'registered', 'updated', 'deleted', 'hidden', 'name'])) {
+                    unset($data[$key]);
+                }
+            }
+        } else {
+            // Return empty if nothing was found
+            if ($data === []) {
+                return [];
+            }
+            // Get username if character is linked to a user
+            $data['username'] = !empty($data['user_id'])
+                ? Query::query('SELECT `username` FROM `uc__users` WHERE `user_id`=:user_id;', [':user_id' => $data['user_id']], return: 'value')
+                : null;
+            // Get jobs
+            $data['jobs'] = Query::query('SELECT `name`, `level`, `last_change` FROM `ffxiv__character_jobs` LEFT JOIN `ffxiv__jobs` ON `ffxiv__character_jobs`.`job_id`=`ffxiv__jobs`.`job_id` WHERE `ffxiv__character_jobs`.`character_id`=:id ORDER BY `name`;', [':id' => $this->id], return: 'all');
+            // Get old names. For now, returning only the count due to cases of bullying, when the old names are learnt. They are still being collected, though, for statistical purposes.
+            $data['old_names'] = Query::query('SELECT `name` FROM `ffxiv__character_names` WHERE `character_id`=:id AND `name`!=:name', [':id' => $this->id, ':name' => $data['name']], return: 'column');
+            // Get previous known incarnations (combination of gender and race/clan)
+            $data['incarnations'] = Query::query('SELECT `gender`, `ffxiv__clan`.`race`, `ffxiv__clan`.`clan` FROM `ffxiv__character_clans` LEFT JOIN `ffxiv__clan` ON `ffxiv__character_clans`.`clan_id` = `ffxiv__clan`.`clan_id` WHERE `ffxiv__character_clans`.`character_id`=:id AND !(`ffxiv__character_clans`.`clan_id`=:clan_id AND `ffxiv__character_clans`.`gender`=:gender) ORDER BY `gender` , `race` , `clan` ', [':id' => $this->id, ':clan_id' => $data['clan_id'], ':gender' => $data['gender']], return: 'all');
+            // Get old servers
+            $data['servers'] = Query::query('SELECT `ffxiv__server`.`data_center`, `ffxiv__server`.`server` FROM `ffxiv__character_servers` LEFT JOIN `ffxiv__server` ON `ffxiv__server`.`server_id`=`ffxiv__character_servers`.`server_id` WHERE `ffxiv__character_servers`.`character_id`=:id AND `ffxiv__character_servers`.`server_id` != :server_id ORDER BY `data_center` , `server` ', [':id' => $this->id, ':server_id' => $data['server_id']], return: 'all');
+            // Get achievements
+            $data['achievements'] = Query::query('SELECT \'achievement\' AS `type`, `achievement_id` AS `id`, `category`, `subcategory`,`name`, `points`, (SELECT `time` FROM `ffxiv__character_achievement` WHERE `character_id` = :id AND `ffxiv__character_achievement`.`achievement_id`=`ffxiv__achievement`.`achievement_id`) AS `time`, `icon` FROM `ffxiv__achievement` WHERE `ffxiv__achievement`.`category` IS NOT NULL AND `achievement_id` IN (SELECT `achievement_id` FROM `ffxiv__character_achievement` WHERE `character_id` = :id) ORDER BY `time` DESC, `name`;', [':id' => $this->id], return: 'all');
+            // Get friends
+            $data['friends'] = Query::query('SELECT \'character\' AS `type`, `outer`.`friend` AS `id`, `ffxiv__character`.`name` AS `name`, `avatar` AS `icon`, `current`, EXISTS(SELECT `character_id` FROM `ffxiv__character_friends` WHERE `ffxiv__character_friends`.`character_id`=`outer`.`friend` AND `ffxiv__character_friends`.`friend`=`outer`.`character_id` AND `ffxiv__character_friends`.`current`=`outer`.`current`) AS `mutual`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`) AS `user_id`, NULL AS `rank_id` FROM `ffxiv__character_friends` AS `outer` LEFT JOIN `ffxiv__character` ON `outer`.`friend`=`ffxiv__character`.`character_id` WHERE `outer`.`character_id`=:id', [':id' => $this->id], return: 'all');
+            // Get characters being followed by the character
+            $data['following'] = Query::query('SELECT \'character\' AS `type`, `outer`.`following` AS `id`, `ffxiv__character`.`name` AS `name`, `avatar` AS `icon`, `current`, EXISTS(SELECT `character_id` FROM `ffxiv__character_following` WHERE `ffxiv__character_following`.`character_id`=`outer`.`following` AND `ffxiv__character_following`.`following`=`outer`.`character_id` AND `ffxiv__character_following`.`current`=`outer`.`current`) AS `mutual`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`) AS `user_id`, NULL AS `rank_id` FROM `ffxiv__character_following` AS `outer` LEFT JOIN `ffxiv__character` ON `outer`.`following`=`ffxiv__character`.`character_id` WHERE `outer`.`character_id`=:id', [':id' => $this->id], return: 'all');
+            // Get affiliated groups' details
+            $data['groups'] = AbstractEntity::cleanCrestResults(
+                Query::query(
+                /** @lang SQL */
+                    '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `current`, `ffxiv__freecompany_character`.`rank_id`, `ffxiv__freecompany_rank`.`rankname` AS `rank`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id)
+                            UNION ALL
+                            (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`ls_id` AS `id`, `ffxiv__linkshell`.`name` AS `name`, `current`, `ffxiv__linkshell_character`.`rank_id`, `ffxiv__linkshell_rank`.`rank` AS `rank`, NULL AS `crest_part_1`, NULL AS `crest_part_2`, NULL AS `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rank_id`=`ffxiv__linkshell_rank`.`ls_rank_id` WHERE `character_id`=:id)
+                            UNION ALL
+                            (SELECT \'pvpteam\' AS `type`, 1 AS `crossworld`, `ffxiv__pvpteam_character`.`pvp_id` AS `id`, `ffxiv__pvpteam`.`name` AS `name`, `current`, `ffxiv__pvpteam_character`.`rank_id`, `ffxiv__pvpteam_rank`.`rank` AS `rank`, `crest_part_1`, `crest_part_2`, `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam` ON `ffxiv__pvpteam_character`.`pvp_id`=`ffxiv__pvpteam`.`pvp_id` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_character`.`rank_id`=`ffxiv__pvpteam_rank`.`pvp_rank_id` WHERE `character_id`=:id)
+                            ORDER BY `current` DESC, `name`;',
+                    [':id' => $this->id],
+                    return: 'all',
+                ),
+            );
+            // Clean up the data from unnecessary (technical) clutter
+            unset($data['clan_id'], $data['nameday_id'], $data['achievement_id'], $data['category'], $data['subcategory'], $data['how_to'], $data['points'], $data['icon'], $data['item'], $data['item_icon'], $data['item_id'], $data['server_id']);
+        }
 
         return $data;
     }
@@ -461,7 +523,9 @@ final class Character extends AbstractEntity
                 foreach ($this->lodestone['achievements'] as $achievement_id => $item) {
                     $icon = self::removeLodestoneDomain($item['icon']);
                     // Download the icon if it's not already present
-                    $webp = \is_file(\str_replace('.png', '.webp', Config::$icons.$icon)) ? true : Images::download($item['icon'], Config::$icons.$icon);
+                    $webp = \is_file(\str_replace('.png', '.webp', Config::$icons.$icon))
+                        ? true
+                        : Images::download($item['icon'], Config::$icons.$icon);
                     if (!$webp) {
                         continue;
                     }
@@ -640,46 +704,16 @@ final class Character extends AbstractEntity
 
                 return Query::query($queries);
             }
-            $result = Query::query(
+
+            return Query::query(
                 'UPDATE `ffxiv__character` SET `hidden` = COALESCE(`hidden`, CURRENT_TIMESTAMP(6)), `updated`=CURRENT_TIMESTAMP(6) WHERE `character_id` = :character_id',
                 [':character_id' => $this->id],
             );
-
-            return $result;
         } catch (\Throwable $exception) {
             Errors::error_log($exception, debug: $this->debug);
 
             return false;
         }
-    }
-
-    /**
-     * Extracted function to update server and name of the character
-     *
-     * @param array $queries
-     *
-     * @return void
-     */
-    private function insertServerAndName(array &$queries): void
-    {
-        // Insert server, if it has not been inserted yet. If the server is registered at all.
-        if (Query::query('SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server;', [':server' => $this->lodestone['server']], return: 'check')) {
-            $queries[] = [
-                'INSERT IGNORE INTO `ffxiv__character_servers`(`character_id`, `server_id`) VALUES (:character_id, (SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server));',
-                [
-                    ':character_id' => $this->id,
-                    ':server' => $this->lodestone['server'],
-                ],
-            ];
-        }
-        // Insert a name if it has not been inserted yet
-        $queries[] = [
-            'INSERT IGNORE INTO `ffxiv__character_names`(`character_id`, `name`) VALUES (:character_id, :name);',
-            [
-                ':character_id' => $this->id,
-                ':name' => $this->lodestone['name'],
-            ],
-        ];
     }
 
     /**
@@ -750,58 +784,31 @@ final class Character extends AbstractEntity
     }
 
     /**
-     * Link user to character
+     * Extracted function to update server and name of the character
      *
-     * @return array
+     * @param array $queries
      *
-     * @internal
+     * @return void
      */
-    public function linkUser(): array
+    private function insertServerAndName(array &$queries): void
     {
-        try {
-            // Check if a character exists and is linked already
-            $character = Query::query('SELECT `character_id`, `user_id` FROM `uc__user_to_ff_character` WHERE `character_id`=:id;', [':id' => $this->id], return: 'row');
-            if (
-                $character !== []
-                && $character['user_id']
-            ) {
-                return ['http_error' => 409, 'reason' => 'Character already linked'];
-            }
-            // Register or update the character
-            $this->update();
-            if (!empty($this->lodestone['id'])) {
-                // Something went wrong with getting data
-                if (!empty($this->lodestone['404'])) {
-                    return ['http_error' => 400, 'reason' => 'No character found with id `'.$this->id.'`'];
-                }
-
-                return ['http_error' => 500, 'reason' => 'Failed to get fresh data for character with id `'.$this->id.'`'];
-            }
-            // Check if biography is set
-            if (empty($this->lodestone['bio'])) {
-                return ['http_error' => 424, 'reason' => 'No biography found for character with id `'.$this->id.'`'];
-            }
-            // Check if the biography contains the respected text
-            $token = \preg_replace('/(.*)(fftracker:([a-z\d]{64}))(.*)/uis', '$3', $this->lodestone['bio']);
-            if (empty($token)) {
-                return ['http_error' => 424, 'reason' => 'No tracker token found for character with id `'.$this->id.'`'];
-            }
-            // Check if the ID of the current user is the same as the user who has this token
-            if (!Query::query('SELECT `user_id` FROM `uc__users` WHERE `user_id`=:user_id AND `ff_token`=:token;', [':user_id' => $_SESSION['user_id'], ':token' => $token], return: 'check')) {
-                return ['http_error' => 403, 'reason' => 'Wrong token or user provided'];
-            }
-            // Link character to user
-            $result = Query::query([
-                'INSERT IGNORE INTO `uc__user_to_ff_character` (`user_id`, `character_id`) VALUES (:user_id, :character_id);', [':user_id' => $_SESSION['user_id'], ':character_id' => $this->id],
-                'INSERT IGNORE INTO `uc__user_to_group` (`user_id`, `group_id`) VALUES (:user_id, :group_id);', [':user_id' => $_SESSION['user_id'], ':group_id' => [Config::$group_ids['Linked to FF'], 'int']],
-            ]);
-            Security::log(LogType::UserDetailsChanged->value, 'Attempted to link FFXIV character', ['id' => $this->id, 'result' => $result]);
-            // Download avatar
-            new User($_SESSION['user_id'])->addAvatar(false, 'https://img2.finalfantasyxiv.com/f/'.$this->avatar_id.'c0.jpg', $this->id);
-
-            return ['response' => $result];
-        } catch (\Throwable $exception) {
-            return ['http_error' => 500, 'reason' => $exception->getMessage()];
+        // Insert server, if it has not been inserted yet. If the server is registered at all.
+        if (Query::query('SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server;', [':server' => $this->lodestone['server']], return: 'check')) {
+            $queries[] = [
+                'INSERT IGNORE INTO `ffxiv__character_servers`(`character_id`, `server_id`) VALUES (:character_id, (SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server));',
+                [
+                    ':character_id' => $this->id,
+                    ':server' => $this->lodestone['server'],
+                ],
+            ];
         }
+        // Insert a name if it has not been inserted yet
+        $queries[] = [
+            'INSERT IGNORE INTO `ffxiv__character_names`(`character_id`, `name`) VALUES (:character_id, :name);',
+            [
+                ':character_id' => $this->id,
+                ':name' => $this->lodestone['name'],
+            ],
+        ];
     }
 }

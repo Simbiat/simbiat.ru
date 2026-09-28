@@ -27,7 +27,7 @@ final class Password extends Api
     /**
      * @param array $path
      *
-     * @return array|true[]
+     * @return array<string>
      */
     protected function genData(array $path): array
     {

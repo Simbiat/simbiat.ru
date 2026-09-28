@@ -90,10 +90,11 @@ final class MainRouter extends Router
      */
     private function error(array $uri): array
     {
-        $output_array['http_error'] = 
+        $output_array['http_error'] =
             empty($uri[0])
             || !\in_array((int) $uri[0], [300, 301, 302, 303, 305, 307, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 421, 422, 423, 424, 425, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505], true)
-         ? 404 : (int) $uri[0];
+            ? 404
+            : (int) $uri[0];
         $output_array['suggested_link'] = \dirname($_SERVER['REQUEST_URI'] ?? '');
         $output_array['error_page'] = true;
 

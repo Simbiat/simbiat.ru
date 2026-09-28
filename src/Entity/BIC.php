@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 // TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
+
 namespace App\Entity;
 
 use App\Enum\BIC\AccRstrType;
@@ -176,7 +177,9 @@ final class BIC extends Entity
 
         // Old DBF data processing
         // Gets a list of phones
-        $from_db['TELEF'] = !empty($from_db['TELEF']) ? $this->phoneList($from_db['TELEF']) : [];
+        $from_db['TELEF'] = !empty($from_db['TELEF'])
+            ? $this->phoneList($from_db['TELEF'])
+            : [];
         // If RKC is the same as BIC, it means that the current bank is RKC and does not have a bank above it
         if ($from_db['RKC'] === $from_db['BIC']) {
             $from_db['RKC'] = null;
@@ -412,7 +415,9 @@ final class BIC extends Entity
         $phones = \explode(',', $dob[0]);
         // Attempting to sanitize the phone numbers to use +7 code only
         \preg_match('/\((\d*)\)/', $phones[0], $code);
-        $code = empty($code[1]) ? '+7 ' : '+7 ('.$code[1].') ';
+        $code = empty($code[1])
+            ? '+7 '
+            : '+7 ('.$code[1].') ';
         foreach ($phones as $key => $phone) {
             if (\preg_match('/\((\d*)\)/', $phone)) {
                 $phone = '+7 '.$phone;

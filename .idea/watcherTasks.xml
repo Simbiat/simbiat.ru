@@ -127,7 +127,7 @@
       <option name="workingDir" value="$ProjectFileDir$" />
       <envs />
     </TaskOptions>
-    <TaskOptions isEnabled="true">
+    <TaskOptions isEnabled="false">
       <option name="arguments" value="compose -f ./compose.yaml exec frankenphp composer rector /app/$/FileRelativePath$" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />

@@ -41,6 +41,7 @@ H /config/crowdsec/online_api_credentials.example.yaml
 H /config/deploy/
 H /config/packages/dev/
 H /config/packages/test/
+H /config/composer-dependency-analyser.php
 H /config/eslint.config.mts
 H /config/php-cs-fixer.php
 H /config/php_dev.ini

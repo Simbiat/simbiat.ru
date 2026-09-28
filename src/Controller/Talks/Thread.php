@@ -151,10 +151,10 @@ final class Thread extends Page
         /** @noinspection DuplicatedCode */
         $output_array['ogextra'] =
             '<meta property="article:published_time" content="'.\date('c', $output_array['created']).'" />
-            <meta property="article:modified_time" content="'.\date('c', $output_array['updated']).'" />'.
-            ($output_array['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />').
-            ($output_array['editor'] !== 1 && $output_array['editor'] !== $output_array['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />' : '').
-            '<meta property="article:section" content="'.$output_array['parents'][\array_key_last($output_array['parents'])]['name'].'" />';
+            <meta property="article:modified_time" content="'.\date('c', $output_array['updated']).'" />'
+            .($output_array['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />')
+            .($output_array['editor'] !== 1 && $output_array['editor'] !== $output_array['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />' : '')
+            .'<meta property="article:section" content="'.$output_array['parents'][\array_key_last($output_array['parents'])]['name'].'" />';
         foreach ($output_array['tags'] as $tag) {
             $output_array['ogextra'] .= '<meta property="article:tag" content="'.$tag.'" />';
         }
@@ -185,10 +185,11 @@ final class Thread extends Page
             $output_array['thread_link_types'] = \App\Entity\Thread::getAltLinkTypes();
         }
         // Add access token
-        $output_array['get_access_token'] = 
+        $output_array['get_access_token'] =
             $output_array['author'] === SystemUser::Unknown->value
             && $_SESSION['user_id'] === SystemUser::Unknown->value
-         ? $_GET['access_token'] ?? null : null;
+            ? $_GET['access_token'] ?? null
+            : null;
 
         return $output_array;
     }

@@ -9,5 +9,5 @@ namespace App\Exception;
  */
 final class NotificationSaveException extends \Exception
 {
-
+    // Stub for the exception
 }

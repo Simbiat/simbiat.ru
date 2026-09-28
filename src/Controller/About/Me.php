@@ -516,9 +516,9 @@ final class Me extends StaticPage
                 [
                     'achievements' => [
                         '<a href="/resume/OHS_Basics.pdf" target="_blank">
-							<img crossorigin="anonymous" loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="" class="link_icon" width="481" height="481">
-							<span>Occupational Healthcare & Safety Basics</span>
-						</a>',
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="" class="link_icon" width="481" height="481">
+                            <span>Occupational Healthcare & Safety Basics</span>
+                        </a>',
                     ],
                     'href' => 'https://www.signanthealth.com/',
                     'icon' => '/assets/images/icons/SignantHealth.svg',

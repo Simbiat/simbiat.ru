@@ -15,6 +15,19 @@ abstract class Listing extends Search
     // Service name for breadcrumbs
     protected string $service_name = 'listing';
 
+    // Get date from results
+    final protected function getDate(array $results): int|string
+    {
+        // Prepare the array of dates
+        $dates = \array_column($results['entities'], 'updated');
+        // Return max value if the dates' array is not empty or 0 otherwise
+        if (\count($dates) === 0) {
+            return 0;
+        }
+
+        return \max($dates);
+    }
+
     // Generation of the page data
     protected function generate(array $path): array
     {
@@ -78,18 +91,5 @@ abstract class Listing extends Search
 
         // Merge with extra fields and return the result
         return \array_merge($output_array, $this->extras());
-    }
-
-    // Get date from results
-    final protected function getDate(array $results): int|string
-    {
-        // Prepare the array of dates
-        $dates = \array_column($results['entities'], 'updated');
-        // Return max value if the dates' array is not empty or 0 otherwise
-        if (empty($dates)) {
-            return 0;
-        }
-
-        return \max($dates);
     }
 }

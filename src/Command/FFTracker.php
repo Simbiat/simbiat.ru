@@ -21,9 +21,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Various commands for FFXIV Tracker
  */
-final class FFTracker
+final readonly class FFTracker
 {
     /**
+     * Inject dependencies
+     *
      * @param \Doctrine\DBAL\Connection $connection
      */
     public function __construct(
@@ -43,7 +45,7 @@ final class FFTracker
     {
         $output->writeln(Errors::logfmt('Registering new FFXIV characters...'));
         try {
-            /* @var \PDO $pdo IDE complains due to more generic object */
+            /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
             $cron = new TaskInstance(dbh: $pdo);
             // Try to register new characters
@@ -91,7 +93,7 @@ final class FFTracker
             ) {
                 throw new \RuntimeException(\sprintf('Directory "%s" was not created', Config::$statistics));
             }
-            /* @var \PDO $pdo IDE complains due to more generic object */
+            /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
             new Query($pdo);
             foreach (['raw', 'characters', 'groups', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
@@ -155,7 +157,7 @@ final class FFTracker
     {
         $output->writeln(Errors::logfmt('Updating FFXIV servers...'));
         try {
-            /* @var \PDO $pdo IDE complains due to more generic object */
+            /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
             $lodestone = new Lodestone();
             // Get server
@@ -338,7 +340,6 @@ final class FFTracker
         }
         // Get the most and least popular titles
         $data['titles'] = Splitters::topAndBottom(Query::query('SELECT COUNT(*) as `count`, `ffxiv__achievement`.`title`, `ffxiv__achievement`.`achievement_id` FROM `ffxiv__character` LEFT JOIN `ffxiv__achievement` ON `ffxiv__achievement`.`achievement_id`=`ffxiv__character`.`title_id` WHERE `ffxiv__character`.`title_id` IS NOT NULL GROUP BY `title_id` ORDER BY `count` DESC;', return: 'all'), 20);
-
     }
 
     /**
@@ -411,7 +412,8 @@ final class FFTracker
         ));
         // Get entities with duplicate names
         $duplicate_names = Query::query(
-        /** @lang MariaDB */            '(
+        /** @lang MariaDB */
+            '(
                         SELECT
                             \'character\' AS `type`,
                             `f`.`character_id` AS `id`,
@@ -605,7 +607,8 @@ final class FFTracker
                     ', return: 'all');
         // Number of updated entities in the last 30 days
         $data['updates_stats'] = Query::query(
-        /** @lang MariaDB */            '(SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'characters\' as `type` FROM `ffxiv__character` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
+        /** @lang MariaDB */
+            '(SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'characters\' as `type` FROM `ffxiv__character` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
                             UNION
                             (SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'free_companies\' as `type` FROM `ffxiv__freecompany` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
                             UNION
@@ -633,7 +636,7 @@ final class FFTracker
      */
     private function scheduleBugs(array $data): void
     {
-        /* @var \PDO $pdo IDE complains due to more generic object */
+        /** @var \PDO $pdo IDE complains due to more generic object */
         $pdo = $this->connection->getNativeConnection();
         // These may be because of temporary issues on the parser or Lodestone side, so schedule them for update
         $cron = new TaskInstance(dbh: $pdo);

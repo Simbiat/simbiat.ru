@@ -12,51 +12,13 @@ use App\Service\Errors;
 abstract class Entity
 {
     // Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of same object for different sets of data
-    protected bool $attempted = false;
+    public ?string $id = null;
 
     // If ID was retrieved, this needs to not be null
-    public ?string $id = null;
+    protected bool $attempted = false;
 
     // Format for IDs
     protected string $id_format = '/^\d+$/m';
-
-    // Debug flag
-    protected bool $debug = false;
-
-    /**
-     * @param string|int|null $id    ID of an entity
-     * @param bool            $debug Flag to enable debug mode
-     */
-    final public function __construct(string|int|null $id = null, bool $debug = false)
-    {
-        // Set debug flag
-        $this->debug = $debug;
-        // If ID was provided - set it as well
-        if (!empty($id)) {
-            $this->setId($id);
-        } elseif ($id !== null) {
-            throw new \UnexpectedValueException('ID can\'t be empty.');
-        }
-    }
-
-    /**
-     * Set entity ID
-     *
-     * @param string|int $id
-     *
-     * @return $this
-     */
-    public function setId(string|int $id): self
-    {
-        // Convert to string for consistency
-        $id = (string) $id;
-        if (\preg_match($this->id_format, $id) !== 1) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
-        }
-        $this->id = $id;
-
-        return $this;
-    }
 
     /**
      * Get entity properties
@@ -93,22 +55,6 @@ abstract class Entity
     }
 
     /**
-     * Function to get initial data from DB
-     *
-     * @return array
-     */
-    abstract protected function getFromDB(): array;
-
-    /**
-     * Function process database data
-     *
-     * @param array $from_db
-     *
-     * @return void
-     */
-    abstract protected function process(array $from_db): void;
-
-    /**
      * Get the data in an array
      *
      * @return array
@@ -132,5 +78,54 @@ abstract class Entity
         }
 
         return $array;
+    }
+
+    /**
+     * Function to get initial data from DB
+     *
+     * @return array
+     */
+    abstract protected function getFromDB(): array;
+
+    /**
+     * Function process database data
+     *
+     * @param array $from_db
+     *
+     * @return void
+     */
+    abstract protected function process(array $from_db): void;
+
+    /**
+     * @param string|int|null $id    ID of an entity
+     * @param bool            $debug Flag to enable debug mode
+     */
+    final public function __construct(string|int|null $id = null, protected bool $debug = false)
+    {
+        // If ID was provided - set it as well
+        if (!empty($id)) {
+            $this->setId($id);
+        } elseif ($id !== null) {
+            throw new \UnexpectedValueException('ID can\'t be empty.');
+        }
+    }
+
+    /**
+     * Set entity ID
+     *
+     * @param string|int $id
+     *
+     * @return $this
+     */
+    public function setId(string|int $id): self
+    {
+        // Convert to string for consistency
+        $id = (string) $id;
+        if (\preg_match($this->id_format, $id) !== 1) {
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
+        }
+        $this->id = $id;
+
+        return $this;
     }
 }

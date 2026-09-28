@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 // TODO: Consider moving this to `/app/src/EventSubscriber` and potentially utilizing Symfony's tools (possibly even as replacement for the class)
+
 namespace App\Service;
 
 use JetBrains\PhpStorm\ExpectedValues;
@@ -60,51 +61,6 @@ final class Errors
         self::write($message);
 
         return false;
-    }
-
-    /**
-     * Helper to write errors in the log
-     *
-     * @param string          $type     Error type
-     * @param string          $file     The file where the error happened
-     * @param string|int      $line     Line in file where the error happened
-     * @param string          $message  Error message
-     * @param string          $trace    Trace from the error
-     * @param \Throwable|null $previous Previous Throwable, if this was re-thrown. Will be merged with context.
-     * @param mixed           $context  Optional additional cotext
-     *
-     * @return string
-     */
-    private static function genLogEntry(string $type, string $file, string|int $line, string $message, string $trace = '', null|\Throwable $previous = null, mixed $context = ''): string
-    {
-        // Determine page link
-        $page = self::getRequest();
-        $previous_throw = '';
-        if ($previous !== null) {
-            $previous_trace = $previous->getTraceAsString();
-            $previous_throw = "\t".'Previous Exception: '."\r\n\t\t".
-                'File: '.$previous->getFile()."\r\n\t\t".
-                'Line: '.$previous->getLine()."\r\n\t\t".
-                'Message: '.$previous->getMessage()."\r\n".
-                ($previous_trace === '' ? '' : "\t\t".'Trace: '.$previous_trace."\r\n");
-        }
-        // Prepare context
-        if (!\is_string($context)) {
-            try {
-                $context = \json_encode($context, \JSON_THROW_ON_ERROR);
-            } catch (\Throwable) {
-                $context = '';
-            }
-        }
-
-        return '['.\date('c').'] '.$type.':'."\r\n\t".
-            'Request: '.$page."\r\n\t".
-            'File: '.$file."\r\n\t".
-            'Line: '.$line."\r\n\t".
-            'Message: '.$message."\r\n".
-            ($trace === '' ? '' : "\t".'Trace: '.$trace."\r\n").
-            ($context === '' ? '' : "\t".'Context: '.$context."\r\n").
-            $previous_throw;
     }
 
     /**
@@ -178,30 +134,6 @@ final class Errors
     }
 
     /**
-     * Helper to write errors in the log
-     *
-     * @param string $message Error message
-     *
-     * @return void
-     */
-    private static function write(string $message): void
-    {
-        \file_put_contents(Config::$work_dir.'/var/log/php.log', $message, \FILE_APPEND);
-    }
-
-    /**
-     * Helper to attempt to get URL, which was used when the error occurred
-     *
-     * @return string
-     */
-    private static function getRequest(): string
-    {
-        $request = \preg_match('/^cli(-server)?$/i', \PHP_SAPI) === 1 ? 'CLI' : $_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
-
-        return $request;
-    }
-
-    /**
      * A simple wrapper function for var_dump to apply <pre> tag and exit the script (by default)
      *
      * @param mixed $variable Variable to dump
@@ -250,5 +182,74 @@ final class Errors
         }
 
         return \implode(' ', $parts);
+    }
+
+    /**
+     * Helper to write errors in the log
+     *
+     * @param string          $type     Error type
+     * @param string          $file     The file where the error happened
+     * @param string|int      $line     Line in file where the error happened
+     * @param string          $message  Error message
+     * @param string          $trace    Trace from the error
+     * @param \Throwable|null $previous Previous Throwable, if this was re-thrown. Will be merged with context.
+     * @param mixed           $context  Optional additional cotext
+     *
+     * @return string
+     */
+    private static function genLogEntry(string $type, string $file, string|int $line, string $message, string $trace = '', null|\Throwable $previous = null, mixed $context = ''): string
+    {
+        // Determine page link
+        $page = self::getRequest();
+        $previous_throw = '';
+        if ($previous !== null) {
+            $previous_trace = $previous->getTraceAsString();
+            $previous_throw = "\t".'Previous Exception: '."\r\n\t\t"
+                .'File: '.$previous->getFile()."\r\n\t\t"
+                .'Line: '.$previous->getLine()."\r\n\t\t"
+                .'Message: '.$previous->getMessage()."\r\n"
+                .($previous_trace === '' ? '' : "\t\t".'Trace: '.$previous_trace."\r\n");
+        }
+        // Prepare context
+        if (!\is_string($context)) {
+            try {
+                $context = \json_encode($context, \JSON_THROW_ON_ERROR);
+            } catch (\Throwable) {
+                $context = '';
+            }
+        }
+
+        return '['.\date('c').'] '.$type.':'."\r\n\t"
+            .'Request: '.$page."\r\n\t"
+            .'File: '.$file."\r\n\t"
+            .'Line: '.$line."\r\n\t"
+            .'Message: '.$message."\r\n"
+            .($trace === '' ? '' : "\t".'Trace: '.$trace."\r\n")
+            .($context === '' ? '' : "\t".'Context: '.$context."\r\n")
+            .$previous_throw;
+    }
+
+    /**
+     * Helper to write errors in the log
+     *
+     * @param string $message Error message
+     *
+     * @return void
+     */
+    private static function write(string $message): void
+    {
+        \file_put_contents(Config::$work_dir.'/var/log/php.log', $message, \FILE_APPEND);
+    }
+
+    /**
+     * Helper to attempt to get URL, which was used when the error occurred
+     *
+     * @return string
+     */
+    private static function getRequest(): string
+    {
+        return \preg_match('/^cli(-server)?$/i', \PHP_SAPI) === 1
+            ? 'CLI'
+            : $_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
     }
 }

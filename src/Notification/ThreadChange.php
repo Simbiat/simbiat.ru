@@ -16,10 +16,12 @@ final class ThreadChange extends Notification
      * Subject for email
      */
     protected const string SUBJECT = 'Thread edited';
+
     /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
      */
     protected const int PRIORITY = 2;
+
     /**
      * Whether to send to all emails registered for the user
      */

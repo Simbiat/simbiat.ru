@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 // TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
+
 namespace App\Entity;
 
 use App\Enum\SystemUser;
@@ -22,7 +23,6 @@ use Simbiat\StringHelpers\Sanitize;
  */
 final class Section extends Entity
 {
-    protected string $id_format = '/^top|\d+$/mi';
     public string $name = '';
     public string $type = 'Category';
     public string $inherited_type = 'Category';
@@ -51,13 +51,14 @@ final class Section extends Entity
 
     // List of threads
     public array $threads = [];
-
-    // Flag indicating if we are getting data for a thread and can skip some details
-    private bool $for_thread = false;
-
-    // List of subscribers
     public array $subscribers = [];
     public int $sequence = 0;
+
+    protected string $id_format = '/^top|\d+$/mi';
+
+    // Flag indicating if we are getting data for a thread and can skip some details
+    // List of subscribers
+    private bool $for_thread = false;
 
     /**
      * Function to set a flag to return only the data required for a thread (for the sake of optimization)
@@ -71,6 +72,345 @@ final class Section extends Entity
         $this->for_thread = $for_thread;
 
         return $this;
+    }
+
+    /**
+     * Function to (un)mark the section as private
+     *
+     * @param bool $private
+     *
+     * @return array<string, bool|int|string>
+     */
+    public function setPrivate(bool $private = false): array
+    {
+        // Check permission
+        if (!\in_array('edit_sections', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
+        }
+        try {
+            $affected = Query::query(
+                'UPDATE `talks__sections` SET `private`=:private, `editor`=:user_id WHERE `section_id`=:section_id;',
+                [
+                    ':private' => [$private, 'bool'],
+                    ':section_id' => [$this->id, 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+                return: 'affected',
+            );
+            if ($affected > 0) {
+                $this->private = $private;
+                $this->notifyAboutChange($private ? 'private' : 'public');
+            }
+
+            // TODO need to mark all children as private as well
+            return ['response' => true];
+        } catch (\Throwable) {
+            return ['response' => false];
+        }
+    }
+
+    /**
+     * Function to close/open a section
+     *
+     * @param bool $closed
+     *
+     * @return array
+     */
+    public function setClosed(bool $closed = false): array
+    {
+        // Check permission
+        if (!\in_array('edit_sections', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
+        }
+        try {
+            $affected = Query::query(
+                'UPDATE `talks__sections` SET `closed`=:closed, `editor`=:user_id WHERE `section_id`=:section_id;',
+                [
+                    ':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')],
+                    ':section_id' => [$this->id, 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+                return: 'affected',
+            );
+            if ($affected > 0) {
+                $this->closed = ($closed ? \time() : null);
+                $this->notifyAboutChange($closed ? 'close' : 'open');
+            }
+
+            return ['response' => true];
+        } catch (\Throwable) {
+            return ['response' => false];
+        }
+    }
+
+    /**
+     * Move section to another parent section
+     *
+     * @return array
+     */
+    public function move(): array
+    {
+        // Check permission
+        if (!\in_array('move_sections', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `move_sections` permission'];
+        }
+        $data = $_POST['section_data'] ?? [];
+        if (empty($data['parent_id'])) {
+            return ['http_error' => 400, 'reason' => 'No section ID provided'];
+        }
+        $parent = new self($data['parent_id'])->get();
+        if ($parent->id === null) {
+            return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parent_id'].'` does not exist'];
+        }
+        try {
+            $affected = Query::query(
+                'UPDATE `talks__sections` SET `parent_id`=:parent_id, `editor`=:user_id WHERE `section_id`=:section_id;',
+                [
+                    ':parent_id' => [
+                        (empty($data['parent_id']) ? null : $data['parent_id']),
+                        (empty($data['parent_id']) ? 'null' : 'int'),
+                    ],
+                    ':section_id' => [$this->id, 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+                return: 'affected',
+            );
+            if ($affected > 0) {
+                $this->notifyAboutChange('move');
+            }
+
+            return ['response' => true];
+        } catch (\Throwable) {
+            return ['response' => false];
+        }
+    }
+
+    /**
+     * Create a new section
+     *
+     * @return array
+     */
+    public function add(): array
+    {
+        // Sanitize data
+        $data = $_POST['section_data'] ?? [];
+        $sanitize = $this->sanitizeInput($data);
+        if (\is_array($sanitize)) {
+            return $sanitize;
+        }
+        try {
+            $new_id = Query::query(
+                'INSERT INTO `talks__sections`(`section_id`, `name`, `description`, `parent_id`, `sequence`, `type`, `closed`, `private`, `published`, `author`, `editor`, `icon`) VALUES (NULL,:name,:description,:parent_id,:sequence,:type,:closed,:private,:time,:user_id,:user_id,:icon);',
+                [
+                    ':closed' => [
+                        ($data['closed'] ? 'now' : null),
+                        ($data['closed'] ? 'datetime' : 'null'),
+                    ],
+                    ':description' => \mb_trim($data['description'], null, 'UTF-8'),
+                    ':icon' => [
+                        (empty($data['icon']) ? null : $data['icon']),
+                        (empty($data['icon']) ? 'null' : 'string'),
+                    ],
+                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
+                    ':parent_id' => [
+                        (empty($data['parent_id']) ? null : $data['parent_id']),
+                        (empty($data['parent_id']) ? 'null' : 'int'),
+                    ],
+                    ':private' => [$data['private'], 'bool'],
+                    ':sequence' => [$data['order'], 'int'],
+                    ':time' => [
+                        (empty($data['time']) ? 'now' : $data['time']),
+                        'datetime',
+                    ],
+                    ':type' => [$data['type'], 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+                return: 'increment',
+            );
+            // Link the section to the user, if it's required
+            if (!empty($data['link_type'])) {
+                switch ($data['link_type']) {
+                    case 2:
+                        Query::query(
+                            'INSERT INTO `uc__user_to_section` (`user_id`, `blog`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `blog`=:section_id;',
+                            [
+                                ':section_id' => [$new_id, 'int'],
+                                ':user_id' => [$_SESSION['user_id'], 'int'],
+                            ],
+                        );
+
+                        break;
+                    case 4:
+                        Query::query(
+                            'INSERT INTO `uc__user_to_section` (`user_id`, `changelog`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `changelog`=:section_id;',
+                            [
+                                ':section_id' => [$new_id, 'int'],
+                                ':user_id' => [$_SESSION['user_id'], 'int'],
+                            ],
+                        );
+
+                        break;
+                    case 6:
+                        Query::query(
+                            'INSERT INTO `uc__user_to_section` (`user_id`, `knowledgebase`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `knowledgebase`=:section_id;',
+                            [
+                                ':section_id' => [$new_id, 'int'],
+                                ':user_id' => [$_SESSION['user_id'], 'int'],
+                            ],
+                        );
+
+                        break;
+                }
+            }
+
+            return ['response' => true, 'location' => '/talks/sections/'.$new_id];
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+
+            return ['http_error' => 500, 'reason' => 'Failed to create new section'];
+        }
+    }
+
+    /**
+     * Edit section data
+     *
+     * @return array<string, bool|int|string>
+     */
+    public function edit(): array
+    {
+        // Sanitize data
+        $data = $_POST['section_data'] ?? [];
+        $sanitize = $this->sanitizeInput($data, true);
+        if (\is_array($sanitize)) {
+            return $sanitize;
+        }
+        // Check if we are changing to a category and if we have any threads in it
+        if (
+            $data['type'] === 1
+            && Query::query('SELECT `thread_id` FROM `talks__threads` WHERE `section_id`=:section_id LIMIT 1;', [':section_id' => [$this->id, 'int']], return: 'check')
+        ) {
+            return ['http_error' => 400, 'reason' => 'Can\'t change section type to `Category`, because it has threads in it'];
+        }
+        try {
+            $queries = [];
+            $queries[] = [
+                'UPDATE `talks__sections` SET `name`=:name, `description`=:description, `sequence`=:sequence, `type`=:type, `editor`=:user_id, `icon`=COALESCE(:icon, `icon`) WHERE `section_id`=:section_id;',
+                [
+                    ':description' => \mb_trim($data['description'], null, 'UTF-8'),
+                    ':icon' => [
+                        (empty($data['icon']) ? null : $data['icon']),
+                        (empty($data['icon']) ? 'null' : 'string'),
+                    ],
+                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
+                    ':section_id' => [$this->id, 'int'],
+                    ':sequence' => [$data['order'], 'int'],
+                    ':type' => [$data['type'], 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+            ];
+            $affected = Query::query($queries, return: 'affected');
+            if ($affected > 0) {
+                $this->notifyAboutChange('change');
+            }
+
+            return ['response' => true];
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+
+            return ['http_error' => 500, 'reason' => 'Failed to update section'];
+        }
+    }
+
+    /**
+     * Delete section
+     *
+     * @return array
+     */
+    public function delete(): array
+    {
+        // Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
+        if (!$this->attempted) {
+            (void) $this->get();
+        }
+        // Check permission
+        if (
+            !$this->owned
+            && !\in_array('remove_sections', $_SESSION['permissions'], true)
+        ) {
+            return ['http_error' => 403, 'reason' => 'No `remove_sections` permission'];
+        }
+        if ($this->id === null) {
+            return ['http_error' => 404, 'reason' => 'Section not found'];
+        }
+        // Check if the section is system one
+        if ($this->system) {
+            return ['http_error' => 403, 'reason' => 'Can\'t delete system section'];
+        }
+        // Check if the section has any subsections or threads
+        if (
+            !empty($this->children['entities'])
+            || !empty($this->threads['entities'])
+        ) {
+            return ['http_error' => 400, 'reason' => 'Can\'t delete non-empty section'];
+        }
+        // Set location for successful removal
+        $location = $this->parent_id === 0
+            ? '/talks/edit/sections/'
+            : '/talks/edit/sections/'.$this->parent_id.'/';
+        // Attempt removal
+        try {
+            $affected = Query::query('DELETE FROM `talks__sections` WHERE `section_id`=:section_id;', [':section_id' => [$this->id, 'int']], return: 'affected');
+            if ($affected > 0) {
+                $this->notifyAboutChange('delete');
+            }
+
+            return ['response' => true, 'location' => $location];
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+
+            return ['http_error' => 500, 'reason' => 'Failed to delete section'];
+        }
+    }
+
+    /**
+     * Function to get section types allowed inside a section
+     *
+     * @param string|int $type
+     *
+     * @return array
+     */
+    public static function getSectionTypes(string|int $type = ''): array
+    {
+        $where = '';
+        switch (\mb_strtolower($type, 'UTF-8')) {
+            case 'blog':
+            case '2':
+                $where = ' WHERE `talks__types`.`type`=\'Blog\'';
+
+                break;
+            case 'forum':
+            case '3':
+                $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Forum\')';
+
+                break;
+            case 'changelog':
+            case '4':
+                $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Changelog\')';
+
+                break;
+            case 'support':
+            case '5':
+                $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Support\')';
+
+                break;
+            case 'knowledgebase':
+            case '6':
+                $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Knowledgebase\')';
+
+                break;
+        }
+
+        return Query::query('SELECT `type_id` AS `value`, `type` AS `name`, `description`, CONCAT(\'/assets/images/uploaded/\', SUBSTRING(`sys__files`.`file_id`, 1, 2), \'/\', SUBSTRING(`sys__files`.`file_id`, 3, 2), \'/\', SUBSTRING(`sys__files`.`file_id`, 5, 2), \'/\', `sys__files`.`file_id`, \'.\', `sys__files`.`extension`) AS `icon` FROM `talks__types` INNER JOIN `sys__files` ON `talks__types`.`icon`=`sys__files`.`file_id`'.$where.' ORDER BY `type_id`;', return: 'all');
     }
 
     /**
@@ -146,8 +486,7 @@ final class Section extends Entity
             }
             $data['owned'] =
                 $inherited_ownership
-                || $data['author'] === $_SESSION['user_id']
-             ? true : false;
+                || $data['author'] === $_SESSION['user_id'];
             // Get children
             $where = '';
             $bindings = [':section_id' => [$this->id, 'int']];
@@ -278,11 +617,19 @@ final class Section extends Entity
         $this->system = (bool) $from_db['system'];
         $this->private = (bool) $from_db['private'];
         $this->owned = $from_db['owned'];
-        $this->closed = $from_db['closed'] !== null ? \strtotime($from_db['closed']) : null;
-        $this->created = $from_db['created'] !== null ? \strtotime($from_db['created']) : null;
-        $this->published = $from_db['published'] !== null ? \strtotime($from_db['published']) : null;
+        $this->closed = $from_db['closed'] !== null
+            ? \strtotime($from_db['closed'])
+            : null;
+        $this->created = $from_db['created'] !== null
+            ? \strtotime($from_db['created'])
+            : null;
+        $this->published = $from_db['published'] !== null
+            ? \strtotime($from_db['published'])
+            : null;
         $this->author = $from_db['author'] ?? SystemUser::Deleted->value;
-        $this->updated = $from_db['updated'] !== null ? \strtotime($from_db['updated']) : null;
+        $this->updated = $from_db['updated'] !== null
+            ? \strtotime($from_db['updated'])
+            : null;
         $this->editor = $from_db['editor'] ?? SystemUser::Deleted->value;
         $this->icon = $from_db['icon'] ?? '/assets/images/talks/category.svg';
         $this->parents = $from_db['parents'];
@@ -313,7 +660,9 @@ final class Section extends Entity
             return [];
         }
         // If the parent has its own parent - get it and add to array
-        $parents = !empty($parents[0]['parent_id']) ? \array_merge($parents, $this->getParents((int) $parents[0]['parent_id'])) : \array_reverse($parents);
+        $parents = !empty($parents[0]['parent_id'])
+            ? \array_merge($parents, $this->getParents((int) $parents[0]['parent_id']))
+            : \array_reverse($parents);
 
         // Reverse array to make it from top to bottom
         return $parents;
@@ -326,10 +675,12 @@ final class Section extends Entity
      */
     private function notifyAboutChange(#[ExpectedValues(['private', 'public', 'close', 'open', 'change', 'delete', 'move'])] string $type): void
     {
-        $for_notification = $type === 'delete' ? [
+        $for_notification = $type === 'delete'
+            ? [
                 'author' => $this->author,
                 'section_id' => $this->id,
-            ] : Query::query(
+            ]
+            : Query::query(
                 'SELECT `section_id`, `author`, `name` AS `new_name`, `description`, `parent_id`,
                                                         (SELECT `name` FROM `talks__sections` WHERE `section_id`=`main_select`.`parent_id`) AS `parent_name`,
                                                         (SELECT `type` FROM `talks__types` WHERE `type_id`=`main_select`.`type`) AS `type`,
@@ -374,253 +725,6 @@ final class Section extends Entity
     }
 
     /**
-     * Function to (un)mark the section as private
-     *
-     * @param bool $private
-     *
-     * @return array|false[]|true[]
-     */
-    public function setPrivate(bool $private = false): array
-    {
-        // Check permission
-        if (!\in_array('edit_sections', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
-        }
-        try {
-            $affected = Query::query(
-                'UPDATE `talks__sections` SET `private`=:private, `editor`=:user_id WHERE `section_id`=:section_id;',
-                [
-                    ':private' => [$private, 'bool'],
-                    ':section_id' => [$this->id, 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-                return: 'affected',
-            );
-            if ($affected > 0) {
-                $this->private = $private;
-                $this->notifyAboutChange($private ? 'private' : 'public');
-            }
-
-            // TODO need to mark all children as private as well
-            return ['response' => true];
-        } catch (\Throwable) {
-            return ['response' => false];
-        }
-    }
-
-    /**
-     * Function to close/open a section
-     *
-     * @param bool $closed
-     *
-     * @return array
-     */
-    public function setClosed(bool $closed = false): array
-    {
-        // Check permission
-        if (!\in_array('edit_sections', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
-        }
-        try {
-            $affected = Query::query(
-                'UPDATE `talks__sections` SET `closed`=:closed, `editor`=:user_id WHERE `section_id`=:section_id;',
-                [
-                    ':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')],
-                    ':section_id' => [$this->id, 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-                return: 'affected',
-            );
-            if ($affected > 0) {
-                $this->closed = ($closed ? \time() : null);
-                $this->notifyAboutChange($closed ? 'close' : 'open');
-            }
-
-            return ['response' => true];
-        } catch (\Throwable) {
-            return ['response' => false];
-        }
-    }
-
-    /**
-     * Move section to another parent section
-     *
-     * @return array
-     */
-    public function move(): array
-    {
-        // Check permission
-        if (!\in_array('move_sections', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `move_sections` permission'];
-        }
-        $data = $_POST['section_data'] ?? [];
-        if (empty($data['parent_id'])) {
-            return ['http_error' => 400, 'reason' => 'No section ID provided'];
-        }
-        $parent = new Section($data['parent_id'])->get();
-        if ($parent->id === null) {
-            return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parent_id'].'` does not exist'];
-        }
-        try {
-            $affected = Query::query(
-                'UPDATE `talks__sections` SET `parent_id`=:parent_id, `editor`=:user_id WHERE `section_id`=:section_id;',
-                [
-                    ':parent_id' => [
-                        (empty($data['parent_id']) ? null : $data['parent_id']),
-                        (empty($data['parent_id']) ? 'null' : 'int'),
-                    ],
-                    ':section_id' => [$this->id, 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-                return: 'affected',
-            );
-            if ($affected > 0) {
-                $this->notifyAboutChange('move');
-            }
-
-            return ['response' => true];
-        } catch (\Throwable) {
-            return ['response' => false];
-        }
-    }
-
-    /**
-     * Create a new section
-     *
-     * @return array
-     */
-    public function add(): array
-    {
-        // Sanitize data
-        $data = $_POST['section_data'] ?? [];
-        $sanitize = $this->sanitizeInput($data);
-        if (\is_array($sanitize)) {
-            return $sanitize;
-        }
-        try {
-            $new_id = Query::query(
-                'INSERT INTO `talks__sections`(`section_id`, `name`, `description`, `parent_id`, `sequence`, `type`, `closed`, `private`, `published`, `author`, `editor`, `icon`) VALUES (NULL,:name,:description,:parent_id,:sequence,:type,:closed,:private,:time,:user_id,:user_id,:icon);',
-                [
-                    ':closed' => [
-                        ($data['closed'] ? 'now' : null),
-                        ($data['closed'] ? 'datetime' : 'null'),
-                    ],
-                    ':description' => \mb_trim($data['description'], null, 'UTF-8'),
-                    ':icon' => [
-                        (empty($data['icon']) ? null : $data['icon']),
-                        (empty($data['icon']) ? 'null' : 'string'),
-                    ],
-                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
-                    ':parent_id' => [
-                        (empty($data['parent_id']) ? null : $data['parent_id']),
-                        (empty($data['parent_id']) ? 'null' : 'int'),
-                    ],
-                    ':private' => [$data['private'], 'bool'],
-                    ':sequence' => [$data['order'], 'int'],
-                    ':time' => [
-                        (empty($data['time']) ? 'now' : $data['time']),
-                        'datetime',
-                    ],
-                    ':type' => [$data['type'], 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-                return: 'increment',
-            );
-            // Link the section to the user, if it's required
-            if (!empty($data['link_type'])) {
-                switch ($data['link_type']) {
-                    case 2:
-                        Query::query(
-                            'INSERT INTO `uc__user_to_section` (`user_id`, `blog`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `blog`=:section_id;',
-                            [
-                                ':section_id' => [$new_id, 'int'],
-                                ':user_id' => [$_SESSION['user_id'], 'int'],
-                            ],
-                        );
-
-                        break;
-                    case 4:
-                        Query::query(
-                            'INSERT INTO `uc__user_to_section` (`user_id`, `changelog`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `changelog`=:section_id;',
-                            [
-                                ':section_id' => [$new_id, 'int'],
-                                ':user_id' => [$_SESSION['user_id'], 'int'],
-                            ],
-                        );
-
-                        break;
-                    case 6:
-                        Query::query(
-                            'INSERT INTO `uc__user_to_section` (`user_id`, `knowledgebase`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `knowledgebase`=:section_id;',
-                            [
-                                ':section_id' => [$new_id, 'int'],
-                                ':user_id' => [$_SESSION['user_id'], 'int'],
-                            ],
-                        );
-
-                        break;
-                }
-            }
-
-            return ['response' => true, 'location' => '/talks/sections/'.$new_id];
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
-
-            return ['http_error' => 500, 'reason' => 'Failed to create new section'];
-        }
-    }
-
-    /**
-     * Edit section data
-     *
-     * @return array|true[]
-     */
-    public function edit(): array
-    {
-        // Sanitize data
-        $data = $_POST['section_data'] ?? [];
-        $sanitize = $this->sanitizeInput($data, true);
-        if (\is_array($sanitize)) {
-            return $sanitize;
-        }
-        // Check if we are changing to a category and if we have any threads in it
-        if (
-            $data['type'] === 1
-            && Query::query('SELECT `thread_id` FROM `talks__threads` WHERE `section_id`=:section_id LIMIT 1;', [':section_id' => [$this->id, 'int']], return: 'check')
-        ) {
-            return ['http_error' => 400, 'reason' => 'Can\'t change section type to `Category`, because it has threads in it'];
-        }
-        try {
-            $queries = [];
-            $queries[] = [
-                'UPDATE `talks__sections` SET `name`=:name, `description`=:description, `sequence`=:sequence, `type`=:type, `editor`=:user_id, `icon`=COALESCE(:icon, `icon`) WHERE `section_id`=:section_id;',
-                [
-                    ':description' => \mb_trim($data['description'], null, 'UTF-8'),
-                    ':icon' => [
-                        (empty($data['icon']) ? null : $data['icon']),
-                        (empty($data['icon']) ? 'null' : 'string'),
-                    ],
-                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
-                    ':section_id' => [$this->id, 'int'],
-                    ':sequence' => [$data['order'], 'int'],
-                    ':type' => [$data['type'], 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-            ];
-            $affected = Query::query($queries, return: 'affected');
-            if ($affected > 0) {
-                $this->notifyAboutChange('change');
-            }
-
-            return ['response' => true];
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
-
-            return ['http_error' => 500, 'reason' => 'Failed to update section'];
-        }
-    }
-
-    /**
      * Sanitize section data
      *
      * @param array $data Data to check
@@ -633,14 +737,14 @@ final class Section extends Entity
         if (\count($data) === 0) {
             return ['http_error' => 400, 'reason' => 'No form data provided'];
         }
-        $data['closed'] = $data['closed'] ?? $this->closed;
+        $data['closed'] ??= $this->closed;
         $data['closed'] = Sanitization::checkboxToBoolean($data['closed']);
-        $data['private'] = $data['private'] ?? $this->private;
+        $data['private'] ??= $this->private;
         $data['private'] = Sanitization::checkboxToBoolean($data['private']);
         $data['clear_icon'] = Sanitization::checkboxToBoolean($data['clear_icon']);
         $data['icon'] = !(\mb_strtolower($data['icon'], 'UTF-8') === 'false');
         $data['type'] = (int) $data['type'];
-        $data['order'] = $data['order'] ?? $this->sequence;
+        $data['order'] ??= $this->sequence;
         $data['order'] = (int) ($data['order'] ?? 0);
         if ($data['order'] < 0) {
             $data['order'] = 0;
@@ -658,7 +762,7 @@ final class Section extends Entity
                 $data['parent_id'] = null;
             }
         }
-        $data['parent_id'] = $data['parent_id'] ?? $this->parent_id;
+        $data['parent_id'] ??= $this->parent_id;
         // If time was set, convert to UTC
         $data['time'] = Sanitization::scheduledTime($data['time'], $data['timezone']);
         // Strip tags from description, since we do not allow HTML here
@@ -669,7 +773,7 @@ final class Section extends Entity
             return ['http_error' => 400, 'reason' => 'Name cannot be empty'];
         }
         // Check if parent exists
-        $parent = new Section($data['parent_id'])->get();
+        $parent = new self($data['parent_id'])->get();
         if ($parent->id === null) {
             return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parent_id'].'` does not exist'];
         }
@@ -810,95 +914,5 @@ final class Section extends Entity
         }
 
         return true;
-    }
-
-    /**
-     * Delete section
-     *
-     * @return array
-     */
-    public function delete(): array
-    {
-        // Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
-        if (!$this->attempted) {
-            (void) $this->get();
-        }
-        // Check permission
-        if (
-            !$this->owned
-            && !\in_array('remove_sections', $_SESSION['permissions'], true)
-        ) {
-            return ['http_error' => 403, 'reason' => 'No `remove_sections` permission'];
-        }
-        if ($this->id === null) {
-            return ['http_error' => 404, 'reason' => 'Section not found'];
-        }
-        // Check if the section is system one
-        if ($this->system) {
-            return ['http_error' => 403, 'reason' => 'Can\'t delete system section'];
-        }
-        // Check if the section has any subsections or threads
-        if (
-            !empty($this->children['entities'])
-            || !empty($this->threads['entities'])
-        ) {
-            return ['http_error' => 400, 'reason' => 'Can\'t delete non-empty section'];
-        }
-        // Set location for successful removal
-        $location = $this->parent_id === 0 ? '/talks/edit/sections/' : '/talks/edit/sections/'.$this->parent_id.'/';
-        // Attempt removal
-        try {
-            $affected = Query::query('DELETE FROM `talks__sections` WHERE `section_id`=:section_id;', [':section_id' => [$this->id, 'int']], return: 'affected');
-            if ($affected > 0) {
-                $this->notifyAboutChange('delete');
-            }
-
-            return ['response' => true, 'location' => $location];
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
-
-            return ['http_error' => 500, 'reason' => 'Failed to delete section'];
-        }
-    }
-
-    /**
-     * Function to get section types allowed inside a section
-     *
-     * @param string|int $type
-     *
-     * @return array
-     */
-    public static function getSectionTypes(string|int $type = ''): array
-    {
-        $where = '';
-        switch (\mb_strtolower($type, 'UTF-8')) {
-            case 'blog':
-            case '2':
-                $where = ' WHERE `talks__types`.`type`=\'Blog\'';
-
-                break;
-            case 'forum':
-            case '3':
-                $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Forum\')';
-
-                break;
-            case 'changelog':
-            case '4':
-                $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Changelog\')';
-
-                break;
-            case 'support':
-            case '5':
-                $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Support\')';
-
-                break;
-            case 'knowledgebase':
-            case '6':
-                $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Knowledgebase\')';
-
-                break;
-        }
-
-        return Query::query('SELECT `type_id` AS `value`, `type` AS `name`, `description`, CONCAT(\'/assets/images/uploaded/\', SUBSTRING(`sys__files`.`file_id`, 1, 2), \'/\', SUBSTRING(`sys__files`.`file_id`, 3, 2), \'/\', SUBSTRING(`sys__files`.`file_id`, 5, 2), \'/\', `sys__files`.`file_id`, \'.\', `sys__files`.`extension`) AS `icon` FROM `talks__types` INNER JOIN `sys__files` ON `talks__types`.`icon`=`sys__files`.`file_id`'.$where.' ORDER BY `type_id`;', return: 'all');
     }
 }

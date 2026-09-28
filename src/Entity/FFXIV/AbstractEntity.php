@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 // TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
+
 namespace App\Entity\FFXIV;
 
 use App\HomePage;
@@ -19,55 +20,19 @@ use Simbiat\Database\Query;
 abstract class AbstractEntity
 {
     // Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of the same object for different sets of data
-    protected bool $attempted = false;
+    protected const string ENTITY_TYPE = 'character';
+
+    public ?string $id = null;
+
+    public string $name = '';
 
     // If ID was retrieved, this needs to not be null
-    public ?string $id = null;
+    protected bool $attempted = false;
 
     // Format for IDs
     protected string $id_format = '/^\d+$/m';
 
-    // Debug flag
-    protected bool $debug = false;
-    protected const string ENTITY_TYPE = 'character';
-    public string $name = '';
-
     protected null|array $lodestone = null;
-
-    /**
-     * @param string|int|null $id    ID of an entity
-     * @param bool            $debug Flag to enable debug mode
-     */
-    final public function __construct(string|int|null $id = null, bool $debug = false)
-    {
-        // Set debug flag
-        $this->debug = $debug;
-        // If ID was provided - set it as well
-        if (!empty($id)) {
-            $this->setId($id);
-        } elseif ($id !== null) {
-            throw new \UnexpectedValueException('ID can\'t be empty.');
-        }
-    }
-
-    /**
-     * Set entity ID
-     *
-     * @param string|int $id
-     *
-     * @return $this
-     */
-    public function setId(string|int $id): self
-    {
-        // Convert to string for consistency
-        $id = (string) $id;
-        if (\preg_match($this->id_format, $id) !== 1) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
-        }
-        $this->id = $id;
-
-        return $this;
-    }
 
     /**
      * Get entity properties
@@ -208,40 +173,6 @@ abstract class AbstractEntity
     }
 
     /**
-     * Function to get initial data from DB
-     *
-     * @throws \Exception
-     */
-    abstract protected function getFromDB(): array;
-
-    /**
-     * Get entity data from Lodestone
-     *
-     * @param bool $allow_sleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
-     *
-     * @return string|array
-     *
-     * @internal
-     */
-    abstract public function getFromLodestone(bool $allow_sleep = false): string|array;
-
-    /**
-     * Function to do processing
-     *
-     * @param array $from_db
-     *
-     * @return void
-     */
-    abstract protected function process(array $from_db): void;
-
-    /**
-     * Function to update the entity in DB
-     *
-     * @return bool
-     */
-    abstract protected function updateDB(): bool;
-
-    /**
      * Update the entity
      *
      * @param bool $allow_sleep Flag to allow sleep if Lodestone is throttling us
@@ -322,22 +253,6 @@ abstract class AbstractEntity
     }
 
     /**
-     * Remove a scheduled job from Cron, if any
-     *
-     * @return void
-     */
-    private function removeFromCron(): void
-    {
-        try {
-            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-            new TaskInstance('ff_update_entity', [(string) $this->id, ($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE])->delete();
-        } catch (\Throwable $exception) {
-            // Do nothing
-            Errors::error_log($exception, 'Failed to remove task for '.$this::ENTITY_TYPE.' ID `'.$this->id.'`', debug: $this->debug);
-        }
-    }
-
-    /**
      * To be called from API to allow entity updates
      *
      * @return bool|array|string
@@ -370,6 +285,73 @@ abstract class AbstractEntity
         }
 
         return $result;
+    }
+
+    /**
+     * Get entity data from Lodestone
+     *
+     * @param bool $allow_sleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
+     *
+     * @return string|array
+     *
+     * @internal
+     */
+    abstract public function getFromLodestone(bool $allow_sleep = false): string|array;
+
+    /**
+     * Function to get initial data from DB
+     *
+     * @throws \Exception
+     */
+    abstract protected function getFromDB(): array;
+
+    /**
+     * Function to do processing
+     *
+     * @param array $from_db
+     *
+     * @return void
+     */
+    abstract protected function process(array $from_db): void;
+
+    /**
+     * Function to update the entity in DB
+     *
+     * @return bool
+     */
+    abstract protected function updateDB(): bool;
+
+    /**
+     * @param string|int|null $id    ID of an entity
+     * @param bool            $debug Flag to enable debug mode
+     */
+    final public function __construct(string|int|null $id = null, protected bool $debug = false)
+    {
+        // If ID was provided - set it as well
+        if (!empty($id)) {
+            $this->setId($id);
+        } elseif ($id !== null) {
+            throw new \UnexpectedValueException('ID can\'t be empty.');
+        }
+    }
+
+    /**
+     * Set entity ID
+     *
+     * @param string|int $id
+     *
+     * @return $this
+     */
+    public function setId(string|int $id): self
+    {
+        // Convert to string for consistency
+        $id = (string) $id;
+        if (\preg_match($this->id_format, $id) !== 1) {
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
+        }
+        $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -444,71 +426,6 @@ abstract class AbstractEntity
     }
 
     /**
-     * Helper function to add new characters to Cron en masse
-     *
-     * @param array $members
-     *
-     * @return void
-     */
-    protected function charMassCron(array $members): void
-    {
-        // Cache CRON object
-        if (\count($members) !== 0) {
-            $cron = new TaskInstance();
-            foreach ($members as $member => $details) {
-                if (!$details['registered']) {
-                    // Priority is higher since they are missing a lot of data.
-                    try {
-                        $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $member, 'character'], 'message' => 'Updating character with ID '.$member, 'priority' => 2])->add();
-                    } catch (\Throwable) {
-                        // Do nothing, not considered critical
-                    }
-                }
-            }
-        }
-    }
-
-    protected function charQuickRegister(string|int $character_id, array &$lodestone_data, array &$queries): void
-    {
-        // Check if character is registered
-        $lodestone_data[$character_id]['registered'] = Query::query('SELECT `character_id` FROM `ffxiv__character` WHERE `character_id`=:character_id', [':character_id' => $character_id], return: 'check');
-        if (!$lodestone_data[$character_id]['registered']) {
-            // Create the basic entry of the character
-            $queries[] = [
-                'INSERT INTO `ffxiv__character`(
-                                `character_id`, `server_id`, `name`, `registered`, `updated`, `avatar`, `gc_rank_id`, `pvp_matches`
-                            )
-                            VALUES (
-                                :character_id, (SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server), :name, CURRENT_TIMESTAMP(6), TIMESTAMPADD(SECOND, -3600, CURRENT_TIMESTAMP(6)), :avatar, `gc_rank_id` = (SELECT `gc_rank_id` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gc_rank_id` LIMIT 1), :matches
-                            ) ON DUPLICATE KEY UPDATE `deleted`=NULL;',
-                [
-                    ':avatar' => \str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0.jpg'], '', $lodestone_data[$character_id]['avatar']),
-                    ':character_id' => $character_id,
-                    ':gcRank' => (empty($lodestone_data[$character_id]['grand_company']['rank']) ? '' : $lodestone_data[$character_id]['grand_company']['rank']),
-                    ':matches' => (empty($lodestone_data[$character_id]['feasts']) ? 0 : $lodestone_data[$character_id]['feasts']),
-                    ':name' => $lodestone_data[$character_id]['name'],
-                    ':server' => $lodestone_data[$character_id]['server'],
-                ],
-            ];
-        }
-    }
-
-    /**
-     * Function to remove Lodestone domain(s) from image links
-     *
-     * @param string $url
-     *
-     * @return string
-     */
-    public static function removeLodestoneDomain(string $url): string
-    {
-        return \str_replace([
-            'https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/',
-            'https://lds-img.finalfantasyxiv.com/itemicon/',
-        ], '', $url);
-    }
-
-    /**
      * Function to download crest components from Lodestone
      *
      * @param array $images
@@ -580,6 +497,21 @@ abstract class AbstractEntity
     }
 
     /**
+     * Function to remove Lodestone domain(s) from image links
+     *
+     * @param string $url
+     *
+     * @return string
+     */
+    public static function removeLodestoneDomain(string $url): string
+    {
+        return \str_replace([
+            'https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/',
+            'https://lds-img.finalfantasyxiv.com/itemicon/',
+        ], '', $url);
+    }
+
+    /**
      * Function to turn a group crest into a favicon
      *
      * @param array $images
@@ -604,6 +536,88 @@ abstract class AbstractEntity
         }
 
         return '/assets/images/fftracker/merged-crests/not_found.webp';
+    }
+
+    /**
+     * Clean component crests to have a proper image, even if they are empty
+     *
+     * @param array $results
+     *
+     * @return array
+     */
+    public static function cleanCrestResults(array $results): array
+    {
+        foreach ($results as $key => $result) {
+            if (
+                isset($result['crest_part_1'])
+                || isset($result['crest_part_2'])
+                || isset($result['crest_part_3'])
+            ) {
+                $results[$key]['icon'] = self::crestToFavicon([$result['crest_part_1'], $result['crest_part_2'], $result['crest_part_3']]);
+                if (
+                    isset($result['gc_id'])
+                    && \str_contains($results[$key]['icon'], 'not_found')
+                    && \in_array($result['gc_id'], [1, 2, 3], true)
+                ) {
+                    $results[$key]['icon'] = $result['gc_id'];
+                }
+            } else {
+                $results[$key]['icon'] = '/assets/images/fftracker/merged-crests/not_found.webp';
+            }
+            unset($results[$key]['crest_part_1'], $results[$key]['crest_part_2'], $results[$key]['crest_part_3'], $results[$key]['gc_id']);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Helper function to add new characters to Cron en masse
+     *
+     * @param array $members
+     *
+     * @return void
+     */
+    protected function charMassCron(array $members): void
+    {
+        // Cache CRON object
+        if (\count($members) !== 0) {
+            $cron = new TaskInstance();
+            foreach ($members as $member => $details) {
+                if (!$details['registered']) {
+                    // Priority is higher since they are missing a lot of data.
+                    try {
+                        $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $member, 'character'], 'message' => 'Updating character with ID '.$member, 'priority' => 2])->add();
+                    } catch (\Throwable) {
+                        // Do nothing, not considered critical
+                    }
+                }
+            }
+        }
+    }
+
+    protected function charQuickRegister(string|int $character_id, array &$lodestone_data, array &$queries): void
+    {
+        // Check if character is registered
+        $lodestone_data[$character_id]['registered'] = Query::query('SELECT `character_id` FROM `ffxiv__character` WHERE `character_id`=:character_id', [':character_id' => $character_id], return: 'check');
+        if (!$lodestone_data[$character_id]['registered']) {
+            // Create the basic entry of the character
+            $queries[] = [
+                'INSERT INTO `ffxiv__character`(
+                                `character_id`, `server_id`, `name`, `registered`, `updated`, `avatar`, `gc_rank_id`, `pvp_matches`
+                            )
+                            VALUES (
+                                :character_id, (SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server), :name, CURRENT_TIMESTAMP(6), TIMESTAMPADD(SECOND, -3600, CURRENT_TIMESTAMP(6)), :avatar, `gc_rank_id` = (SELECT `gc_rank_id` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gc_rank_id` LIMIT 1), :matches
+                            ) ON DUPLICATE KEY UPDATE `deleted`=NULL;',
+                [
+                    ':avatar' => \str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0.jpg'], '', $lodestone_data[$character_id]['avatar']),
+                    ':character_id' => $character_id,
+                    ':gcRank' => (empty($lodestone_data[$character_id]['grand_company']['rank']) ? '' : $lodestone_data[$character_id]['grand_company']['rank']),
+                    ':matches' => (empty($lodestone_data[$character_id]['feasts']) ? 0 : $lodestone_data[$character_id]['feasts']),
+                    ':name' => $lodestone_data[$character_id]['name'],
+                    ':server' => $lodestone_data[$character_id]['server'],
+                ],
+            ];
+        }
     }
 
     /**
@@ -704,34 +718,18 @@ abstract class AbstractEntity
     }
 
     /**
-     * Clean component crests to have a proper image, even if they are empty
+     * Remove a scheduled job from Cron, if any
      *
-     * @param array $results
-     *
-     * @return array
+     * @return void
      */
-    public static function cleanCrestResults(array $results): array
+    private function removeFromCron(): void
     {
-        foreach ($results as $key => $result) {
-            if (
-                isset($result['crest_part_1'])
-                || isset($result['crest_part_2'])
-                || isset($result['crest_part_3'])
-            ) {
-                $results[$key]['icon'] = self::crestToFavicon([$result['crest_part_1'], $result['crest_part_2'], $result['crest_part_3']]);
-                if (
-                    isset($result['gc_id'])
-                    && \str_contains($results[$key]['icon'], 'not_found')
-                    && \in_array($result['gc_id'], [1, 2, 3], true)
-                ) {
-                    $results[$key]['icon'] = $result['gc_id'];
-                }
-            } else {
-                $results[$key]['icon'] = '/assets/images/fftracker/merged-crests/not_found.webp';
-            }
-            unset($results[$key]['crest_part_1'], $results[$key]['crest_part_2'], $results[$key]['crest_part_3'], $results[$key]['gc_id']);
+        try {
+            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+            new TaskInstance('ff_update_entity', [(string) $this->id, ($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE])->delete();
+        } catch (\Throwable $exception) {
+            // Do nothing
+            Errors::error_log($exception, 'Failed to remove task for '.$this::ENTITY_TYPE.' ID `'.$this->id.'`', debug: $this->debug);
         }
-
-        return $results;
     }
 }

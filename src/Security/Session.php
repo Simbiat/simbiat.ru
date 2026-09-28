@@ -44,9 +44,6 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         \ini_set('session.use_only_cookies', true);
     }
 
-    // #########################
-    // \SessionHandlerInterface#
-    // #########################
     /**
      * Initialize session
      *
@@ -264,6 +261,134 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
+     * Destroy a session
+     *
+     * @link  https://php.net/manual/en/sessionhandlerinterface.destroy.php
+     *
+     * @param string $id The session ID being destroyed.
+     *
+     * @return bool <p>
+     *                   The return value (usually TRUE on success, FALSE on failure).
+     *                   Note this value is returned internally to PHP for processing.
+     *                   </p>
+     *
+     * @since 5.4
+     */
+    public function destroy(string $id): bool
+    {
+        try {
+            return Query::query('DELETE FROM `uc__sessions` WHERE `session_id`=:id', [':id' => $id]);
+        } catch (\Throwable $e) {
+            Errors::error_log($e);
+
+            return false;
+        }
+    }
+
+    /**
+     * Cleanup old sessions
+     *
+     * @link  https://php.net/manual/en/sessionhandlerinterface.gc.php
+     *
+     * @param int $max_lifetime <p>
+     *                          Sessions that have not updated for
+     *                          the last max_lifetime seconds will be removed.
+     *                          </p>
+     *
+     * @return int|false <p>
+     *                          Returns the number of deleted sessions on success, or false on failure. Prior to PHP version 7.1, the function returned true in case of success.
+     *                          Note this value is returned internally to PHP for processing.
+     *                          </p>
+     *
+     * @since 5.4
+     */
+    public function gc(int $max_lifetime = 300): false|int
+    {
+        try {
+            return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND) OR `user_id` IN (:system_user_id, :deleted_user_id);', [':life' => [$max_lifetime, 'int'], ':system_user_id' => [SystemUser::System->value, 'int'], ':deleted_user_id' => [SystemUser::Deleted->value, 'int']], return: 'affected');
+        } catch (\Throwable $throwable) {
+            // Ignore deadlocks
+            if (\mb_stripos($throwable->getMessage(), 'Deadlock', 0, 'UTF-8') === false) {
+                Errors::error_log($throwable);
+            }
+
+            return false;
+        }
+    }
+
+    /**
+     * Create session ID
+     *
+     * @link https://php.net/manual/en/sessionidinterface.create-sid.php
+     *
+     * @return string <p>
+     * The new session ID. Notes that this value is returned internally to PHP for processing.
+     * </p>
+     */
+    public function create_sid(): string
+    {
+        return \session_create_id();
+    }
+
+    /**
+     * Validate session id
+     *
+     * @link https://www.php.net/manual/sessionupdatetimestamphandlerinterface.validateid
+     *
+     * @param string $id The session id
+     *
+     * @return bool <p>
+     *                   Note this value is returned internally to PHP for processing.
+     *                   </p>
+     */
+    public function validateId(string $id): bool
+    {
+        // Get ID
+        try {
+            $session_id = Query::query('SELECT `session_id` FROM `uc__sessions` WHERE `session_id` = :id;', [':id' => $id], return: 'value');
+        } catch (\Throwable $e) {
+            Errors::error_log($e);
+
+            return false;
+        }
+        // Check if it was returned
+        if (empty($session_id)) {
+            // No such session exists
+            return false;
+        }
+
+        // Validate session id using hash_equals to mitigate timing attacks
+        return \hash_equals($session_id, $id);
+    }
+
+    /**
+     * Update the timestamp of a session
+     *
+     * @link https://www.php.net/manual/sessionupdatetimestamphandlerinterface.updatetimestamp.php
+     *
+     * @param string $id   The session id
+     * @param string $data <p>
+     *                     The encoded session data. This data is the
+     *                     result of the PHP internally encoding
+     *                     the $_SESSION superglobal to a serialized
+     *                     string and passing it as this parameter.
+     *                     Please note sessions use an alternative serialization method.
+     *                     </p>
+     *
+     * @return bool
+     */
+    public function updateTimestamp(string $id, string $data): bool
+    {
+        try {
+            return Query::query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP(6) WHERE `session_id` = :id;', [':id' => $id]);
+        } catch (\Throwable $e) {
+            Errors::error_log($e);
+
+            return false;
+        }
+    }
+
+    /**
      * Custom function to refresh data, which needs refreshing on every session (IP for tracking, groups for access control, names for rendering, etc.)
      *
      * @param array $data Main array with the data
@@ -357,9 +482,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         $forwarded = $_SERVER['HTTP_X_FORWARDED'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_FORWARDED'] ?? $_SERVER['HTTP_FORWARDED_FOR'] ?? '';
         if (!empty($forwarded)) {
             // Get a list of IPs that do validate as proper IP
-            $ips = \array_filter(\array_map('\trim', \explode(',', $forwarded)), static function ($value) {
-                return \filter_var($value, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6);
-            });
+            $ips = \array_filter(\array_map('\trim', \explode(',', $forwarded)), static fn($value) => \filter_var($value, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6));
             // Check if any are left
             if (!empty($ips)) {
                 // Get the right-most IP
@@ -443,140 +566,6 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             Errors::error_log($exception);
 
             return [];
-        }
-    }
-
-    /**
-     * Destroy a session
-     *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.destroy.php
-     *
-     * @param string $id The session ID being destroyed.
-     *
-     * @return bool <p>
-     *                   The return value (usually TRUE on success, FALSE on failure).
-     *                   Note this value is returned internally to PHP for processing.
-     *                   </p>
-     *
-     * @since 5.4
-     */
-    public function destroy(string $id): bool
-    {
-        try {
-            return Query::query('DELETE FROM `uc__sessions` WHERE `session_id`=:id', [':id' => $id]);
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
-
-            return false;
-        }
-    }
-
-    /**
-     * Cleanup old sessions
-     *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.gc.php
-     *
-     * @param int $max_lifetime <p>
-     *                          Sessions that have not updated for
-     *                          the last max_lifetime seconds will be removed.
-     *                          </p>
-     *
-     * @return int|false <p>
-     *                          Returns the number of deleted sessions on success, or false on failure. Prior to PHP version 7.1, the function returned true in case of success.
-     *                          Note this value is returned internally to PHP for processing.
-     *                          </p>
-     *
-     * @since 5.4
-     */
-    public function gc(int $max_lifetime = 300): false|int
-    {
-        try {
-            return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND) OR `user_id` IN (:system_user_id, :deleted_user_id);', [':life' => [$max_lifetime, 'int'], ':system_user_id' => [SystemUser::System->value, 'int'], ':deleted_user_id' => [SystemUser::Deleted->value, 'int']], return: 'affected');
-        } catch (\Throwable $throwable) {
-            // Ignore deadlocks
-            if (\mb_stripos($throwable->getMessage(), 'Deadlock', 0, 'UTF-8') === false) {
-                Errors::error_log($throwable);
-            }
-
-            return false;
-        }
-    }
-
-    // ####################
-    // \SessionIdInterface#
-    // ####################
-    /**
-     * Create session ID
-     *
-     * @link https://php.net/manual/en/sessionidinterface.create-sid.php
-     *
-     * @return string <p>
-     * The new session ID. Notes that this value is returned internally to PHP for processing.
-     * </p>
-     */
-    public function create_sid(): string
-    {
-        return \session_create_id();
-    }
-
-    // ########################################
-    // \SessionUpdateTimestampHandlerInterface#
-    // ########################################
-    /**
-     * Validate session id
-     *
-     * @link https://www.php.net/manual/sessionupdatetimestamphandlerinterface.validateid
-     *
-     * @param string $id The session id
-     *
-     * @return bool <p>
-     *                   Note this value is returned internally to PHP for processing.
-     *                   </p>
-     */
-    public function validateId(string $id): bool
-    {
-        // Get ID
-        try {
-            $session_id = Query::query('SELECT `session_id` FROM `uc__sessions` WHERE `session_id` = :id;', [':id' => $id], return: 'value');
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
-
-            return false;
-        }
-        // Check if it was returned
-        if (empty($session_id)) {
-            // No such session exists
-            return false;
-        }
-
-        // Validate session id using hash_equals to mitigate timing attacks
-        return \hash_equals($session_id, $id);
-    }
-
-    /**
-     * Update the timestamp of a session
-     *
-     * @link https://www.php.net/manual/sessionupdatetimestamphandlerinterface.updatetimestamp.php
-     *
-     * @param string $id   The session id
-     * @param string $data <p>
-     *                     The encoded session data. This data is the
-     *                     result of the PHP internally encoding
-     *                     the $_SESSION superglobal to a serialized
-     *                     string and passing it as this parameter.
-     *                     Please note sessions use an alternative serialization method.
-     *                     </p>
-     *
-     * @return bool
-     */
-    public function updateTimestamp(string $id, string $data): bool
-    {
-        try {
-            return Query::query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP(6) WHERE `session_id` = :id;', [':id' => $id]);
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
-
-            return false;
         }
     }
 }

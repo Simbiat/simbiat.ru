@@ -20,7 +20,7 @@ final class Extension extends AbstractExtension implements GlobalsInterface
     /**
      * Returns a list of functions to add to the existing list.
      *
-     * @return TwigFunction[]
+     * @return array<\Twig\TwigFunction>
      */
     #[\Override]
     public function getFunctions(): array
@@ -71,7 +71,9 @@ final class Extension extends AbstractExtension implements GlobalsInterface
             }
         }
         // Flag for Save-Data header
-        $save_data = \preg_match('/^on$/i', $_SERVER['HTTP_SAVE_DATA'] ?? '') === 1 ? 'true' : 'false';
+        $save_data = \preg_match('/^on$/i', $_SERVER['HTTP_SAVE_DATA'] ?? '') === 1
+            ? 'true'
+            : 'false';
 
         return \array_merge($defaults, [
             // Flag whether GET is present

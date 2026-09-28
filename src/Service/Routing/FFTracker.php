@@ -18,9 +18,11 @@ use App\Controller\FFXIV\Track;
 final class FFTracker extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $sub_routes = ['search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'crossworldlinkshells', 'achievements', 'statistics', 'crests', 'track', 'points',
+    protected array $sub_routes = [
+        'search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'crossworldlinkshells', 'achievements', 'statistics', 'crests', 'track', 'points',
         // legacy singular nodes
-        'character', 'freecompany', 'pvpteam', 'linkshell', 'crossworld_linkshell', 'crossworldlinkshell', 'achievement',];
+        'character', 'freecompany', 'pvpteam', 'linkshell', 'crossworld_linkshell', 'crossworldlinkshell', 'achievement',
+    ];
 
     // Current breadcrumb for navigation
     protected array $breadcrumb = [

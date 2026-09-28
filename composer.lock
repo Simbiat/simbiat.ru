@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f5630a8738838aca76b9b37a0c479aa",
+    "content-hash": "5fd378e5e99f2acb35bf3e73f7e7e615",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -10969,12 +10969,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pdepend/pdepend.git",
-                "reference": "10eaf720b5061f4dd9513f4b513710799804fae6"
+                "reference": "9ac5444aba5b2c71c7d1f9573f2949684e440a24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/10eaf720b5061f4dd9513f4b513710799804fae6",
-                "reference": "10eaf720b5061f4dd9513f4b513710799804fae6",
+                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/9ac5444aba5b2c71c7d1f9573f2949684e440a24",
+                "reference": "9ac5444aba5b2c71c7d1f9573f2949684e440a24",
                 "shasum": ""
             },
             "require": {
@@ -11036,7 +11036,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-25T16:37:08+00:00"
+            "time": "2026-09-26T13:56:53+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -11158,16 +11158,16 @@
         },
         {
             "name": "phildaiguille/twig-a11y-rules",
-            "version": "v0.9.0",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhilDaiguille/twig-a11y-rules.git",
-                "reference": "d6cd9a5a90f8f2bcc47cc5e35a70bcc792acd72c"
+                "reference": "6f0b89e614c11238f5cf7becfa66e3f18badbe2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhilDaiguille/twig-a11y-rules/zipball/d6cd9a5a90f8f2bcc47cc5e35a70bcc792acd72c",
-                "reference": "d6cd9a5a90f8f2bcc47cc5e35a70bcc792acd72c",
+                "url": "https://api.github.com/repos/PhilDaiguille/twig-a11y-rules/zipball/6f0b89e614c11238f5cf7becfa66e3f18badbe2f",
+                "reference": "6f0b89e614c11238f5cf7becfa66e3f18badbe2f",
                 "shasum": ""
             },
             "require": {
@@ -11178,12 +11178,17 @@
             "require-dev": {
                 "brianium/paratest": "^7.23.1",
                 "friendsofphp/php-cs-fixer": "^3.95",
-                "infection/infection": "^0.34.1",
+                "infection/infection": "^0.35.4",
                 "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^13.2.6",
                 "rector/rector": "^2.4"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "TwigA11y\\": "src/"
@@ -11195,7 +11200,8 @@
             ],
             "authors": [
                 {
-                    "name": "Phildaiguille"
+                    "name": "Phildaiguille",
+                    "homepage": "https://github.com/PhilDaiguille"
                 }
             ],
             "description": "Accessibility linting rules for Twig templates",
@@ -11215,7 +11221,7 @@
                 "issues": "https://github.com/PhilDaiguille/twig-a11y-rules/issues",
                 "source": "https://github.com/PhilDaiguille/twig-a11y-rules"
             },
-            "time": "2026-08-04T18:58:59+00:00"
+            "time": "2026-09-26T15:42:10+00:00"
         },
         {
             "name": "phpcompatibility/php-compatibility",
@@ -11488,17 +11494,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpmd/phpmd.git",
-                "reference": "c8187fe2f6900415f9cec7f19339c24ff16bc14f"
+                "reference": "4879072390bce301f63dabd98b3fdec794c51bb6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/c8187fe2f6900415f9cec7f19339c24ff16bc14f",
-                "reference": "c8187fe2f6900415f9cec7f19339c24ff16bc14f",
+                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/4879072390bce301f63dabd98b3fdec794c51bb6",
+                "reference": "4879072390bce301f63dabd98b3fdec794c51bb6",
                 "shasum": ""
             },
             "require": {
                 "composer/xdebug-handler": "^3.0",
                 "ext-xml": "*",
+                "fidry/cpu-core-counter": "^1.2",
                 "pdepend/pdepend": "3.x-dev#2cdfa2dab627b79c8ee74146821bb65307a5bd30",
                 "php": "^8.1",
                 "symfony/console": "^6.4|^7.0|^8.0",
@@ -11512,10 +11519,14 @@
                 "friendsofphp/php-cs-fixer": "^3.57",
                 "gregwar/rst": "^1.0",
                 "mikey179/vfsstream": "^1.6.8",
-                "phpstan/phpstan": "~2.1.56",
+                "phpstan/phpstan": "~2.2.15",
                 "phpunit/phpunit": "^10.5.62|^11.5.50",
                 "squizlabs/php_codesniffer": "^3.8.0"
             },
+            "suggest": {
+                "ext-pcntl": "Needed to apply the rules in parallel"
+            },
+            "default-branch": true,
             "bin": [
                 "bin/phpmd"
             ],
@@ -11569,7 +11580,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-24T12:44:58+00:00"
+            "time": "2026-09-26T15:48:30+00:00"
         },
         {
             "name": "phpstan/phpstan",
@@ -11688,22 +11699,22 @@
         },
         {
             "name": "phpstan/phpstan-phpunit",
-            "version": "2.0.18",
+            "version": "2.0.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-phpunit.git",
-                "reference": "f5dc20ff8082d02339b60cab68ec3eb0d859fb30"
+                "reference": "33a190a5e8e69fd18308443a80d4f43f42d43604"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-phpunit/zipball/f5dc20ff8082d02339b60cab68ec3eb0d859fb30",
-                "reference": "f5dc20ff8082d02339b60cab68ec3eb0d859fb30",
+                "url": "https://api.github.com/repos/phpstan/phpstan-phpunit/zipball/33a190a5e8e69fd18308443a80d4f43f42d43604",
+                "reference": "33a190a5e8e69fd18308443a80d4f43f42d43604",
                 "shasum": ""
             },
             "require": {
                 "phar-io/version": "^3.2",
                 "php": "^7.4 || ^8.0",
-                "phpstan/phpstan": "^2.2.3"
+                "phpstan/phpstan": "^2.2.6"
             },
             "conflict": {
                 "phpunit/phpunit": "<7.0"
@@ -11740,9 +11751,9 @@
             ],
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-phpunit/issues",
-                "source": "https://github.com/phpstan/phpstan-phpunit/tree/2.0.18"
+                "source": "https://github.com/phpstan/phpstan-phpunit/tree/2.0.19"
             },
-            "time": "2026-07-04T12:16:09+00:00"
+            "time": "2026-09-26T17:07:06+00:00"
         },
         {
             "name": "phpstan/phpstan-strict-rules",
@@ -16621,7 +16632,6 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.5",
         "ext-apcu": "*",
         "ext-bcmath": "*",
         "ext-brotli": "*",
@@ -16642,7 +16652,8 @@
         "ext-zend-opcache": "*",
         "ext-zip": "*",
         "ext-zlib": "*",
-        "ext-zstd": "*"
+        "ext-zstd": "*",
+        "php": "^8.5"
     },
     "platform-dev": {
         "ext-igbinary": "*",

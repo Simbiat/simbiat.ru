@@ -17,16 +17,17 @@ final class Threads extends Api
     protected array $methods = ['POST' => ['add', 'edit'], 'DELETE' => 'delete', 'PATCH' => ['move', 'close', 'open', 'mark_private', 'mark_public', 'pin', 'unpin']];
 
     // Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
-    protected array $verbs = ['add' => 'Add thread',
-'close' => 'Close thread',
-'delete' => 'Delete thread',
-'edit' => 'Edit thread',
-'mark_private' => 'Mark the thread as private',
-'mark_public' => 'Mark the thread as public',
-'move' => 'Move thread',
-'open' => 'Open thread',
-'pin' => 'Pin the thread',
-'unpin' => 'Unpin the thread',
+    protected array $verbs = [
+        'add' => 'Add thread',
+        'close' => 'Close thread',
+        'delete' => 'Delete thread',
+        'edit' => 'Edit thread',
+        'mark_private' => 'Mark the thread as private',
+        'mark_public' => 'Mark the thread as public',
+        'move' => 'Move thread',
+        'open' => 'Open thread',
+        'pin' => 'Pin the thread',
+        'unpin' => 'Unpin the thread',
     ];
 
     // Flag indicating that authentication is required

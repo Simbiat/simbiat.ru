@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class Healthcheck
 {
     /**
-     * Clear old sessions
+     * Check if database is up
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *

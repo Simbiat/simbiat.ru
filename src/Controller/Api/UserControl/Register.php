@@ -19,9 +19,11 @@ final class Register extends Api
     protected array $methods = ['POST' => ''];
 
     /**
+     * This is an actual API response generation based on further details of the $path
+     *
      * @param array $path
      *
-     * @return array
+     * @return array<string>
      */
     protected function genData(array $path): array
     {

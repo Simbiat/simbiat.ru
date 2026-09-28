@@ -35,6 +35,7 @@ final class Kernel extends BaseKernel
     public function boot(): void
     {
         parent::boot();
+
         if ($this->app_bootstrapped) {
             return;
         }

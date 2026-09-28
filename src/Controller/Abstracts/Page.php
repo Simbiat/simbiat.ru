@@ -89,46 +89,12 @@ abstract class Page
     // List of images to H2 push, which are dependent on data grabbed by the page during generation
     protected array $h2_push_extra = [];
 
-    final public function __construct()
-    {
-        // Check that subclass has set appropriate properties
-        foreach (['subservice_name', 'breadcrumb'] as $property) {
-            if (empty($this->{$property})) {
-                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
-            }
-        }
-        // Set last modified data
-        $this->last_modified = \time();
-    }
-
-    /**
-     * Send common headers
-     *
-     * @return void
-     */
-    public static function headers(): void
-    {
-        // Send headers
-        if (!\headers_sent()) {
-            \header('X-Dns-Prefetch-Control: off');
-            \header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
-            \header('Allow: GET, HEAD, OPTIONS');
-            \header('Content-Type: text/html; charset=utf-8');
-            \header('SourceMap: /assets/'.\filemtime(Config::$js_dir.'app.js').'.js.map', false);
-            \header('SourceMap: /assets/styles/'.\filemtime(Config::$css_dir.'app.css').'.css.map', false);
-            \header('NEL: {"report_to":"default","max_age":31536000,"include_subdomains":true}');
-            \header('feature-policy: accelerometer \'none\'; gyroscope \'none\'; magnetometer \'none\'; camera \'none\'; microphone \'none\'; midi \'none\'; usb \'none\'; encrypted-media \'self\'; publickey-credentials-get \'self\'; geolocation \'none\'; xr-spatial-tracking \'none\'; payment \'none\'; display-capture \'none\'; web-share \'none\'; sync-xhr \'none\'; autoplay \'none\'; fullscreen \'none\'; picture-in-picture \'none\'');
-            \header('permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), cross-origin-isolated=(self), display-capture=(), document-domain=(), encrypted-media=(self), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(self), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(self), xr-spatial-tracking=(), clipboard-read=(self), clipboard-write=(self), gamepad=(self), speaker-selection=(), hid=(), idle-detection=(), interest-cohort=(), serial=()');
-            \header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' https://img2.finalfantasyxiv.com; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\'; trusted-types dompurify default;');
-        }
-    }
-
     /**
      * Get the page
      *
      * @param array $path
      *
-     * @return array|int[]
+     * @return array<string>
      */
     final public function get(array $path): array
     {
@@ -204,8 +170,8 @@ abstract class Page
         $page['cache_age'] = $this->cache_age;
         $page['cache_strategy'] = $this->cache_strategy;
         if (
-            !empty($this->h2_push)
-            || !empty($this->h2_push_extra)
+            \count($this->h2_push) !== 0
+            || \count($this->h2_push_extra) !== 0
         ) {
             $this->h2_push = \array_merge($this->h2_push, $this->h2_push_extra);
             // Prepare a set of images to push
@@ -214,7 +180,7 @@ abstract class Page
             }
             Links::links($this->h2_push, force_cross_origin: true);
         }
-        if (!empty($this->alt_links)) {
+        if (\count($this->alt_links) !== 0) {
             // Send HTTP header
             if (!HomePage::$stale_return) {
                 Links::links($this->alt_links, force_cross_origin: true);
@@ -294,7 +260,7 @@ abstract class Page
     {
         // Add a path to breadcrumbs
         $this->breadcrumb[] = [
-            'href' => $this->breadcrumb[\array_key_last($this->breadcrumb)]['href'].($query ? '&' : '/').$path,
+            'href' => \array_last($this->breadcrumb)['href'].($query ? '&' : '/').$path,
             'name' => $name,
         ];
     }
@@ -306,7 +272,7 @@ abstract class Page
      */
     final protected function getLastCrumb(): string
     {
-        return $this->breadcrumb[\array_key_last($this->breadcrumb)]['href'];
+        return \array_last($this->breadcrumb)['href'];
     }
 
     /**
@@ -351,4 +317,38 @@ abstract class Page
      * @return array
      */
     abstract protected function generate(array $path): array;
+
+    final public function __construct()
+    {
+        // Check that subclass has set appropriate properties
+        foreach (['subservice_name', 'breadcrumb'] as $property) {
+            if (empty($this->{$property})) {
+                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
+            }
+        }
+        // Set last modified data
+        $this->last_modified = \time();
+    }
+
+    /**
+     * Send common headers
+     *
+     * @return void
+     */
+    public static function headers(): void
+    {
+        // Send headers
+        if (!\headers_sent()) {
+            \header('X-Dns-Prefetch-Control: off');
+            \header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
+            \header('Allow: GET, HEAD, OPTIONS');
+            \header('Content-Type: text/html; charset=utf-8');
+            \header('SourceMap: /assets/'.\filemtime(Config::$js_dir.'app.js').'.js.map', false);
+            \header('SourceMap: /assets/styles/'.\filemtime(Config::$css_dir.'app.css').'.css.map', false);
+            \header('NEL: {"report_to":"default","max_age":31536000,"include_subdomains":true}');
+            \header('feature-policy: accelerometer \'none\'; gyroscope \'none\'; magnetometer \'none\'; camera \'none\'; microphone \'none\'; midi \'none\'; usb \'none\'; encrypted-media \'self\'; publickey-credentials-get \'self\'; geolocation \'none\'; xr-spatial-tracking \'none\'; payment \'none\'; display-capture \'none\'; web-share \'none\'; sync-xhr \'none\'; autoplay \'none\'; fullscreen \'none\'; picture-in-picture \'none\'');
+            \header('permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), cross-origin-isolated=(self), display-capture=(), document-domain=(), encrypted-media=(self), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(self), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(self), xr-spatial-tracking=(), clipboard-read=(self), clipboard-write=(self), gamepad=(self), speaker-selection=(), hid=(), idle-detection=(), interest-cohort=(), serial=()');
+            \header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' https://img2.finalfantasyxiv.com; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\'; trusted-types dompurify default;');
+        }
+    }
 }

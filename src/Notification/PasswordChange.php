@@ -16,14 +16,17 @@ final class PasswordChange extends Notification
      * Subject for email
      */
     protected const string SUBJECT = '[Alert]: Password change';
+
     /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
      */
     protected const int PRIORITY = 1;
+
     /**
      * Whether to send to all emails registered for the user
      */
     protected const bool ALL_EMAILS = true;
+
     /**
      * Whether this is a security alert, and we need to collect session details and pass them to Twig
      */

@@ -17,6 +17,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 final readonly class Cron
 {
     /**
+     * Inject dependencies
+     *
      * @param \Doctrine\DBAL\Connection $connection
      */
     public function __construct(
@@ -35,7 +37,7 @@ final readonly class Cron
     public function cron(OutputInterface $output): int
     {
         try {
-            /* @var \PDO $pdo IDE complains due to more generic object */
+            /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
             $output->writeln(Errors::logfmt('Processing CRON tasks from DB...'));
             new Agent($pdo)->process(50);

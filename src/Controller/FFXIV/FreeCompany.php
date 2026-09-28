@@ -45,11 +45,12 @@ final class FreeCompany extends Page
         $this->lastModified($output_array['freecompany']['dates']['updated']);
         $output_array['freecompany']['dates']['scheduled'] = $entity->scheduleUpdate();
         // Check if linked to the current user
-        $output_array['freecompany']['linked'] = 
+        $output_array['freecompany']['linked'] =
             $_SESSION['user_id'] !== 1
             && \in_array($_SESSION['user_id'], \array_column($output_array['freecompany']['members'], 'user_id'), true)
-         ? true : false;
-        $output_array['freecompany']['can_refresh'] = 
+            ? true
+            : false;
+        $output_array['freecompany']['can_refresh'] =
             (
                 empty($output_array['freecompany']['dates']['deleted']) && (
                     empty($output_array['freecompany']['dates']['scheduled']) ||
@@ -57,7 +58,8 @@ final class FreeCompany extends Page
                 )
             ) ||
             \in_array('refresh_all_ff', $_SESSION['permissions'], true)
-         ? true : false;
+            ? true
+            : false;
         // Continue breadcrumbs
         $this->breadcrumb[] = ['href' => '/fftracker/freecompanies/'.$id, 'name' => $output_array['freecompany']['name']];
         // Update meta

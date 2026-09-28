@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 // TODO: Consider splitting into Entity (just description/shape/structure of the object), Repository (queries for getting the data) and Service (processing the data, "business operations")
+
 namespace App\Entity;
 
 use App\Enum\SystemUser;
@@ -63,9 +64,6 @@ final class Thread extends Entity
     public array $external_links = [];
 
     // Flag indicating if we are getting data for a post and can skip some details
-    private bool $for_post = false;
-
-    // Access token for support tickets from contact form
     public ?string $access_token = null;
 
     // Access token for support tickets from contact form
@@ -73,6 +71,9 @@ final class Thread extends Entity
 
     // List of subscribers
     public array $subscribers = [];
+
+    // Access token for support tickets from contact form
+    private bool $for_post = false;
 
     /**
      * Function to set a flag, indicating that data is needed for a post (for optimization)
@@ -89,206 +90,11 @@ final class Thread extends Entity
     }
 
     /**
-     * Function to get initial data from DB
-     *
-     * @return array
-     */
-    protected function getFromDB(): array
-    {
-        // Set the page required for threads
-        $page = (int) ($_GET['page'] ?? 1);
-        // Get general information
-        $data = new Threads([':thread_id' => [$this->id, 'int']], '`talks__threads`.`thread_id`=:thread_id')->listEntities();
-        if (
-            !\is_array($data)
-            || empty($data['entities'])
-        ) {
-            return [];
-        }
-        $data = $data['entities'][0];
-        // Get section details
-        $data['section'] = new Section($data['section_id'])->setForThread(true)->getArray();
-        if ($data['detailed_type'] === 'Support') {
-            $data['access_token'] = Query::query('SELECT `access_token`, `email` FROM `talks__contact_form` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'row');
-        }
-        if ($this->for_post) {
-            // Get pagination data
-            try {
-                // Regular list does not fit due to pagination and due to excessive data, so using a custom query to get all posts
-                $data['posts']['pages'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `published`<=CURRENT_TIMESTAMP(6)').';', [':thread_id' => [$this->id, 'int']], return: 'count');
-            } catch (\Throwable) {
-                $data['posts']['pages'] = 1;
-            }
-        } else {
-            // Get subscribers
-            $data['subscribers'] = Query::query('SELECT `user_id` FROM `subs__threads` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'column');
-            // Get posts
-            $data['posts'] = new Posts([':thread_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)'), '`talks__posts`.`published` ASC')->listEntities($page);
-            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-            if (
-                \is_array($data['posts'])
-                && \is_array($data['posts']['entities'])
-            ) {
-                /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-                foreach ($data['posts']['entities'] as $post_key => $post) {
-                    /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-                    $data['posts']['entities'][$post_key]['attachments'] = Query::query('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`file_id` = `sys__files`.`file_id` WHERE `post_id`=:post_id;', [':post_id' => $post['id']], return: 'all');
-                }
-            }
-            // Get tags
-            $data['tags'] = Query::query('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tag_id`=`talks__tags`.`tag_id` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'column');
-            // Get external links
-            $data['links'] = $this->getAltLinks();
-        }
-
-        return $data;
-    }
-
-    /**
-     * Function process database data
-     *
-     * @param array $from_db
-     *
-     * @return void
-     */
-    protected function process(array $from_db): void
-    {
-        $this->name = $from_db['name'];
-        $this->type = $from_db['detailed_type'];
-        $this->system = (bool) $from_db['system'];
-        $this->private = (bool) $from_db['private'];
-        $this->pinned = (bool) $from_db['pinned'];
-        $this->og_image = $from_db['og_image'] ?? null;
-        $this->last_post = $from_db['last_post'] !== null ? \strtotime($from_db['last_post']) : null;
-        $this->last_poster = $from_db['last_poster'] ?? SystemUser::Deleted->value;
-        $this->closed = $from_db['closed'] !== null ? \strtotime($from_db['closed']) : null;
-        $this->created = $from_db['created'] !== null ? \strtotime($from_db['created']) : null;
-        $this->published = $from_db['published'] !== null ? \strtotime($from_db['published']) : null;
-        $this->author = $from_db['author'] ?? SystemUser::Deleted->value;
-        $this->owned = ($this->author === $_SESSION['user_id']);
-        $this->updated = $from_db['updated'] !== null ? \strtotime($from_db['updated']) : null;
-        $this->editor = $from_db['editor'] ?? SystemUser::Deleted->value;
-        $this->parents = \array_merge($from_db['section']['parents'], [['section_id' => $from_db['section']['id'], 'name' => $from_db['section']['name'], 'type' => $from_db['section']['type'], 'parent_id' => $from_db['section']['parents'][0]['section_id']]]);
-        $this->parent = $from_db['section'];
-        $this->parent_id = (int) $from_db['section']['id'];
-        $this->language = $from_db['language'];
-        $this->last_page = $from_db['posts']['pages'];
-        if ($this->last_page < 1) {
-            $this->last_page = 1;
-        }
-        $this->access_token = $from_db['access_token']['access_token'] ?? null;
-        $this->email = $from_db['access_token']['email'] ?? null;
-        if ($this->for_post) {
-            return;
-        }
-
-        $this->subscribers = $from_db['subscribers'];
-        $this->posts = $from_db['posts'];
-        $this->tags = $from_db['tags'];
-        $this->external_links = $from_db['links'];
-    }
-
-    /**
-     * Get alternative links for the thread
-     *
-     * @return array
-     */
-    private function getAltLinks(): array
-    {
-        $links = Query::query(
-            'SELECT `url`, `talks__alt_link_types`.`type`, `icon`
-                                        FROM `talks__alt_link_types`
-                                        LEFT JOIN `talks__alt_links` ON `talks__alt_links`.`type`=`talks__alt_link_types`.`type_id`
-                                            AND `thread_id`=:thread_id;',
-            [':thread_id' => [$this->id, 'int']],
-            return: 'all',
-        );
-
-        return Editors::digitToKey($links, 'type');
-    }
-
-    /**
-     * Get language from DB
-     *
-     * @return array
-     */
-    public static function getLanguages(): array
-    {
-        return Query::query('SELECT `tag` AS `value`, `name` FROM `sys__languages` ORDER BY `name`;', return: 'all');
-    }
-
-    /**
-     * Get supported alternative link types
-     *
-     * @return array
-     */
-    public static function getAltLinkTypes(): array
-    {
-        return Query::query('SELECT * FROM `talks__alt_link_types` ORDER BY `type`;', return: 'all');
-    }
-
-    /**
-     * @param string $type Change type
-     *
-     * @return void
-     */
-    private function notifyAboutChange(#[ExpectedValues(['private', 'public', 'close', 'open', 'change', 'delete', 'move', 'pin', 'unpin'])] string $type): void
-    {
-        $for_notification = $type === 'delete' ? [
-                'author' => $this->author,
-                'thread_id' => $this->id,
-            ] : Query::query(
-                'SELECT `thread_id`, `author`, `name` AS `new_name`, `section_id`,
-                                                        (SELECT `name` FROM `talks__sections` WHERE `section_id`=`main_select`.`section_id`) AS `parent_name`,
-                                                        (SELECT CONCAT(\'/assets/images/uploaded/\', SUBSTRING(`file_id`, 1, 2), \'/\', SUBSTRING(`file_id`, 3, 2), \'/\', SUBSTRING(`file_id`, 5, 2), \'/\', `file_id`, \'.\', `extension`) AS `icon` FROM `sys__files` WHERE `file_id`=`main_select`.`og_image`) AS `og_image`
-                                                        FROM `talks__threads` AS `main_select` WHERE `thread_id`=:thread_id;',
-                [':thread_id' => [$this->id, 'int']],
-                return: 'row',
-            );
-        $for_notification['reason'] = $_POST['thread_data']['change_reason'] ?? '';
-        $for_notification['name'] = $this->name;
-        $for_notification['change_type'] = $type;
-        $for_notification['editor_id'] = $_SESSION['user_id'];
-        $for_notification['editor_name'] = $_SESSION['username'];
-        if (
-            $for_notification['author'] === $_SESSION['user_id']
-            || \in_array($for_notification['author'], SystemUser::getSystemUsers(), true)
-        ) {
-            return;
-        }
-
-        if ($type === 'change') {
-            $links = $this->getAltLinks();
-            $for_notification['changes'] = Checkers::getChanges(
-                \array_merge(
-                    [
-                        'name' => $this->name,
-                        'og_image' => $this->og_image,
-                    ],
-                    $this->external_links,
-                ),
-                \array_merge(
-                    [
-                        'name' => $for_notification['new_name'],
-                        'og_image' => $for_notification['og_image'],
-                    ],
-                    $links,
-                ),
-            );
-            // If no changes added to, skip sending notification, something was changed, that we do not track
-            if ($for_notification['changes'] === []) {
-                return;
-            }
-        }
-        (void) new ThreadChange()->save($for_notification['author'], $for_notification);
-    }
-
-    /**
      * Function that (un)marks a section as thread
      *
      * @param bool $private
      *
-     * @return array|false[]|true[]
+     * @return array<string, bool|int|string>
      */
     public function setPrivate(bool $private = false): array
     {
@@ -309,7 +115,6 @@ final class Thread extends Entity
             if ($affected > 0) {
                 $this->private = $private;
                 $this->notifyAboutChange($private ? 'private' : 'public');
-
             }
 
             return ['response' => true];
@@ -323,7 +128,7 @@ final class Thread extends Entity
      *
      * @param bool $closed
      *
-     * @return array|false[]|true[]
+     * @return array<string, bool|int|string>
      */
     public function setClosed(bool $closed = false): array
     {
@@ -357,7 +162,6 @@ final class Thread extends Entity
             $this->closed = (!$closed ? null : \time());
             if ($affected > 0) {
                 $this->notifyAboutChange($closed ? 'close' : 'open');
-
             }
 
             return ['response' => true];
@@ -419,7 +223,7 @@ final class Thread extends Entity
      *
      * @param bool $pinned
      *
-     * @return array|false[]|true[]
+     * @return array<string, bool|int|string>
      */
     public function setPinned(bool $pinned = false): array
     {
@@ -440,7 +244,6 @@ final class Thread extends Entity
             $this->pinned = $pinned;
             if ($affected > 0) {
                 $this->notifyAboutChange($this->pinned ? 'pin' : 'unpin');
-
             }
 
             return ['response' => true];
@@ -613,7 +416,7 @@ final class Thread extends Entity
     /**
      * Edit section data
      *
-     * @return array|true[]
+     * @return array<string, bool|int|string>
      */
     public function edit(): array
     {
@@ -715,7 +518,6 @@ final class Thread extends Entity
             $affected = Query::query($queries, return: 'affected');
             if ($affected > 0) {
                 $this->notifyAboutChange('change');
-
             }
 
             return ['response' => true];
@@ -724,6 +526,258 @@ final class Thread extends Entity
 
             return ['http_error' => 500, 'reason' => 'Failed to update thread'];
         }
+    }
+
+    /**
+     * Delete section
+     *
+     * @return array
+     */
+    public function delete(): array
+    {
+        // Check permission
+        if (!\in_array('remove_threads', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `remove_threads` permission'];
+        }
+        // Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
+        if (!$this->attempted) {
+            $this->get();
+        }
+        if ($this->id === null) {
+            return ['http_error' => 404, 'reason' => 'Thread not found'];
+        }
+        // Check if the section is system one
+        if ($this->system) {
+            return ['http_error' => 403, 'reason' => 'Can\'t delete system thread'];
+        }
+        // Check if the section has any subsections or threads
+        if (!empty($this->posts['entities'])) {
+            return ['http_error' => 400, 'reason' => 'Can\'t delete non-empty thread'];
+        }
+        // Set location for successful removal
+        $location = !empty($this->parent['id'])
+            ? '/talks/sections/'.$this->parent['id'].'/'
+            : '/talks/sections/';
+        // Attempt removal
+        try {
+            $affected = Query::query('DELETE FROM `talks__threads` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'affected');
+            if ($affected > 0) {
+                $this->notifyAboutChange('delete');
+            }
+
+            return ['response' => true, 'location' => $location];
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+
+            return ['http_error' => 500, 'reason' => 'Failed to delete thread'];
+        }
+    }
+
+    /**
+     * Get language from DB
+     *
+     * @return array
+     */
+    public static function getLanguages(): array
+    {
+        return Query::query('SELECT `tag` AS `value`, `name` FROM `sys__languages` ORDER BY `name`;', return: 'all');
+    }
+
+    /**
+     * Get supported alternative link types
+     *
+     * @return array
+     */
+    public static function getAltLinkTypes(): array
+    {
+        return Query::query('SELECT * FROM `talks__alt_link_types` ORDER BY `type`;', return: 'all');
+    }
+
+    /**
+     * Function to get initial data from DB
+     *
+     * @return array
+     */
+    protected function getFromDB(): array
+    {
+        // Set the page required for threads
+        $page = (int) ($_GET['page'] ?? 1);
+        // Get general information
+        $data = new Threads([':thread_id' => [$this->id, 'int']], '`talks__threads`.`thread_id`=:thread_id')->listEntities();
+        if (
+            !\is_array($data)
+            || empty($data['entities'])
+        ) {
+            return [];
+        }
+        $data = $data['entities'][0];
+        // Get section details
+        $data['section'] = new Section($data['section_id'])->setForThread(true)->getArray();
+        if ($data['detailed_type'] === 'Support') {
+            $data['access_token'] = Query::query('SELECT `access_token`, `email` FROM `talks__contact_form` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'row');
+        }
+        if ($this->for_post) {
+            // Get pagination data
+            try {
+                // Regular list does not fit due to pagination and due to excessive data, so using a custom query to get all posts
+                $data['posts']['pages'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `published`<=CURRENT_TIMESTAMP(6)').';', [':thread_id' => [$this->id, 'int']], return: 'count');
+            } catch (\Throwable) {
+                $data['posts']['pages'] = 1;
+            }
+        } else {
+            // Get subscribers
+            $data['subscribers'] = Query::query('SELECT `user_id` FROM `subs__threads` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'column');
+            // Get posts
+            $data['posts'] = new Posts([':thread_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)'), '`talks__posts`.`published` ASC')->listEntities($page);
+            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            if (
+                \is_array($data['posts'])
+                && \is_array($data['posts']['entities'])
+            ) {
+                /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+                foreach ($data['posts']['entities'] as $post_key => $post) {
+                    /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+                    $data['posts']['entities'][$post_key]['attachments'] = Query::query('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`file_id` = `sys__files`.`file_id` WHERE `post_id`=:post_id;', [':post_id' => $post['id']], return: 'all');
+                }
+            }
+            // Get tags
+            $data['tags'] = Query::query('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tag_id`=`talks__tags`.`tag_id` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'column');
+            // Get external links
+            $data['links'] = $this->getAltLinks();
+        }
+
+        return $data;
+    }
+
+    /**
+     * Function process database data
+     *
+     * @param array $from_db
+     *
+     * @return void
+     */
+    protected function process(array $from_db): void
+    {
+        $this->name = $from_db['name'];
+        $this->type = $from_db['detailed_type'];
+        $this->system = (bool) $from_db['system'];
+        $this->private = (bool) $from_db['private'];
+        $this->pinned = (bool) $from_db['pinned'];
+        $this->og_image = $from_db['og_image'] ?? null;
+        $this->last_post = $from_db['last_post'] !== null
+            ? \strtotime($from_db['last_post'])
+            : null;
+        $this->last_poster = $from_db['last_poster'] ?? SystemUser::Deleted->value;
+        $this->closed = $from_db['closed'] !== null
+            ? \strtotime($from_db['closed'])
+            : null;
+        $this->created = $from_db['created'] !== null
+            ? \strtotime($from_db['created'])
+            : null;
+        $this->published = $from_db['published'] !== null
+            ? \strtotime($from_db['published'])
+            : null;
+        $this->author = $from_db['author'] ?? SystemUser::Deleted->value;
+        $this->owned = ($this->author === $_SESSION['user_id']);
+        $this->updated = $from_db['updated'] !== null
+            ? \strtotime($from_db['updated'])
+            : null;
+        $this->editor = $from_db['editor'] ?? SystemUser::Deleted->value;
+        $this->parents = \array_merge($from_db['section']['parents'], [['section_id' => $from_db['section']['id'], 'name' => $from_db['section']['name'], 'type' => $from_db['section']['type'], 'parent_id' => $from_db['section']['parents'][0]['section_id']]]);
+        $this->parent = $from_db['section'];
+        $this->parent_id = (int) $from_db['section']['id'];
+        $this->language = $from_db['language'];
+        $this->last_page = $from_db['posts']['pages'];
+        if ($this->last_page < 1) {
+            $this->last_page = 1;
+        }
+        $this->access_token = $from_db['access_token']['access_token'] ?? null;
+        $this->email = $from_db['access_token']['email'] ?? null;
+        if ($this->for_post) {
+            return;
+        }
+
+        $this->subscribers = $from_db['subscribers'];
+        $this->posts = $from_db['posts'];
+        $this->tags = $from_db['tags'];
+        $this->external_links = $from_db['links'];
+    }
+
+    /**
+     * Get alternative links for the thread
+     *
+     * @return array
+     */
+    private function getAltLinks(): array
+    {
+        $links = Query::query(
+            'SELECT `url`, `talks__alt_link_types`.`type`, `icon`
+                                        FROM `talks__alt_link_types`
+                                        LEFT JOIN `talks__alt_links` ON `talks__alt_links`.`type`=`talks__alt_link_types`.`type_id`
+                                            AND `thread_id`=:thread_id;',
+            [':thread_id' => [$this->id, 'int']],
+            return: 'all',
+        );
+
+        return Editors::digitToKey($links, 'type');
+    }
+
+    /**
+     * @param string $type Change type
+     *
+     * @return void
+     */
+    private function notifyAboutChange(#[ExpectedValues(['private', 'public', 'close', 'open', 'change', 'delete', 'move', 'pin', 'unpin'])] string $type): void
+    {
+        $for_notification = $type === 'delete'
+            ? [
+                'author' => $this->author,
+                'thread_id' => $this->id,
+            ]
+            : Query::query(
+                'SELECT `thread_id`, `author`, `name` AS `new_name`, `section_id`,
+                                                        (SELECT `name` FROM `talks__sections` WHERE `section_id`=`main_select`.`section_id`) AS `parent_name`,
+                                                        (SELECT CONCAT(\'/assets/images/uploaded/\', SUBSTRING(`file_id`, 1, 2), \'/\', SUBSTRING(`file_id`, 3, 2), \'/\', SUBSTRING(`file_id`, 5, 2), \'/\', `file_id`, \'.\', `extension`) AS `icon` FROM `sys__files` WHERE `file_id`=`main_select`.`og_image`) AS `og_image`
+                                                        FROM `talks__threads` AS `main_select` WHERE `thread_id`=:thread_id;',
+                [':thread_id' => [$this->id, 'int']],
+                return: 'row',
+            );
+        $for_notification['reason'] = $_POST['thread_data']['change_reason'] ?? '';
+        $for_notification['name'] = $this->name;
+        $for_notification['change_type'] = $type;
+        $for_notification['editor_id'] = $_SESSION['user_id'];
+        $for_notification['editor_name'] = $_SESSION['username'];
+        if (
+            $for_notification['author'] === $_SESSION['user_id']
+            || \in_array($for_notification['author'], SystemUser::getSystemUsers(), true)
+        ) {
+            return;
+        }
+
+        if ($type === 'change') {
+            $links = $this->getAltLinks();
+            $for_notification['changes'] = Checkers::getChanges(
+                \array_merge(
+                    [
+                        'name' => $this->name,
+                        'og_image' => $this->og_image,
+                    ],
+                    $this->external_links,
+                ),
+                \array_merge(
+                    [
+                        'name' => $for_notification['new_name'],
+                        'og_image' => $for_notification['og_image'],
+                    ],
+                    $links,
+                ),
+            );
+            // If no changes added to, skip sending notification, something was changed, that we do not track
+            if ($for_notification['changes'] === []) {
+                return;
+            }
+        }
+        (void) new ThreadChange()->save($for_notification['author'], $for_notification);
     }
 
     /**
@@ -929,49 +983,5 @@ final class Thread extends Entity
         }
 
         return $alt_links;
-    }
-
-    /**
-     * Delete section
-     *
-     * @return array
-     */
-    public function delete(): array
-    {
-        // Check permission
-        if (!\in_array('remove_threads', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `remove_threads` permission'];
-        }
-        // Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
-        if (!$this->attempted) {
-            $this->get();
-        }
-        if ($this->id === null) {
-            return ['http_error' => 404, 'reason' => 'Thread not found'];
-        }
-        // Check if the section is system one
-        if ($this->system) {
-            return ['http_error' => 403, 'reason' => 'Can\'t delete system thread'];
-        }
-        // Check if the section has any subsections or threads
-        if (!empty($this->posts['entities'])) {
-            return ['http_error' => 400, 'reason' => 'Can\'t delete non-empty thread'];
-        }
-        // Set location for successful removal
-        $location = !empty($this->parent['id']) ? '/talks/sections/'.$this->parent['id'].'/' : '/talks/sections/';
-        // Attempt removal
-        try {
-            $affected = Query::query('DELETE FROM `talks__threads` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'affected');
-            if ($affected > 0) {
-                $this->notifyAboutChange('delete');
-
-            }
-
-            return ['response' => true, 'location' => $location];
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
-
-            return ['http_error' => 500, 'reason' => 'Failed to delete thread'];
-        }
     }
 }

@@ -54,7 +54,7 @@ final class Mailer
                 }
                 foreach ($notifications as $uuid => $type) {
                     $class_name = NotificationType::tryFrom($type);
-                    if (null === $class_name) {
+                    if ($class_name === null) {
                         // Bad type, remove the notification
                         new Test($uuid)->delete();
                     } else {

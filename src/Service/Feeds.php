@@ -37,7 +37,7 @@ final class Feeds
      * @param array  $uri    List of URIs
      * @param string $format What format should be used
      *
-     * @return int[]
+     * @return array<string, int>
      *
      * @throws \DOMException
      */
@@ -56,11 +56,13 @@ final class Feeds
                 // Set general settings first for feeds. Using one array for both types of feeds
                 if ($format === 'atom') {
                     $settings = [
-                        'authors' => [[
-                            'email' => Config::$admin_email,
-                            'name' => Config::$admin_name,
-                            'uri' => Config::$base_url.'/',
-                        ],],
+                        'authors' => [
+                            [
+                                'email' => Config::$admin_email,
+                                'name' => Config::$admin_name,
+                                'uri' => Config::$base_url.'/',
+                            ],
+                        ],
                         'icon' => Config::$base_url.'/assets/images/favicons/simbiat.png',
                         'logo' => Config::$base_url.'/assets/images/ogimages/default.png',
                     ];

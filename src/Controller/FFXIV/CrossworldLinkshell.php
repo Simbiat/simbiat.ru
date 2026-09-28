@@ -47,7 +47,8 @@ final class CrossworldLinkshell extends Page
         $output_array['linkshell']['linked'] =
             $_SESSION['user_id'] !== 1
             && \in_array($_SESSION['user_id'], \array_column($output_array['linkshell']['members'], 'user_id'), true)
-                ? true : false;
+                    ? true
+                    : false;
         $output_array['linkshell']['dates']['scheduled'] = $entity->scheduleUpdate();
         $output_array['linkshell']['can_refresh'] =
             (
@@ -57,7 +58,8 @@ final class CrossworldLinkshell extends Page
                 )
             ) ||
             \in_array('refresh_all_ff', $_SESSION['permissions'], true)
-                ? true : false;
+                    ? true
+                    : false;
         // Continue breadcrumbs
         $this->breadcrumb[] = ['href' => '/fftracker/crossworld_linkshells/'.$id, 'name' => $output_array['linkshell']['name']];
         // Update meta

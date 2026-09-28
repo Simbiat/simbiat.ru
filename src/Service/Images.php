@@ -203,7 +203,8 @@ final class Images
             && $count < 2
         ) {
             // add the last 20 characters from the previous string, to make sure the searched pattern is not split.
-            $chunk = ($chunk ? \mb_substr($chunk, -20, encoding: 'UTF-8') : '').\fread($fh, 1024 * 100); //read 100 kb at a time
+            //read 100 kb at a time
+            $chunk = ($chunk ? \mb_substr($chunk, -20, encoding: 'UTF-8') : '').\fread($fh, 1024 * 100);
             $count += \preg_match_all('/\x00\x21\xF9\x04.{4}\x00[\x2C\x21]/s', $chunk);
         }
         \fclose($fh);
@@ -232,7 +233,9 @@ final class Images
                 return false;
             }
             $length = \unpack('N', $bytes);
-            $length = $length ? $length[1] : 0;
+            $length = $length
+                ? $length[1]
+                : 0;
             $chunk_name = $f->fread(4);
             switch ($chunk_name) {
                 case 'acTL':
@@ -333,7 +336,7 @@ final class Images
      * @param string $file_id File ID to use
      * @param bool   $is_path If `true` ID is actually a path
      *
-     * @return array|null[]
+     * @return array<string, int|string|null>
      */
     public static function ogImage(string $file_id, bool $is_path = false): array
     {

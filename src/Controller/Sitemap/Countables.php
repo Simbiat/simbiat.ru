@@ -56,11 +56,12 @@ final class Countables extends Page
             $path[1] = \preg_replace('/\.xml$/ui', '', $path[1]);
         }
         // Get page
-        $path[1] = 
+        $path[1] =
             empty($path[1])
             || !\is_numeric($path[1])
             || $path[1] < 1
-         ? 1 : (int) $path[1];
+            ? 1
+            : (int) $path[1];
         // Update the link of breadcrumb
         $this->breadcrumb[0]['href'] .= $path[0].'/';
         // Set the starting position for the query

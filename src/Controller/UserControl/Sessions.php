@@ -90,13 +90,18 @@ final class Sessions extends Page
                 // Get client
                 $output_array[$type][$key]['client'] = HomePage::$device_detector->getClient();
                 // Set OS and client icon if they exist
-                $output_array[$type][$key]['os']['icon'] = !empty($output_array[$type][$key]['os']) ? DDCIcons::getOS($output_array[$type][$key]['os']['name'], $output_array[$type][$key]['os']['family']) : null;
-                $output_array[$type][$key]['client']['icon'] = !empty($output_array[$type][$key]['client']) ? DDCIcons::getClient($output_array[$type][$key]['client']['name'], $output_array[$type][$key]['client']['type']) : null;
+                $output_array[$type][$key]['os']['icon'] = !empty($output_array[$type][$key]['os'])
+                    ? DDCIcons::getOS($output_array[$type][$key]['os']['name'], $output_array[$type][$key]['os']['family'])
+                    : null;
+                $output_array[$type][$key]['client']['icon'] = !empty($output_array[$type][$key]['client'])
+                    ? DDCIcons::getClient($output_array[$type][$key]['client']['name'], $output_array[$type][$key]['client']['type'])
+                    : null;
                 // Set country icon if a flag exists
-                $output_array[$type][$key]['country_icon'] = 
+                $output_array[$type][$key]['country_icon'] =
                     !empty($output_array[$type][$key]['country'])
                     && \is_file(Config::$img_dir.'flags/'.$output_array[$type][$key]['country'].'.svg')
-                 ? '/assets/images/flags/'.$output_array[$type][$key]['country'].'.svg' : null;
+                    ? '/assets/images/flags/'.$output_array[$type][$key]['country'].'.svg'
+                    : null;
             }
         }
         $output_array['current_session'] = \session_id();

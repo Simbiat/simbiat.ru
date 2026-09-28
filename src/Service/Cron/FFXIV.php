@@ -151,7 +151,7 @@ final class FFXIV
                                 // Cycle through everything every 5 days. At the time of writing, there should be less than 30000 pages, with 500 pages per hourly scan; the full cycle finishes in less than 3 days
                                 \time() - $json[$world['entity']][$world['world']][$order][$count][$page]['date'] > 432000
                             ) {
-                                $pages_parsed++;
+                                ++$pages_parsed;
                                 // Get linkshells
                                 try {
                                     $lodestone->searchLinkshell('', $world['world'], $count, $order, $page, $world['entity'] === 'crossworldlinkshell');

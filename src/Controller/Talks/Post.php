@@ -159,10 +159,10 @@ final class Post extends Page
         /** @noinspection DuplicatedCode */
         $output_array['ogextra'] =
             '<meta property="article:published_time" content="'.\date('c', $output_array['created']).'" />
-            <meta property="article:modified_time" content="'.\date('c', $output_array['updated']).'" />'.
-            ($output_array['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />').
-            ($output_array['editor'] !== 1 && $output_array['editor'] !== $output_array['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />' : '').
-            '<meta property="article:section" content="'.$output_array['name'].'" />';
+            <meta property="article:modified_time" content="'.\date('c', $output_array['updated']).'" />'
+            .($output_array['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />')
+            .($output_array['editor'] !== 1 && $output_array['editor'] !== $output_array['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />' : '')
+            .'<meta property="article:section" content="'.$output_array['name'].'" />';
 
         return $output_array;
     }

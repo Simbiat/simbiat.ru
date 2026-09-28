@@ -23,6 +23,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class Install
 {
     /**
+     * Inject dependencies
+     *
      * @param \Doctrine\DBAL\Connection $connection
      */
     public function __construct(
@@ -45,7 +47,7 @@ final class Install
             // TODO: Need to figure out a way to prevent run for the 2nd time
             return Command::SUCCESS;
 
-            /* @var \PDO $pdo IDE complains due to more generic object */
+            /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
             // Install CRON
             if (new Installer($pdo)->install()) {

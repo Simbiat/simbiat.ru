@@ -16,10 +16,12 @@ final class NewPost extends Notification
      * Subject for email
      */
     protected const string SUBJECT = 'New post in watched thread';
+
     /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
      */
     protected const int PRIORITY = 1;
+
     /**
      * Whether a non-empty array of Twig variables is required
      */

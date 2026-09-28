@@ -17,14 +17,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Run tasks related to database maintenance
  */
-final class Database
+final readonly class Database
 {
     /**
+     * Inject dependencies
+     *
      * @param \Doctrine\DBAL\Connection $connection
      */
     public function __construct(
         /** @noinspection InterfacesAsConstructorDependenciesInspection */
-        private readonly Connection $connection,
+        private Connection $connection,
     ) {}
 
     /**
@@ -39,7 +41,7 @@ final class Database
     {
         $output->writeln(Errors::logfmt('Generating ordered list of tables...'));
         try {
-            /* @var \PDO $pdo IDE complains due to more generic object */
+            /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
             $dump_order = '';
             // Get tables in order
@@ -79,7 +81,7 @@ final class Database
             if (Config::$environment !== 'dev') {
                 return Command::SUCCESS;
             }
-            /* @var \PDO $pdo IDE complains due to more generic object */
+            /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
             if (
                 !\is_dir(Config::$ddl_dir)
@@ -127,7 +129,7 @@ final class Database
     {
         $output->writeln(Errors::logfmt('Generating optimization scripts...'));
         try {
-            /* @var \PDO $pdo IDE complains due to more generic object */
+            /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
             $analyzer = new Analyzer($pdo);
             $settings = new Settings($pdo);
