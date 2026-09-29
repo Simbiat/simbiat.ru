@@ -126,7 +126,7 @@ abstract class FileListing extends StaticPage
     protected function getFiles(#[FileReference] string $path, bool $count_only = false): array
     {
         $iterator = $this->recursive
-            ? new \CallbackFilterIterator(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST), static fn($cur) => $cur->isFile());
+            ? new \CallbackFilterIterator(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST), static fn($cur) => $cur->isFile())
             : new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), static fn($cur) => $cur->isFile());
         // Order results
         /* @noinspection IteratorToArrayKeysCollisionInspection */
