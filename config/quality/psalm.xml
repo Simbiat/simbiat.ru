@@ -17,14 +17,22 @@
     allowStringToStandInForClass="true"
 >
     <projectFiles>
+        <directory name="/app"/>
         <ignoreFiles allowMissingFiles="true">
+            <directory name="/app/assets"/>
+            <directory name="/app/build"/>
+            <directory name="/app/data"/>
+            <directory name="/app/node_modules"/>
+            <directory name="/app/packages/DDCIcons/icons"/>
+            <directory name="/app/public/assets"/>
+            <directory name="/app/var"/>
             <directory name="/app/vendor"/>
         </ignoreFiles>
     </projectFiles>
     <fileExtensions>
         <extension name=".php"/>
         <extension name=".twig"
-                   checker="../vendor/psalm/plugin-symfony/src/Twig/TemplateFileAnalyzer.php"/>
+                   checker="../../vendor/psalm/plugin-symfony/src/Twig/TemplateFileAnalyzer.php"/>
     </fileExtensions>
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>

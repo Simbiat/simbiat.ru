@@ -8,16 +8,22 @@
     </description>
 
     <!-- Directories to scan -->
-    <file>/app/src</file>
-    <file>/app/tests</file>
-    <file>/app/packages</file>
     <file>/app/bin</file>
     <file>/app/config</file>
+    <file>/app/packages</file>
     <file>/app/public</file>
+    <file>/app/src</file>
+    <file>/app/tests</file>
     <arg name="extensions" value="php"/>
     <!-- Exclusions -->
-    <exclude-pattern>vendor/*</exclude-pattern>
-    <exclude-pattern>var/*</exclude-pattern>
+    <exclude-pattern>/app/assets/*</exclude-pattern>
+    <exclude-pattern>/app/build/*</exclude-pattern>
+    <exclude-pattern>/app/data/*</exclude-pattern>
+    <exclude-pattern>/app/node_modules/*</exclude-pattern>
+    <exclude-pattern>/app/packages/DDCIcons/icons/*</exclude-pattern>
+    <exclude-pattern>/app/public/assets/*</exclude-pattern>
+    <exclude-pattern>/app/var/*</exclude-pattern>
+    <exclude-pattern>/app/vendor/*</exclude-pattern>
 
     <!-- Performance -->
     <arg name="cache" value="/tmp/phpcs.cache"/>

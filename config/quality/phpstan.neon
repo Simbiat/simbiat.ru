@@ -11,7 +11,21 @@ includes:
 
 parameters:
     level: max
+    paths:
+        - /app/bin
+        - /app/config
+        - /app/packages
+        - /app/public
+        - /app/src
+        - /app/tests
     excludePaths:
+        - /app/assets
+        - /app/build
+        - /app/data
+        - /app/node_modules
+        - /app/packages/DDCIcons/icons
+        - /app/public/assets
+        - /app/var
         - /app/vendor
     fileExtensions:
         - php

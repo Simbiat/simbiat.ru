@@ -30,12 +30,12 @@
     <option name="codingStandard" value="Custom" />
     <option name="idleDelayMs" value="5000" />
     <option name="runMode" value="ON_SAVE" />
-    <option name="rulesetPath" value="/app/config/php-cs-fixer.php" />
+    <option name="rulesetPath" value="/app/config/quality/php-cs-fixer.php" />
     <option name="transferred" value="true" />
   </component>
   <component name="PHPCodeSnifferOptionsConfiguration">
     <option name="codingStandard" value="Custom" />
-    <option name="customRuleset" value="/app/config/phpcs.xml" />
+    <option name="customRuleset" value="/app/config/quality/phpcs.xml" />
     <option name="extensions" value="php,inc" />
     <option name="installedPaths" value="$PROJECT_DIR$/vendor/escapestudios/symfony2-coding-standard" />
     <option name="idleDelayMs" value="5000" />
@@ -459,15 +459,14 @@
     </PhpStan_settings>
   </component>
   <component name="PhpStanOptionsConfiguration">
-    <option name="config" value="/app/config/phpstan.neon" />
+    <option name="config" value="/app/config/quality/phpstan.neon" />
     <option name="idleDelayMs" value="5000" />
     <option name="runMode" value="ON_SAVE" />
     <option name="transferred" value="true" />
   </component>
   <component name="PhpUnit">
     <phpunit_settings>
-      <phpunit_by_interpreter interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" configuration_file_path="/app/config/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
-      <PhpUnitSettings configuration_file_path="$PROJECT_DIR$/config/phpunit.xml" custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
+      <phpunit_by_interpreter interpreter_id="75753f80-45b8-4e18-9256-c71e0222056d" configuration_file_path="/app/config/quality/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
     </phpunit_settings>
   </component>
   <component name="Psalm">
@@ -477,7 +476,7 @@
     </Psalm_settings>
   </component>
   <component name="PsalmOptionsConfiguration">
-    <option name="config" value="/app/config/psalm.xml" />
+    <option name="config" value="/app/config/quality/psalm.xml" />
     <option name="idleDelayMs" value="5000" />
     <option name="runMode" value="ON_SAVE" />
     <option name="transferred" value="true" />

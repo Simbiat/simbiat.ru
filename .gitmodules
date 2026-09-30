@@ -91,3 +91,6 @@
 [submodule "build/js/dev/HTMLESLintPlugin"]
 	path = build/js/dev/HTMLESLintPlugin
 	url = https://github.com/Simbiat/html-eslint-plugin-simbiat
+[submodule "packages/QARunner"]
+	path = packages/QARunner
+	url = https://github.com/Simbiat/qa-runner

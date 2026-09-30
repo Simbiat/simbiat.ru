@@ -2,7 +2,7 @@
 <project version="4">
   <component name="EslintConfiguration">
     <work-dir-patterns value="$PROJECT_DIR$" />
-    <custom-configuration-file used="true" path="$PROJECT_DIR$/config/eslint.config.mts" />
+    <custom-configuration-file used="true" path="$PROJECT_DIR$/config/quality/eslint.config.mts" />
     <extra-options value="--no-config-lookup --color --report-unused-disable-directives-severity warn --report-unused-inline-configs warn --cache --cache-location ./data/temp/.eslintcache --cache-strategy content --concurrency auto" />
     <files-pattern value="**/*.{js,ts,jsx,tsx,cjs,cts,mjs,mts,html,vue,md,markdown,json,jsonc,json5,twig}" />
   </component>

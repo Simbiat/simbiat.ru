@@ -41,18 +41,8 @@ H /config/crowdsec/online_api_credentials.example.yaml
 H /config/deploy/
 H /config/packages/dev/
 H /config/packages/test/
-H /config/composer-dependency-analyser.php
-H /config/eslint.config.mts
-H /config/php-cs-fixer.php
+H /config/quality/
 H /config/php_dev.ini
-H /config/phpcs.xml
-H /config/phpmd.xml
-H /config/phpstan.neon
-H /config/phpunit.xml
-H /config/psalm.xml
-H /config/rector.php
-H /config/stylelint.config.ts
-H /config/twig-cs-fixer.php
 + /data/
 + /data/.gitignore
 - /data/security.json
@@ -78,6 +68,8 @@ P /data/uploadedimages/**
 + /migrations/
 H /node_modules/
 + /packages/
+H /packages/QARunner/
+H /packages/Sniffs/
 #TODO: will likely need to be updated once Symfony will start handling items through the `assets/` folder
 + /public/
 P /public/assets/images/fftracker/crests-components/**

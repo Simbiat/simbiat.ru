@@ -26,6 +26,7 @@
       <sourceFolder url="file://$MODULE_DIR$/packages/Database/Bind" isTestSource="false" packagePrefix="Simbiat\Database\" />
       <sourceFolder url="file://$MODULE_DIR$/packages/Database/Manage" isTestSource="false" packagePrefix="Simbiat\Database\" />
       <sourceFolder url="file://$MODULE_DIR$/packages/Sniffs" isTestSource="false" packagePrefix="\" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/QARunner" isTestSource="false" packagePrefix="Simbiat\QARunner\" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/repo" />

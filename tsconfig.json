@@ -64,8 +64,8 @@
     },
     "files": [
         "./vendor/tinymce/tinymce/tinymce.d.ts",
-        "./config/eslint.config.mts",
-        "./config/stylelint.config.ts"
+        "./config/quality/eslint.config.mts",
+        "./config/quality/stylelint.config.ts"
     ],
     //Include only .ts and .mts files in the same dir
     "include": [

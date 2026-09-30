@@ -28,6 +28,7 @@
     <mapping directory="$PROJECT_DIR$/packages/HTML/nl2tag" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/HTMLCache" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/HTTP/SSE" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/QARunner" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/SandClock" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/Sniffs" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/packages/StringHelpers" vcs="Git" />
