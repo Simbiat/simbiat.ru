@@ -17,7 +17,7 @@ return new Configuration()
     ->addPathToScan('/app/packages', isDev: false)
     ->addPathToScan('/app/packages/QARunner', isDev: true)
     ->addPathToScan('/app/packages/Sniffs', isDev: true)
-    ->addPathToScan('/app/public', isDev: false)
+    ->addPathToScan('/app/public/index.php', isDev: false)
     ->addPathToScan('/app/src', isDev: false)
     ->addPathToScan('/app/tests', isDev: true)
     ->setFileExtensions(['php']) // applies only to directory scanning, not directly listed files

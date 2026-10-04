@@ -16,13 +16,15 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                     'options' => [
                         Mysql::ATTR_FOUND_ROWS => true,
                         PDO::ATTR_TIMEOUT => 1,
-                        Mysql::ATTR_INIT_COMMAND => 'SET SESSION character_set_client = \'utf8mb4\',
-                                                    SESSION collation_connection = \'utf8mb4_0900_as_cs\',
-                                                    SESSION character_set_connection = \'utf8mb4\',
-                                                    SESSION character_set_database = \'utf8mb4\',
-                                                    SESSION character_set_results = \'utf8mb4\',
-                                                    SESSION character_set_server = \'utf8mb4\',
-                                                    SESSION time_zone=\'+00:00\'',
+                        Mysql::ATTR_INIT_COMMAND => <<<'EOD'
+                                SET SESSION character_set_client = 'utf8mb4',
+                                SESSION collation_connection = 'utf8mb4_0900_as_cs',
+                                SESSION character_set_connection = 'utf8mb4',
+                                SESSION character_set_database = 'utf8mb4',
+                                SESSION character_set_results = 'utf8mb4',
+                                SESSION character_set_server = 'utf8mb4',
+                                SESSION time_zone='+00:00';
+                            EOD,
                     ],
                     'default_table_options' => [
                         'charset' => 'utf8mb4',

@@ -402,7 +402,7 @@ const ts_files_config = {
                     'eslint.config.mts',
                     'stylelint.config.ts',
                 ],
-                defaultProject: '../tsconfig.json',
+                defaultProject: '../../tsconfig.json',
             },
         },
     },

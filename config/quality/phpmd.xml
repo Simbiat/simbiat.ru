@@ -10,6 +10,20 @@
         Custom PHP MD ruleset
     </description>
 
+    <exclude-pattern>/app/assets/*</exclude-pattern>
+    <exclude-pattern>/app/bin/console</exclude-pattern>
+    <exclude-pattern>/app/bin/phpunit</exclude-pattern>
+    <exclude-pattern>/app/build/*</exclude-pattern>
+    <exclude-pattern>/app/config/bundles.php</exclude-pattern>
+    <exclude-pattern>/app/config/preload.php</exclude-pattern>
+    <exclude-pattern>/app/config/reference.php</exclude-pattern>
+    <exclude-pattern>/app/data/*</exclude-pattern>
+    <exclude-pattern>/app/node_modules/*</exclude-pattern>
+    <exclude-pattern>/app/packages/DDCIcons/icons/*</exclude-pattern>
+    <exclude-pattern>/app/public/*</exclude-pattern>
+    <exclude-pattern>/app/var/*</exclude-pattern>
+    <exclude-pattern>/app/vendor/*</exclude-pattern>
+
     <rule ref="rulesets/cleancode.xml"/>
     <rule ref="rulesets/codesize.xml"/>
     <rule ref="rulesets/controversial.xml"/>

@@ -9,10 +9,11 @@
     findUnusedVariablesAndParams="true"
     findUnusedCode="true"
     forceJit="true"
+    reportInfo="true"
     findUnusedPsalmSuppress="true"
     ensureArrayStringOffsetsExist="true"
     ensureArrayIntOffsetsExist="true"
-    cacheDirectory="/tmp/psalm"
+    cacheDirectory="/app/data/temp/psalm"
     serializer="igbinary"
     allowStringToStandInForClass="true"
 >
@@ -21,10 +22,15 @@
         <ignoreFiles allowMissingFiles="true">
             <directory name="/app/assets"/>
             <directory name="/app/build"/>
+            <file name="/app/bin/console"/>
+            <file name="/app/bin/phpunit"/>
             <directory name="/app/data"/>
+            <file name="/app/config/bundles.php"/>
+            <file name="/app/config/preload.php"/>
+            <file name="/app/config/reference.php"/>
             <directory name="/app/node_modules"/>
             <directory name="/app/packages/DDCIcons/icons"/>
-            <directory name="/app/public/assets"/>
+            <directory name="/app/public"/>
             <directory name="/app/var"/>
             <directory name="/app/vendor"/>
         </ignoreFiles>

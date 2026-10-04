@@ -29,7 +29,8 @@ return new Config()
         'attribute_empty_parentheses' => true,
         'combine_consecutive_issets' => true,
         'combine_consecutive_unsets' => true,
-        'mb_str_functions' => true,
+        // Custom Prefer Multibyte sniff covers more functions and attempts detecting binary data
+        'mb_str_functions' => false,
         'multiline_whitespace_before_semicolons' => ['strategy' => 'no_multi_line'],
         'new_expression_parentheses' => ['use_parentheses' => false],
         'no_redundant_readonly_property' => true,
@@ -89,7 +90,9 @@ return new Config()
     ->setFinder(
         new Finder()
             // 💡 root folder to check
-            ->in('/app')
+            ->in('/app/')
+            ->files()
+            ->name('*.php')
             ->exclude([
                 'assets',
                 'build',
@@ -99,5 +102,13 @@ return new Config()
                 'public/assets',
                 'var',
                 'vendor',
+            ])
+            ->notPath([
+                'bin/console',
+                'bin/phpunit',
+                'config/bundles.php',
+                'config/preload.php',
+                'config/reference.php',
+                'public/index.php',
             ])
     );

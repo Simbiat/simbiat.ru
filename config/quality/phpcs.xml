@@ -11,17 +11,21 @@
     <file>/app/bin</file>
     <file>/app/config</file>
     <file>/app/packages</file>
-    <file>/app/public</file>
     <file>/app/src</file>
     <file>/app/tests</file>
     <arg name="extensions" value="php"/>
     <!-- Exclusions -->
     <exclude-pattern>/app/assets/*</exclude-pattern>
+    <exclude-pattern>/app/bin/console</exclude-pattern>
+    <exclude-pattern>/app/bin/phpunit</exclude-pattern>
     <exclude-pattern>/app/build/*</exclude-pattern>
+    <exclude-pattern>/app/config/bundles.php</exclude-pattern>
+    <exclude-pattern>/app/config/preload.php</exclude-pattern>
+    <exclude-pattern>/app/config/reference.php</exclude-pattern>
     <exclude-pattern>/app/data/*</exclude-pattern>
     <exclude-pattern>/app/node_modules/*</exclude-pattern>
     <exclude-pattern>/app/packages/DDCIcons/icons/*</exclude-pattern>
-    <exclude-pattern>/app/public/assets/*</exclude-pattern>
+    <exclude-pattern>/app/public/*</exclude-pattern>
     <exclude-pattern>/app/var/*</exclude-pattern>
     <exclude-pattern>/app/vendor/*</exclude-pattern>
 
@@ -240,6 +244,7 @@
         <exclude name="Universal.UseStatements.DisallowUseClass.FoundWithAlias"/>
         <exclude name="Universal.ControlStructures.IfElseDeclaration.NoNewLine"/>
         <exclude name="Universal.Arrays.DisallowShortArraySyntax.Found"/>
+        <exclude name="Universal.FunctionDeclarations.NoLongClosures"/>
         <!-- Conflicts Universal.PHP.DisallowExitDieParentheses -->
         <exclude name="Universal.PHP.RequireExitDieParentheses"/>
         <!-- Duplicates SlevomatCodingStandard.Classes.RequireAbstractOrFinal -->
@@ -288,6 +293,7 @@
                 <element key="packages/HTMLCache" value="Simbiat"/>
                 <element key="packages/HTTP/SSE" value="Simbiat\HTTP"/>
                 <element key="packages/http20" value="Simbiat\htt20"/>
+                <element key="packages/QARunner" value="Simbiat\QARunner"/>
                 <element key="packages/SandClock" value="Simbiat"/>
                 <element key="packages/Sniffs/Simbiat" value="Simbiat"/>
                 <element key="packages/StringHelpers" value="Simbiat\StringHelpers"/>

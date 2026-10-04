@@ -81,6 +81,29 @@
     },
     "description": "Package for simbiat.eu",
     "extra": {
+        "qa-runner": {
+            "check": {
+                "Simbiat\\QARunner\\Adapters\\CodeSniffer": "@phpcs",
+                "Simbiat\\QARunner\\Adapters\\CSFixer": "@php-cs-fixer",
+                "Simbiat\\QARunner\\Adapters\\Stan": "@phpstan",
+                "Simbiat\\QARunner\\Adapters\\Psalm": "@psalm",
+                "Simbiat\\QARunner\\Adapters\\MessDetector": "@phpmd",
+                "Simbiat\\QARunner\\Adapters\\Rector": "@rector",
+                "Simbiat\\QARunner\\Adapters\\TwigCS": "@twig-cs"
+            },
+            "diff": {
+                "Simbiat\\QARunner\\Adapters\\CodeSniffer": "@phpcs",
+                "Simbiat\\QARunner\\Adapters\\CSFixer": "@php-cs-fixer",
+                "Simbiat\\QARunner\\Adapters\\Psalm": "@psalter",
+                "Simbiat\\QARunner\\Adapters\\Rector": "@rector"
+            },
+            "fix": {
+                "Simbiat\\QARunner\\Adapters\\CodeSniffer": "@phpcbf",
+                "Simbiat\\QARunner\\Adapters\\CSFixer": "@php-cs-fixer",
+                "Simbiat\\QARunner\\Adapters\\Psalm": "@psalter",
+                "Simbiat\\QARunner\\Adapters\\Rector": "@rector"
+            }
+        },
         "symfony": {
             "allow-contrib": false,
             "require": "8.*"
@@ -93,7 +116,7 @@
     "require": {
         "doctrine/doctrine-bundle": "^3.3.2",
         "doctrine/doctrine-migrations-bundle": "^4.0.1",
-        "doctrine/orm": "^3.7.2",
+        "doctrine/orm": "^3.7.3",
         "ext-apcu": "*",
         "ext-bcmath": "*",
         "ext-brotli": "*",
@@ -192,10 +215,10 @@
         "phpmd/phpmd": "^3.0.0@dev",
         "phpstan/phpstan": "^2.2.15",
         "phpstan/phpstan-deprecation-rules": "^2.0.5",
-        "phpstan/phpstan-phpunit": "^2.0.20",
+        "phpstan/phpstan-phpunit": "^2.0.21",
         "phpstan/phpstan-strict-rules": "^2.0.12",
         "phpstan/phpstan-symfony": "^2.0.20",
-        "phpunit/phpunit": "^13.3.6",
+        "phpunit/phpunit": "^13.4.0",
         "psalm/plugin-phpunit": "^0",
         "psalm/plugin-symfony": "^5.3",
         "rector/rector": "^2.6.7",
@@ -255,10 +278,10 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "psalm": "psalm --config=/app/config/quality/psalm.xml --memory-limit=1G",
+        "psalter": "psalter --config=/app/config/quality/psalm.xml --memory-limit=1G --show-info=true",
+        "psalm": "psalm --config=/app/config/quality/psalm.xml --memory-limit=1G --show-info=true",
         "rector": "rector --config=/app/config/quality/rector.php --dry-run",
-        "twig-cs": "twig-cs-fixer lint --config=/app/config/quality/twig-cs-fixer.php",
-        "twig-cs-inspection": "twig-cs-fixer lint --config=/app/config/quality/twig-cs-fixer.php --report=github"
+        "twig-cs": "twig-cs-fixer lint --config=/app/config/quality/twig-cs-fixer.php"
     },
     "version": "1.0.0"
 }

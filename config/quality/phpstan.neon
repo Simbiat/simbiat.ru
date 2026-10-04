@@ -15,16 +15,20 @@ parameters:
         - /app/bin
         - /app/config
         - /app/packages
-        - /app/public
         - /app/src
         - /app/tests
     excludePaths:
         - /app/assets
+        - /app/bin/console
+        - /app/bin/phpunit
         - /app/build
+        - /app/config/bundles.php
+        - /app/config/preload.php
+        - /app/config/reference.php
         - /app/data
         - /app/node_modules
         - /app/packages/DDCIcons/icons
-        - /app/public/assets
+        - /app/public
         - /app/var
         - /app/vendor
     fileExtensions:

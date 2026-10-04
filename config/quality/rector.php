@@ -15,13 +15,17 @@ return RectorConfig::configure()
                        '/app/bin',
                        '/app/config',
                        '/app/packages',
-                       '/app/public',
                        '/app/src',
                        '/app/tests'
                    ])
                    ->withSkip([
+                       '/app/bin/console',
+                       '/app/bin/phpunit',
                        '/app/packages/DDCIcons/icons',
-                       '/app/public/assets',
+                       '/app/public',
+                       '/app/config/bundles.php',
+                       '/app/config/preload.php',
+                       '/app/config/reference.php',
                    ])
                    ->withPhpSets()
                    ->withSets([SymfonySetList::CONFIGS])

@@ -38,7 +38,7 @@ for (const entry of browsers) {
         continue;
     }
     // eslint-disable-next-line security/detect-object-injection
-    const browser = browser_map[raw_browser] ?? raw_browser.replace(/[\n"\\]/gv, '');
+    const browser = browser_map[raw_browser] ?? raw_browser.replace(/[\n"'\\]/gv, '');
     const version = semver.coerce(raw_version)
                           ?.toString();
     if (typeof version === 'undefined' || version === '') {
@@ -64,18 +64,34 @@ for (const [browser, versions] of Object.entries(collected)) {
 }
 
 // caniuse does not store history for Chrome Mobile, but due to Chrome's release cycle, it's safe to use the same value as from desktop Chrome
-if (typeof minimums['Chrome'] !== 'undefined' && minimums['Chrome'] !== null) {
+if (typeof minimums['Chrome'] !== 'undefined') {
     minimums['Chrome Mobile'] = minimums['Chrome'];
 }
-
-const yaml_lines: string[] = ['parameters:', '    app.teapot_browsers:'];
-for (const [browser, version] of Object.entries(minimums)) {
-    yaml_lines.push(`        "${browser}": "${version}"`);
+// Similar situation with Firefox, but while it is being reported, it is always reported as latest version of the desktop one.
+if (typeof minimums['Firefox'] !== 'undefined') {
+    minimums['Firefox Mobile'] = minimums['Firefox'];
 }
 
+const php_lines: string[] = [
+    '<?php',
+    '',
+    'declare(strict_types=1);',
+    '',
+    'use Symfony\\Component\\DependencyInjection\\Loader\\Configurator\\ContainerConfigurator;',
+    '',
+    'return static function (ContainerConfigurator $containerConfigurator): void {',
+    '    $parameters = $containerConfigurator->parameters();',
+    '',
+    '    $parameters->set(\'app.teapot_browsers\', [',
+];
+for (const [browser, version] of Object.entries(minimums)) {
+    php_lines.push(`        '${browser}' => '${version}',`);
+}
+php_lines.push('    ]);', '};');
+
 fs.writeFileSync(
-    './config/packages/teapot_browsers.yaml',
-    `${yaml_lines.join('\n')}\n`,
+    './config/packages/teapot_browsers.php',
+    `${php_lines.join('\n')}\n`,
     'utf-8',
 );
 console.log('✅ Teapot browsers list generated');

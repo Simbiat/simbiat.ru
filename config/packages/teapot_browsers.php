@@ -9,7 +9,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     $parameters->set('app.teapot_browsers', [
         'Chrome Mobile' => '120.0.0',
-        'Firefox Mobile' => '153.0.0',
+        'Firefox Mobile' => '148.0.0',
         'Chrome' => '120.0.0',
         'Microsoft Edge' => '120.0.0',
         'Firefox' => '148.0.0',

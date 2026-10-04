@@ -12,9 +12,9 @@ logs/
 #Ignore data folder
 data/
 
-#Ignore generated CSS/JS
-public/assets/app.*
-public/assets/styles/
+#Ignore assets
+assets/
+public/assets/
 
 #Ignore project files
 .idea/
@@ -23,15 +23,7 @@ public/assets/styles/
 #Ignore node_modules, since only used by dev tools
 node_modules/
 
-#Ignore image files from libraries. There are just too many, and they won't be useful.
-#At the same time, I've noticed that chat does not seem to "see" them unless respective folder is open in Porject Explorer,
-#so maybe this is not even necessary.
-#FFXIV libraries
-/public/assets/images/fftracker/icons/
-/public/assets/images/fftracker/maps/
-/public/assets/images/fftracker/crests-components/
-/build/PSDs/FFXIV/
-#DDC
+#DDC Icons
 /packages/DDCIcons/icons/
 
 /build/PSDs/
