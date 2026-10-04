@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\HomePage;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Temporary bridge controller. Hands every request straight to the legacy
@@ -28,8 +29,14 @@ final class LegacyController
      * @return \Symfony\Component\HttpFoundation\Response
      */
     #[Route('/{path}', name: 'app_legacy', requirements: ['path' => '.*'], priority: -100)]
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $method = \strtoupper($request->getMethod());
+        // Parse multipart/form-data for PUT/DELETE/PATCH methods (if any). Do not use Headers function, since the body is already consumed.
+        if (\in_array($method, ['PUT', 'DELETE', 'PATCH'], true)) {
+            $_POST = $request->request->all();
+            $_FILES = $request->files->all();
+        }
         new HomePage();
 
         // Unreachable: HomePage::twigProc() always calls exit(0).

@@ -219,12 +219,6 @@ final class HomePage
         self::$device_detector = new DeviceDetector();
         self::$device_detector->setYamlParser(new Pecl());
         self::$device_detector->setCache(new PSR6Bridge(new ApcuAdapter('Matomo')));
-        // Parse multipart/form-data for PUT/DELETE/PATCH methods (if any)
-        Headers::multiPartFormParse();
-        if (\in_array(self::$method, ['PUT', 'DELETE', 'PATCH'], true)) {
-            $_POST = \array_change_key_case(Headers::$_PUT ?: Headers::$_DELETE ?: Headers::$_PATCH ?: []);
-            $_FILES = Headers::$_FILES;
-        }
         // Get all POST and GET keys to the lower case
         $_POST = \array_change_key_case($_POST);
         Sanitization::carefulArraySanitization($_POST);

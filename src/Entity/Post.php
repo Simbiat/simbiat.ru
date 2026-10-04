@@ -313,7 +313,7 @@ final class Post extends Entity
      */
     public function edit(): array
     {
-        $success = ['response' => true, 'location' => '/talks/threads/'.$this->thread_id.'/'.($this->page > 1 ? '?page='.$this->page : '').'#post_'.$this->id];
+        $success = ['response' => true, 'location' => '/talks/threads/'.$this->thread_id.($this->page > 1 ? '?page='.$this->page : '').'#post_'.$this->id];
         // Check permission
         if (!\in_array('can_post', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `can_post` permission'];
@@ -422,8 +422,8 @@ final class Post extends Entity
         }
         // Set location for successful removal
         $location = !empty($this->thread_id)
-            ? '/talks/threads/'.$this->thread_id.'/'
-            : '/talks/sections/';
+            ? '/talks/threads/'.$this->thread_id
+            : '/talks/sections';
         // Attempt removal. We also need to update thread details
         try {
             $affected = Query::query(

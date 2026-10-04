@@ -86,7 +86,7 @@ export function pageRefresh(new_url?: string): void {
         url = new URL(document.location.href, window.location.origin);
     } else {
         window.location.assign(encodeURI(new_url ?? ''));
-        url = new URL(new_url ?? '', document.location.href);
+        return;
     }
     url.searchParams.set('force_reload', String(Date.now()));
     window.location.replace(url.toString());
