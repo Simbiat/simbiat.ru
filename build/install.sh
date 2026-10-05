@@ -94,37 +94,40 @@ sudo sh -c 'echo "net.core.wmem_max=7500000" >> /etc/sysctl.conf'
 # Limit journal size
 echo "Limiting journal size..."
 echo "Uncommenting lines..."
-sudo sed -i 's/#SystemMaxUse=/SystemMaxUse=500M/g' /etc/systemd/journald.conf
-sudo sed -i 's/#SystemKeepFree=/SystemKeepFree=1G/g' /etc/systemd/journald.conf
-sudo sed -i 's/#MaxRetentionSec=/MaxRetentionSec=100d/g' /etc/systemd/journald.conf
-
-echo "Setting values..."
-sudo sed -i 's/SystemMaxUse=.*/SystemMaxUse=500M/g' /etc/systemd/journald.conf
-sudo sed -i 's/SystemKeepFree=.*/SystemKeepFree=1G/g' /etc/systemd/journald.conf
-sudo sed -i 's/MaxRetentionSec=.*/MaxRetentionSec=100d/g' /etc/systemd/journald.conf
+sudo mkdir -p /etc/systemd/journald.conf.d
+sudo tee /etc/systemd/journald.conf.d/local.conf > /dev/null <<'EOF'
+[Journal]
+SystemMaxUse=500M
+SystemKeepFree=1G
+MaxRetentionSec=100d
+EOF
 
 echo "Restarting service..."
 sudo systemctl restart systemd-journald
 
+echo "Setting up netcup DNS..."
+sudo mkdir -p /etc/systemd/resolved.conf.d
+sudo tee /etc/systemd/resolved.conf.d/local.conf > /dev/null <<'EOF'
+[Resolve]
+DNS=46.38.252.230 46.38.225.230 2a03:4000:8000::fce6 2a03:4000:0:1::e1e6
+EOF
+
 echo "Updating SSH settings..."
-sudo sed -i 's/#LoginGraceTime.*/LoginGraceTime 1m/g' /etc/ssh/sshd_config
-sudo sed -i 's/LoginGraceTime.*/LoginGraceTime 1m/g' /etc/ssh/sshd_config
-sudo sed -i 's/#MaxAuthTries.*/MaxAuthTries 6/g' /etc/ssh/sshd_config
-sudo sed -i 's/MaxAuthTries.*/MaxAuthTries 6/g' /etc/ssh/sshd_config
-sudo sed -i 's/#AllowAgentForwarding.*/AllowAgentForwarding no/g' /etc/ssh/sshd_config
-sudo sed -i 's/AllowAgentForwarding.*/AllowAgentForwarding no/g' /etc/ssh/sshd_config
-sudo sed -i 's/#X11Forwarding.*/X11Forwarding no/g' /etc/ssh/sshd_config
-sudo sed -i 's/X11Forwarding.*/X11Forwarding no/g' /etc/ssh/sshd_config
-sudo sed -i 's/#PrintLastLog.*/PrintLastLog no/g' /etc/ssh/sshd_config
-sudo sed -i 's/PrintLastLog.*/PrintLastLog no/g' /etc/ssh/sshd_config
-sudo sed -i 's/#ClientAliveInterval.*/ClientAliveInterval 300/g' /etc/ssh/sshd_config
-sudo sed -i 's/ClientAliveInterval.*/ClientAliveInterval 300/g' /etc/ssh/sshd_config
-sudo sed -i 's/#ClientAliveCountMax.*/ClientAliveCountMax 3/g' /etc/ssh/sshd_config
-sudo sed -i 's/ClientAliveCountMax.*/ClientAliveCountMax 3/g' /etc/ssh/sshd_config
-sudo sed -i 's/#MaxStartups.*/MaxStartups 10/g' /etc/ssh/sshd_config
-sudo sed -i 's/MaxStartups.*/MaxStartups 10/g' /etc/ssh/sshd_config
-sudo sed -i 's/#AllowUsers.*/AllowUsers administrator/g' /etc/ssh/sshd_config
-sudo sed -i 's/AllowUsers.*/AllowUsers administrator/g' /etc/ssh/sshd_config
+sudo mkdir -p /etc/ssh/sshd_config.d
+sudo tee /etc/ssh/sshd_config.d/local.conf > /dev/null <<'EOF'
+LoginGraceTime 1m
+MaxAuthTries 6
+AllowAgentForwarding no
+X11Forwarding no
+PrintMotd no
+PrintLastLog no
+ClientAliveInterval 300
+ClientAliveCountMax 3
+PasswordAuthentication yes
+PermitRootLogin no
+MaxStartups 10
+AllowUsers administrator
+EOF
 
 echo "Creating webserver folder..."
 sudo mkdir /usr/local/webserver
