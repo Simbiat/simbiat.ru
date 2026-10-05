@@ -107,9 +107,4 @@ ENV COMPOSER_CACHE_DIR=/tmp/composer_cache
 ENV PATH="${COMPOSER_HOME}/vendor/bin:/app/vendor/bin:/app/bin:${PATH}"
 COPY --from=composer/composer /usr/bin/composer /usr/bin/composer
 
-# Symfony CLI
-#TODO: Update version when Symfony CLI has a new release
-COPY --link --from=ghcr.io/symfony-cli/symfony-cli:v5.20 /usr/local/bin/symfony /usr/local/bin/symfony
-RUN mkdir -p /etc/bash_completion.d && symfony completion bash | tee /etc/bash_completion.d/symfony
-
 USER frankenphp
