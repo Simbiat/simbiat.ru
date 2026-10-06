@@ -171,7 +171,9 @@ if [ "$HEALTH" != "healthy" ]; then
     # Grace period: give a just-started container time to finish its healthcheck.
     STARTED_AT=$(docker inspect --format '{{.State.StartedAt}}' "$CONTAINER" 2>/dev/null || true)
     if [ -n "$STARTED_AT" ]; then
-        CONTAINER_AGE=$(( $(date +%s) - $(date -d "$STARTED_AT" +%s) ))
+        # BusyBox/Alpine do not like `T` and fractional seconds in the timestamp
+        STARTED_AT_SEC=$(printf '%s' "$STARTED_AT" | sed 's/T/ /; s/\.[0-9]*Z$//')
+        CONTAINER_AGE=$(( $(date +%s) - $(date -d "$STARTED_AT_SEC" +%s) ))
         if [ "$CONTAINER_AGE" -lt "$HEALTH_GRACE" ]; then
             log "Container '$CONTAINER' not healthy ($HEALTH) but started ${CONTAINER_AGE}s ago (< ${HEALTH_GRACE}s), staying quiet."
             exit 1
