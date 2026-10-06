@@ -12,6 +12,7 @@ HEALTH_GRACE=120                    # seconds to wait for healthcheck after cont
 ALERT_LOCK_WAIT=120                 # seconds to wait for a sibling holding the alert lock
 
 WRAPPER_ARGS="$*"                   # captured early, safe to reference in on_error
+INTERNAL_STAMP="$STATE_DIR/cron_wrapper_internal"
 
 log() {
     echo "time=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" msg=\"$1\"" >&2
@@ -23,9 +24,8 @@ on_error() {
     local rc=$?
     trap - ERR
     log "INTERNAL ERROR rc=$rc at line $1, command: ${BASH_COMMAND:-?}"
-    "$MAILER" "[Alert] Cron wrapper crashed" \
-        "cron-wrapper for '${CONTAINER:-unknown}' (args: ${WRAPPER_ARGS:-none}) failed internally at line $1, rc=$rc. Command: ${BASH_COMMAND:-?}" 2 \
-        || log "CRITICAL: alert mailer itself failed, no email sent"
+    alert_once "$INTERNAL_STAMP" "[Alert] Cron wrapper crashed" \
+            "cron-wrapper for '${CONTAINER:-unknown}' (args: ${WRAPPER_ARGS:-none}) failed internally at line $1, rc=$rc. Command: ${BASH_COMMAND:-?}"
     exit "$rc"
 }
 trap 'on_error $LINENO' ERR
@@ -200,6 +200,7 @@ cat "$TMP_STDERR" >&2
 
 if [ "$RC" -eq 0 ]; then
     clear_stamp "$CMD_STAMP"
+    clear_stamp "$INTERNAL_STAMP"
     exit 0
 fi
 
