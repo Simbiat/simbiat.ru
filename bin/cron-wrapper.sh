@@ -151,14 +151,14 @@ STATE=$(docker inspect --format '{{.State.Status}}' "$CONTAINER" 2>/dev/null || 
 if [ -z "$STATE" ]; then
     log "Container '$CONTAINER' not found."
     alert_once "$CTR_STAMP" "[Alert] Missing container" \
-        "Container '$CONTAINER' (expected by cron job: $*) not found on the host."
+        "Container '$CONTAINER' (expected by cron job: $*) not found on the host; command '${WRAPPER_ARGS:-none}' not executed."
     exit 1
 fi
 
 if [ "$STATE" != "running" ]; then
     log "Container '$CONTAINER' is not running (status: $STATE)."
     alert_once "$CTR_STAMP" "[Alert] Container not running" \
-        "Container '$CONTAINER' is not running (status: $STATE)."
+        "Container '$CONTAINER' is not running (status: $STATE); command '${WRAPPER_ARGS:-none}' not executed."
     exit 1
 fi
 
@@ -181,7 +181,7 @@ if [ "$HEALTH" != "healthy" ]; then
     fi
     log "Container '$CONTAINER' is not healthy ($HEALTH)."
     alert_once "$CTR_STAMP" "[Alert] Container not healthy" \
-        "Container '$CONTAINER' is not healthy (status: $HEALTH); command not executed."
+        "Container '$CONTAINER' is not healthy (status: $HEALTH); command '${WRAPPER_ARGS:-none}' not executed."
     exit 1
 fi
 
