@@ -147,7 +147,7 @@ abstract class AbstractEntity
             try {
                 // Check if already scheduled
                 /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-                $cron_task = new TaskInstance('ff_update_entity', [(string) $this->id, ($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE]);
+                $cron_task = new TaskInstance('ff_update_entity', [(string) $this->id, $this::ENTITY_TYPE]);
                 $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
                 if ($scheduled) {
                     return \strtotime($scheduled);
@@ -156,7 +156,7 @@ abstract class AbstractEntity
                 $jobs = Query::query('SELECT COUNT(*) AS `count` FROM `cron__schedule` WHERE `task`=\'ff_update_entity\' AND `registered` >= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 MINUTE)', return: 'count');
                 if ($jobs < 50) {
                     /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-                    $cron_task->settingsFromArray(['priority' => 1, 'message' => 'Updating '.($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE.' with ID '.$this->id])->add();
+                    $cron_task->settingsFromArray(['priority' => 1, 'message' => 'Updating '.$this::ENTITY_TYPE.' with ID '.$this->id])->add();
                     $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
                     if ($scheduled) {
                         return \strtotime($scheduled);
@@ -270,7 +270,7 @@ abstract class AbstractEntity
         if ($result !== true) {
             try {
                 /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-                $cron_task = new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $this->id, ($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE], 'message' => 'Updating '.($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE.' with ID '.$this->id, 'priority' => 3]);
+                $cron_task = new TaskInstance()->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $this->id, $this::ENTITY_TYPE], 'message' => 'Updating '.$this::ENTITY_TYPE.' with ID '.$this->id, 'priority' => 3]);
                 $cron_task->add();
                 $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
                 if (
@@ -726,7 +726,7 @@ abstract class AbstractEntity
     {
         try {
             /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-            new TaskInstance('ff_update_entity', [(string) $this->id, ($this::ENTITY_TYPE === 'linkshell' && $this::CROSSWORLD ? 'crossworld' : '').$this::ENTITY_TYPE])->delete();
+            new TaskInstance('ff_update_entity', [(string) $this->id, $this::ENTITY_TYPE])->delete();
         } catch (\Throwable $exception) {
             // Do nothing
             Errors::error_log($exception, 'Failed to remove task for '.$this::ENTITY_TYPE.' ID `'.$this->id.'`', debug: $this->debug);
