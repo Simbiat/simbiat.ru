@@ -22,7 +22,6 @@ final class Linkshell extends AbstractEntity
     public array $dates = [];
     public ?string $community = null;
     public ?string $server = null;
-    public ?string $data_center = null;
     public array $old_names = [];
     public array $members = [];
     public array $past_members = [];

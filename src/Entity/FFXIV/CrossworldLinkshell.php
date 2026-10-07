@@ -23,6 +23,7 @@ final class CrossworldLinkshell extends AbstractEntity
     public array $old_names = [];
     public array $members = [];
     public array $past_members = [];
+    protected string $id_format = '/^[a-z\d]{40}$/m';
 
     /**
      * Get linkshell data from Lodestone
