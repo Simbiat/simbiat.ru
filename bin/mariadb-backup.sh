@@ -75,6 +75,7 @@ error_handler() {
     # Shutdown temporary MariaDB instance if still running
     if [ -f "$tmp_pidfile" ]; then
       kill "$(cat "$tmp_pidfile")" 2>/dev/null || true
+      wait "${temp_instance_job:-}" 2>/dev/null || true
       rm -f "$tmp_socket" "$tmp_pidfile"
     fi
     if [ -f "${db_maintenance_flag}" ]; then
@@ -443,7 +444,7 @@ SQL_EOF
     log_msg "Starting temporary MariaDB instance"
     # Run as the mysql user so file ownership is correct
     su -s /bin/bash mysql -c \
-      "mariadbd \
+      "exec mariadbd \
         --skip-log-error \
         --datadir='$physical_backup' \
         --socket='$tmp_socket' \
@@ -452,8 +453,8 @@ SQL_EOF
         --skip-networking \
         --innodb-buffer-pool-size=256M \
         --innodb-flush-log-at-trx-commit=0 \
-        --skip-grant-tables \
-        &"
+        --skip-grant-tables" &
+    temp_instance_job=$!
 
     # Wait for the temp instance to be ready
     log_msg "Waiting for temp instance to become available"
@@ -554,6 +555,7 @@ SQL_EOF
       error_handler 1 "$LINENO"
     fi
     rm -f "$tmp_socket" "$tmp_pidfile"
+    wait "$temp_instance_job" 2>/dev/null || true
 
     # =========================================================
     # COMPRESS BACKUPS
