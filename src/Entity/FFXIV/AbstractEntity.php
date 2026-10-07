@@ -189,7 +189,7 @@ abstract class AbstractEntity
             'character' => 'character_id',
             'achievement' => 'achievement_id',
             'freecompany' => 'fc_id',
-            'linkshell' => 'ls_id',
+            'linkshell', 'crossworldlinkshell' => 'ls_id',
             'pvpteam' => 'pvp_id',
         };
         // Check if we have not updated before
@@ -371,7 +371,7 @@ abstract class AbstractEntity
             'character' => 'character_id',
             'achievement' => 'achievement_id',
             'freecompany' => 'fc_id',
-            'linkshell' => 'ls_id',
+            'linkshell', 'crossworldlinkshell' => 'ls_id',
             'pvpteam' => 'pvp_id',
         };
         try {
