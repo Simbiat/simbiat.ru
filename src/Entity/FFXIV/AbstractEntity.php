@@ -194,7 +194,7 @@ abstract class AbstractEntity
         };
         // Check if we have not updated before
         try {
-            $updated = Query::query('SELECT `updated` FROM `ffxiv__'.$this::ENTITY_TYPE.'` WHERE `'.$id_column.'` = :id', [':id' => $this->id], return: 'value');
+            $updated = Query::query('SELECT `updated` FROM `ffxiv__'.($this::ENTITY_TYPE === 'crossworldlinkshell' ? 'linkshell' : $this::ENTITY_TYPE).'` WHERE `'.$id_column.'` = :id', [':id' => $this->id], return: 'value');
         } catch (\Throwable $exception) {
             Errors::error_log($exception, debug: $this->debug);
 
@@ -375,7 +375,7 @@ abstract class AbstractEntity
             'pvpteam' => 'pvp_id',
         };
         try {
-            $check = Query::query('SELECT `'.$id_column.'` FROM `ffxiv__'.$this::ENTITY_TYPE.'` WHERE `'.$id_column.'` = :id', [':id' => $this->id], return: 'check');
+            $check = Query::query('SELECT `'.$id_column.'` FROM `ffxiv__'.$this::ENTITY_TYPE === 'crossworldlinkshell' ? 'linkshell' : $this::ENTITY_TYPE.'` WHERE `'.$id_column.'` = :id', [':id' => $this->id], return: 'check');
         } catch (\Throwable $exception) {
             Errors::error_log($exception, debug: $this->debug);
 
