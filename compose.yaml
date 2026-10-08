@@ -3,6 +3,11 @@ name: simbiat-dev
 
 networks:
   default:
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+        - subnet: fd00:db8:1::/64
   docker:
     driver: bridge
     internal: true

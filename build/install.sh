@@ -62,7 +62,8 @@ sudo tee /etc/docker/daemon.json > /dev/null <<'EOF'
       "Hard": 4194304,
       "Soft": 4194304
     }
-  }
+  },
+  "ip6tables": true
 }
 EOF
 
