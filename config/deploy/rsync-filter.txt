@@ -37,6 +37,7 @@ H /build/install.sh
 H /build/toupdateonprod.sql
 H /build/useful.cmd
 + /config/
+H /config/Caddy/
 H /config/crowdsec/online_api_credentials.example.yaml
 H /config/deploy/
 H /config/packages/dev/
@@ -70,6 +71,12 @@ H /node_modules/
 + /packages/
 H /packages/QARunner/
 H /packages/Sniffs/
+H /packages/**/*.md
+H /packages/**/*.sql
+H /packages/**/.gitatributes
+H /packages/**/.gitignore
+H /packages/**/composer.json
+H /packages/**/LICENSE
 #TODO: will likely need to be updated once Symfony will start handling items through the `assets/` folder
 + /public/
 P /public/assets/images/fftracker/crests-components/**

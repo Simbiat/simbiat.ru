@@ -17,7 +17,7 @@ services:
         condition: service_healthy
     networks:
       - docker
-      - smtp
+      - postfix
     read_only: true
     restart: unless-stopped
     security_opt:

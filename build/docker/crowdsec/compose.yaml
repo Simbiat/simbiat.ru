@@ -21,7 +21,7 @@ services:
     group_add:
       - 4
     networks:
-      - default
+      - crowdsec_out
       - crowdsec
     ports:
       - "127.0.0.1:8080:8080"

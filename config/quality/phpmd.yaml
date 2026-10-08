@@ -1,0 +1,29 @@
+name: "PHPMD rule set"
+description: "Custom PHP MD ruleset"
+path: "/app"
+exclude-pattern:
+    - "/app/assets/*"
+    - "/app/bin/console"
+    - "/app/bin/phpunit"
+    - "/app/build/*"
+    - "/app/config/bundles.php"
+    - "/app/config/preload.php"
+    - "/app/config/reference.php"
+    - "/app/data/*"
+    - "/app/node_modules/*"
+    - "/app/packages/DDCIcons/icons/*"
+    - "/app/public/*"
+    - "/app/var/*"
+    - "/app/vendor/*"
+
+rules:
+    -   ref: rulesets/cleancode.xml
+        exclude:
+            - StaticAccess
+    -   ref: rulesets/codesize.xml
+    -   ref: rulesets/controversial.xml
+        exclude:
+            - CamelCaseVariableName
+    -   ref: rulesets/design.xml
+    -   ref: rulesets/naming.xml
+    -   ref: rulesets/unusedcode.xml

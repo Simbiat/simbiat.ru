@@ -23,10 +23,8 @@ services:
       POSTFIX_relayhost: "[${PROTON_HOST}]:${PROTON_PORT}"
       POSTMAP_sasl_passwd: "[${PROTON_HOST}]:${PROTON_PORT} ${PROTON_USER}:${PROTON_PASSWORD}"
     networks:
-      default:
-      smtp:
-        aliases:
-          - postfix-smtp
+      - postfix
+      - smtp
     read_only: true
     restart: unless-stopped
     security_opt:

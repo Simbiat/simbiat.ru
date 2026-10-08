@@ -212,7 +212,7 @@
         "phildaiguille/twig-a11y-rules": "^1.0",
         "phpcompatibility/php-compatibility": "^10@dev",
         "phpcsstandards/phpcsextra": "^1.5.1",
-        "phpmd/phpmd": "^3.0.0@dev",
+        "phpmd/phpmd": "^3.0.0",
         "phpstan/phpstan": "^2.2.15",
         "phpstan/phpstan-deprecation-rules": "^2.0.5",
         "phpstan/phpstan-phpunit": "^2.0.21",
@@ -270,7 +270,7 @@
         "php-cs-fixer": "php-cs-fixer fix --dry-run --config=/app/config/quality/php-cs-fixer.php --using-cache=yes --cache-file=/app/data/temp/.php-cs-fixer.cache --verbose --allow-risky=yes --path-mode=intersection",
         "phpcbf": "phpcbf --standard=/app/config/quality/phpcs.xml",
         "phpcs": "phpcs --standard=/app/config/quality/phpcs.xml -s",
-        "phpmd": "phpmd analyze --cache --cache-file=/app/data/temp/.phpmd.result-cache.php --cache-strategy=content --ruleset=/app/config/quality/phpmd.xml --threads=4 --jetbrains=simbiat.eu",
+        "phpmd": "phpmd analyze --cache --cache-file=/app/data/temp/.phpmd.result-cache.php --cache-strategy=content --ruleset=/app/config/quality/phpmd.yaml --threads=4 --jetbrains=simbiat.eu",
         "phpstan": "phpstan analyse --configuration=/app/config/quality/phpstan.neon --memory-limit=1G",
         "post-install-cmd": [
             "@auto-scripts"

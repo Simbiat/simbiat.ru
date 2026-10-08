@@ -18,5 +18,6 @@ ENV POSTFIX_smtp_sasl_security_options="noanonymous" \
     POSTFIX_inet_protocols="all" \
     POSTFIX_smtp_sasl_auth_enable="yes" \
     POSTFIX_smtp_sasl_password_maps="hash:/etc/postfix/sasl_passwd" \
+    POSTFIX_mynetworks="172.22.0.0/24" \
     RSYSLOG_LOG_TO_FILE="yes" \
     RSYSLOG_TIMESTAMP="yes"

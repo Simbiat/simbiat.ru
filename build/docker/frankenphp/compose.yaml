@@ -27,7 +27,7 @@ services:
       - mariadb:database
     networks:
       - default
-      - smtp
+      - postfix
       - crowdsec
     ports:
       - "80:80" # HTTP

@@ -305,12 +305,18 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     public function gc(int $max_lifetime = 300): false|int
     {
         try {
-            return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND) OR `user_id` IN (:system_user_id, :deleted_user_id);', [':life' => [$max_lifetime, 'int'], ':system_user_id' => [SystemUser::System->value, 'int'], ':deleted_user_id' => [SystemUser::Deleted->value, 'int']], return: 'affected');
+            /** @var int $expired */
+            $expired = Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND);', [':life' => [$max_lifetime, 'int']], return: 'affected');
+            /** @var int $system_users */
+            $system_users = Query::query('DELETE FROM `uc__sessions` WHERE `user_id` IN (:system_user_id, :deleted_user_id);', [':system_user_id' => [SystemUser::System->value, 'int'], ':deleted_user_id' => [SystemUser::Deleted->value, 'int']], return: 'affected');
+
+            return $expired + $system_users;
         } catch (\Throwable $throwable) {
             // Ignore deadlocks
-            if (\mb_stripos($throwable->getMessage(), 'Deadlock', 0, 'UTF-8') === false) {
-                Errors::error_log($throwable);
+            if (\mb_stripos($throwable->getMessage(), 'Deadlock', 0, 'UTF-8') !== false) {
+                return 0;
             }
+            Errors::error_log($throwable);
 
             return false;
         }

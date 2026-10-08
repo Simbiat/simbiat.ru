@@ -4,18 +4,27 @@ name: simbiat-dev
 networks:
   default:
     enable_ipv6: true
+  smtp:
+    enable_ipv6: true
+  docker:
+    driver: bridge
+    internal: true
+  postfix:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.22.0.0/24
+  # Crowdsec needs 2 networks to ensure FrankenPHP is communicating with it internally, but I could not think of a better name, unlike with postfix/smtp
+  crowdsec:
+    driver: bridge
+    internal: true
     ipam:
       config:
         - subnet: 172.21.0.0/16
         - subnet: fd00:db8:1::/64
-  docker:
-    driver: bridge
-    internal: true
-  smtp:
-    driver: bridge
-    internal: true
-  crowdsec:
-    driver: bridge
+  crowdsec_out:
+    enable_ipv6: true
 
 volumes:
   caddy_config:

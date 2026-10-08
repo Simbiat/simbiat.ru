@@ -7,7 +7,7 @@
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
       <option name="fileExtension" value="*" />
-      <option name="immediateSync" value="true" />
+      <option name="immediateSync" value="false" />
       <option name="name" value="CSS Combine" />
       <option name="output" value="" />
       <option name="outputFilters">
@@ -27,7 +27,7 @@
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
       <option name="fileExtension" value="ts" />
-      <option name="immediateSync" value="true" />
+      <option name="immediateSync" value="false" />
       <option name="name" value="Build TypeScript" />
       <option name="output" value="" />
       <option name="outputFilters">
@@ -47,7 +47,7 @@
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
       <option name="fileExtension" value="*" />
-      <option name="immediateSync" value="true" />
+      <option name="immediateSync" value="false" />
       <option name="name" value="Caddy Compile" />
       <option name="output" value="" />
       <option name="outputFilters">
@@ -67,7 +67,7 @@
       <option name="description" />
       <option name="exitCodeBehavior" value="NEVER" />
       <option name="fileExtension" value="twig" />
-      <option name="immediateSync" value="true" />
+      <option name="immediateSync" value="false" />
       <option name="name" value="Twig SAT" />
       <option name="output" value="" />
       <option name="outputFilters">

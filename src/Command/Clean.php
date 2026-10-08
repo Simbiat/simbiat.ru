@@ -30,16 +30,19 @@ final class Clean
     #[AsCommand(name: 'app:clean:sessions', description: 'Clean old sessions')]
     public function sessions(OutputInterface $output): int
     {
-        $output->writeln(Errors::logfmt('Cleaning old sessions...'));
         try {
             // Connect to DB
             Config::dbConnect();
+            $result = new Session()->gc();
             if (
                 Config::$dbup
-                && !new Session()->gc()
+                && $result === false
             ) {
+                $output->writeln(Errors::logfmt('Failed to clean old sessions. Check logs.'));
+
                 return Command::FAILURE;
             }
+            $output->writeln(Errors::logfmt($result.' session removed'));
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable, cli: true);
 
