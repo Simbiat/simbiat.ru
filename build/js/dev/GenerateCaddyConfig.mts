@@ -205,6 +205,7 @@ async function main(): Promise<void> {
                         // Endpoint for custom health check, available only from inside the container
                         healthcheck: {
                             listen: [':2026'],
+                            metrics: {},
                             routes: [
                                 {
                                     match: [
@@ -219,15 +220,8 @@ async function main(): Promise<void> {
                                     ],
                                     handle: [
                                         {
-                                            handler: 'vars',
-                                            root: '/built-in',
-                                        },
-                                        {
-                                            handler: 'rewrite',
-                                            uri: '/healthcheck.php',
-                                        },
-                                        {
-                                            handler: 'php',
+                                            handler: 'static_response',
+                                            status_code: 200,
                                         },
                                     ],
                                     terminal: true,
@@ -237,6 +231,7 @@ async function main(): Promise<void> {
                         // Endpoint for opcache reset, available only from inside the container
                         reset: {
                             listen: [':2027'],
+                            metrics: {},
                             routes: [
                                 {
                                     match: [
@@ -271,6 +266,7 @@ async function main(): Promise<void> {
                                 ':80',
                                 ':443',
                             ],
+                            metrics: {},
                             //Enable access logs for Crowdsec
                             logs: {
                                 default_logger_name: 'access_log',

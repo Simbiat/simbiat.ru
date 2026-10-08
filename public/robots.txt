@@ -5,6 +5,8 @@ User-agent: *
 Sitemap: https://www.simbiat.eu/sitemap/index.xml
 Sitemap: https://www.simbiat.eu/sitemap/fftracker.xml
 # Forbid some folders
+Disallow: /bin/
+Disallow: /build/
 Disallow: /cgi-bin/
 Disallow: /data/
 Disallow: /composer/
@@ -12,6 +14,12 @@ Disallow: /lib/
 Disallow: /twig/
 Disallow: /api/
 Disallow: /uc/
+Disallow: /var/
+Disallow: /vendor/
+Disallow: /fftracker/search
+Disallow: /bictracker/search
+Disallow: /*?page=
+Disallow: /*&page=
 
 user-agent: Google-Extended
 disallow: *

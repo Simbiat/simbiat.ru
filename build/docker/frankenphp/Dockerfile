@@ -82,10 +82,9 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod 755 /usr/local/bin/entrypoint.sh
 
 RUN mkdir /built-in
-COPY healthcheck.php /built-in/healthcheck.php
 COPY reset.php /built-in/reset.php
 
-HEALTHCHECK --start-period=30s --interval=10s --timeout=10s --retries=3 CMD ["curl", "--connect-timeout", "8", "--max-time", "10", "-f", "http://localhost:2026"]
+HEALTHCHECK --start-period=30s --interval=10s --timeout=10s --retries=3 CMD ["curl", "--connect-timeout", "8", "--max-time", "10", "-fsS", "http://localhost:2026"]
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
