@@ -563,10 +563,10 @@ SQL_EOF
     # COMPRESS BACKUPS
     # =========================================================
     log_msg "Zipping logical backup"
-    7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -mhe -mtc -mta -mtm -mmt=on -p"${MARIADB_BACKUP_PASSWORD}" "$backup_dir/$current_date-${logical_name}.7z" "$logical_backup"
+    7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -mhe -mtc -mta -mtm -mmt=4 -p"${MARIADB_BACKUP_PASSWORD}" "$backup_dir/$current_date-${logical_name}.7z" "$logical_backup"
     rm -rf "$logical_backup";
     log_msg "Zipping physical backup"
-    7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -mhe -mtc -mta -mtm -mmt=on -p"${MARIADB_BACKUP_PASSWORD}" "$backup_dir/$current_date-physical.7z" "$physical_backup"
+    7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -mhe -mtc -mta -mtm -mmt=4 -p"${MARIADB_BACKUP_PASSWORD}" "$backup_dir/$current_date-physical.7z" "$physical_backup"
     rm -rf "$physical_backup";
     log_msg "Backup completed"
     rm -f "$maintenance_flag"
