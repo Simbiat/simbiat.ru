@@ -29,10 +29,10 @@ disk_space_multiplier=3
 
 logical_name="daily"
 if [ "$(date +%u)" -eq 1 ]; then
-logical_name="weekly"
+    logical_name="weekly"
 fi
 if [ "$(date +%d)" -eq 01 ]; then
-logical_name="monthly"
+    logical_name="monthly"
 fi
 
 # Temporary MariaDB instance settings
@@ -44,16 +44,16 @@ tmp_port=3307
 # into them. Still before `set -e` on purpose, so we control the error
 # message rather than getting a cryptic one from the first `>>`.
 if ! mkdir -p "$(dirname "$log_file")" "$backup_dir"; then
-echo "FATAL: could not create required directories" >&2
-exit 1
+    echo "FATAL: could not create required directories" >&2
+    exit 1
 fi
 
 # Single-instance guard. Released automatically when the script exits for any reason, since it's tied to this fd.
 lock_file=/tmp/mariadb_backup.lock
 exec 200>"$lock_file"
 if ! flock -n 200; then
-echo "FATAL: another backup run appears to be in progress (lock: $lock_file)" >&2
-exit 1
+    echo "FATAL: another backup run appears to be in progress (lock: $lock_file)" >&2
+    exit 1
 fi
 
 set -euE
@@ -141,15 +141,17 @@ run_parallel() {
 
     parallel_init "$max_parallel"
 
-    local item
+    local item pid
+    local -a pids=()
     for item in "${items_ref[@]}"; do
       read -r -u 3
       (
         "$worker" "$item" || echo 1 >> "$status_file"
         echo >&3
       ) &
+      pids+=("$!")
     done
-    wait
+    wait "${pids[@]}" || true
     parallel_close
 }
 

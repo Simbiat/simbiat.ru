@@ -6,7 +6,6 @@ set -a; source "$(dirname "${BASH_SOURCE[0]}")/../.env"; set +a
 if [[ -f "$(dirname "${BASH_SOURCE[0]}")/../.env.dev" ]]; then
     set -a; source "$(dirname "${BASH_SOURCE[0]}")/../.env.dev"; set +a
 fi
-
 set -euo pipefail
 
 if [[ $# -ne 3 ]]; then
@@ -31,7 +30,11 @@ if ! $prod; then
     smtp_priority='Non-Urgent'
     importance='Low'
     subject="[Test] $subject"
-elif (( priority > 1 )); then
+    body="************* This email is from test environment *************
+
+$body"
+fi
+if (( priority > 1 )); then
     smtp_priority='Urgent'
     importance='High'
 elif (( priority < 1 )); then
