@@ -67,6 +67,35 @@ cleanup_older_than() {
         done
 }
 
+# Unpack latest archive
+unpack_latest() {
+    local src_dir="$1" dest_dir="$2" label="$3"
+    local latest tmp_dir src_root only
+    latest=$(find "${src_dir}" -maxdepth 1 -name '*.7z' -type f -print0 | sort -z | tail -z -n 1 | tr -d '\0')
+    if [ -z "$latest" ]; then
+        log "No latest ${label} backup found"
+        return 0
+    fi
+    log "Unpacking ${label} backup: $latest"
+    tmp_dir=$(mktemp -d -p "${DB_BCK_DIR}") || return 1
+    if ! 7za x "$latest" -y -o"${tmp_dir}" -p"${MARIADB_BACKUP_PASSWORD}"; then
+        log "Unpacking ${label} backup failed. Destination not changed."
+        rm -rf "${tmp_dir}"
+        return 1
+    fi
+    # If the archive has one top-level directory, use it as the root
+    src_root="${tmp_dir}"
+    only=$(find "${tmp_dir}" -mindepth 1 -maxdepth 1)
+    if [ -d "$only" ]; then
+        src_root="$only"
+    fi
+    # Mirror: copy new and changed files, delete files not in the archive
+    rsync "${RSYNC_FLAGS[@]}" --delete "${src_root}/" "${dest_dir}/"
+    local rc=$?
+    rm -rf "${tmp_dir}"
+    return $rc
+}
+
 # ---- Main ------------------------------------------------------------
 # Everything from here on prints to the console AND appends to the log file -
 # no need to redirect each command individually anymore.
@@ -91,12 +120,6 @@ sync_retry "Syncing /var/log/" \
 sync_retry "Syncing /data/uploaded/" \
     rsync "${RSYNC_FLAGS[@]}" --delete "${RSYNC_REMOTE}/data/uploaded/" "${PROJECT_DIR}/data/uploaded/"
 
-sync_retry "Syncing /var/sitemap/" \
-    rsync "${RSYNC_FLAGS[@]}" --delete "${RSYNC_REMOTE}/var/sitemap/" "${MIRROR_DIR}/var/sitemap/"
-
-sync_retry "Syncing /data/ffstatistics/" \
-    rsync "${RSYNC_FLAGS[@]}" --delete "${RSYNC_REMOTE}/data/ffstatistics/" "${MIRROR_DIR}/data/ffstatistics/"
-
 sync_retry "Syncing /data/uploadedimages/" \
     rsync "${RSYNC_FLAGS[@]}" --delete "${RSYNC_REMOTE}/data/uploadedimages/" "${PROJECT_DIR}/data/uploadedimages/"
 
@@ -110,30 +133,53 @@ sync_retry "Syncing /public/assets/images/fftracker/icons/" \
     "${RSYNC_REMOTE}/public/assets/images/fftracker/icons/" \
     "${PROJECT_DIR}/public/assets/images/fftracker/icons/"
 
-mkdir -p "$DB_BCK_DIR"
+mkdir -p "$DB_BCK_DIR/logical"
 (
     sync_retry "Syncing /data/backups/" \
         rsync "${RSYNC_FLAGS[@]}" --partial --remove-source-files \
-        --include='/*.7z' --exclude='/**.sql' --exclude=/recommended_table_order.txt --exclude=/.gitignore \
-        "${RSYNC_REMOTE}/data/backups/" "${DB_BCK_DIR}/"
+        --include='/*daily.7z' --include='/*weekly.7z' --include='/*monthly.7z' --exclude='/*physical.7z' --exclude='/**.sql' --exclude=/recommended_table_order.txt --exclude=/.gitignore \
+        "${RSYNC_REMOTE}/data/backups/" "${DB_BCK_DIR}/logical/"
 )
+mkdir -p "$DB_BCK_DIR/physical"
+(
+    sync_retry "Syncing /data/backups/" \
+        rsync "${RSYNC_FLAGS[@]}" --partial --remove-source-files \
+        --include='/*physical.7z' --exclude='/**.sql' --exclude=/recommended_table_order.txt --exclude=/.gitignore \
+        "${RSYNC_REMOTE}/data/backups/" "${DB_BCK_DIR}/physical/"
+)
+
+# ---- Unpack latest archives
+unpack_latest "${DB_BCK_DIR}/logical"  "${DB_BCK_DIR}/logical_unpacked" "logical"
+unpack_latest "${DB_BCK_DIR}/physical" "${MIRROR_DIR}/data/mariadb"     "physical"
 
 # ---- Mirror project dir --
 sync_retry "Syncing project to mirror folder" \
     rsync --recursive -a --checksum --times --force --prune-empty-dirs \
             --human-readable --progress --stats --delete \
             --include=/data/temp/.gitignore \
-            --exclude=/data/temp/** \
+            --filter='hide /data/temp/**' \
+            --include=/data/mariadb/.gitignore \
+            --exclude=/data/mariadb/** \
+            --filter='protect /data/backups/logical/**' \
+            --filter='protect /data/backups/logical_unpacked/**' \
+            --filter='protect /data/backups/physical/**' \
             --include=/var/log/.gitignore \
             --exclude=/var/log/** \
+            --filter='hide /node_modules/**' \
+            --filter='hide /vendor/**' \
+            --filter='hide /var/cache/**' \
+            --filter='hide /var/deploy/**' \
+            --include=/var/mergedcrests/.gitignore \
+            --filter='hide /var/mergedcrests/**' \
+            --include=/var/sitemap/.gitignore \
+            --filter='hide /var/sitemap/**' \
+            --filter='hide /var/share/**' \
     "${PROJECT_DIR}/" "${MIRROR_DIR}/"
 
-cleanup_older_than "$DB_BCK_DIR" "*.sql"          1
-cleanup_older_than "$DB_BCK_DIR" "*-monthly.7z"  84
-cleanup_older_than "$DB_BCK_DIR" "*-weekly.7z"   42
-cleanup_older_than "$DB_BCK_DIR" "*-daily.7z"    14
-cleanup_older_than "$DB_BCK_DIR" "*-users.7z"    14
-cleanup_older_than "$DB_BCK_DIR" "*-physical.7z"  7
+cleanup_older_than "$DB_BCK_DIR/logical" "*-monthly.7z"  84
+cleanup_older_than "$DB_BCK_DIR/logical" "*-weekly.7z"   42
+cleanup_older_than "$DB_BCK_DIR/logical" "*-daily.7z"    14
+cleanup_older_than "$DB_BCK_DIR/physical" "*-physical.7z"  7
 cleanup_older_than "${MIRROR_DIR}/var/log" "*.log" 14
 
 if [ "$OVERALL_FAILED" -eq 1 ]; then
