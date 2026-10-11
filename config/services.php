@@ -24,8 +24,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     $parameters->set('app.encryption_passphrase', '%env(ENCRYPTION_PASSPHRASE)%');
 
-    $parameters->set('app.security_settings', '%kernel.project_dir%/data/security.json');
-
     $parameters->set('app.base_url', 'https://%app.http_host%');
 
     $parameters->set('app.support_section', 26);

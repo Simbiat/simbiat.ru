@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <psalm
-    autoloader="/app/vendor/autoload.php"
     errorLevel="1"
     reportMixedIssues="true"
     addParamDefaultToDocblockType="true"
@@ -19,6 +18,7 @@
 >
     <projectFiles>
         <directory name="/app"/>
+        <file name="/app/packages/QARunner/bin/qa-runner"/>
         <ignoreFiles allowMissingFiles="true">
             <directory name="/app/assets"/>
             <directory name="/app/build"/>

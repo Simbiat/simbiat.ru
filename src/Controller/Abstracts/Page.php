@@ -310,7 +310,7 @@ abstract class Page
     }
 
     /**
-     * Generation of the page data
+     * This is the actual page generation based on further details of the `$path`
      *
      * @param array $path
      *

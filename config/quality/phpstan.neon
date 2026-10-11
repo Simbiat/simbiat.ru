@@ -17,6 +17,7 @@ parameters:
         - /app/packages
         - /app/src
         - /app/tests
+        - /app/packages/QARunner/bin/qa-runner
     excludePaths:
         - /app/assets
         - /app/bin/console

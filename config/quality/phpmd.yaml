@@ -19,6 +19,8 @@ exclude-pattern:
 rules:
     -   ref: rulesets/cleancode.xml
         exclude:
+            # Conflicts with some sniffs that for FQN global calls without the `use`
+            - MissingImport
             - StaticAccess
     -   ref: rulesets/codesize.xml
     -   ref: rulesets/controversial.xml

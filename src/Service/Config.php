@@ -22,7 +22,6 @@ final class Config
     public private(set) static string $http_host = '';
     public private(set) static string $base_url = '';
     public private(set) static string $html_cache = '';
-    public private(set) static string $security_settings = '';
     public private(set) static string $sitemap = '';
     public private(set) static string $js_dir = '';
     public private(set) static string $css_dir = '';
@@ -59,7 +58,6 @@ final class Config
         self::$environment = $container->getParameter('kernel.environment');
         self::$admin_email = $container->getParameter('app.admin_email');
         self::$from_email = $container->getParameter('app.from_email');
-        self::$security_settings = $container->getParameter('app.security_settings');
         self::$http_host = $container->getParameter('app.http_host');
         self::$base_url = $container->getParameter('app.base_url');
         self::$cookie_settings = $container->getParameter('app.cookie_settings');

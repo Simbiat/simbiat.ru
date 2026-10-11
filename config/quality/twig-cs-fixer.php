@@ -30,5 +30,7 @@ return new Config()
         new Finder()
             ->in('/app/templates')
             ->files()
+            ->notPath('/app/packages')
+            ->notPath('/app/src')
             ->name('*.twig'),
     );

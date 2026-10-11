@@ -149,8 +149,12 @@
         <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineAfterOpeningBrace"/>
         <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineBeforeClosingBrace"/>
         <exclude name="SlevomatCodingStandard.Classes.ClassLength.ClassTooLong"/>
+        <!-- Conflicts Symfony practices -->
+        <exclude name="SlevomatCodingStandard.Classes.DisallowConstructorPropertyPromotion"/>
         <!-- Contradicts Symfony coding standards -->
         <exclude name="SlevomatCodingStandard.Classes.RequireMultiLineMethodSignature"/>
+        <!-- Generic.NamingConventions.AbstractClassNamePrefix.Missing and Symfony standards -->
+        <exclude name="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming"/>
     </rule>
     <rule ref="SlevomatCodingStandard.Classes.TraitUseSpacing">
         <properties>
@@ -311,6 +315,8 @@
         <exclude name="SlevomatCodingStandard.Commenting.RequireOneLineDocComment.MultiLineDocComment"/>
         <!-- Everything needs to have comments, and this can remove them, but it helps find comments without description -->
         <exclude phpcbf-only="true" name="SlevomatCodingStandard.Commenting.UselessFunctionDocComment"/>
+        <!-- Conflicts rules that require a PHPDoc -->
+        <exclude name="SlevomatCodingStandard.Commenting.UselessInheritDocComment"/>
     </rule>
     <!-- This is mostly for the sake of standardization -->
     <rule ref="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment"/>

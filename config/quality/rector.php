@@ -5,6 +5,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\DeadCode\Rector\ClassMethod\RemoveUselessReturnTagRector;
 use Rector\Symfony\Set\SymfonySetList;
 
 /** @noinspection PhpUnhandledExceptionInspection */
@@ -26,6 +27,10 @@ return RectorConfig::configure()
                        '/app/config/bundles.php',
                        '/app/config/preload.php',
                        '/app/config/reference.php',
+                   ])
+                   ->withSkip([
+                       // Conflicts Symfony.Commenting.FunctionComment.MissingReturn sniff
+                       RemoveUselessReturnTagRector::class,
                    ])
                    ->withPhpSets()
                    ->withSets([SymfonySetList::CONFIGS])
