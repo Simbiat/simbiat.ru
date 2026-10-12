@@ -46,7 +46,7 @@ final class NewThread extends Notification
             return $this;
         }
         try {
-            $this->text = EnvironmentGenerator::getTwig()->render('notifications/new_thread.twig', $twig_vars);
+            $this->text = EnvironmentGenerator::getTwig()->render('notifications/new_thread.html.twig', $twig_vars);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             $this->text = null;

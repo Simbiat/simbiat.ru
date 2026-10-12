@@ -478,7 +478,7 @@ abstract class Notification extends Entity
         try {
             // Add content
             $email->subject((Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT)
-                    ->htmlTemplate('email.twig')
+                    ->htmlTemplate('email.html.twig')
                     ->context(['subject' => (Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT, 'username' => $username, 'unsubscribe_all' => $subscribed, 'text' => $this->text, 'tracker' => $this->id, 'created' => $this->created, 'sent' => \time()]);
             try {
                 Query::query('UPDATE `sys__notifications` SET `attempts`=`attempts`+1, `last_attempt`=CURRENT_TIMESTAMP(6) WHERE `uuid` = :uuid;', [':uuid' => $this->id]);

@@ -100,7 +100,7 @@ final class HomePage
                 \ob_end_clean();
                 \ignore_user_abort(true);
                 \ob_start();
-                $output = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.twig', $twig_vars);
+                $output = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.html.twig', $twig_vars);
                 // Output data
                 Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', false);
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
@@ -124,15 +124,15 @@ final class HomePage
             // Handling strict variables
             foreach (
                 [
-                    // common/layout/metatags.twig
+                    // common/layout/metatags.html.twig
                     'og_image', 'ogtype', 'ogextra', 'favicon', 'service_name', 'title', 'error_page', 'static_page', 'cached_page', 'construction', 'suggested_link',
-                    // index.twig
+                    // index.html.twig
                     'link_extra', 'http_error', 'reason', 'pagination',
-                    // common/layout/navigation.twig
+                    // common/layout/navigation.html.twig
                     'type', 'detailed_type', 'section_id', 'subservice_name', 'breadcrumbs',
-                    // common/layout/header.twig
+                    // common/layout/header.html.twig
                     'cache_reset',
-                    // talks/forms/thread.twig
+                    // talks/forms/thread.html.twig
                     'contact_form',
                 ] as $variable
             ) {
@@ -142,27 +142,27 @@ final class HomePage
             }
             \ob_start();
             try {
-                $output = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.twig', $twig_vars);
+                $output = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.html.twig', $twig_vars);
             } catch (\Throwable $exception) {
                 Errors::error_log($exception);
                 Headers::clientReturn(500, false);
                 try {
                     // TODO: Needs to be cleaned up during refactor of pages
-                    $output = EnvironmentGenerator::getTwig()->render('index.twig', [
+                    $output = EnvironmentGenerator::getTwig()->render('index.html.twig', [
                         'breadcrumbs' => [],
                         'cached_page' => false,
-                        // common/layout/header.twig
+                        // common/layout/header.html.twig
                         'cache_reset' => null,
                         'construction' => false,
                         'detailed_type' => null,
                         'error_page' => 500,
                         'favicon' => null,
                         'http_error' => 500,
-                        // index.twig
+                        // index.html.twig
                         'link_extra' => null,
                         'ogextra' => null,
                         'ogtype' => null,
-                        // common/layout/metatags.twig
+                        // common/layout/metatags.html.twig
                         'og_image' => null,
                         'pagination' => null,
                         'reason' => (\preg_match('/(Variable "[^"]+" does not exist)|(Key "[^"]+" does not exist as the sequence)|(Key "[^"]+" for sequence\/mapping with keys "[^"]+" does not exist)/ui', $exception->getMessage()) === 1 ? $exception->getMessage() : 'Twig failure'),
@@ -173,7 +173,7 @@ final class HomePage
                         'static_page' => false,
                         'subservice_name' => null,
                         'title' => null,
-                        // common/layout/navigation.twig
+                        // common/layout/navigation.html.twig
                         'type' => null,
                     ]);
                 } catch (\Throwable $twig_error) {
@@ -506,7 +506,7 @@ final class HomePage
                 $uri[0] === 'api'
                 && empty($vars['template_override'])
             ) {
-                $vars['template_override'] = 'common/pages/api.twig';
+                $vars['template_override'] = 'common/pages/api.html.twig';
             }
             if (
                 $uri[0] === 'api'

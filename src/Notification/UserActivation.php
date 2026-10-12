@@ -51,7 +51,7 @@ final class UserActivation extends Notification
             return $this;
         }
         try {
-            $this->text = EnvironmentGenerator::getTwig()->render('notifications/user_activation.twig', $twig_vars);
+            $this->text = EnvironmentGenerator::getTwig()->render('notifications/user_activation.html.twig', $twig_vars);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             $this->text = null;

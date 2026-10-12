@@ -56,7 +56,7 @@ final class MainRouter extends Router
         }
 
         return match ($path[0]) {
-            'api' => \array_merge(['template_override' => 'common/pages/api.twig'], new Api()->route(\array_slice($path, 1))),
+            'api' => \array_merge(['template_override' => 'common/pages/api.html.twig'], new Api()->route(\array_slice($path, 1))),
             // Forum/Articles
             'talks' => new Talks()->route(\array_slice($path, 1)),
             // Pages routing

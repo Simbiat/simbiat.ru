@@ -42,7 +42,7 @@ final class LoginFailed extends Notification
     protected function setText(array $twig_vars = []): self
     {
         try {
-            $this->text = EnvironmentGenerator::getTwig()->render('notifications/login_failed.twig', $twig_vars);
+            $this->text = EnvironmentGenerator::getTwig()->render('notifications/login_failed.html.twig', $twig_vars);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             $this->text = null;

@@ -37,7 +37,7 @@ final class SectionChange extends Notification
     protected function setText(array $twig_vars = []): self
     {
         try {
-            $this->text = EnvironmentGenerator::getTwig()->render('notifications/section_change.twig', $twig_vars);
+            $this->text = EnvironmentGenerator::getTwig()->render('notifications/section_change.html.twig', $twig_vars);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             $this->text = null;

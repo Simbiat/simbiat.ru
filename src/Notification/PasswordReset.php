@@ -46,7 +46,7 @@ final class PasswordReset extends Notification
             return $this;
         }
         try {
-            $this->text = EnvironmentGenerator::getTwig()->render('notifications/password_reset.twig', $twig_vars);
+            $this->text = EnvironmentGenerator::getTwig()->render('notifications/password_reset.html.twig', $twig_vars);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             $this->text = null;

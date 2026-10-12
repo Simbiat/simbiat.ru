@@ -56,7 +56,7 @@ final class DatabaseUp extends Notification
             return $this;
         }
         try {
-            $this->text = EnvironmentGenerator::getTwig()->render('notifications/database_up.twig', $twig_vars);
+            $this->text = EnvironmentGenerator::getTwig()->render('notifications/database_up.html.twig', $twig_vars);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             $this->text = null;

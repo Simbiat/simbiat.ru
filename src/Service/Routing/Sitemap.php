@@ -49,7 +49,7 @@ final class Sitemap extends Router
             'index' => new Index()->get($path),
         };
         $result['format'] = 'xml';
-        $result['template_override'] = 'common/pages/sitemap.twig';
+        $result['template_override'] = 'common/pages/sitemap.html.twig';
 
         return $result;
     }

@@ -43,7 +43,7 @@ final class Sitemap
                 $links = [];
                 foreach ($this->index_files as $index_file) {
                     $twig_vars = $router->route([$index_file]);
-                    $index[$index_file] = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.twig', $twig_vars);
+                    $index[$index_file] = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.html.twig', $twig_vars);
                     $dom_document = new \DOMDocument();
                     $dom_document->preserveWhiteSpace = false;
                     $dom_document->loadXML($index[$index_file]);
@@ -80,7 +80,7 @@ final class Sitemap
                         }
                         // Generate and write file
                         $map_vars = $router->route(\array_merge($path));
-                        $content = EnvironmentGenerator::getTwig()->render($map_vars['template_override'] ?? 'index.twig', $map_vars);
+                        $content = EnvironmentGenerator::getTwig()->render($map_vars['template_override'] ?? 'index.html.twig', $map_vars);
                         // Check if file already exists and if its contents are the same
                         if (
                             !\is_file($file_path.'/'.$file_name)

@@ -126,7 +126,7 @@ abstract class Api
         }
         if ($this->top_level) {
             // Override template
-            $result['template_override'] = 'common/pages/api.twig';
+            $result['template_override'] = 'common/pages/api.html.twig';
             // Prepare JSON output
             $result['json_ready'] = ['status' => 200];
             if (
