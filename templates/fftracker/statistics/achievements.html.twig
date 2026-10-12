@@ -13,7 +13,7 @@
         </thead>
         {% for row in category %}
             <tr>
-                <td>{{ include('common/elements/entitycard.twig', row) }}</td>
+                <td>{{ include('common/elements/entitycard.html.twig', row) }}</td>
                 <td>{{ row.count }}</td>
             </tr>
         {% endfor %}

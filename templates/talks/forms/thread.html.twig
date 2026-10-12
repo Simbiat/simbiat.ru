@@ -65,7 +65,7 @@
             </select>
             <label for="thread_data_language" data-tooltip="Select a language indicating the language of intended audience. This does not need to be the same as language the {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %} is written in. This will only affect the value of Content-Language HTTP header, which may affect discoverability. If uncertain, leave it as `English (Default)`.">Language</label>
         </div>
-        {{ include('common/elements/imageupload.twig', {'form_name': 'thread_form', 'placeholder': 'Custom banner', 'input_name': 'thread_data[og_image]', 'preview_classes': 'middle', 'mime': 'image/jpeg, image/png, image/webp', 'required': false, 'image_url': thread_edit ? og_image : null, 'tooltip': 'Optional image to be shown as a banner and on social media, when you share the link. If not set no banner will be shown on page, and social media will show a general one. JPEG, PNG and WEBP files are accepted. Resolution ratio needs to be 1.9:1 with minimum being 1200x630 pixels.'}, with_context = false) }}
+        {{ include('common/elements/imageupload.html.twig', {'form_name': 'thread_form', 'placeholder': 'Custom banner', 'input_name': 'thread_data[og_image]', 'preview_classes': 'middle', 'mime': 'image/jpeg, image/png, image/webp', 'required': false, 'image_url': thread_edit ? og_image : null, 'tooltip': 'Optional image to be shown as a banner and on social media, when you share the link. If not set no banner will be shown on page, and social media will show a general one. JPEG, PNG and WEBP files are accepted. Resolution ratio needs to be 1.9:1 with minimum being 1200x630 pixels.'}, with_context = false) }}
         {% if thread_edit %}
             <div class="float_label">
                 <input id="cur_thread_clear_icon" type="checkbox" name="thread_data[clear_og_image]">
@@ -84,13 +84,13 @@
             </div>
             <br>
         {% endif %}
-        {{ include('talks/forms/alt_links.twig', {'alt_links_edit': thread_edit}) }}
+        {{ include('talks/forms/alt_links.html.twig', {'alt_links_edit': thread_edit}) }}
     {% endif %}
     {% if not thread_edit %}
-        {{ include('talks/forms/post.twig', {'verb': 'add', 'new_thread': true, 'text': null}, with_context = false) }}
+        {{ include('talks/forms/post.html.twig', {'verb': 'add', 'new_thread': true, 'text': null}, with_context = false) }}
     {% endif %}
     {% if thread_edit and author != session_data.user_id and author not in system_users %}
-        {{ include('common/elements/change_reason.twig', {'form_name': 'thread_form', 'array_name': 'thread_data'}, with_context = false) }}
+        {{ include('common/elements/change_reason.html.twig', {'form_name': 'thread_form', 'array_name': 'thread_data'}, with_context = false) }}
         <br>
     {% endif %}
     <button type="submit" value="{% if thread_edit %}Update{% else %}{% if contact_form %}Contact{% else %}Post{% endif %}{% endif %}" name="thread_data[submit]" id="thread_form_submit" data-alt-attribute="{% if thread_edit %}Updating{% else %}Creating{% endif %} {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}...">

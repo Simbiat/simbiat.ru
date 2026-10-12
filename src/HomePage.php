@@ -45,7 +45,7 @@ final class HomePage
     public static ?string $method = null;
 
     // Array that can contain variables indicating common HTTP errors
-    private(set) static ?array $http_error = [];
+    public static ?array $http_error = [];
 
     // User agent details from
     private(set) static array $user_agent = [];

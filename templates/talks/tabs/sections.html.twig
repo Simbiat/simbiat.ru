@@ -41,28 +41,28 @@
 {% if id == 1 and not session_data.sections.blog %}
     <div class="tab_content" id="tab_content_start_blog" role="tabpanel" aria-labelledby="tab_name_start_blog">
         <p>Fill in and submit the form below to create your personal blog.</p>
-        {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': true, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
+        {{ include('talks/forms/section.html.twig', {'section_edit': false, 'starting_new_blog': true, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
     </div>
 {% endif %}
 {# Check if user does not have a changelog created and we are in a changelog root section #}
 {% if id == 3 and not session_data.sections.changelog %}
     <div class="tab_content" id="tab_content_start_changelog" role="tabpanel" aria-labelledby="tab_name_start_changelog">
         <p>Fill in and submit the form below to create your changelog.</p>
-        {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': true, 'starting_new_kb': false}) }}
+        {{ include('talks/forms/section.html.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': true, 'starting_new_kb': false}) }}
     </div>
 {% endif %}
 {# Check if user does not have a knowledgebase created and we are in a knowledgebase root section #}
 {% if id == 4 and not session_data.sections.knowledgebase %}
     <div class="tab_content" id="tab_content_start_knowledgebase" role="tabpanel" aria-labelledby="tab_name_start_knowledgebase">
         <p>Fill in and submit the form below to create your knowledgebase.</p>
-        {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': true}) }}
+        {{ include('talks/forms/section.html.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': true}) }}
     </div>
 {% endif %}
 {% if type != 'Category' and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
     {% if (type != 'Blog' and type != 'Knowledgebase' and type != 'Changelog') or ((type == 'Blog' or type == 'Knowledgebase' or type == 'Changelog') and owned) %}
         <div class="tab_content" id="tab_content_new_thread" role="tabpanel" aria-labelledby="tab_name_new_thread">
             <p>Fill in and submit the form below to create a new {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}.</p>
-            {{ include('talks/forms/thread.twig', {'thread_edit': false, 'contact_form': false, 'external_links': null}) }}
+            {{ include('talks/forms/thread.html.twig', {'thread_edit': false, 'contact_form': false, 'external_links': null}) }}
         </div>
     {% endif %}
 {% endif %}
@@ -70,13 +70,13 @@
     {% if inherited_type != 'Blog' and (owned or ('add_sections' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions))) %}
         <div class="tab_content" id="tab_content_new_section" role="tabpanel" aria-labelledby="tab_name_new_section">
             <p>Fill in and submit the form below to create a new subsection in the currently selected one.</p>
-            {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
+            {{ include('talks/forms/section.html.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
         </div>
     {% endif %}
 {% endif %}
 {% if owned or 'edit_sections' in session_data.permissions %}
     <div class="tab_content" id="tab_content_edit" role="tabpanel" aria-labelledby="tab_name_edit">
-        {{ include('talks/forms/section.twig', {'section_edit': true, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
+        {{ include('talks/forms/section.html.twig', {'section_edit': true, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
     </div>
 {% endif %}
 {% if owned or 'edit_sections' in session_data.permissions %}
@@ -90,7 +90,7 @@
                     <i>when</i> it will be removed from those engines.</p>
             {% endif %}
             {% if author != session_data.user_id and author not in system_users %}
-                {{ include('common/elements/change_reason.twig', {'form_name': 'section_private_form', 'array_name': 'section_data'}, with_context = false) }}
+                {{ include('common/elements/change_reason.html.twig', {'form_name': 'section_private_form', 'array_name': 'section_data'}, with_context = false) }}
             {% endif %}
             <input type="hidden" name="verb" value="mark_{% if private %}public{% else %}private{% endif %}" required>
             <input type="hidden" name="section_data[section_id]" value="{{ section_id }}" required>
@@ -129,7 +129,7 @@
                     <var>post_in_closed</var> permission.</p>
             {% endif %}
             {% if author != session_data.user_id and author not in system_users %}
-                {{ include('common/elements/change_reason.twig', {'form_name': 'section_closed_form', 'array_name': 'section_data'}, with_context = false) }}
+                {{ include('common/elements/change_reason.html.twig', {'form_name': 'section_closed_form', 'array_name': 'section_data'}, with_context = false) }}
             {% endif %}
             <input type="hidden" name="verb" value="{% if closed %}open{% else %}close{% endif %}" required>
             <input type="hidden" name="section_data[section_id]" value="{{ section_id }}" required>
@@ -151,7 +151,7 @@
                 <p>If the section has a custom icon, it will not be removed along with the section. Instead, it will be removed during the routine check for orphaned files if the icon file is not linked to anything else.</p>
                 <p>If deletion is successful, you will be redirected to the respective parent section.</p>
                 {% if author != session_data.user_id and author not in system_users %}
-                    {{ include('common/elements/change_reason.twig', {'form_name': 'section_delete_form', 'array_name': 'section_data'}, with_context = false) }}
+                    {{ include('common/elements/change_reason.html.twig', {'form_name': 'section_delete_form', 'array_name': 'section_data'}, with_context = false) }}
                 {% endif %}
                 <input type="hidden" name="verb" value="delete" required>
                 <input type="hidden" name="section_data[section_id]" value="{{ section_id }}" required>

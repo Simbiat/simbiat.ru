@@ -51,6 +51,6 @@
 </section>
 {% if path %}
     <section>
-        {{ include('common/elements/iconlist.twig', {icons: files[path].files}, with_context = false) }}
+        {{ include('common/elements/iconlist.html.twig', {icons: files[path].files}, with_context = false) }}
     </section>
 {% endif %}

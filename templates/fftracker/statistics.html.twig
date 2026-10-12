@@ -13,19 +13,19 @@
     {% if ffstats.category %}
         <article class="margin_05rem">
             {% if ffstats.category == 'characters' %}
-                {{ include('fftracker/statistics/characters.twig') }}
+                {{ include('fftracker/statistics/characters.html.twig') }}
             {% elseif ffstats.category == 'groups' %}
-                {{ include('fftracker/statistics/groups.twig') }}
+                {{ include('fftracker/statistics/groups.html.twig') }}
             {% elseif ffstats.category == 'achievements' %}
-                {{ include('fftracker/statistics/achievements.twig') }}
+                {{ include('fftracker/statistics/achievements.html.twig') }}
             {% elseif ffstats.category == 'timelines' %}
-                {{ include('fftracker/statistics/timelines.twig') }}
+                {{ include('fftracker/statistics/timelines.html.twig') }}
             {% elseif ffstats.category == 'bugs' %}
-                {{ include('fftracker/statistics/bugs.twig') }}
+                {{ include('fftracker/statistics/bugs.html.twig') }}
             {% elseif ffstats.category == 'raw' %}
-                {{ include('fftracker/statistics/raw.twig') }}
+                {{ include('fftracker/statistics/raw.html.twig') }}
             {% elseif ffstats.category == 'other' %}
-                {{ include('fftracker/statistics/other.twig') }}
+                {{ include('fftracker/statistics/other.html.twig') }}
             {% endif %}
         </article>
     {% endif %}

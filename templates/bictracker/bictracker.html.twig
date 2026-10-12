@@ -21,21 +21,21 @@
         </details>
     </article>
     {% if subservice_name == 'search' %}
-        {{ include('common/elements/search.twig') }}
+        {{ include('common/elements/search.html.twig') }}
     {% endif %}
     {% if subservice_name %}
         {% if subservice_name == 'bic' %}
-            {{ include('bictracker/bic.twig') }}
+            {{ include('bictracker/bic.html.twig') }}
         {% else %}
             <article class="margin_05rem">
                 {% if subservice_name == 'keying' %}
-                    {{ include('bictracker/keying.twig') }}
+                    {{ include('bictracker/keying.html.twig') }}
                 {% elseif subservice_name == 'search' %}
-                    {{ include('common/pages/search.twig') }}
+                    {{ include('common/pages/search.html.twig') }}
                 {% elseif subservice_name == 'openbics' %}
-                    {{ include('common/pages/list.twig') }}
+                    {{ include('common/pages/list.html.twig') }}
                 {% elseif subservice_name == 'closedbics' %}
-                    {{ include('common/pages/list.twig') }}
+                    {{ include('common/pages/list.html.twig') }}
                 {% endif %}
             </article>
         {% endif %}

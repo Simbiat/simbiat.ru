@@ -28,7 +28,7 @@
             </div>
         {% endif %}
         {% if verb == 'edit' and author != current_user and author not in system_users %}
-            {{ include('common/elements/change_reason.twig', {'form_name': 'post_form', 'array_name': 'post_data'}, with_context = false) }}
+            {{ include('common/elements/change_reason.html.twig', {'form_name': 'post_form', 'array_name': 'post_data'}, with_context = false) }}
             <br>
         {% endif %}
         {% if not new_thread %}

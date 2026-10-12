@@ -65,9 +65,9 @@
     {% elseif starting_new_kb %}
         <input type="hidden" name="section_data[type]" value="6">
     {% else %}
-        {{ include('common/elements/select_custom.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Type', 'input_name': 'section_data[type]', 'items': section_types, 'required': true, 'selected': type}, with_context = false) }}
+        {{ include('common/elements/select_custom.html.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Type', 'input_name': 'section_data[type]', 'items': section_types, 'required': true, 'selected': type}, with_context = false) }}
     {% endif %}
-    {{ include('common/elements/imageupload.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Custom icon', 'input_name': 'section_data[icon]', 'preview_classes': 'middle section_icon', 'required': false, 'image_url': section_edit ? icon : null, 'mime': 'image/*', 'tooltip': 'Optional icon for the new section'}, with_context = false) }}
+    {{ include('common/elements/imageupload.html.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Custom icon', 'input_name': 'section_data[icon]', 'preview_classes': 'middle section_icon', 'required': false, 'image_url': section_edit ? icon : null, 'mime': 'image/*', 'tooltip': 'Optional icon for the new section'}, with_context = false) }}
     {% if section_edit %}
         <div class="float_label">
             <input id="cur_section_clear_icon" type="checkbox" name="section_data[clear_icon]">
@@ -91,7 +91,7 @@
         {% endif %}
     {% endif %}
     {% if section_edit and author != session_data.user_id and author not in system_users %}
-        {{ include('common/elements/change_reason.twig', {'form_name': 'edit_section_form', 'array_name': 'section_data'}, with_context = false) }}
+        {{ include('common/elements/change_reason.html.twig', {'form_name': 'edit_section_form', 'array_name': 'section_data'}, with_context = false) }}
         <br>
     {% endif %}
     <button type="submit" value="{% if section_edit %}Update{% else %}Add{% endif %}" name="section_data[submit]" id="{% if section_edit %}edit_section_submit{% else %}add_section_submit{% endif %}" formaction="/api/talks/sections" formmethod="post" formtarget="_self" data-alt-attribute="{% if section_edit %}Adding{% else %}Creating{% endif %} section...">

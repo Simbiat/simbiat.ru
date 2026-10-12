@@ -18,12 +18,12 @@
     </div>
     <div class="tab_content active" id="tab_content_view" role="tabpanel" aria-labelledby="tab_name_view">
         {% set post = post|merge({'no_user': false, 'noname': false, 'detailed_type': null, 'text_only': false, 'allow_reply_to': false, 'noeditedtime': false}) %}
-        {{ include('common/elements/post.twig', post) }}
+        {{ include('common/elements/post.html.twig', post) }}
     </div>
     {% if not history_version %}
         {% if can_edit_post %}
             <div class="tab_content" id="tab_content_edit" role="tabpanel" aria-labelledby="tab_name_edit">
-                {{ include('talks/forms/post.twig', {'verb': 'edit', 'new_thread': false, 'thread_id': thread_id, 'post_id': id, 'text': text, 'permissions': session_data.permissions, 'author': author, 'current_user': session_data.user_id}, with_context = false) }}
+                {{ include('talks/forms/post.html.twig', {'verb': 'edit', 'new_thread': false, 'thread_id': thread_id, 'post_id': id, 'text': text, 'permissions': session_data.permissions, 'author': author, 'current_user': session_data.user_id}, with_context = false) }}
             </div>
         {% endif %}
         {% if history and 'view_posts_history' in session_data.permissions %}
@@ -70,7 +70,7 @@
                     <p>If a post has attachments, they will not be removed along with the post. Instead, they will be removed during routine check for orphaned files if they are not linked to anything else.</p>
                     <p>If deletion is successful, you will be redirected to the respective parent thread.</p>
                     {% if author != session_data.user_id and author not in system_users %}
-                        {{ include('common/elements/change_reason.twig', {'form_name': 'delete_post_form', 'array_name': 'post_data', 'placeholder': 'Deletion reason'}, with_context = false) }}
+                        {{ include('common/elements/change_reason.html.twig', {'form_name': 'delete_post_form', 'array_name': 'post_data', 'placeholder': 'Deletion reason'}, with_context = false) }}
                     {% endif %}
                     <input type="hidden" name="verb" value="delete" required>
                     <input type="hidden" name="post_data[post_id]" value="{{ post.id }}" required>

@@ -13,25 +13,25 @@
     {% if subservice_name %}
         <article class="margin_05rem">
             {% if subservice_name == 'registration' %}
-                {{ include('usercontrol/registration.twig') }}
+                {{ include('usercontrol/registration.html.twig') }}
             {% elseif subservice_name == 'activation' %}
-                {{ include('usercontrol/activation.twig') }}
+                {{ include('usercontrol/activation.html.twig') }}
             {% elseif subservice_name == 'emails' %}
-                {{ include('usercontrol/emails.twig') }}
+                {{ include('usercontrol/emails.html.twig') }}
             {% elseif subservice_name == 'unsubscribe' %}
-                {{ include('usercontrol/unsubscribe.twig') }}
+                {{ include('usercontrol/unsubscribe.html.twig') }}
             {% elseif subservice_name == 'profile' %}
-                {{ include('usercontrol/profile.twig') }}
+                {{ include('usercontrol/profile.html.twig') }}
             {% elseif subservice_name == 'password' %}
-                {{ include('usercontrol/password.twig') }}
+                {{ include('usercontrol/password.html.twig') }}
             {% elseif subservice_name == 'removal' %}
-                {{ include('usercontrol/removal.twig') }}
+                {{ include('usercontrol/removal.html.twig') }}
             {% elseif subservice_name == 'avatars' %}
-                {{ include('usercontrol/avatars.twig') }}
+                {{ include('usercontrol/avatars.html.twig') }}
             {% elseif subservice_name == 'fftracker' %}
-                {{ include('usercontrol/fftracker.twig') }}
+                {{ include('usercontrol/fftracker.html.twig') }}
             {% elseif subservice_name == 'sessions' %}
-                {{ include('usercontrol/sessions.twig') }}
+                {{ include('usercontrol/sessions.html.twig') }}
             {% endif %}
         </article>
     {% endif %}

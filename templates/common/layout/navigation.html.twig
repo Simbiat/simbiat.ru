@@ -1,5 +1,5 @@
 <nav id="navigation" aria-label="Primary" itemscope itemtype="https://schema.org/SiteNavigationElement">
-    {{ include('CustomElements/NavHide.twig', with_context = false) }}
+    {{ include('CustomElements/NavHide.html.twig', with_context = false) }}
     <ul id="nav_list">
         <li class="nav_element">
             <div class="nav_line">
@@ -260,5 +260,5 @@
             </div>
         </li>
     </ul>
-    {{ include('common/layout/contacts.twig') }}
+    {{ include('common/layout/contacts.html.twig') }}
 </nav>

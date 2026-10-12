@@ -6,24 +6,24 @@
         </details>
     </article>
     {% if subservice_name == 'search' %}
-        {{ include('common/elements/search.twig') }}
+        {{ include('common/elements/search.html.twig') }}
     {% endif %}
     {% if subservice_name %}
         {% if subservice_name == 'user' or subservice_name == 'search' %}
             <article class="margin_05rem">
                 {% if subservice_name == 'search' %}
-                    {{ include('common/pages/search.twig') }}
+                    {{ include('common/pages/search.html.twig') }}
                 {% elseif subservice_name == 'user' %}
-                    {{ include('talks/user.twig') }}
+                    {{ include('talks/user.html.twig') }}
                 {% endif %}
             </article>
         {% else %}
             {% if subservice_name == 'thread' %}
-                {{ include('talks/thread.twig') }}
+                {{ include('talks/thread.html.twig') }}
             {% elseif subservice_name == 'section' %}
-                {{ include('talks/section.twig') }}
+                {{ include('talks/section.html.twig') }}
             {% elseif subservice_name == 'post' %}
-                {{ include('talks/post.twig') }}
+                {{ include('talks/post.html.twig') }}
             {% endif %}
         {% endif %}
     {% endif %}

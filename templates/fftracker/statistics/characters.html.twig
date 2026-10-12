@@ -28,7 +28,7 @@
     </thead>
     {% for character in ffstats.data.characters.changes.name %}
         <tr>
-            <td>{{ include('common/elements/entitycard.twig', character) }}</td>
+            <td>{{ include('common/elements/entitycard.html.twig', character) }}</td>
             <td>{{ character.count }}</td>
         </tr>
     {% endfor %}
@@ -45,7 +45,7 @@
     </thead>
     {% for character in ffstats.data.characters.changes.clan %}
         <tr>
-            <td>{{ include('common/elements/entitycard.twig', character) }}</td>
+            <td>{{ include('common/elements/entitycard.html.twig', character) }}</td>
             <td>{{ character.count }}</td>
         </tr>
     {% endfor %}
@@ -62,7 +62,7 @@
     </thead>
     {% for character in ffstats.data.characters.changes.server %}
         <tr>
-            <td>{{ include('common/elements/entitycard.twig', character) }}</td>
+            <td>{{ include('common/elements/entitycard.html.twig', character) }}</td>
             <td>{{ character.count }}</td>
         </tr>
     {% endfor %}
@@ -96,7 +96,7 @@
     </thead>
     {% for character in ffstats.data.characters.groups['Free Companies'] %}
         <tr>
-            <td>{{ include('common/elements/entitycard.twig', character) }}</td>
+            <td>{{ include('common/elements/entitycard.html.twig', character) }}</td>
             <td>{{ character.count }}</td>
         </tr>
     {% endfor %}
@@ -113,7 +113,7 @@
     </thead>
     {% for character in ffstats.data.characters.groups['PvP Teams'] %}
         <tr>
-            <td>{{ include('common/elements/entitycard.twig', character) }}</td>
+            <td>{{ include('common/elements/entitycard.html.twig', character) }}</td>
             <td>{{ character.count }}</td>
         </tr>
     {% endfor %}
@@ -130,7 +130,7 @@
     </thead>
     {% for character in ffstats.data.characters.groups['Linkshells'] %}
         <tr>
-            <td>{{ include('common/elements/entitycard.twig', character) }}</td>
+            <td>{{ include('common/elements/entitycard.html.twig', character) }}</td>
             <td>{{ character.count }}</td>
         </tr>
     {% endfor %}
@@ -147,7 +147,7 @@
     </thead>
     {% for character in ffstats.data.characters.groups['simultaneous_linkshells'] %}
         <tr>
-            <td>{{ include('common/elements/entitycard.twig', character) }}</td>
+            <td>{{ include('common/elements/entitycard.html.twig', character) }}</td>
             <td>{{ character.count }}</td>
         </tr>
     {% endfor %}
@@ -164,7 +164,7 @@
     </thead>
     {% for character in ffstats.data.characters.most_pvp %}
         <tr>
-            <td>{{ include('common/elements/entitycard.twig', character) }}</td>
+            <td>{{ include('common/elements/entitycard.html.twig', character) }}</td>
             <td>{{ character.count }}</td>
         </tr>
     {% endfor %}

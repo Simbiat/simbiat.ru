@@ -6,13 +6,13 @@
 <ul id="avatars_list">
     {% if avatars %}
         {% for avatar in avatars %}
-            {{ include('usercontrol/avataritem.twig', {'avatar': avatar, 'number': loop.index}, with_context = false) }}
+            {{ include('usercontrol/avataritem.html.twig', {'avatar': avatar, 'number': loop.index}, with_context = false) }}
         {% endfor %}
     {% endif %}
 </ul>
 <form class="middle" id="profile_avatar" method="post">
     <p>Upload new avatar:</p>
-    {{ include('common/elements/imageupload.twig', {'form_name': 'profile_avatar', 'placeholder': 'New avatar', 'input_name': 'avatar[file]', 'preview_classes': 'avatar middle', 'required': false, 'mime': 'image/*', 'tooltip': 'Upload your new avatar', 'image_url': null}, with_context = false) }}
+    {{ include('common/elements/imageupload.html.twig', {'form_name': 'profile_avatar', 'placeholder': 'New avatar', 'input_name': 'avatar[file]', 'preview_classes': 'avatar middle', 'required': false, 'mime': 'image/*', 'tooltip': 'Upload your new avatar', 'image_url': null}, with_context = false) }}
     <button type="submit" name="submit" id="avatar_submit" value="Upload" data-alt-attribute="Uploading avatar...">
         Upload
     </button>

@@ -26,47 +26,47 @@
     {% else %}
         <article class="margin_05rem">
             {% if subservice_name == 'problem' %}
-                {{ include('supops/problem.twig') }}
+                {{ include('supops/problem.html.twig') }}
             {% elseif subservice_name == 'solution' %}
-                {{ include('supops/solution.twig') }}
+                {{ include('supops/solution.html.twig') }}
             {% elseif subservice_name == 'glossary' %}
-                {{ include('supops/glossary.twig') }}
+                {{ include('supops/glossary.html.twig') }}
             {% elseif subservice_name == 'facts' %}
-                {{ include('supops/facts/facts.twig') }}
+                {{ include('supops/facts/facts.html.twig') }}
             {% elseif subservice_name == 'feedback' %}
-                {{ include('supops/facts/feedback.twig') }}
+                {{ include('supops/facts/feedback.html.twig') }}
             {% elseif subservice_name == 'automation' %}
-                {{ include('supops/facts/automation.twig') }}
+                {{ include('supops/facts/automation.html.twig') }}
             {% elseif subservice_name == 'collaboration' %}
-                {{ include('supops/facts/collaboration.twig') }}
+                {{ include('supops/facts/collaboration.html.twig') }}
             {% elseif subservice_name == 'transparency' %}
-                {{ include('supops/facts/transparency.twig') }}
+                {{ include('supops/facts/transparency.html.twig') }}
             {% elseif subservice_name == 'sustainability' %}
-                {{ include('supops/facts/sustainability.twig') }}
+                {{ include('supops/facts/sustainability.html.twig') }}
             {% elseif subservice_name == 'flow' %}
-                {{ include('supops/flow.twig') }}
+                {{ include('supops/flow.html.twig') }}
             {% elseif subservice_name == 'l0' %}
-                {{ include('supops/levels/L0.twig') }}
+                {{ include('supops/levels/L0.html.twig') }}
             {% elseif subservice_name == 'l1' %}
-                {{ include('supops/levels/L1.twig') }}
+                {{ include('supops/levels/L1.html.twig') }}
             {% elseif subservice_name == 'l2' %}
-                {{ include('supops/levels/L2.twig') }}
+                {{ include('supops/levels/L2.html.twig') }}
             {% elseif subservice_name == 'l3' %}
-                {{ include('supops/levels/L3.twig') }}
+                {{ include('supops/levels/L3.html.twig') }}
             {% elseif subservice_name == 'l4' %}
-                {{ include('supops/levels/L4.twig') }}
+                {{ include('supops/levels/L4.html.twig') }}
             {% elseif subservice_name == 'interoperability' %}
-                {{ include('supops/interoperability.twig') }}
+                {{ include('supops/interoperability.html.twig') }}
             {% elseif subservice_name == 'resolution' %}
-                {{ include('supops/resolution.twig') }}
+                {{ include('supops/resolution.html.twig') }}
             {% elseif subservice_name == 'scale' %}
-                {{ include('supops/scale.twig') }}
+                {{ include('supops/scale.html.twig') }}
             {% elseif subservice_name == 'metrics' %}
-                {{ include('supops/metrics/metrics.twig') }}
+                {{ include('supops/metrics/metrics.html.twig') }}
             {% elseif subservice_name == 'comparison' %}
-                {{ include('supops/comparison.twig') }}
+                {{ include('supops/comparison.html.twig') }}
             {% elseif subservice_name == 'needs' %}
-                {{ include('supops/needs.twig') }}
+                {{ include('supops/needs.html.twig') }}
             {% endif %}
         </article>
     {% endif %}

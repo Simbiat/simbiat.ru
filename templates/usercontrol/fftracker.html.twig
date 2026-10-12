@@ -41,7 +41,7 @@
                     {% if groups[character.id] %}
                         <p>Owned groups:</p>
                         {% for group in groups[character.id] %}
-                            {{ include('common/elements/entitycard.twig', group) }}
+                            {{ include('common/elements/entitycard.html.twig', group) }}
                         {% endfor %}
                     {% else %}
                         <p>No owned groups</p>

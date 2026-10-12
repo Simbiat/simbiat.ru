@@ -3,24 +3,24 @@
         <details class="persistent" open>
             <summary class="right_summary about_section">About crests' page</summary>
             <p>This page provides
-                <a href="https://github.com/Simbiat/FFXIV-Crests-Components" target="_blank">components</a> used by FFXIV for creating crests: backgrounds, frames, emblems, – as well as "merged" crests, where all three were merged into one image (storage is temporary for these, acting as cache).
+                <a href="https://github.com/Simbiat/FFXIV-Crests-Components" target="_blank"><span>components</span></a> used by FFXIV for creating crests: backgrounds, frames, emblems, – as well as "merged" crests, where all three were merged into one image (storage is temporary for these, acting as cache).
             </p>
             <p>These are not necessarily
                 <b>all</b> components, let alone their combinations. Only those identified by the tracker service during its normal work are listed. Quite a few pre-merged crests can be downloaded
-                <a href="https://github.com/Simbiat/FFXIV-Crests" target="_blank">here</a>.
+                <a href="https://github.com/Simbiat/FFXIV-Crests" target="_blank"><span>here</span></a>.
             </p>
             <ul>
                 <li>
-                    <a href="/fftracker/crests/frame">{{ files.frame.name }}</a>: {{ files.frame.count }} icons
+                    <a href="/fftracker/crests/frame"><span>{{ files.frame.name }}</span></a>: {{ files.frame.count }} icons
                 </li>
                 <li>
-                    <a href="/fftracker/crests/emblem">{{ files.emblem.name }}</a>: {{ files.emblem.count }} folders
+                    <a href="/fftracker/crests/emblem"><span>{{ files.emblem.name }}</span></a>: {{ files.emblem.count }} folders
                 </li>
                 <li>
-                    <a href="/fftracker/crests/background">{{ files.background.name }}</a>: {{ files.background.count }} folders
+                    <a href="/fftracker/crests/background"><span>{{ files.background.name }}</span></a>: {{ files.background.count }} folders
                 </li>
                 <li>
-                    <a href="/fftracker/crests/merged">{{ files.merged.name }}</a>: {{ files.merged.count -3 }} folders
+                    <a href="/fftracker/crests/merged"><span>{{ files.merged.name }}</span></a>: {{ files.merged.count - 3 }} folders
                 </li>
             </ul>
         </details>
@@ -60,7 +60,7 @@
             </a>
         {% endif %}
         {% if files[path].files %}
-            {{ include('common/elements/iconlist.twig', {icons: files[path].files}, with_context = false) }}
+            {{ include('common/elements/iconlist.html.twig', {icons: files[path].files}, with_context = false) }}
         {% else %}
             <ul>
                 {% if files[path].name == 'Backgrounds' %}

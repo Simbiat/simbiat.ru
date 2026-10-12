@@ -8,14 +8,14 @@
         {% for entity in search_result.entities %}
             <li>
                 <span class="no_select">{{ loop.index+((pagination.current-1)*pagination.per) }}.</span>
-                {{ include('common/elements/entitycard.twig', entity) }}
+                {{ include('common/elements/entitycard.html.twig', entity) }}
             </li>
         {% endfor %}
     </ol>
 {% else %}
     <div class="search_results">
         {% for entity in search_result.entities %}
-            {{ include('common/elements/entitycard.twig', entity) }}
+            {{ include('common/elements/entitycard.html.twig', entity) }}
         {% endfor %}
     </div>
 {% endif %}

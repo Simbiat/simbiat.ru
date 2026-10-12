@@ -1,7 +1,7 @@
 <game-canvas>
     {% if og_image %}
         <div id="banner_play">
-            {{ include('common/elements/ogimage.twig', {'og_image': og_image}, with_context = false) }}
+            {{ include('common/elements/ogimage.html.twig', {'og_image': og_image}, with_context = false) }}
             <div id="play_overlay">▶️</div>
         </div>
     {% endif %}

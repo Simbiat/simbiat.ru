@@ -26,11 +26,11 @@
     {% if subservice_name %}
         <article class="margin_05rem">
             {% if subservice_name == 'jiangshi' %}
-                {{ include('games/jiangshi.twig') }}
+                {{ include('games/jiangshi.html.twig') }}
             {% elseif subservice_name == 'dden' %}
-                {{ include('games/dden.twig') }}
+                {{ include('games/dden.html.twig') }}
             {% elseif subservice_name == 'radicalresonance' %}
-                {{ include('games/radicalresonance.twig') }}
+                {{ include('games/radicalresonance.html.twig') }}
             {% endif %}
         </article>
     {% endif %}

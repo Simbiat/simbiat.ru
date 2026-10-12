@@ -84,7 +84,7 @@
         </p>
         <ul class="search_results">
             {% for entity in sub_result.results %}
-                <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
+                <li>{{ include('common/elements/entitycard.html.twig', entity) }}</li>
             {% endfor %}
         </ul>
     {% endfor %}

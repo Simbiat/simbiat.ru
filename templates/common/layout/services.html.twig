@@ -1,25 +1,25 @@
 {% if service_name == 'about' %}
-    {{ include('about/about.twig') }}
+    {{ include('about/about.html.twig') }}
 {% elseif service_name == 'fftracker' %}
-    {{ include('fftracker/fftracker.twig') }}
+    {{ include('fftracker/fftracker.html.twig') }}
 {% elseif service_name == 'bictracker' %}
-    {{ include('bictracker/bictracker.twig') }}
+    {{ include('bictracker/bictracker.html.twig') }}
 {% elseif service_name == 'simplepages' %}
-    {{ include('simplepages/simplepages.twig') }}
+    {{ include('simplepages/simplepages.html.twig') }}
 {% elseif service_name == 'homepage' %}
-    {{ include('about/homepage.twig') }}
+    {{ include('about/homepage.html.twig') }}
 {% elseif service_name == 'uc' %}
-    {{ include('usercontrol/usercontrol.twig') }}
+    {{ include('usercontrol/usercontrol.html.twig') }}
 {% elseif service_name == 'talks' %}
-    {{ include('talks/talks.twig') }}
+    {{ include('talks/talks.html.twig') }}
 {% elseif service_name == 'supops' %}
-    {{ include('supops/supops.twig') }}
+    {{ include('supops/supops.html.twig') }}
 {% elseif service_name == 'games' %}
-    {{ include('games/games.twig') }}
+    {{ include('games/games.html.twig') }}
 {% elseif service_name == 'styling_test' %}
-    {{ include('styling_test.twig') }}
+    {{ include('styling_test.html.twig') }}
 {% else %}
     <article id="http_error">
-        {{ include('errors/404.twig') }}
+        {{ include('errors/404.html.twig') }}
     </article>
 {% endif %}

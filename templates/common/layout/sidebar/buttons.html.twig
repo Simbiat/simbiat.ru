@@ -12,7 +12,7 @@
     </side-show>
 {% endif %}
 <side-show>
-    {{ include('CustomElements/WebShare.twig', with_context = false) }}
+    {{ include('CustomElements/WebShare.html.twig', with_context = false) }}
 </side-show>
 {% if is_prod != 'prod' %}
     <side-show id="prod_link" class="sepia_100">
@@ -22,5 +22,5 @@
     </side-show>
 {% endif %}
 <side-show id="back_to_top">
-    {{ include('CustomElements/BackToTop.twig', with_context = false) }}
+    {{ include('CustomElements/BackToTop.html.twig', with_context = false) }}
 </side-show>

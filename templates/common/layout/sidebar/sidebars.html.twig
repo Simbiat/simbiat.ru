@@ -1,17 +1,17 @@
 {% if http_error != 'database' and http_error != 'maintenance' %}
     <dialog id="login_form" class="modal" aria-label="Login form">
         <aside class="sidebar">
-            {{ include('CustomElements/SideHide.twig', with_context = false) }}
+            {{ include('CustomElements/SideHide.html.twig', with_context = false) }}
             <section>
-                {{ include('common/layout/noscript.twig') }}
-                {{ include('common/layout/sidebar/signinup.twig') }}
+                {{ include('common/layout/noscript.html.twig') }}
+                {{ include('common/layout/sidebar/signinup.html.twig') }}
             </section>
         </aside>
     </dialog>
 {% else %}
     <dialog id="sidebar_no_db" class="modal" aria-label="{% if http_error == 'database' %}No database connection{% else %}Maintenance{% endif %}">
         <aside class="sidebar">
-            {{ include('CustomElements/SideHide.twig', with_context = false) }}
+            {{ include('CustomElements/SideHide.html.twig', with_context = false) }}
             <section id="no_db_section">
                 {% if http_error == 'database' %}
                     <img crossorigin="anonymous" loading="lazy" decoding="async" alt="No database connection" src="/assets/images/errors/database.svg" width="56" height="56">

@@ -98,7 +98,7 @@
         <input id="test_number_spinner" type="number" inputmode="decimal" class="number_spinner">
         <label for="test_number_spinner">with spinner</label>
     </span>
-    {{ include('common/elements/password_field.twig', {'new_password': true, 'password_field_id': 'new_password', 'password_field_name': 'new_password', 'password_field_placeholder': 'New password'}) }}
+    {{ include('common/elements/password_field.html.twig', {'new_password': true, 'password_field_id': 'new_password', 'password_field_name': 'new_password', 'password_field_placeholder': 'New password'}) }}
     <span class="float_label">
         <input id="test_search" type="search" inputmode="search" autocomplete="on">
         <label for="test_search">test_search</label>

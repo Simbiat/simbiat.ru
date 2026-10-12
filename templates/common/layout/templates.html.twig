@@ -1,16 +1,16 @@
 <div id="html_templates">
-    {{ include('common/elements/snackbar.twig') }}
+    {{ include('common/elements/snackbar.html.twig') }}
     <template id="spinner">
         <img crossorigin="anonymous" loading="lazy" decoding="async" class="spinner" src="/assets/images/korada_art_brushbuddy_loading.avif" alt="Processing..." width="128" height="128">
     </template>
     {% if service_name == 'uc' %}
         {% if subservice_name == 'emails' %}
             <template id="email_row">
-                {{ include('usercontrol/emailrow.twig', with_context = false) }}
+                {{ include('usercontrol/emailrow.html.twig', with_context = false) }}
             </template>
         {% elseif subservice_name == 'avatars' %}
             <template id="avatar_item">
-                {{ include('usercontrol/avataritem.twig', with_context = false) }}
+                {{ include('usercontrol/avataritem.html.twig', with_context = false) }}
             </template>
         {% endif %}
     {% endif %}

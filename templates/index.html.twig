@@ -13,7 +13,7 @@
         {% endif %}
 
         {# General Meta #}
-        <meta name="description" content="{{ og_desc|default('Official Simbiat Software website') }}"> 
+        <meta name="description" content="{{ og_desc|default('Official Simbiat Software website') }}">
         {# theme-color is not baseline, but is used by Safari and a lot of Chromium browsers for installed webapps #}
         <!-- eslint-disable-next-line html/use-baseline -->
         <meta name="theme-color" content="#2e293d">
@@ -124,7 +124,7 @@
             {{ linkTags(link_extra, 'head') }}
         {% endif %}
 
-        {{ include('common/layout/scripts.twig') }}
+        {{ include('common/layout/scripts.html.twig') }}
         {% if http_error %}
             {% if not (error_page) and http_error in [305, 408, 409, 500, 501, 502, 503] and construction == false and static_page == false %}
                 <meta http-equiv="refresh" content="60">
@@ -132,13 +132,13 @@
         {% endif %}
     </head>
     {% if reason == 'Teapot' %}
-        {{ include('errors/418.twig') }}
+        {{ include('errors/418.html.twig') }}
     {% else %}
         <body>
-            {{ include('common/layout/navigation.twig') }}
+            {{ include('common/layout/navigation.html.twig') }}
             <div id="content">
                 <header>
-                    {{ include('common/layout/header.twig') }}
+                    {{ include('common/layout/header.html.twig') }}
                 </header>
                 <main id="main">
                     {% if http_error and (static_page == false or (static_page and http_error != 503)) and cached_page == false %}
@@ -150,14 +150,14 @@
                                         <var>{{ url }}</var> page{% endif %}. Here's what the server has to say in its defense:
                                     </p>
                                 {% endif %}
-                                {{ include('errors/' ~ http_error ~ '.twig') }}
+                                {{ include('errors/' ~ http_error ~ '.html.twig') }}
                                 {% if http_error not in [503, 418] and session_data.prev_page %}
                                     <p>You can try going back to previous
                                         <a href="{{ session_data.prev_page }}">page</a>.
                                     </p>
                                 {% endif %}
                             {% else %}
-                                {{ include('errors/construction.twig') }}
+                                {{ include('errors/construction.html.twig') }}
                             {% endif %}
                             {% if not (error_page) and http_error in [305, 408, 409, 500, 501, 502, 503] %}
                                 <p>
@@ -173,25 +173,25 @@
                         {% if pagination %}
                             {{ pagination(pagination.current, pagination.total, pagination.prefix) }}
                         {% endif %}
-                        {{ include('common/layout/services.twig') }}
+                        {{ include('common/layout/services.html.twig') }}
                         {% if pagination %}
                             {{ pagination(pagination.current, pagination.total, pagination.prefix) }}
                         {% endif %}
                     {% endif %}
                 </main>
                 <footer id="footer">
-                    {{ include('common/layout/footer.twig') }}
+                    {{ include('common/layout/footer.html.twig') }}
                 </footer>
             </div>
-            {{ include('common/layout/sidebar.twig') }}
+            {{ include('common/layout/sidebar.html.twig') }}
             <div id="overlays">
                 <dialog class="modal" aria-label="Gallery overlay" id="gallery_dialog">
-                    {{ include('CustomElements/GalleryOverlay.twig') }}
+                    {{ include('CustomElements/GalleryOverlay.html.twig') }}
                 </dialog>
                 <tool-tip id="tooltip" role="tooltip" aria-label="Tooltip" popover="manual"></tool-tip>
                 <div id="snackbar_container"></div>
             </div>
-            {{ include('common/layout/templates.twig') }}
+            {{ include('common/layout/templates.html.twig') }}
         </body>
     {% endif %}
 </html>

@@ -47,7 +47,7 @@
                 <input type="email" required spellcheck="false" aria-required="true" name="signinup[email]" id="signinup_email" placeholder="Email" autocomplete="email" inputmode="email" minlength="1" maxlength="254" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`\{\|\}~\-]+@[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?)*$">
                 <label for="signinup_email">Email</label>
             </div>
-            {{ include('common/elements/password_field.twig', {'new_password': true, 'password_field_id': 'signinup_password', 'password_field_name': 'signinup[password]', 'password_field_placeholder': 'Password'}) }}
+            {{ include('common/elements/password_field.html.twig', {'new_password': true, 'password_field_id': 'signinup_password', 'password_field_name': 'signinup[password]', 'password_field_placeholder': 'Password'}) }}
             <div class="float_label" id="rememberme_div">
                 <input id="rememberme" type="checkbox" name="signinup[rememberme]">
                 <label for="rememberme">

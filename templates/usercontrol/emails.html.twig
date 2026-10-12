@@ -9,7 +9,7 @@
     </thead>
     <tbody>
         {% for number, email in emails %}
-            {{ include('usercontrol/emailrow.twig', {'email': email, 'number': number, 'count_activated': count_activated, 'count_subscribed': count_subscribed}, with_context = false) }}
+            {{ include('usercontrol/emailrow.html.twig', {'email': email, 'number': number, 'count_activated': count_activated, 'count_subscribed': count_subscribed}, with_context = false) }}
         {% endfor %}
     </tbody>
 </table>

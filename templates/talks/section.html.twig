@@ -19,7 +19,7 @@
 {% endif %}
 {% if session_data.user_id != 1 and session_data.username %}
     <tab-menu class="margin_bottom_negative_05rem">
-        {{ include('talks/tabs/sections.twig') }}
+        {{ include('talks/tabs/sections.html.twig') }}
     </tab-menu>
 {% endif %}
 <article class="margin_05rem">
@@ -42,7 +42,7 @@
             </thead>
             <tbody>
                 {% for section in children.entities %}
-                    {{ include('talks/rows/section.twig', {'section': section, 'permissions': session_data.permissions}, with_context = false) }}
+                    {{ include('talks/rows/section.html.twig', {'section': section, 'permissions': session_data.permissions}, with_context = false) }}
                 {% endfor %}
             </tbody>
         </table>
@@ -59,7 +59,7 @@
             </thead>
             <tbody>
                 {% for thread in threads.entities %}
-                    {{ include('talks/rows/thread.twig', {'thread': thread, 'permissions': session_data.permissions}, with_context = false) }}
+                    {{ include('talks/rows/thread.html.twig', {'thread': thread, 'permissions': session_data.permissions}, with_context = false) }}
                 {% endfor %}
             </tbody>
         </table>

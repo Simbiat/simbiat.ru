@@ -105,6 +105,10 @@ abstract class Page
         ) {
             \header('Content-Language: '.$this->language);
         }
+        // If we have a static page, and HTTP error is set at this stage, it can break the rendering of the page. As such we remove the error.
+        if ($this->static) {
+            HomePage::$http_error = [];
+        }
         // Check if user has required permission
         if (
             \count($this->required_permission) > 0
@@ -114,7 +118,6 @@ abstract class Page
         } elseif (
             HomePage::$http_error === []
             || HomePage::$http_error === null
-            || $this->static
         ) {
             // Generate the page only if no prior errors detected
             // Generate a list of allowed methods

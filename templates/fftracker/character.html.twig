@@ -137,7 +137,7 @@
                         {% for entity in character.groups %}
                             <div>
                                 {% if entity.current %}<span class="emoji_green" data-tooltip="Current group">✔</span>{% else %}<span class="emoji_red" data-tooltip="Past group">❌</span>{% endif %}
-                                {{ include('common/elements/entitycard.twig', entity) }}{% if entity.rank %} as <i>{{ entity.rank }}</i>{% endif %}
+                                {{ include('common/elements/entitycard.html.twig', entity) }}{% if entity.rank %} as <i>{{ entity.rank }}</i>{% endif %}
                             </div>
                         {% endfor %}
                     </ul>
@@ -160,7 +160,7 @@
                                     {% if entity.mutual %}
                                         <span data-tooltip="Mutual relationship">🤝</span>
                                     {% endif %}
-                                    {{ include('common/elements/entitycard.twig', entity) }}
+                                    {{ include('common/elements/entitycard.html.twig', entity) }}
                                 </div>
                             {% endfor %}
                         </ul>
@@ -180,7 +180,7 @@
                                     {% if entity.mutual %}
                                         <span data-tooltip="Mutual relationship">🤝</span>
                                     {% endif %}
-                                    {{ include('common/elements/entitycard.twig', entity) }}
+                                    {{ include('common/elements/entitycard.html.twig', entity) }}
                                 </div>
                             {% endfor %}
                         </ul>

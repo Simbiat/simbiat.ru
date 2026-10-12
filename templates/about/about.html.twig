@@ -20,17 +20,17 @@
     {% if subservice_name %}
         <article class="margin_05rem">
             {% if subservice_name == 'me' %}
-                {{ include('about/me.twig') }}
+                {{ include('about/me.html.twig') }}
             {% elseif subservice_name == 'tech' %}
-                {{ include('about/tech.twig') }}
+                {{ include('about/tech.html.twig') }}
             {% elseif subservice_name == 'tos' %}
-                {{ include('about/tos.twig') }}
+                {{ include('about/tos.html.twig') }}
             {% elseif subservice_name == 'privacy' %}
-                {{ include('about/privacy.twig') }}
+                {{ include('about/privacy.html.twig') }}
             {% elseif subservice_name == 'security' %}
-                {{ include('about/security.twig') }}
+                {{ include('about/security.html.twig') }}
             {% elseif subservice_name == 'contacts' %}
-                {{ include('about/contacts.twig') }}
+                {{ include('about/contacts.html.twig') }}
             {% endif %}
         </article>
     {% endif %}

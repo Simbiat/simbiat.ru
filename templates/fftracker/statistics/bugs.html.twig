@@ -3,7 +3,7 @@
 {% if ffstats.data.bugs.no_clan|length > 0 %}
     <p>These are either characters that are freshly added to the tracker (which is normal) or those that have <var>----</var> instead of race/clan on Lodestone itself (which is a bug).</p>
     {% for character in ffstats.data.bugs.no_clan %}
-        {{ include('common/elements/entitycard.twig', character) }}
+        {{ include('common/elements/entitycard.html.twig', character) }}
     {% endfor %}
 {% else %}
     <p>No characters without a clan found.</p>
@@ -12,7 +12,7 @@
 {% if ffstats.data.bugs.no_avatar|length > 0 %}
     <p>These are characters that for some reason do not have an avatar on Lodestone (and no jobs at all) and look corrupted.</p>
     {% for character in ffstats.data.bugs.no_avatar %}
-        {{ include('common/elements/entitycard.twig', character) }}
+        {{ include('common/elements/entitycard.html.twig', character) }}
     {% endfor %}
 {% else %}
     <p>No characters without an avatar found.</p>
@@ -21,7 +21,7 @@
 {% if ffstats.data.bugs.no_members|length > 0 %}
     <p>These are either groups that are freshly added to the tracker (which is normal) or those that do not have any members on Lodestone, which may mean that these are groups pending removal from the game.</p>
     {% for group in ffstats.data.bugs.no_members %}
-        {{ include('common/elements/entitycard.twig', group) }}
+        {{ include('common/elements/entitycard.html.twig', group) }}
     {% endfor %}
 {% else %}
     <p>No active groups without members were found.</p>
@@ -55,7 +55,7 @@
                         <td>{{ server }}</td>
                         <td>
                             {% for duplicate in duplicates %}
-                                {{ include('common/elements/entitycard.twig', duplicate) }}
+                                {{ include('common/elements/entitycard.html.twig', duplicate) }}
                             {% endfor %}
                         </td>
                     </tr>

@@ -52,46 +52,46 @@
         </details>
     </article>
     {% if subservice_name == 'search' %}
-        {{ include('common/elements/search.twig') }}
+        {{ include('common/elements/search.html.twig') }}
     {% endif %}
     {% if subservice_name %}
         {% if subservice_name == 'statistics' %}
-            {{ include('fftracker/statistics.twig') }}
+            {{ include('fftracker/statistics.html.twig') }}
         {% else %}
             {% if subservice_name == 'character' %}
-                {{ include('fftracker/character.twig') }}
+                {{ include('fftracker/character.html.twig') }}
             {% elseif subservice_name == 'freecompany' %}
-                {{ include('fftracker/freecompany.twig') }}
+                {{ include('fftracker/freecompany.html.twig') }}
             {% elseif subservice_name == 'linkshell' %}
-                {{ include('fftracker/linkshell.twig') }}
+                {{ include('fftracker/linkshell.html.twig') }}
             {% elseif subservice_name == 'crossworld_linkshell' %}
-                {{ include('fftracker/linkshell.twig') }}
+                {{ include('fftracker/linkshell.html.twig') }}
             {% elseif subservice_name == 'pvpteam' %}
-                {{ include('fftracker/pvpteam.twig') }}
+                {{ include('fftracker/pvpteam.html.twig') }}
             {% else %}
                 <article class="margin_05rem">
                     {% if subservice_name == 'search' %}
-                        {{ include('common/pages/search.twig') }}
+                        {{ include('common/pages/search.html.twig') }}
                     {% elseif subservice_name == 'characters' %}
-                        {{ include('common/pages/list.twig') }}
+                        {{ include('common/pages/list.html.twig') }}
                     {% elseif subservice_name == 'freecompanies' %}
-                        {{ include('common/pages/list.twig') }}
+                        {{ include('common/pages/list.html.twig') }}
                     {% elseif subservice_name == 'pvpteams' %}
-                        {{ include('common/pages/list.twig') }}
+                        {{ include('common/pages/list.html.twig') }}
                     {% elseif subservice_name == 'linkshells' %}
-                        {{ include('common/pages/list.twig') }}
+                        {{ include('common/pages/list.html.twig') }}
                     {% elseif subservice_name == 'crossworld_linkshells' %}
-                        {{ include('common/pages/list.twig') }}
+                        {{ include('common/pages/list.html.twig') }}
                     {% elseif subservice_name == 'achievements' %}
-                        {{ include('common/pages/list.twig') }}
+                        {{ include('common/pages/list.html.twig') }}
                     {% elseif subservice_name == 'points' %}
-                        {{ include('common/pages/list.twig') }}
+                        {{ include('common/pages/list.html.twig') }}
                     {% elseif subservice_name == 'achievement' %}
-                        {{ include('fftracker/achievement.twig') }}
+                        {{ include('fftracker/achievement.html.twig') }}
                     {% elseif subservice_name == 'track' %}
-                        {{ include('fftracker/track.twig') }}
+                        {{ include('fftracker/track.html.twig') }}
                     {% elseif subservice_name == 'crests' %}
-                        {{ include('fftracker/crests.twig') }}
+                        {{ include('fftracker/crests.html.twig') }}
                     {% endif %}
                 </article>
             {% endif %}

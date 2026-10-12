@@ -30,7 +30,7 @@
             <p>Current members:</p>
             <ul class="search_results">
                 {% for entity in linkshell.members %}
-                    <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
+                    <li>{{ include('common/elements/entitycard.html.twig', entity) }}</li>
                 {% endfor %}
             </ul>
         {% endif %}
@@ -55,7 +55,7 @@
         <div class="tab_content" id="tab_content_past_members" role="tabpanel" aria-labelledby="tab_name_past_members">
             <ul class="search_results">
                 {% for entity in linkshell.past_members %}
-                    <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
+                    <li>{{ include('common/elements/entitycard.html.twig', entity) }}</li>
                 {% endfor %}
             </ul>
         </div>

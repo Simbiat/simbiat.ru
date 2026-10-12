@@ -256,7 +256,7 @@
                 <h3>Головн{% if bicdetails.PrntBIC|length > 1 %}ые{% else %}ая{% endif %} организаци{% if bicdetails.PrntBIC|length > 1 %}и{% else %}я{% endif %}</h3>
                 <ul class="search_results bic_chain">
                     {% for bank in bicdetails.PrntBIC %}
-                        <li>{{ include('common/elements/entitycard.twig', bank) }}{% if not loop.last %} >>> {% endif %}</li>
+                        <li>{{ include('common/elements/entitycard.html.twig', bank) }}{% if not loop.last %} >>> {% endif %}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
@@ -265,14 +265,14 @@
                 <ul class="search_results">
                     {% for branch in bicdetails.branches %}
                         {% if not branch.DateOut %}
-                            <li>{{ include('common/elements/entitycard.twig', branch) }}</li>
+                            <li>{{ include('common/elements/entitycard.html.twig', branch) }}</li>
                         {% endif %}
                     {% endfor %}
                 </ul>
                 <ul class="search_results">
                     {% for branch in bicdetails.branches %}
                         {% if branch.DateOut %}
-                            <li>{{ include('common/elements/entitycard.twig', branch) }}</li>
+                            <li>{{ include('common/elements/entitycard.html.twig', branch) }}</li>
                         {% endif %}
                     {% endfor %}
                 </ul>
@@ -281,7 +281,7 @@
                 <h3>Организаци{% if bicdetails.same_bic|length > 1 %}и{% else %}я{% endif %} с тем же <abbr data-tooltip="Банковский идентификационный код">БИК</abbr></h3>
                 <ul class="search_results">
                     {% for bank in bicdetails.same_bic %}
-                        <li>{{ include('common/elements/entitycard.twig', bank) }}</li>
+                        <li>{{ include('common/elements/entitycard.html.twig', bank) }}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
@@ -289,7 +289,7 @@
                 <h3>Организаци{% if bicdetails.same_address|length > 1 %}и{% else %}я{% endif %} с тем же адресом</h3>
                 <ul class="search_results">
                     {% for bank in bicdetails.same_address %}
-                        <li>{{ include('common/elements/entitycard.twig', bank) }}</li>
+                        <li>{{ include('common/elements/entitycard.html.twig', bank) }}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
@@ -297,7 +297,7 @@
                 <h3>Преемник{% if bicdetails.DBF.successors|length > 1 %}и{% endif %} согласно DBF</h3>
                 <ul class="search_results bic_chain">
                     {% for bank in bicdetails.DBF.successors %}
-                        <li>{{ include('common/elements/entitycard.twig', bank) }}{% if not loop.last %} >>> {% endif %}</li>
+                        <li>{{ include('common/elements/entitycard.html.twig', bank) }}{% if not loop.last %} >>> {% endif %}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
@@ -305,7 +305,7 @@
                 <h3>Предшественник{% if bicdetails.DBF.predecessors|length > 1 or bicdetails.DBF.predecessors.0|length > 1 %}и{% endif %} согласно DBF</h3>
                 <ul class="search_results">
                     {% for predecessor in bicdetails.DBF.predecessors %}
-                        <li>{{ include('common/elements/entitycard.twig', predecessor) }}</li>
+                        <li>{{ include('common/elements/entitycard.html.twig', predecessor) }}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
@@ -406,7 +406,7 @@
                 <h3>Расчётно-кассовы{% if bicdetails.DBF.misc.RKC|length > 1 %}е{% else %}й{% endif %} центр{% if bicdetails.DBF.misc.RKC|length > 1 %}ы{% endif %} согласно DBF</h3>
                 <ul class="search_results bic_chain">
                     {% for bank in bicdetails.DBF.misc.RKC %}
-                        <li>{{ include('common/elements/entitycard.twig', bank) }}{% if not loop.last %} >>> {% endif %}</li>
+                        <li>{{ include('common/elements/entitycard.html.twig', bank) }}{% if not loop.last %} >>> {% endif %}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
