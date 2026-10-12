@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Notification;
 
+use App\Service\Config;
 use App\Service\Errors;
-use App\Twig\EnvironmentGenerator;
 
 /**
  * Confirmation about ticket being created for anonymous users
@@ -51,7 +51,7 @@ final class TicketCreation extends Notification
             return $this;
         }
         try {
-            $this->text = EnvironmentGenerator::getTwig()->render('notifications/ticket_creation.html.twig', $twig_vars);
+            $this->text = Config::$twig->render('notifications/ticket_creation.html.twig', $twig_vars);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             $this->text = null;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Notification;
 
+use App\Service\Config;
 use App\Service\Errors;
-use App\Twig\EnvironmentGenerator;
 
 /**
  * Notification about database going down
@@ -56,7 +56,7 @@ final class DatabaseDown extends Notification
             return $this;
         }
         try {
-            $this->text = EnvironmentGenerator::getTwig()->render('notifications/database_down.html.twig', $twig_vars);
+            $this->text = Config::$twig->render('notifications/database_down.html.twig', $twig_vars);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             $this->text = null;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Notification;
 
+use App\Service\Config;
 use App\Service\Errors;
-use App\Twig\EnvironmentGenerator;
 
 /**
  * Notification about a user being locked due to a wrong password
@@ -37,7 +37,7 @@ final class UserLock extends Notification
     protected function setText(array $twig_vars = []): self
     {
         try {
-            $this->text = EnvironmentGenerator::getTwig()->render('notifications/user_lock.html.twig', $twig_vars);
+            $this->text = Config::$twig->render('notifications/user_lock.html.twig', $twig_vars);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             $this->text = null;

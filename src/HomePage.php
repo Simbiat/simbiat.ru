@@ -14,7 +14,6 @@ use App\Service\Config;
 use App\Service\Errors;
 use App\Service\Routing\MainRouter;
 use App\Service\Sanitization;
-use App\Twig\EnvironmentGenerator;
 use DateTimeInterface;
 use DeviceDetector\Cache\PSR6Bridge;
 use DeviceDetector\ClientHints;
@@ -100,7 +99,7 @@ final class HomePage
                 \ob_end_clean();
                 \ignore_user_abort(true);
                 \ob_start();
-                $output = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.html.twig', $twig_vars);
+                $output = Config::$twig->render($twig_vars['template_override'] ?? 'index.html.twig', $twig_vars);
                 // Output data
                 Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', false);
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
@@ -142,13 +141,13 @@ final class HomePage
             }
             \ob_start();
             try {
-                $output = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.html.twig', $twig_vars);
+                $output = Config::$twig->render($twig_vars['template_override'] ?? 'index.html.twig', $twig_vars);
             } catch (\Throwable $exception) {
                 Errors::error_log($exception);
                 Headers::clientReturn(500, false);
                 try {
                     // TODO: Needs to be cleaned up during refactor of pages
-                    $output = EnvironmentGenerator::getTwig()->render('index.html.twig', [
+                    $output = Config::$twig->render('index.html.twig', [
                         'breadcrumbs' => [],
                         'cached_page' => false,
                         // common/layout/header.html.twig

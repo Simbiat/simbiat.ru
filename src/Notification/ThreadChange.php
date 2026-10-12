@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Notification;
 
+use App\Service\Config;
 use App\Service\Errors;
-use App\Twig\EnvironmentGenerator;
 
 /**
  * Notifications about changes to threads for thread authors
@@ -37,7 +37,7 @@ final class ThreadChange extends Notification
     protected function setText(array $twig_vars = []): self
     {
         try {
-            $this->text = EnvironmentGenerator::getTwig()->render('notifications/thread_change.html.twig', $twig_vars);
+            $this->text = Config::$twig->render('notifications/thread_change.html.twig', $twig_vars);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             $this->text = null;

@@ -24,23 +24,12 @@ final class EnvironmentGenerator
      * Function to get the actual Twig environment object
      *
      * @return \Twig\Environment
-     *
-     * @throws \Twig\Error\LoaderError
      */
     public static function getTwig(): Environment
     {
         if (!self::$environment) {
-            $templates_dir = Config::$work_dir.'/templates/';
-            // Initiate Twig
-            $loader = new FilesystemLoader($templates_dir);
-            // this creates the @images namespace
-            $loader->addPath(Config::$work_dir.'/public/assets/images/', 'images');
-            // this creates the @styles namespace
-            $loader->addPath(Config::$work_dir.'/public/assets/styles/', 'styles');
-            self::$environment = new Environment($loader, ['cache' => \sys_get_temp_dir().'/twig/', 'auto_reload' => true, 'autoescape' => 'html', 'use_yield' => true, 'strict_variables' => true]);
+            #TODO: needs to move to kernel.request listener
             self::$environment->getExtension(CoreExtension::class)->setTimezone($_SESSION['timezone'] ?? $_SERVER['HTTP_X_CLIENT_TIMEZONE'] ?? 'UTC');
-            self::$environment->addExtension(new Extension());
-            self::$environment->addExtension(new CssInlinerExtension());
         }
 
         return self::$environment;

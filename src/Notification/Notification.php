@@ -10,7 +10,6 @@ use App\Service\Config;
 use App\Service\Errors;
 use App\Service\Images;
 use App\Service\Sanitization;
-use App\Twig\EnvironmentGenerator;
 use GeoIp2\Database\Reader;
 use Simbiat\Database\Query;
 use Simbiat\http20\Common;
@@ -441,7 +440,7 @@ abstract class Notification extends Entity
         }
         // Prepare message listener with Twig renderer
         try {
-            $renderer = new BodyRenderer(EnvironmentGenerator::getTwig());
+            $renderer = new BodyRenderer(Config::$twig);
             $message_listener = new MessageListener(null, $renderer);
         } catch (\Throwable $exception) {
             Errors::error_log($exception);

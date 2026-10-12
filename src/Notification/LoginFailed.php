@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Notification;
 
+use App\Service\Config;
 use App\Service\Errors;
-use App\Twig\EnvironmentGenerator;
 
 /**
  * Notification about failed login
@@ -42,7 +42,7 @@ final class LoginFailed extends Notification
     protected function setText(array $twig_vars = []): self
     {
         try {
-            $this->text = EnvironmentGenerator::getTwig()->render('notifications/login_failed.html.twig', $twig_vars);
+            $this->text = Config::$twig->render('notifications/login_failed.html.twig', $twig_vars);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             $this->text = null;

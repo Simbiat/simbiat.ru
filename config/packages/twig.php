@@ -6,11 +6,17 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 
 return static function (ContainerConfigurator $containerConfigurator): void {
     $containerConfigurator->extension('twig', [
+        'default_path' => '%kernel.project_dir%/templates',
         'file_name_pattern' => '*.twig',
+        'strict_variables' => true,
+        'auto_reload' => true,
+        'cache' => true,
+        'date' => [
+            'timezone' => 'UTC',
+        ],
+        'paths' => [
+            '%kernel.project_dir%/public/assets/images' => 'images',
+            '%kernel.project_dir%/public/assets/styles' => 'styles',
+        ],
     ]);
-    if ($containerConfigurator->env() === 'test') {
-        $containerConfigurator->extension('twig', [
-            'strict_variables' => true,
-        ]);
-    }
 };

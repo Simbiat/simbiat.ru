@@ -7,7 +7,6 @@ namespace App\Command;
 use App\HomePage;
 use App\Service\Config;
 use App\Service\Errors;
-use App\Twig\EnvironmentGenerator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -43,7 +42,7 @@ final class Sitemap
                 $links = [];
                 foreach ($this->index_files as $index_file) {
                     $twig_vars = $router->route([$index_file]);
-                    $index[$index_file] = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.html.twig', $twig_vars);
+                    $index[$index_file] = Config::$twig->render($twig_vars['template_override'] ?? 'index.html.twig', $twig_vars);
                     $dom_document = new \DOMDocument();
                     $dom_document->preserveWhiteSpace = false;
                     $dom_document->loadXML($index[$index_file]);
@@ -80,7 +79,7 @@ final class Sitemap
                         }
                         // Generate and write file
                         $map_vars = $router->route(\array_merge($path));
-                        $content = EnvironmentGenerator::getTwig()->render($map_vars['template_override'] ?? 'index.html.twig', $map_vars);
+                        $content = Config::$twig->render($map_vars['template_override'] ?? 'index.html.twig', $map_vars);
                         // Check if file already exists and if its contents are the same
                         if (
                             !\is_file($file_path.'/'.$file_name)

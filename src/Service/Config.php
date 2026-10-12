@@ -6,6 +6,7 @@ namespace App\Service;
 
 use Simbiat\Database\Query;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Environment;
 
 /**
  * Class that holds the main settings for the website. Needs to be instantiated early as part of bootstrapping.
@@ -42,6 +43,7 @@ final class Config
     public private(set) static string $database_name = '';
     public private(set) static string $encryption_passphrase = '';
     public private(set) static array $argon_settings = [];
+    public private(set) static Environment $twig;
 
     // Track if the DB connection is up
     public private(set) static bool $dbup = false;
@@ -98,6 +100,7 @@ final class Config
 
             return false;
         }
+        self::$twig = self::$container->get('app.twig');
         // Check in case we accidentally call this for the 2nd time
         if (!self::$dbup) {
             try {

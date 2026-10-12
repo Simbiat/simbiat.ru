@@ -192,10 +192,15 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
     $services->defaults()
-        ->autowire()
-        ->autoconfigure();
+             ->autowire()
+             ->autoconfigure();
 
     $services->load('App\\', '/app/src/');
 
     $services->set(DotenvDumpCommand::class);
+
+    // TODO: This should be removed once \Twig\Environment is properly injected instead of using \App\Config layer
+    $services
+        ->alias('app.twig', 'twig')
+        ->public();
 };
