@@ -78,18 +78,27 @@ export function basename(path: string): string {
 
 /**
  * Function to force page refresh. Regular `reload()` often hits the cache, thus not properly updating.
- * @param new_url - URL to load.
+ * @param url - URL to load.
  */
-export function pageRefresh(new_url?: string): void {
-    let url;
-    if (empty(new_url)) {
-        url = new URL(document.location.href, window.location.origin);
+export function pageRefresh(url?: string): void {
+    const current_url = new URL(document.location.href, window.location.origin);
+    let new_url;
+    if (empty(url)) {
+        new_url = current_url;
     } else {
-        window.location.assign(encodeURI(new_url ?? ''));
-        return;
+        new_url = new URL(encodeURI(url ?? ''), window.location.origin);
+        const is_same_page
+            = new_url.origin === current_url.origin
+              && new_url.pathname === current_url.pathname
+              && new_url.search === current_url.search;
+        // If it's the same page we, it probably is different in fragment component only, and thus `assign` will not trigger reload
+        if (!is_same_page) {
+            window.location.assign(new_url.toString());
+            return;
+        }
     }
-    url.searchParams.set('force_reload', String(Date.now()));
-    window.location.replace(url.toString());
+    new_url.searchParams.set('force_reload', String(Date.now()));
+    window.location.replace(new_url.toString());
 }
 
 /**
