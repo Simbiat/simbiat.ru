@@ -552,16 +552,15 @@
         {
             "match": [
                 {
-                    "path_regexp": {
-                        "name": "sitemapRewrite",
-                        "pattern": "/sitemap/(.+)"
-                    }
+                    "path": [
+                        "/sitemap/*"
+                    ]
                 }
             ],
             "handle": [
                 {
                     "handler": "file_server",
-                    "root": "/app/data",
+                    "root": "/app/var",
                     // Resets HTTP error code when in error route
                     "status_code": "{http.vars.asset_status_reset}"
                 }
