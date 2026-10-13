@@ -66,10 +66,6 @@ DEPLOY_ARTIFACTS_DIR="${LOCAL_PROJECT_ROOT}/var/deploy"
 # This is relative to PROD directory, not the system's `/var/log`, so `.` is important.
 MAINTENANCE_FLAG="./var/log/db_maintenance.flag"
 
-#TODO: replace with endpoint for worker mode reset, when migrating to worker mode
-# URL to call inside container to reset opcache
-OPCACHE_RESET_URL="http://localhost:2027/"
-
 PATTERN_ROOT_COMPOSE='^compose\.ya?ml$'
 
 RSYNC_COMMON_FLAGS=(--recursive --links --perms --executability --group --owner --devices --specials --delete-delay --delay-updates --checksum --omit-dir-times --itemize-changes)
@@ -376,7 +372,7 @@ fi
 # Reset unless frankenphp itself was rebuilt/recreated above - a fresh
 # process already starts with an empty opcache.
 if ! $frankenphp_recreated; then
-    ACTIONS+=("sudo docker compose -f ./compose.yaml exec ${SVC_FRANKENPHP} curl -fsS ${OPCACHE_RESET_URL}")
+    ACTIONS+=("sudo docker compose -f ./compose.yaml exec ${SVC_FRANKENPHP} bin/console app:clean:opcache")
 fi
 # Remove maintenance flag
 ACTIONS+=("rm -f ${MAINTENANCE_FLAG}")
