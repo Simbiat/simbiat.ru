@@ -57,7 +57,7 @@ final readonly class FFTracker
             // We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
             $new_max_id = \min($max_id + 500, 4294967295);
             if ((int) $max_id < (int) $new_max_id) {
-                for ($character = $max_id + 1; (int) $character <= (int) $new_max_id; $character++) {
+                for ($character = ($max_id + 1); (int) $character <= (int) $new_max_id; $character++) {
                     $extra_for_error = 'character ID '.$character;
                     $cron->settingsFromArray(
                         ['task' => 'ff_update_entity', 'arguments' => [(string) $character, 'character'], 'message' => 'Updating character with ID '.$character],
@@ -159,21 +159,27 @@ final readonly class FFTracker
         try {
             /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
-            $lodestone = new Lodestone();
             // Get server
-            $worlds = $lodestone->getWorldStatus()->getResult()['worlds'];
-            // Prepare queries
-            $queries = [];
-            foreach ($worlds as $data_center => $servers) {
-                foreach ($servers as $server => $status) {
-                    $queries[] = [
-                        'INSERT IGNORE INTO `ffxiv__server` (`server`, `data_center`) VALUES (:server, :data_center)',
-                        [':server' => $server, ':data_center' => $data_center],
-                    ];
+            $lodestone = new Lodestone()->getWorldStatus();
+            $result = $lodestone->getResult();
+            if (\array_key_exists('worlds', $result)) {
+                // Prepare queries
+                $queries = [];
+                foreach ($result['worlds'] as $data_center => $servers) {
+                    foreach ($servers as $server => $status) {
+                        $queries[] = [
+                            'INSERT IGNORE INTO `ffxiv__server` (`server`, `data_center`) VALUES (:server, :data_center)',
+                            [':server' => $server, ':data_center' => $data_center],
+                        ];
+                    }
                 }
+                new Query($pdo);
+                Query::query($queries);
+            } else {
+                Errors::error_log(new \RuntimeException('Failed to get worlds'), $lodestone->getErrors(), cli: true);
+
+                return Command::FAILURE;
             }
-            new Query($pdo);
-            Query::query($queries);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable, cli: true);
 
