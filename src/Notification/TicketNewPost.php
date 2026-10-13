@@ -10,7 +10,7 @@ use App\Service\Errors;
 /**
  * Notification about new reply in a ticket for anonymous users
  */
-final class TicketChange extends Notification
+final class TicketNewPost extends Notification
 {
     /**
      * Subject for email
@@ -46,7 +46,7 @@ final class TicketChange extends Notification
             return $this;
         }
         try {
-            $this->text = Config::$twig->render('notifications/ticket_change.html.twig', $twig_vars);
+            $this->text = Config::$twig->render('notifications/ticket_new_post.html.twig', $twig_vars);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             $this->text = null;

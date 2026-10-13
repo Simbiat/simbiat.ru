@@ -9,7 +9,7 @@ namespace App\Entity;
 use App\Enum\SystemUser;
 use App\Notification\NewPost;
 use App\Notification\PostChange;
-use App\Notification\TicketChange;
+use App\Notification\TicketNewPost;
 use App\Notification\TicketCreation;
 use App\Service\Errors;
 use App\Service\Sanitization;
@@ -625,7 +625,7 @@ final class Post extends Entity
                     if ($first_post) {
                         (void) new TicketCreation()->save(SystemUser::Unknown->value, $twig_vars, true, false, $email);
                     } else {
-                        (void) new TicketChange()->save(SystemUser::Unknown->value, $twig_vars, true, false, $email);
+                        (void) new TicketNewPost()->save(SystemUser::Unknown->value, $twig_vars, true, false, $email);
                     }
                 }
             }

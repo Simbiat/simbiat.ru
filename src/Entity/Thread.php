@@ -9,6 +9,7 @@ namespace App\Entity;
 use App\Enum\SystemUser;
 use App\Notification\NewThread;
 use App\Notification\ThreadChange;
+use App\Notification\TicketChange;
 use App\Security\Security;
 use App\Service\Curl;
 use App\Service\Errors;
@@ -63,16 +64,22 @@ final class Thread extends Entity
     // List of external links
     public array $external_links = [];
 
-    // Flag indicating if we are getting data for a post and can skip some details
+    /**
+     * @var string|null Access token for support tickets from contact form
+     */
     public ?string $access_token = null;
 
-    // Access token for support tickets from contact form
+    /**
+     * @var string|null Contact email for the anonymous creator of the ticket
+     */
     public ?string $email = null;
 
     // List of subscribers
     public array $subscribers = [];
 
-    // Access token for support tickets from contact form
+    /**
+     * @var bool Flag indicating if we are getting data for a post and can skip some details
+     */
     private bool $for_post = false;
 
     /**
@@ -98,6 +105,10 @@ final class Thread extends Entity
      */
     public function setPrivate(bool $private = false): array
     {
+        // Ensure we have current data to check ownership
+        if (!$this->attempted) {
+            $this->get();
+        }
         // Check permission
         if (!\in_array('mark_private', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `mark_private` permission'];
@@ -177,6 +188,10 @@ final class Thread extends Entity
      */
     public function move(): array
     {
+        // Ensure we have current data to check ownership
+        if (!$this->attempted) {
+            $this->get();
+        }
         // Check permission
         if (!\in_array('move_threads', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `move_threads` permission'];
@@ -227,6 +242,10 @@ final class Thread extends Entity
      */
     public function setPinned(bool $pinned = false): array
     {
+        // Ensure we have current data to check ownership
+        if (!$this->attempted) {
+            $this->get();
+        }
         // Check permission
         if (!\in_array('can_pin', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `can_pin` permission'];
@@ -747,13 +766,12 @@ final class Thread extends Entity
         $for_notification['change_type'] = $type;
         $for_notification['editor_id'] = $_SESSION['user_id'];
         $for_notification['editor_name'] = $_SESSION['username'];
-        if (
-            $for_notification['author'] === $_SESSION['user_id']
-            || \in_array($for_notification['author'], SystemUser::getSystemUsers(), true)
-        ) {
-            return;
-        }
-
+        $for_notification['changes'] = [];
+        // Flag for anonymous ticket author
+        $for_notification['ticket'] = false;
+        // Flag for subscriber
+        $for_notification['subscriber'] = false;
+        $author = (int) $for_notification['author'];
         if ($type === 'change') {
             $links = $this->getAltLinks();
             $for_notification['changes'] = Checkers::getChanges(
@@ -777,7 +795,27 @@ final class Thread extends Entity
                 return;
             }
         }
-        (void) new ThreadChange()->save($for_notification['author'], $for_notification);
+        // Notify Ticket creator
+        if ($this->type === 'Support' && $author === SystemUser::Unknown->value && $author !== $_SESSION['user_id'] && $this->email !== null) {
+            (void) new ThreadChange()->save($author, \array_merge($for_notification, ['token' => $this->access_token, 'ticket' => true, 'name' => \preg_replace('/^\[Contact Form]\s*/ui', '', $this->name)]), true, false, $this->email);
+        }
+        // Notify non-anonymous author
+        if (
+            $author !== $_SESSION['user_id']
+            && !\in_array($author, SystemUser::getSystemUsers(), true)
+        ) {
+            (void) new ThreadChange()->save($author, $for_notification);
+        }
+        // Notify subscribers
+        $for_notification['subscriber'] = true;
+        foreach ($this->subscribers as $subscriber) {
+            if (
+                $author !== $subscriber
+                && !\in_array($subscriber, SystemUser::getSystemUsers(), true)
+            ) {
+                (void) new ThreadChange()->save($subscriber, $for_notification);
+            }
+        }
     }
 
     /**

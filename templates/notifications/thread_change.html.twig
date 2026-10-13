@@ -17,7 +17,14 @@
 {% elseif change_type == 'unpin' %}
     {% set action = 'unpinned' %}
 {% endif %}
-<p>Your thread {% if change_type != 'delete' %}<a href="{{ domain }}/talks/threads/{{ thread_id }}">{{ name }}</a>{% else %}<var>{{ name }}</var>{% endif %} was {{ action }} {% if change_type == 'move' %} to <a href="{{ domain }}/talks/sections/{{ section_id }}">{{ parent_name }}</a> {% endif %}by <a href="{{ domain }}/talks/users/{{ editor_id }}">{{ editor_name }}</a>.</p>
+{% if ticket == true %}
+    {% set entity = 'Your ticket' %}
+{% elseif subscriber == true %}
+    {% set entity = 'The thread you are subscribed to' %}
+{% else %}
+    {% set entity = 'Your thread' %}
+{% endif %}
+<p>{{ entity }} {% if change_type != 'delete' %}{% if ticket == true %}👉 {% endif %}<a href="{{ domain }}/talks/threads/{{ thread_id }}{% if ticket == true %}?access_token={{ token }}{% endif %}">{{ name }}</a>{% if ticket == true %} 👈{% endif %}{% else %}<var>{{ name }}</var>{% endif %}{% if subscriber == true %},{% endif %} was {{ action }} {% if change_type == 'move' %} to <a href="{{ domain }}/talks/sections/{{ section_id }}">{{ parent_name }}</a> {% endif %}by <a href="{{ domain }}/talks/users/{{ editor_id }}">{{ editor_name }}</a>.</p>
 {% if changes|length > 0 %}
     <br>
     <p>These are the changes:</p>
@@ -63,4 +70,7 @@
     <p><q>{{ reason }}</q> was provided as the reason.</p>
 {% else %}
     <p>No reason was provided.</p>
+{% endif %}
+{% if ticket == true and change_type != 'delete' %}
+    <p class="warning">Note that the link above is the only link you can use to access the ticket, unless you register, and it gets updated with every new post, even if that post was made by you. We recommend keeping this email for future tracking of progress, unless you consider the ticket resolved, or until you get an email about an update, which will have a newer link.</p>
 {% endif %}

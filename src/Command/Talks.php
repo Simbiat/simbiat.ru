@@ -109,13 +109,14 @@ final class Talks
     #[AsCommand(name: 'app:talks:close_tickets', description: 'Close tickets that have been inactive for some time')]
     public function closeTickets(OutputInterface $output): int
     {
-        $output->writeln(Errors::logfmt('Closing tickets...'));
         try {
             // Connect to DB
             Config::dbConnect();
             if (Config::$dbup) {
-                $tickets = Query::query('SELECT `thread_id` FROM `talks__threads` LEFT JOIN `talks__sections` ON `talks__threads`.`section_id`=`talks__sections`.`section_id` WHERE `type`=:type AND `last_post` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 MONTH);', [':type' => TalkType::Support->value], return: 'column');
+                $_POST['thread_data']['change_reason'] = 'Automatic closure due to 1 month of inactivity';
+                $tickets = Query::query('SELECT `thread_id` FROM `talks__threads` LEFT JOIN `talks__sections` ON `talks__threads`.`section_id`=`talks__sections`.`section_id` WHERE `type`=:type AND `talks__threads`.`closed` IS NULL AND `last_post` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 MONTH);', [':type' => TalkType::Support->value], return: 'column');
                 foreach ($tickets as $ticket) {
+                    $output->writeln(Errors::logfmt('Closing ticket ID '.$ticket.'...'));
                     (void) new Thread($ticket)->setClosed(true);
                 }
             }
