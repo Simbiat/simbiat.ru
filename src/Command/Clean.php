@@ -287,4 +287,49 @@ final class Clean
 
         return Command::SUCCESS;
     }
+
+    /**
+     * Reset OPCache, both for web and CLI
+     *
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
+     * @return int
+     */
+    #[AsCommand(name: 'app:clean:opcache', description: 'Reset OPCache, both for web and CLI')]
+    public function opcache(OutputInterface $output): int
+    {
+        try {
+            $output->writeln(Errors::logfmt('Resetting CLI OPCache...'));
+            if (\opcache_get_status()) {
+                if (!\opcache_reset()) {
+                    $output->writeln(Errors::logfmt('Failed to reset CLI OPCache', 'error'));
+                }
+            } else {
+                $output->writeln(Errors::logfmt('opcache.enable_cli is off, skipping...'));
+            }
+            $output->writeln(Errors::logfmt('Resetting web OPCache...'));
+            $ch = \curl_init('http://localhost:2027');
+            \curl_setopt($ch, \CURLOPT_RETURNTRANSFER, true);
+            \curl_setopt($ch, \CURLOPT_NOBODY, true);
+            \curl_setopt($ch, \CURLOPT_FAILONERROR, false);
+            $response = \curl_exec($ch);
+            if ($response === false) {
+                $output->writeln(Errors::logfmt('Connection failed: '.\curl_error($ch), 'error'));
+
+                return Command::FAILURE;
+            }
+            $http_code = \curl_getinfo($ch, \CURLINFO_RESPONSE_CODE);
+            if ($http_code !== 200) {
+                $output->writeln(Errors::logfmt('Unexpected HTTP code: '.$http_code, 'error'));
+
+                return Command::FAILURE;
+            }
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable, cli: true);
+
+            return Command::FAILURE;
+        }
+
+        return Command::SUCCESS;
+    }
 }
