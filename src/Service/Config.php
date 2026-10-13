@@ -86,6 +86,8 @@ final class Config
         self::$statistics = $container->getParameter('app.directories.ffxiv.statistics');
         self::$html_cache = $container->getParameter('app.directories.html_cache');
         self::$group_ids = $container->getParameter('app.group_ids');
+        // Twig
+        self::$twig = self::$container->get('app.twig');
     }
 
     /**
@@ -100,7 +102,6 @@ final class Config
 
             return false;
         }
-        self::$twig = self::$container->get('app.twig');
         // Check in case we accidentally call this for the 2nd time
         if (!self::$dbup) {
             try {

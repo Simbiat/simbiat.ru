@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller\Sitemap;
 
-use App\Controller\Abstracts\Page;
+use App\Controller\Abstracts\Sitemap;
 use Simbiat\Database\Query;
 
 /**
  * Class for the main sitemap index file
  */
-abstract class Index extends Page
+final class Index extends Sitemap
 {
     // Cache age, in case we prefer the generated page to be cached
     protected int $cache_age = 1440;
