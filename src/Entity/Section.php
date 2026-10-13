@@ -512,7 +512,7 @@ final class Section extends Entity
                 $order_by = match ($data['detailed_type']) {
                     'Blog', 'Changelog' => '`published` DESC, `last_post` DESC, `name` ASC',
                     'Forum' => '`last_post` DESC, `name` ASC',
-                    'Support' => '`talks__threads`.`closed` IS NOT NULL, `talks__threads`.`closed` DESC, `last_post` DESC, `name` ASC',
+                    'Support' => '`talks__threads`.`closed` IS NOT NULL, `last_post` DESC, `name` ASC',
                     'Knowledgebase' => '`name` ASC',
                 };
                 // If the user is not an admin, also limit the selection to non-private threads or those created by the user
@@ -526,7 +526,7 @@ final class Section extends Entity
                     )
                     && $_SESSION['user_id'] === SystemUser::Unknown->value
                 ) {
-                    $where .= ' AND `talks__threads`.`author`!=:anonymous';
+                    $where .= ' AND (`talks__threads`.`author`!=:anonymous OR (`talks__threads`.`author`=:anonymous AND `talks__threads`.`private`=0 AND `talks__threads`.`closed` IS NOT NULL))';
                     $bindings[':anonymous'] = [SystemUser::Unknown->value, 'int'];
                 }
                 if (!\in_array('view_scheduled', $_SESSION['permissions'], true)) {
