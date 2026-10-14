@@ -52,6 +52,8 @@ final class ForeignKeys
                 // BIC restrictions
                 Query::query('DELETE FROM `bic__acc_rstr` WHERE `AccRstr` NOT IN (:types);', [':types' => [Converters::enumValues(AccRstrType::class), 'in', 'string']]);
                 Query::query('DELETE FROM `bic__bic_rstr` WHERE `Rstr` NOT IN (:types);', [':types' => [Converters::enumValues(RstrType::class), 'in', 'string']]);
+                // Stalkers for non-existent characters
+                Query::query('DELETE FROM `ffxiv__stalkers` WHERE `character_id` NOT IN (SELECT `character_id` FROM `ffxiv__character`);');
             }
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable, cli: true);

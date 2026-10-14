@@ -58,7 +58,6 @@
       <excludeFolder url="file://$MODULE_DIR$/public/assets/controllers" />
       <excludeFolder url="file://$MODULE_DIR$/public/assets/html5games" />
       <excludeFolder url="file://$MODULE_DIR$/public/assets/styles" />
-      <excludeFolder url="file://$MODULE_DIR$/build/DDL" />
       <excludeFolder url="file://$MODULE_DIR$/build/PSDs" />
       <excludeFolder url="file://$MODULE_DIR$/build/phpmyadmin" />
       <excludeFolder url="file://$MODULE_DIR$/lib/DDCIcons/src/icons" />

@@ -432,7 +432,7 @@ final class Character extends AbstractEntity
             }
             // Main query to insert or update a character
             $queries[] = [
-                'INSERT INTO `ffxiv__character`(
+                'INSERT INTO `ffxiv__character` (
                     `character_id`, `server_id`, `name`, `registered`, `updated`, `hidden`, `hidden_achievements`, `hidden_friends`, `hidden_following`, `deleted`, `biography`, `title_id`, `avatar`, `clan_id`, `gender`, `nameday_id`, `guardian_id`, `city_id`, `gc_rank_id`, `pvp_matches`, `achievement_points`
                 )
                 VALUES (
@@ -462,6 +462,7 @@ final class Character extends AbstractEntity
                     ':title' => (empty($this->lodestone['title']) ? '' : $this->lodestone['title']),
                 ],
             ];
+            $this->checkStalker($queries);
             // Update levels. Doing this in a cycle since columns can vary. This can reduce performance, but so far this is the best idea I have to make it as automated as possible
             if (!empty($this->lodestone['jobs'])) {
                 foreach ($this->lodestone['jobs'] as $job => $level) {
@@ -751,6 +752,8 @@ final class Character extends AbstractEntity
                 'DELETE FROM `ffxiv__character_names` WHERE `character_id`=:character_id;',
                 // Remove server history
                 'DELETE FROM `ffxiv__character_servers` WHERE `character_id`=:character_id;',
+                // Remove from stalkers list
+                'DELETE FROM `ffxiv__stalkers` WHERE `character_id`=:character_id;',
                 // Remove linked character
                 'DELETE FROM `uc__user_to_ff_character` WHERE `character_id` = :character_id;',
                 // Nullify the avatars
@@ -808,6 +811,44 @@ final class Character extends AbstractEntity
             [
                 ':character_id' => $this->id,
                 ':name' => $this->lodestone['name'],
+            ],
+        ];
+    }
+
+    /**
+     * Check if character is a potential stalker
+     *
+     * @param array $queries
+     *
+     * @return void
+     */
+    private function checkStalker(array &$queries): void
+    {
+        $echo_takedown = \mb_stripos($this->lodestone['bio'], 'echo-takedown', 0, 'UTF-8') !== false;
+        $echo_claim = \mb_stripos($this->lodestone['bio'], 'echo-claim', 0, 'UTF-8') !== false;
+        $echo_verify = \preg_match('/echo-(?!takedown)[a-z0-9]{8}/uir', $this->lodestone['bio']) === 1;
+        // If bio has no signs of EchoVault - exit early
+        if (!$echo_takedown && !$echo_claim && !$echo_verify) {
+
+            return;
+        }
+        $queries[] = [
+            'INSERT INTO `ffxiv__stalkers` (`character_id`, `echo_takedown`, `echo_takedown_bio`, `echo_claim`, `echo_claim_bio`, `echo_verify`, `echo_verify_bio`)
+                VALUES (:character_id,  :takedown,  :takedown_bio,  :claim,  :claim_bio,  :verify,  :verify_bio) ON DUPLICATE KEY UPDATE
+                `echo_takedown`=COALESCE(`echo_takedown`, :takedown),
+                `echo_takedown_bio`=COALESCE(`echo_takedown_bio`, :takedown_bio),
+                `echo_claim`=COALESCE(`echo_claim`, :claim),
+                `echo_claim_bio`=COALESCE(`echo_claim_bio`, :claim_bio),
+                `echo_verify`=COALESCE(`echo_verify`, :verify),
+                `echo_verify_bio`=COALESCE(`echo_verify_bio`, :verify_bio);',
+            [
+                ':character_id' => $this->id,
+                ':takedown' => [$echo_takedown ? \microtime(true) : null, $echo_takedown ? 'datetime' : 'null'],
+                ':takedown_bio' => [$echo_takedown ? $this->lodestone['bio'] : null, $echo_takedown ? 'string' : 'null'],
+                ':claim' => [$echo_claim ? \microtime(true) : null, $echo_claim ? 'datetime' : 'null'],
+                ':claim_bio' => [$echo_claim ? $this->lodestone['bio'] : null, $echo_claim ? 'string' : 'null'],
+                ':verify' => [$echo_verify ? \microtime(true) : null, $echo_verify ? 'datetime' : 'null'],
+                ':verify_bio' => [$echo_verify ? $this->lodestone['bio'] : null, $echo_verify ? 'string' : 'null'],
             ],
         ];
     }
