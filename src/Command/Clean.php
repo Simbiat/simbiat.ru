@@ -33,16 +33,15 @@ final class Clean
         try {
             // Connect to DB
             Config::dbConnect();
-            $result = new Session()->gc();
-            if (
-                Config::$dbup
-                && $result === false
-            ) {
-                $output->writeln(Errors::logfmt('Failed to clean old sessions. Check logs.'));
+            if (Config::$dbup) {
+                $result = new Session()->gc();
+                if ($result === false) {
+                    $output->writeln(Errors::logfmt('Failed to clean old sessions. Check logs.'));
 
-                return Command::FAILURE;
+                    return Command::FAILURE;
+                }
+                $output->writeln(Errors::logfmt($result.' session(s) removed'));
             }
-            $output->writeln(Errors::logfmt($result.' session removed'));
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable, cli: true);
 
