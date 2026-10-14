@@ -52,6 +52,159 @@
                     ]
                 }
             ]
+        },
+        // Headers required for TinyMCE, when uploading files through it
+        {
+            "handle": [
+                {
+                    "handler": "headers",
+                    "response": {
+                        "set": {
+                            "Access-Control-Allow-Credentials": [
+                                "true"
+                            ],
+                            "P3P": [
+                                "CP=\"There is no P3P policy.\""
+                            ]
+                        },
+                        "deferred": true
+                    }
+                }
+            ],
+            "match": [
+                {
+                    "path": [
+                        "/api/upload*"
+                    ]
+                }
+            ]
+        },
+        // Headers for security.txt
+        {
+            "handle": [
+                {
+                    "handler": "headers",
+                    "response": {
+                        "set": {
+                            "Content-Type": [
+                                "text/plain; charset=utf-8"
+                            ],
+                            "Content-Disposition": [
+                                "inline; filename=\"security.txt\""
+                            ]
+                        },
+                        "deferred": true
+                    }
+                }
+            ],
+            "match": [
+                {
+                    "path": [
+                        "/.well-known/security.txt"
+                    ]
+                }
+            ]
+        },
+        // Allow `data:` for games' pages due to how GameMaker works
+        {
+            "handle": [
+                {
+                    "handler": "headers",
+                    "response": {
+                        "replace": {
+                            "Content-Security-Policy": [
+                                {
+                                    "search": "media-src 'self'",
+                                    "replace": "media-src 'self' data:"
+                                }
+                            ]
+                        },
+                        "deferred": true
+                    }
+                }
+            ],
+            "match": [
+                {
+                    "path": [
+                        "/games*"
+                    ]
+                }
+            ]
+        },
+        // Allow `blob:` for pages with possible upload previews
+        {
+            "handle": [
+                {
+                    "handler": "headers",
+                    "response": {
+                        "replace": {
+                            "Content-Security-Policy": [
+                                {
+                                    "search": "img-src 'self'",
+                                    "replace": "img-src 'self' blob:"
+                                }
+                            ]
+                        },
+                        "deferred": true
+                    }
+                }
+            ],
+            "match": [
+                {
+                    "path": [
+                        "/talks/sections*",
+                        "/talks/threads*",
+                        "/uc/avatars*"
+                    ]
+                }
+            ]
+        },
+        // Force JSON MIME for API endpoints
+        {
+            "handle": [
+                {
+                    "handler": "headers",
+                    "response": {
+                        "set": {
+                            "Content-Type": [
+                                "application/json; charset=utf-8"
+                            ]
+                        },
+                        "deferred": true
+                    }
+                }
+            ],
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/api(/.*|/?$)",
+                        "name": "test_pattern_name_just_for_test"
+                    }
+                }
+            ]
+        },
+        // Force XML MIME for sitemaps
+        {
+            "handle": [
+                {
+                    "handler": "headers",
+                    "response": {
+                        "set": {
+                            "Content-Type": [
+                                "application/xml; charset=utf-8"
+                            ]
+                        },
+                        "deferred": true
+                    }
+                }
+            ],
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/sitemap(/.*|/?$)"
+                    }
+                }
+            ]
         }
     ]
 }

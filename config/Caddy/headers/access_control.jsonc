@@ -30,5 +30,21 @@
                 }
             }
         }
+    },
+    // Set Allow, if empty
+    {
+        "handler": "headers",
+        "response": {
+            "set": {
+                "Allow": [
+                    "HEAD, OPTIONS, GET"
+                ]
+            },
+            "require": {
+                "headers": {
+                    "Allow": null
+                }
+            }
+        }
     }
 ]

@@ -69,9 +69,6 @@ abstract class Api
      */
     final public function route(array $path): array
     {
-        if ($this->top_level) {
-            self::headers();
-        }
         // Ignore bots
         if (!empty(HomePage::$user_agent['bot'])) {
             return ['http_error' => 403, 'reason' => 'No access to API for bots'];
@@ -337,21 +334,6 @@ abstract class Api
      * @return array<string>
      */
     abstract protected function genData(array $path): array;
-
-    /**
-     * Send API headers
-     *
-     * @return void
-     */
-    public static function headers(): void
-    {
-        // Send headers
-        if (!\headers_sent()) {
-            \header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
-            \header('Allow: GET, HEAD, OPTIONS');
-            \header('Content-Type: application/json; charset=utf-8');
-        }
-    }
 
     /**
      * This is a wrapper to allow some common checks

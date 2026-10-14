@@ -27,6 +27,7 @@ import rewrites from '../../../config/Caddy/rewrites.jsonc';
 import php from '../../../config/Caddy/php.jsonc';
 import hotlinks from '../../../config/Caddy/hotlinks.jsonc';
 import rate_limit from '../../../config/Caddy/rate_limit.jsonc';
+import for_html from '../../../config/Caddy/headers/for_html.jsonc';
 
 // The following 3 interfaces are just to help with suppressing type-related errors
 interface HostMatch {
@@ -118,22 +119,6 @@ async function main(): Promise<void> {
                     },
                     ...(headers_access_control as []),
                     ...(headers_cache_control as []),
-                    //Set Allow, if empty
-                    {
-                        handler: 'headers',
-                        response: {
-                            set: {
-                                Allow: [
-                                    'HEAD, OPTIONS, GET',
-                                ],
-                            },
-                            require: {
-                                headers: {
-                                    Allow: null,
-                                },
-                            },
-                        },
-                    },
                     {
                         ...headers_path_based,
                     },
@@ -147,6 +132,7 @@ async function main(): Promise<void> {
                     {
                         ...headers_compression,
                     },
+                    ...(for_html as []),
                 ],
             },
             {
@@ -201,11 +187,11 @@ async function main(): Promise<void> {
                 http: {
                     grace_period: '30s',
                     shutdown_delay: '10s',
+                    metrics: {},
                     servers: {
                         // Endpoint for custom health check, available only from inside the container
                         healthcheck: {
                             listen: [':2026'],
-                            metrics: {},
                             routes: [
                                 {
                                     match: [
@@ -231,7 +217,6 @@ async function main(): Promise<void> {
                         // Endpoint for opcache reset, available only from inside the container
                         reset: {
                             listen: [':2027'],
-                            metrics: {},
                             routes: [
                                 {
                                     match: [
@@ -266,7 +251,6 @@ async function main(): Promise<void> {
                                 ':80',
                                 ':443',
                             ],
-                            metrics: {},
                             //Enable access logs for Crowdsec
                             logs: {
                                 default_logger_name: 'access_log',
@@ -355,12 +339,11 @@ async function main(): Promise<void> {
                                                     {
                                                         handle: [
                                                             {
-                                                                handler: 'vars',
-                                                                root: '/app/public',
+                                                                handler: 'static_response',
+                                                                status_code: "{http.error.status_code}",
                                                             },
                                                         ],
                                                     },
-                                                    ...(php as []),
                                                 ],
                                             },
                                         ],

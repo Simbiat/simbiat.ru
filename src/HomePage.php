@@ -101,6 +101,7 @@ final class HomePage
                 \ob_start();
                 $output = Config::$twig->render($twig_vars['template_override'] ?? 'index.html.twig', $twig_vars);
                 // Output data
+                // TODO: when removing zEcho, need to ensure that eTag is attached, because Caddy does not do that
                 Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', false);
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
                 @\ob_end_flush();
@@ -199,6 +200,7 @@ final class HomePage
                 @\ob_end_clean();
             } else {
                 // Output data
+                // TODO: when removing zEcho, need to ensure that eTag is attached, because Caddy does not do that
                 Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', false);
             }
             exit(0);
@@ -237,12 +239,6 @@ final class HomePage
         $request = \preg_replace('/^(.*)(\?.*)?$/u', '$1', $_SERVER['REQUEST_URI']);
         if (\preg_match('/^\/\.well-known\/security\.txt$/iu', $request) !== 1) {
             return;
-        }
-
-        // Send headers that will identify this as an actual file
-        if (!\headers_sent()) {
-            \header('Content-Type: text/plain; charset=utf-8');
-            \header('Content-Disposition: inline; filename="security.txt"');
         }
         if (
             self::$method !== 'HEAD'
@@ -422,9 +418,7 @@ final class HomePage
             Links::links(self::$links, force_cross_origin: true);
             // Send standard headers
             if ($uri[0] === 'api') {
-                Api::headers();
-            } else {
-                Page::headers();
+                Headers::notAccept(['application/json']);
             }
             if (\array_key_exists('http_error', self::$http_error)) {
                 $vars = self::$http_error;

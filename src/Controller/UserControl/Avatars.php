@@ -35,8 +35,6 @@ final class Avatars extends Page
     // This is the actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        // Allow `blob:`
-        @\header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' blob:; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\'; trusted-types dompurify default;');
         $output_array = [];
         // Get the avatar list
         $output_array['avatars'] = new User($_SESSION['user_id'])->getAvatars();

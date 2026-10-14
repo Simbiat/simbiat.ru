@@ -71,6 +71,22 @@
     },
     {
         "handle": [
+            // Force HTML MIME by default
+            {
+                "handler": "headers",
+                "response": {
+                    "set": {
+                        "Content-Type": [
+                            "text/html; charset=utf-8"
+                        ]
+                    },
+                    "require": {
+                        "headers": {
+                            "Content-Type": null
+                        }
+                    }
+                }
+            },
             {
                 "handler": "php",
                 "env": {
