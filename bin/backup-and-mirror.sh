@@ -67,35 +67,6 @@ cleanup_older_than() {
         done
 }
 
-# Unpack latest archive
-unpack_latest() {
-    local src_dir="$1" dest_dir="$2" label="$3"
-    local latest tmp_dir src_root only
-    latest=$(find "${src_dir}" -maxdepth 1 -name '*.7z' -type f -print0 | sort -z | tail -z -n 1 | tr -d '\0')
-    if [ -z "$latest" ]; then
-        log "No latest ${label} backup found"
-        return 0
-    fi
-    log "Unpacking ${label} backup: $latest"
-    tmp_dir=$(mktemp -d -p "${DB_BCK_DIR}") || return 1
-    if ! 7za x "$latest" -y -o"${tmp_dir}" -p"${MARIADB_BACKUP_PASSWORD}"; then
-        log "Unpacking ${label} backup failed. Destination not changed."
-        rm -rf "${tmp_dir}"
-        return 1
-    fi
-    # If the archive has one top-level directory, use it as the root
-    src_root="${tmp_dir}"
-    only=$(find "${tmp_dir}" -mindepth 1 -maxdepth 1)
-    if [ -d "$only" ]; then
-        src_root="$only"
-    fi
-    # Mirror: copy new and changed files, delete files not in the archive
-    rsync "${RSYNC_FLAGS[@]}" --delete "${src_root}/" "${dest_dir}/"
-    local rc=$?
-    rm -rf "${tmp_dir}"
-    return $rc
-}
-
 # ---- Main ------------------------------------------------------------
 # Everything from here on prints to the console AND appends to the log file -
 # no need to redirect each command individually anymore.
@@ -148,10 +119,6 @@ mkdir -p "$DB_BCK_DIR/physical"
         "${RSYNC_REMOTE}/data/backups/" "${DB_BCK_DIR}/physical/"
 )
 
-# ---- Unpack latest archives
-unpack_latest "${DB_BCK_DIR}/logical"  "${DB_BCK_DIR}/logical_unpacked" "logical"
-unpack_latest "${DB_BCK_DIR}/physical" "${MIRROR_DIR}/data/mariadb"     "physical"
-
 # ---- Mirror project dir --
 sync_retry "Syncing project to mirror folder" \
     rsync --recursive -a --checksum --times --force --prune-empty-dirs \
@@ -161,7 +128,6 @@ sync_retry "Syncing project to mirror folder" \
             --include=/data/mariadb/.gitignore \
             --exclude=/data/mariadb/** \
             --filter='protect /data/backups/logical/**' \
-            --filter='protect /data/backups/logical_unpacked/**' \
             --filter='protect /data/backups/physical/**' \
             --include=/var/log/.gitignore \
             --exclude=/var/log/** \
