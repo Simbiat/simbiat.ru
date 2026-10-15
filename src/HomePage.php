@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Controller\Abstracts\Page;
-use App\Controller\Api\Api;
 use App\Enum\SystemUser;
 use App\Security\Security;
 use App\Security\Session;
@@ -14,17 +12,12 @@ use App\Service\Config;
 use App\Service\Errors;
 use App\Service\Routing\MainRouter;
 use App\Service\Sanitization;
+use App\Service\UserAgentParser;
 use DateTimeInterface;
-use DeviceDetector\Cache\PSR6Bridge;
-use DeviceDetector\ClientHints;
 use DeviceDetector\DeviceDetector;
-use DeviceDetector\Parser\AbstractParser;
-use DeviceDetector\Parser\Device\AbstractDeviceParser;
-use DeviceDetector\Yaml\Pecl;
 use Simbiat\http20\Common;
 use Simbiat\http20\Headers;
 use Simbiat\http20\Links;
-use Symfony\Component\Cache\Adapter\ApcuAdapter;
 
 /**
  * Class to generate pages. "HomePage" is a legacy name
@@ -214,12 +207,6 @@ final class HomePage
         self::$data_cache ??= new Caching();
         // Set method
         self::$method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] ?? $_SERVER['REQUEST_METHOD'] ?? null;
-        // Initiate device detector
-        // Force full string versions
-        AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
-        self::$device_detector = new DeviceDetector();
-        self::$device_detector->setYamlParser(new Pecl());
-        self::$device_detector->setCache(new PSR6Bridge(new ApcuAdapter('Matomo')));
         // Get all POST and GET keys to the lower case
         $_POST = \array_change_key_case($_POST);
         Sanitization::carefulArraySanitization($_POST);
@@ -262,11 +249,9 @@ final class HomePage
             return ['unsupported' => true, 'browser' => false, 'bot' => null];
         }
         // Parse user agent
-        self::$device_detector->setUserAgent($_SERVER['HTTP_USER_AGENT']);
-        self::$device_detector->setClientHints(ClientHints::factory($_SERVER));
-        self::$device_detector->parse();
+        $device_detector = new UserAgentParser();
         // Get bot name
-        $bot = self::$device_detector->getBot();
+        $bot = $device_detector->getBot($_SERVER['HTTP_USER_AGENT']);
         if (\is_array($bot)) {
             // Do not waste resources on bots
 
@@ -274,16 +259,15 @@ final class HomePage
             return ['bot' => \mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => null, 'client' => null, 'unsupported' => false, 'browser' => false, 'ai' => \strncasecmp($bot['category'] ?? '', 'ai', 2) === 0];
         }
         // Get OS
-        $os = self::$device_detector->getOs();
+        $os = $device_detector->getOs($_SERVER['HTTP_USER_AGENT']);
         // Concat OS and version
         $os = \mb_trim(($os['name'] ?? '').' '.($os['version'] ?? ''), null, 'UTF-8');
         // Force OS to be NULL if it's empty
-        if (empty($os)) {
+        if ($os === null || $os === []) {
             $os = null;
         }
         // Get client
-        $browser = self::$device_detector->isBrowser();
-        $client = self::$device_detector->getClient();
+        $client = $device_detector->getClient($_SERVER['HTTP_USER_AGENT']);
         // Check if a client is supported
         $unsupported =
             \preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser)/ui', $client['name'] ?? '') === 1
@@ -294,10 +278,11 @@ final class HomePage
                     || \version_compare($client['version'], Config::$teapot_browsers[$client['name']], 'lt')
                 )
             );
+        $browser = ($client['type'] ?? null) === 'browser';
         // Concat client and version
         $client = \mb_trim(($client['name'] ?? '').' '.($client['version'] ?? ''), null, 'UTF-8');
         // Force the client to be NULL if it's empty
-        if (empty($client)) {
+        if ($client === '' || $client === null || $client === []) {
             $client = null;
         }
 

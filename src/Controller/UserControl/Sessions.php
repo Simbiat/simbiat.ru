@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\UserControl;
 
 use App\Controller\Abstracts\Page;
-use App\HomePage;
 use App\Service\Config;
-use DeviceDetector\Parser\AbstractParser;
-use DeviceDetector\Parser\Device\AbstractDeviceParser;
+use App\Service\UserAgentParser;
 use GeoIp2\Database\Reader;
 use Simbiat\Database\Query;
 use Simbiat\DDCIcons;
@@ -58,10 +56,9 @@ final class Sessions extends Page
         // Get logs
         $output_array['logs'] = Query::query('SELECT `time`, `action`, `sys__logs`.`ip`, `user_agent` FROM `sys__logs` WHERE `user_id`=:user_id AND `type` IN (1, 2, 3, 6, 7, 8, 9) ORDER BY `time` DESC LIMIT 50', [':user_id' => $_SESSION['user_id']], return: 'all');
         // Create user_agent object
-        // Force full string versions
-        AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
         // Prevent unnecessary trips to a DB file by "caching" found IPs, since it's unlikely to have too many different ones
         $ips = [];
+        $device_detector = new UserAgentParser();
         // Expand user_agent
         foreach (['sessions', 'cookies', 'logs'] as $type) {
             foreach ($output_array[$type] as $key => $item) {
@@ -82,13 +79,10 @@ final class Sessions extends Page
                     $output_array[$type][$key]['country'] = '';
                     $output_array[$type][$key]['city'] = '';
                 }
-                HomePage::$device_detector->setUserAgent((string) $item['user_agent']);
-                HomePage::$device_detector->setClientHints();
-                HomePage::$device_detector->parse();
                 // Get OS
-                $output_array[$type][$key]['os'] = HomePage::$device_detector->getOs();
+                $output_array[$type][$key]['os'] = $device_detector->getOs((string) $item['user_agent']);
                 // Get client
-                $output_array[$type][$key]['client'] = HomePage::$device_detector->getClient();
+                $output_array[$type][$key]['client'] = $device_detector->getClient((string) $item['user_agent']);
                 // Set OS and client icon if they exist
                 $output_array[$type][$key]['os']['icon'] = !empty($output_array[$type][$key]['os'])
                     ? DDCIcons::getOS($output_array[$type][$key]['os']['name'], $output_array[$type][$key]['os']['family'])
@@ -100,8 +94,8 @@ final class Sessions extends Page
                 $output_array[$type][$key]['country_icon'] =
                     !empty($output_array[$type][$key]['country'])
                     && \is_file(Config::$img_dir.'flags/'.$output_array[$type][$key]['country'].'.svg')
-                    ? '/assets/images/flags/'.$output_array[$type][$key]['country'].'.svg'
-                    : null;
+                        ? '/assets/images/flags/'.$output_array[$type][$key]['country'].'.svg'
+                        : null;
             }
         }
         $output_array['current_session'] = \session_id();
