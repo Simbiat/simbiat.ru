@@ -824,6 +824,9 @@ final class Character extends AbstractEntity
      */
     private function checkStalker(array &$queries): void
     {
+        if ($this->lodestone['bio'] === null || $this->lodestone['bio'] === '') {
+            return;
+        }
         $echo_takedown = \mb_stripos($this->lodestone['bio'], 'echo-takedown', 0, 'UTF-8') !== false;
         $echo_claim = \mb_stripos($this->lodestone['bio'], 'echo-claim', 0, 'UTF-8') !== false;
         $echo_verify = \preg_match('/echo-(?!takedown)[a-z0-9]{8}/uir', $this->lodestone['bio']) === 1;
