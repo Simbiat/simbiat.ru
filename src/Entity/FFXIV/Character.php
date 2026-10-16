@@ -873,8 +873,8 @@ final class Character extends AbstractEntity
                     `echo_verify_value`=COALESCE(`echo_verify_value`, :verify_value),
                     `echo_verify_bio`=COALESCE(`echo_verify_bio`, :verify_bio),
                     `echo_10`=COALESCE(`echo_10`, :echo_10),
-                    `echo_10_value`=COALESCE(`echo_verify_value`, :echo_10_value),
-                    `echo_10_bio`=COALESCE(`echo_verify_bio`, :echo_10_bio);',
+                    `echo_10_value`=COALESCE(`echo_10_value`, :echo_10_value),
+                    `echo_10_bio`=COALESCE(`echo_10_bio`, :echo_10_bio);',
             [
                 ':character_id' => $this->id,
                 ':takedown' => [$echo_takedown_value !== null ? \microtime(true) : null, $echo_takedown_value !== null ? 'datetime' : 'null'],

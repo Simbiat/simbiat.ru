@@ -2,10 +2,10 @@ USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__red_flags` (
   `character_id` int(10) unsigned NOT NULL COMMENT 'Character ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/character/characterid/)',
   `echo_takedown` datetime(6) DEFAULT NULL COMMENT 'Date when echo-takedown was found in bio',
-  `echo_takedown_value` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Value of identified echo-takedown code',
+  `echo_takedown_value` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Value of identified echo-takedown code',
   `echo_takedown_bio` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Bio text snapshot where echo-takedown was found',
   `echo_claim` datetime(6) DEFAULT NULL COMMENT 'Date when echo-claim was found in bio',
-  `echo_claim_value` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Value of identified echo-claim code',
+  `echo_claim_value` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Value of identified echo-claim code',
   `echo_claim_bio` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Bio text snapshot where echo-claim was found',
   `echo_verify` datetime(6) DEFAULT NULL COMMENT 'Date when echo-verify was found in bio',
   `echo_verify_value` varchar(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Value of identified echo verification code',
