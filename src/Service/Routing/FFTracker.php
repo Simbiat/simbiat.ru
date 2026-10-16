@@ -19,7 +19,7 @@ final class FFTracker extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = [
-        'search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'crossworldlinkshells', 'achievements', 'statistics', 'crests', 'track', 'points',
+        'search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'crossworldlinkshells', 'achievements', 'statistics', 'crests', 'track', 'points', 'red_flags',
         // legacy singular nodes
         'character', 'freecompany', 'pvpteam', 'linkshell', 'crossworld_linkshell', 'crossworldlinkshell', 'achievement',
     ];
@@ -48,7 +48,7 @@ final class FFTracker extends Router
             'linkshells' => (!empty($path[1]) ? new Linkshell()->get(\array_slice($path, 1)) : new Listing()->get($path)),
             'crossworld_linkshells' => (!empty($path[1]) ? new CrossworldLinkshell()->get(\array_slice($path, 1)) : new Listing()->get($path)),
             'achievements' => (!empty($path[1]) ? new Achievement()->get(\array_slice($path, 1)) : new Listing()->get($path)),
-            'points' => new Listing()->get($path),
+            'points', 'red_flags' => new Listing()->get($path),
             default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.\implode('`, `', $this->sub_routes).'`.'],
         };
     }

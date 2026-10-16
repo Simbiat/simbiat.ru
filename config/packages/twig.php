@@ -10,7 +10,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         'file_name_pattern' => '*.twig',
         'strict_variables' => true,
         'auto_reload' => true,
-        'cache' => true,
+        'cache' => $containerConfigurator->env() === 'prod',
         'date' => [
             'timezone' => 'UTC',
         ],

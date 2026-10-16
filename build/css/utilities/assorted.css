@@ -126,3 +126,7 @@
     /* stylelint-disable-next-line declaration-no-important -- Valid case */
     cursor: pointer !important;
 }
+
+.white_space_normal {
+    white-space: normal;
+}

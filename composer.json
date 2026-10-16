@@ -218,7 +218,7 @@
         "phpstan/phpstan-phpunit": "^2.1.1",
         "phpstan/phpstan-strict-rules": "^2.1.0",
         "phpstan/phpstan-symfony": "^2.1.0",
-        "phpunit/phpunit": "^13.4.2",
+        "phpunit/phpunit": "^13.4.3",
         "psalm/plugin-phpunit": "^0",
         "psalm/plugin-symfony": "^5.3",
         "rector/rector": "^2.7.0",
@@ -234,7 +234,7 @@
         "symfony/maker-bundle": "^1.68",
         "symfony/stopwatch": "^8.1",
         "symfony/web-profiler-bundle": "^8.1.9",
-        "symplify/phpstan-rules": "^14.19.0",
+        "symplify/phpstan-rules": "^14.19.1",
         "vimeo/psalm": "^6.20.0",
         "vincentlanglet/twig-cs-fixer": "^4.1.1"
     },

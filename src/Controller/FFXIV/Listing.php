@@ -11,6 +11,7 @@ use App\Service\Search\Companies;
 use App\Service\Search\CrossworldLinkshells;
 use App\Service\Search\Linkshells;
 use App\Service\Search\PVP;
+use App\Service\Search\RedFlags;
 
 final class Listing extends \App\Controller\Abstracts\Listing
 {
@@ -42,6 +43,7 @@ final class Listing extends \App\Controller\Abstracts\Listing
         'freecompanies' => ['name' => 'Free Companies', 'class' => Companies::class],
         'linkshells' => ['name' => 'Linkshells', 'class' => Linkshells::class],
         'points' => ['name' => 'Achievements Leaderboard', 'class' => AchievementPoints::class, 'numbered' => true],
+        'red_flags' => ['name' => 'Red Flags', 'class' => RedFlags::class],
         'pvpteams' => ['name' => 'PvP Teams', 'class' => PVP::class],
     ];
 

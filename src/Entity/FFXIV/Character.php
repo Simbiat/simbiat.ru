@@ -38,6 +38,7 @@ final class Character extends AbstractEntity
     public array $following = [];
     public int $achievement_points = 0;
     public array $owned = [];
+    public array $red_flags = [];
 
     /**
      * Get character data from Lodestone
@@ -233,6 +234,11 @@ final class Character extends AbstractEntity
                     return: 'all',
                 ),
             );
+            // Get red flags
+            $data['red_flags'] = Query::query('SELECT * FROM `ffxiv__red_flags` WHERE `character_id`=:id;', [':id' => $this->id], return: 'row');
+            if ($data['red_flags'] !== []) {
+                unset($data['red_flags']['character_id']);
+            }
             // Clean up the data from unnecessary (technical) clutter
             unset($data['clan_id'], $data['nameday_id'], $data['achievement_id'], $data['category'], $data['subcategory'], $data['how_to'], $data['points'], $data['icon'], $data['item'], $data['item_icon'], $data['item_id'], $data['server_id']);
         }
@@ -325,6 +331,7 @@ final class Character extends AbstractEntity
         }
         $this->achievement_points = $from_db['achievement_points'] ?? 0;
         $this->jobs = $from_db['jobs'] ?? [];
+        $this->red_flags = $from_db['red_flags'] ?? [];
     }
 
     /**
@@ -462,7 +469,7 @@ final class Character extends AbstractEntity
                     ':title' => (empty($this->lodestone['title']) ? '' : $this->lodestone['title']),
                 ],
             ];
-            $this->checkStalker($queries);
+            $this->redFlags($queries);
             // Update levels. Doing this in a cycle since columns can vary. This can reduce performance, but so far this is the best idea I have to make it as automated as possible
             if (!empty($this->lodestone['jobs'])) {
                 foreach ($this->lodestone['jobs'] as $job => $level) {
@@ -753,7 +760,7 @@ final class Character extends AbstractEntity
                 // Remove server history
                 'DELETE FROM `ffxiv__character_servers` WHERE `character_id`=:character_id;',
                 // Remove from stalkers list
-                'DELETE FROM `ffxiv__stalkers` WHERE `character_id`=:character_id;',
+                'DELETE FROM `ffxiv__red_flags` WHERE `character_id`=:character_id;',
                 // Remove linked character
                 'DELETE FROM `uc__user_to_ff_character` WHERE `character_id` = :character_id;',
                 // Nullify the avatars
@@ -822,36 +829,66 @@ final class Character extends AbstractEntity
      *
      * @return void
      */
-    private function checkStalker(array &$queries): void
+    private function redFlags(array &$queries): void
     {
+        // Exit early if empty bio
         if ($this->lodestone['bio'] === null || $this->lodestone['bio'] === '') {
             return;
         }
-        $echo_takedown = \mb_stripos($this->lodestone['bio'], 'echo-takedown', 0, 'UTF-8') !== false;
-        $echo_claim = \mb_stripos($this->lodestone['bio'], 'echo-claim', 0, 'UTF-8') !== false;
-        $echo_verify = \preg_match('/echo-(?!takedown)[a-z0-9]{8}/uir', $this->lodestone['bio']) === 1;
-        // If bio has no signs of EchoVault - exit early
-        if (!$echo_takedown && !$echo_claim && !$echo_verify) {
+        $echo_takedown_value = \preg_match('/(echo-takedown-[a-z0-9]{8})/uir', $this->lodestone['bio'], $matches) ? $matches[1] : null;
+        $echo_claim_value = \preg_match('/(echo-claim-[a-z0-9]{8})/uir', $this->lodestone['bio'], $matches) ? $matches[1] : null;
+        $echo_verify_value = \preg_match('/(echo-(?!takedown)[a-z0-9]{8})/uir', $this->lodestone['bio'], $matches) ? $matches[1] : null;
+        // Check for potential 10-character codes. Exclude ECU12345VC and ECU123456V, since they are from Eorzea Collection
+        \preg_match_all('/(?:^|<br(?:\s*\/)?>)((?!ECU\d{5}VC|ECU\d{6}V)[a-z0-9]{10})(?:<br(?:\s*\/)?>|$)/uir', $this->lodestone['bio'], $echo_10_matches, \PREG_SET_ORDER);
+        $echo_10_value = null;
+        if ($echo_10_matches !== []) {
+            $echo_10_matches = \array_map('\strtolower', \array_column($echo_10_matches, 1));
+            // See what matches are whitelisted
+            $in_whitelist = Query::query(
+                'SELECT `term` FROM `ffxiv__echo_10_whitelist` WHERE `term` IN (:terms)',
+                [':terms' => [$echo_10_matches, 'in', 'string']],
+                return: 'column'
+            );
+            // Get the first value that is not in whitelist
+            $echo_10_value = \array_first(\array_diff($echo_10_matches, $in_whitelist));
 
+        }
+        // If bio has no signs of EchoVault - exit early
+        if ($echo_takedown_value === null && $echo_claim_value === null && $echo_verify_value === null && $echo_10_value === null) {
             return;
         }
         $queries[] = [
-            'INSERT INTO `ffxiv__stalkers` (`character_id`, `echo_takedown`, `echo_takedown_bio`, `echo_claim`, `echo_claim_bio`, `echo_verify`, `echo_verify_bio`)
-                VALUES (:character_id,  :takedown,  :takedown_bio,  :claim,  :claim_bio,  :verify,  :verify_bio) ON DUPLICATE KEY UPDATE
-                `echo_takedown`=COALESCE(`echo_takedown`, :takedown),
-                `echo_takedown_bio`=COALESCE(`echo_takedown_bio`, :takedown_bio),
-                `echo_claim`=COALESCE(`echo_claim`, :claim),
-                `echo_claim_bio`=COALESCE(`echo_claim_bio`, :claim_bio),
-                `echo_verify`=COALESCE(`echo_verify`, :verify),
-                `echo_verify_bio`=COALESCE(`echo_verify_bio`, :verify_bio);',
+            'INSERT INTO `ffxiv__red_flags`
+                    (`character_id`, `echo_takedown`, `echo_takedown_value`, `echo_takedown_bio`, `echo_claim`, `echo_claim_value`, `echo_claim_bio`, `echo_verify`, `echo_verify_value`, `echo_verify_bio`, `echo_10`, `echo_10_value`, `echo_10_bio`)
+                VALUES
+                    (:character_id,  :takedown, :takedown_value, :takedown_bio,  :claim, :claim_value,  :claim_bio,  :verify, :verify_value,  :verify_bio, :echo_10, :echo_10_value, :echo_10_bio)
+                ON DUPLICATE KEY UPDATE
+                    `echo_takedown`=COALESCE(`echo_takedown`, :takedown),
+                    `echo_takedown_value`=COALESCE(`echo_takedown_value`, :takedown_value),
+                    `echo_takedown_bio`=COALESCE(`echo_takedown_bio`, :takedown_bio),
+                    `echo_claim`=COALESCE(`echo_claim`, :claim),
+                    `echo_claim_value`=COALESCE(`echo_claim_value`, :claim_value),
+                    `echo_claim_bio`=COALESCE(`echo_claim_bio`, :claim_bio),
+                    `echo_verify`=COALESCE(`echo_verify`, :verify),
+                    `echo_verify_value`=COALESCE(`echo_verify_value`, :verify_value),
+                    `echo_verify_bio`=COALESCE(`echo_verify_bio`, :verify_bio),
+                    `echo_10`=COALESCE(`echo_10`, :echo_10),
+                    `echo_10_value`=COALESCE(`echo_verify_value`, :echo_10_value),
+                    `echo_10_bio`=COALESCE(`echo_verify_bio`, :echo_10_bio);',
             [
                 ':character_id' => $this->id,
-                ':takedown' => [$echo_takedown ? \microtime(true) : null, $echo_takedown ? 'datetime' : 'null'],
-                ':takedown_bio' => [$echo_takedown ? $this->lodestone['bio'] : null, $echo_takedown ? 'string' : 'null'],
-                ':claim' => [$echo_claim ? \microtime(true) : null, $echo_claim ? 'datetime' : 'null'],
-                ':claim_bio' => [$echo_claim ? $this->lodestone['bio'] : null, $echo_claim ? 'string' : 'null'],
-                ':verify' => [$echo_verify ? \microtime(true) : null, $echo_verify ? 'datetime' : 'null'],
-                ':verify_bio' => [$echo_verify ? $this->lodestone['bio'] : null, $echo_verify ? 'string' : 'null'],
+                ':takedown' => [$echo_takedown_value !== null ? \microtime(true) : null, $echo_takedown_value !== null ? 'datetime' : 'null'],
+                ':takedown_value' => [$echo_takedown_value, $echo_takedown_value !== null ? 'string' : 'null'],
+                ':takedown_bio' => [$echo_takedown_value !== null ? $this->lodestone['bio'] : null, $echo_takedown_value !== null ? 'string' : 'null'],
+                ':claim' => [$echo_claim_value !== null ? \microtime(true) : null, $echo_claim_value !== null ? 'datetime' : 'null'],
+                ':claim_value' => [$echo_claim_value, $echo_claim_value !== null ? 'string' : 'null'],
+                ':claim_bio' => [$echo_claim_value !== null ? $this->lodestone['bio'] : null, $echo_claim_value !== null ? 'string' : 'null'],
+                ':verify' => [$echo_verify_value !== null ? \microtime(true) : null, $echo_verify_value !== null ? 'datetime' : 'null'],
+                ':verify_value' => [$echo_verify_value, $echo_verify_value !== null ? 'string' : 'null'],
+                ':verify_bio' => [$echo_verify_value !== null ? $this->lodestone['bio'] : null, $echo_verify_value !== null ? 'string' : 'null'],
+                ':echo_10' => [$echo_10_value !== null ? \microtime(true) : null, $echo_10_value !== null ? 'datetime' : 'null'],
+                ':echo_10_value' => [$echo_10_value, $echo_10_value !== null ? 'string' : 'null'],
+                ':echo_10_bio' => [$echo_10_value !== null ? $this->lodestone['bio'] : null, $echo_10_value !== null ? 'string' : 'null'],
             ],
         ];
     }

@@ -1,28 +1,36 @@
 <tab-menu>
     <div role="tablist" class="tab_list">
-        <a class="tab_name active" role="tab" id="tab_name_general" href="#tab_name_general" aria-controls="tab_content_general">General</a>
-        {% if not character.dates.hidden %}
+        <a class="tab_name active" role="tab" id="tab_name_general" href="#tab_name_general" aria-controls="tab_content_general"><span>General</span></a>
+        {% if character.dates.hidden == null or characters.red_flags|length > 0 %}
             {% if character.location.previous_servers or character.biology.incarnations or character.biology.old_names|length > 0 %}
-                <a class="tab_name" role="tab" id="tab_name_history" href="#tab_name_history" aria-controls="tab_content_history">History</a>
+                <a class="tab_name" role="tab" id="tab_name_history" href="#tab_name_history" aria-controls="tab_content_history"><span>History</span></a>
             {% endif %}
             {% if character.groups|length > 0 %}
-                <a class="tab_name" role="tab" id="tab_name_groups" href="#tab_name_groups" aria-controls="tab_content_groups">Groups</a>
+                <a class="tab_name" role="tab" id="tab_name_groups" href="#tab_name_groups" aria-controls="tab_content_groups"><span>Groups</span></a>
             {% endif %}
             {% if character.friends|length > 0 or character.following|length > 0 %}
-                <a class="tab_name" role="tab" id="tab_name_relationships" href="#tab_name_relationships" aria-controls="tab_content_relationships">Relationships</a>
+                <a class="tab_name" role="tab" id="tab_name_relationships" href="#tab_name_relationships" aria-controls="tab_content_relationships"><span>Relationships</span></a>
             {% endif %}
             {% if character.jobs|length > 0 %}
-                <a class="tab_name" role="tab" id="tab_name_jobs" href="#tab_name_jobs" aria-controls="tab_content_jobs">Jobs</a>
+                <a class="tab_name" role="tab" id="tab_name_jobs" href="#tab_name_jobs" aria-controls="tab_content_jobs"><span>Jobs</span></a>
             {% endif %}
             {% if character.achievements|length > 0 %}
-                <a class="tab_name" role="tab" id="tab_name_achievements" href="#tab_name_achievements" aria-controls="tab_content_achievements">Achievements</a>
+                <a class="tab_name" role="tab" id="tab_name_achievements" href="#tab_name_achievements" aria-controls="tab_content_achievements"><span>Achievements</span></a>
+            {% endif %}
+            {% if character.red_flags|length > 0 %}
+                <a class="tab_name danger" role="tab" id="tab_name_red_flags" href="#tab_name_red_flags" aria-controls="tab_content_red_flags"><span>Red Flags</span></a>
             {% endif %}
         {% endif %}
     </div>
     <div id="tab_content_general" class="tab_content active" role="tabpanel" aria-labelledby="tab_name_general">
         <section class="ff_char_page">
-            {% if not character.dates.hidden %}
+            {% if character.dates.hidden == null or characters.red_flags|length > 0 %}
                 <section class="ff_char_block">
+                    {% if character.red_flags|length > 0 %}
+                        <samp class="error white_space_normal">
+                            This character has some red flags. <a href="#tab_name_red_flags"><span>Check details</span></a>.
+                        </samp>
+                    {% endif %}
                     {% if not character.avatar_id or character.avatar_id == 'defaultf' %}
                         <img crossorigin="anonymous" loading="lazy" decoding="async" class="gallery_zoom{% if character.owned.id and session_data.user_id == character.owned.id %} ff_owned{% endif %}" id="ff_portrait_img" alt="{{ character.name }}" src="/assets/images/fftracker/silhouettes/{% if character.biology.gender == 1 %}male{% else %}female{% endif %}{{ character.biology.race }}.webp" width="640" height="873">
                     {% else %}
@@ -31,30 +39,34 @@
                 </section>
             {% endif %}
             <section class="ff_char_block">
-                {% if not character.dates.hidden %}
-                    <samp class="warning regular_text">If you own this character account, and do not want to share the data, read <a href="/talks/threads/1657" target="_blank">this article</a> to learn how to hide it.</samp>
+                {% if not character.dates.hidden and character.red_flags|length == 0 %}
+                    <samp class="warning regular_text white_space_normal">
+                        If you own this character account, and do not want to share the data, read
+                        <a href="/talks/threads/1657" target="_blank"><span>this article</span></a> to learn how to hide it.
+                    </samp>
                 {% endif %}
                 {% if character.dates.hidden %}
                     <p class="warning">
-                        Requested <a href="/talks/threads/1657" target="_blank">anonymity</a> on {{ timeTag(character.dates.hidden, 'd/m/Y') }}
+                        Requested <a href="/talks/threads/1657" target="_blank"><span>anonymity</span></a> on {{ timeTag(character.dates.hidden, 'd/m/Y') }}{% if character.red_flags|length > 0 %}, but red flags detected, so setting is ignored.{% endif %}.
                     </p>
                 {% else %}
                     <p>
                         <b>{{ character.name }}</b>{% if character.title.title %}, a.k.a
                         <i>"<a href="/fftracker/achievements/{{ character.title.id }}">
-                                <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="" src="/assets/images/fftracker/icons/{{ character.title.icon }}" width="40" height="40">
+                                <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" role="none" alt="" src="/assets/images/fftracker/icons/{{ character.title.icon }}" width="40" height="40">
                                 <span>{{ character.title.title }}</span>
-                            </a>"</i>{% if not character.owned.id %},{% endif %}{% endif %}{% if character.owned.id %}, a.k.a <i>"<a href="/users/{{ character.owned.id }}">{{ character.owned.name }}</a>"</i>,{% endif %} {% if character.dates.deleted or character.dates.hidden %}was{% else %}is{% endif %} a {% if character.biology.gender == 1 %}male{% else %}female{% endif %} <i>{{ character.biology.race }}</i> of <i>{{ character.biology.clan }}</i> clan, registered in the database on {{ timeTag(character.dates.registered, 'd/m/Y') }} with <i>{{ character.id }}</i> for ID.
+                            </a>"
+                        </i>{% if not character.owned.id %},{% endif %}{% endif %}{% if character.owned.id %}, a.k.a <i>"<a href="/users/{{ character.owned.id }}"><span>{{ character.owned.name }}</span></a>"</i>,{% endif %} {% if character.dates.deleted or character.dates.hidden %}was{% else %}is{% endif %} a {% if character.biology.gender == 1 %}male{% else %}female{% endif %} <i>{{ character.biology.race }}</i> of <i>{{ character.biology.clan }}</i> clan, registered in the database on {{ timeTag(character.dates.registered, 'd/m/Y') }} with <i>{{ character.id }}</i> for ID.
                     </p>
                     <p>
                         Born on <i>{{ character.biology.nameday }}</i> under protection of
-                        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="" class="link_icon" src="/assets/images/fftracker/guardians/{{ character.biology.guardian_id }}.webp" width="128" height="128">
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" role="none" alt="" class="link_icon" src="/assets/images/fftracker/guardians/{{ character.biology.guardian_id }}.webp" width="128" height="128">
                         <i>{{ character.biology.guardian }}</i>.{% if character.dates.deleted %}
                         <span class="failure">🪦 Died on {{ timeTag(character.dates.deleted, 'd/m/Y') }}.</span>{% endif %}
                     </p>
                     <p>
                         {% if character.dates.deleted %}Was{% else %}Currently is{% endif %} resident of
-                        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="" class="link_icon" src="/assets/images/fftracker/cities/{{ character.location.city_id }}.webp" width="1024" height="1024">
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="" role="none" class="link_icon" src="/assets/images/fftracker/cities/{{ character.location.city_id }}.webp" width="1024" height="1024">
                         <i>{{ character.location.city }}</i>,
                         <i>{{ character.location.region }}</i>{% if character.location.server %} on {{ character.location.server }} of {{ character.location.data_center }}{% endif %}.
                     </p>
@@ -64,7 +76,7 @@
                     {% if character.grand_company.name %}
                         <p>
                             Reached rank of
-                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ character.grand_company.rank }}" class="link_icon" src="/assets/images/fftracker/grandcompany/{{ character.grand_company.gc_rank_id }}.webp" width="102" height="96">
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="" role="none" class="link_icon" src="/assets/images/fftracker/grandcompany/{{ character.grand_company.gc_rank_id }}.webp" width="102" height="96">
                             <i>{{ character.grand_company.rank }}</i> in
                             <i>{{ character.grand_company.name }}</i>
                             Grand company.
@@ -86,7 +98,7 @@
                         <blockquote class="w100pc">{{ sanitize(character.biography|raw) }}</blockquote>
                     {% endif %}
                     {% if character.lodestone_url %}
-                        <p>See the record on <a href="{{ character.lodestone_url }}" target="_blank">Lodestone</a>.</p>
+                        <p>See the record on <a href="{{ character.lodestone_url }}" target="_blank"><span>Lodestone</span></a>.</p>
                     {% endif %}
                     {% if not character.dates.deleted and character.dates.scheduled %}
                         <p class="margin_top_1rem">
@@ -96,7 +108,7 @@
                 {% endif %}
                 {% if character.can_refresh %}
                     <p class="margin_top_1rem">
-                        <button class="refresh" id="ff_refresh" data-tooltip="Update character" type="button" data-link="/api/fftracker/characters/{{ character.id }}/update">
+                        <button class="refresh" id="ff_refresh" aria-label="Update character" data-tooltip="Update character" type="button" data-link="/api/fftracker/characters/{{ character.id }}/update">
                             <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Update character" src="/assets/images/refresh.svg" width="24" height="24">
                         </button>
                     </p>
@@ -104,7 +116,7 @@
             </section>
         </section>
     </div>
-    {% if not character.dates.hidden %}
+    {% if character.dates.hidden == null or characters.red_flags|length > 0 %}
         {% if character.location.previous_servers or character.biology.incarnations or character.biology.old_names|length > 0 %}
             <div class="tab_content" id="tab_content_history" role="tabpanel" aria-labelledby="tab_name_history">
                 {% if character.location.previous_servers %}
@@ -191,6 +203,7 @@
         {% if character.jobs|length > 0 %}
             <div class="tab_content" id="tab_content_jobs" role="tabpanel" aria-labelledby="tab_name_jobs">
                 <table>
+                    <caption class="hidden">Jobs</caption>
                     <thead>
                         <tr>
                             <th>Job</th>
@@ -202,7 +215,7 @@
                         {% set sum = job.level + sum ?? 0 %}
                         <tr>
                             <td>
-                                <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="" src="/assets/images/fftracker/jobs/{{ job.name }}.webp" width="256" height="256">
+                                <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" role="none" alt="" src="/assets/images/fftracker/jobs/{{ job.name }}.webp" width="256" height="256">
                                 {{ job.name }}
                             </td>
                             <td>{{ job.level }}</td>
@@ -224,9 +237,10 @@
         {% if character.achievements|length > 0 %}
             <div class="tab_content" id="tab_content_achievements" role="tabpanel" aria-labelledby="tab_name_achievements">
                 <table>
+                    <caption class="hidden">Achievements</caption>
                     <thead>
                         <tr>
-                            <th></th>
+                            <th>Icon</th>
                             <th>Achievement</th>
                             <th>Points</th>
                             <th>Date</th>
@@ -238,7 +252,7 @@
                                 <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ entity.name }}" src="/assets/images/fftracker/icons/{{ entity.icon }}" class="center_image" width="40" height="40">
                             </td>
                             <td>
-                                <a href="/fftracker/achievements/{{ entity.id }}">{{ entity.name }}</a>
+                                <a href="/fftracker/achievements/{{ entity.id }}"><span>{{ entity.name }}</span></a>
                             </td>
                             <td>{{ entity.points }}</td>
                             <td>{{ timeTag(entity.time, 'd/m/Y') }}</td>
@@ -257,5 +271,70 @@
                 </table>
             </div>
         {% endif %}
+    {% endif %}
+    {% if character.red_flags|length > 0 %}
+        <div class="tab_content" id="tab_content_red_flags" role="tabpanel" aria-labelledby="tab_name_red_flags">
+            <p>
+                Below you can find "<span class="error">red flags</span>" that were identified for this character. While not conclusive, they may indicate the character being used or involved in malicious actions.This can include stalking through exposing of in-game information circumventing Lodestone limitations.
+            </p>
+            {% if character.red_flags.echo_takedown %}
+                <h2>EchoVault Takedown</h2>
+                <p>
+                    <var>{{ character.red_flags.echo_takedown_value }}</var> was detected in character bio on {{ timeTag(character.red_flags.echo_takedown, 'd/m/Y') }}. While this tag is intended to request removal of character data from EchoVault, it can be used to hide the character using the plugin. Below is the biography field snapshot, where the flag was detected:
+                </p>
+                <details>
+                    <summary>Takedown snapshot</summary>
+                    {# This is sanitized when saving to database and when grabbed from it #}
+                    {# twig-cs-fixer-disable-next-line ForbiddenFilter #}
+                    <blockquote class="w100pc">{{ character.red_flags.echo_takedown_bio|raw }}</blockquote>
+                </details>
+            {% endif %}
+            {% if character.red_flags.echo_claim %}
+                <h2>EchoVault Claim</h2>
+                <p>
+                    <var>{{ character.red_flags.echo_claim_value }}</var> was detected in character bio on {{ timeTag(character.red_flags.echo_claim, 'd/m/Y') }}. This tag is intended to claim character in EchoVault. While that itself does not indicate data sharing, it is highly probable. Below is the biography field snapshot, where the flag was detected:
+                </p>
+                <details>
+                    <summary>Claim snapshot</summary>
+                    {# This is sanitized when saving to database and when grabbed from it #}
+                    {# twig-cs-fixer-disable-next-line ForbiddenFilter #}
+                    <blockquote class="w100pc">{{ character.red_flags.echo_claim_bio|raw }}</blockquote>
+                </details>
+            {% endif %}
+            {% if character.red_flags.echo_verify %}
+                <h2>EchoVault Claim</h2>
+                <p>
+                    <var>{{ character.red_flags.echo_verify_value }}</var> was detected in character bio on {{ timeTag(character.red_flags.echo_verify, 'd/m/Y') }}. This tag is intended to verify character in EchoVault specifically for the sake of data sharing. Below is the biography field snapshot, where the flag was detected:
+                </p>
+                <details>
+                    <summary>Verify snapshot</summary>
+                    {# This is sanitized when saving to database and when grabbed from it #}
+                    {# twig-cs-fixer-disable-next-line ForbiddenFilter #}
+                    <blockquote class="w100pc">{{ character.red_flags.echo_verify_bio|raw }}</blockquote>
+                </details>
+            {% endif %}
+            {% if character.red_flags.echo_10 %}
+                <h2>10-character code</h2>
+                <p>
+                    <var>{{ character.red_flags.echo_10_value }}</var> was detected in character bio on {{ timeTag(character.red_flags.echo_10, 'd/m/Y') }}. This <em>can</em> be an EchoVault code used to verify character for the sake of data sharing. Unfortunately, since approximately {{ timeTag('2026-09-18', 'd/m/Y') }} new EchoVault codes are too ambiguous to detected accurately. If the code captured is a regular word or otherwise is a false-positive, please, use <a href="/about/contacts"><span>this form</span></a> to contact administration about this. Below is the biography field snapshot, where the flag was detected:
+                </p>
+                <details>
+                    <summary>10-character snapshot</summary>
+                    {# This is sanitized when saving to database and when grabbed from it #}
+                    {# twig-cs-fixer-disable-next-line ForbiddenFilter #}
+                    <blockquote class="w100pc">{{ character.red_flags.echo_10_bio|raw }}</blockquote>
+                </details>
+            {% endif %}
+            {% if character.red_flags.echo_409 %}
+                <h2>EchoVault 409</h2>
+                <p>
+                    Manual validation of the character was conducted by Sunnie from <a href="https://echo-unvaulted.net" target="_blank"><span>Echo Unvaulted</span></a> and confirmed the character was fully verified in EchoVault and thus was sharing data at least at some point. This was done using an "exploit" in EchoVault, that was telling you that account was already claimed, when you attempted to do that. It looks like it may no longer be the case for accounts verified after approximately {{ timeTag('2026-09-18', 'd/m/Y') }}. Below you can see the snapshot of the HTTP communication as evidence.
+                </p>
+                <details>
+                    <summary>409 details</summary>
+                    <code class="w100pc">{{ character.red_flags.echo_409_details }}</code>
+                </details>
+            {% endif %}
+        </div>
     {% endif %}
 </tab-menu>

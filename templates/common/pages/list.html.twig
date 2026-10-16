@@ -1,3 +1,9 @@
+{% if service_name == 'fftracker' and subservice_name == 'points' %}
+    This is leaderboard based on number of achievement points earned by each character.
+{% endif %}
+{% if service_name == 'fftracker' and subservice_name == 'red_flags' %}
+    This is list of characters with potential red flags identified for them. Check each character for more details.
+{% endif %}
 {% if service_name == 'bictracker' %}
     <p>Показано {{ search_result.entities|length }} ({{ 1+((pagination.current-1)*pagination.per) }} по {{ search_result.entities|length+((pagination.current-1)*100) }}) записей из {{ search_result.count }}.</p>
 {% else %}
