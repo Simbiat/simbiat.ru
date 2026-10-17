@@ -1,42 +1,37 @@
-{% if not posts.entities %}
-    <article class="margin_05rem">
-        <p class="middle">It looks like we've got nothing in here</p>
-        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block" width="490" height="476">
-    </article>
-{% else %}
-    {% if created|date('Y/m/d H:i') != published|date('Y/m/d H:i') or pinned or closed or private or system or (access_token and get_access_token and access_token == get_access_token) %}
-        <div class="thread_icons margin_bottom_05rem">
-            {% if created|date('Y/m/d H:i') > published|date('Y/m/d H:i') %}
-                <span data-tooltip="Backlog thread created on {{ created|date('d/m/Y H:i') }}">🕰️</span>
-            {% endif %}
-            {% if created|date('Y/m/d H:i') < published|date('Y/m/d H:i') %}
-                <span data-tooltip="Scheduled thread created on {{ created|date('d/m/Y H:i') }} }}">⏲️</span>
-            {% endif %}
-            {% if pinned %}
-                <span data-tooltip="Pinned thread">📌</span>
-            {% endif %}
-            {% if closed %}
-                <span data-tooltip="Closed thread">🔒</span>
-            {% endif %}
-            {% if private %}
-                <span data-tooltip="Private thread">🚷</span>
-            {% endif %}
-            {% if system %}
-                <span data-tooltip="System thread">⚠</span>
-            {% endif %}
-            {% if access_token and get_access_token and access_token == get_access_token %}
-                <p class="warning margin_bottom_2rem">You’ve accessed this page using an access token. To be able to access the page in the future use this link: <var data-tooltip="Click to copy link">{{ canonical }}?access_token={{ access_token }}</var></p>
-            {% endif %}
-        </div>
-    {% endif %}
-    {% if session_data.user_id != 1 and session_data.username %}
-        <tab-menu class="margin_bottom_negative_05rem">
-            {{ include('talks/tabs/threads.html.twig') }}
-        </tab-menu>
-    {% endif %}
-    {% if og_image %}
-        {{ include('common/elements/ogimage.html.twig', {'og_image': og_image}, with_context = false) }}
-    {% endif %}
+{% if created|date('Y/m/d H:i') != published|date('Y/m/d H:i') or pinned or closed or private or system or (access_token and get_access_token and access_token == get_access_token) %}
+    <div class="thread_icons margin_bottom_05rem">
+        {% if created|date('Y/m/d H:i') > published|date('Y/m/d H:i') %}
+            <span data-tooltip="Backlog thread created on {{ created|date('d/m/Y H:i') }}">🕰️</span>
+        {% endif %}
+        {% if created|date('Y/m/d H:i') < published|date('Y/m/d H:i') %}
+            <span data-tooltip="Scheduled thread created on {{ created|date('d/m/Y H:i') }} }}">⏲️</span>
+        {% endif %}
+        {% if pinned %}
+            <span data-tooltip="Pinned thread">📌</span>
+        {% endif %}
+        {% if closed %}
+            <span data-tooltip="Closed thread">🔒</span>
+        {% endif %}
+        {% if private %}
+            <span data-tooltip="Private thread">🚷</span>
+        {% endif %}
+        {% if system %}
+            <span data-tooltip="System thread">⚠</span>
+        {% endif %}
+        {% if access_token and get_access_token and access_token == get_access_token %}
+            <p class="warning margin_bottom_2rem">You’ve accessed this page using an access token. To be able to access the page in the future use this link: <var data-tooltip="Click to copy link">{{ canonical }}?access_token={{ access_token }}</var></p>
+        {% endif %}
+    </div>
+{% endif %}
+{% if session_data.user_id != 1 and session_data.username %}
+    <tab-menu class="margin_bottom_negative_05rem">
+        {{ include('talks/tabs/threads.html.twig') }}
+    </tab-menu>
+{% endif %}
+{% if og_image %}
+    {{ include('common/elements/ogimage.html.twig', {'og_image': og_image}, with_context = false) }}
+{% endif %}
+{% if posts.entities %}
     {% for post in posts.entities %}
         {% set post = post|merge({'noname': true, 'allow_reply_to': true, 'no_user': false, 'no_post_id': false, 'text_only': false, 'history_version': false, 'private': false, 'noeditedtime': false}) %}
         {{ include('common/elements/post.html.twig', post) }}
@@ -44,6 +39,11 @@
             {{ include('talks/altlinks.html.twig') }}
         {% endif %}
     {% endfor %}
+{% else %}
+    <article class="margin_05rem">
+        <p class="middle">It looks like we've got nothing in here</p>
+        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block" width="490" height="476">
+    </article>
 {% endif %}
 {% if 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
     {{ include('talks/forms/post.html.twig', {'verb': 'add', 'new_thread': false, 'thread_id': id, 'text': null}, with_context = false) }}
