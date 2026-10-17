@@ -111,7 +111,7 @@ export class Posts {
             await Ajax.request({
                 url: `${location.protocol}//${location.host}/api/talks/posts/${(form_data.get('post_data[post_id]') ?? '0') as string}`,
                 form_data,
-                method: 'PATCH',
+                method: 'DELETE',
                 button,
                 /**
                  * Further processing on success.
