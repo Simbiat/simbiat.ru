@@ -31,8 +31,9 @@
         </div>
         <div id="gallery_image">
             <div id="gallery_prev" role="button" tabindex="0" data-tooltip="Previous image">❰</div>
-            {# Width and height get updated dynamically #}
-            <img crossorigin="anonymous" loading="lazy" decoding="async" id="gallery_loaded_image" alt="" src="" width="32" height="32">
+            {# Width and height get updated dynamically, crossorigin is copied from original images #}
+            <!-- eslint-disable-next-line html/require-attrs -->
+            <img loading="lazy" decoding="async" id="gallery_loaded_image" alt="placeholder" src="" width="32" height="32">
             <div id="gallery_next" role="button" tabindex="0" data-tooltip="Next image">❱</div>
         </div>
         <div id="gallery_counter">

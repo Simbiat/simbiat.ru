@@ -189,6 +189,11 @@ export class GalleryOverlay extends HTMLElement {
                 }
                 if (this.gallery_loaded_image) {
                     this.gallery_loaded_image.src = link.href;
+                    if (image.hasAttribute('crossorigin')) {
+                        this.gallery_loaded_image.setAttribute('crossorigin', image.getAttribute('crossorigin') ?? '');
+                    } else {
+                        this.gallery_loaded_image.removeAttribute('crossorigin');
+                    }
                     this.gallery_loaded_image.alt = image.getAttribute('alt') ?? '';
                     this.gallery_loaded_image.setAttribute('data-tooltip', image.getAttribute('alt') ?? '');
                 }
