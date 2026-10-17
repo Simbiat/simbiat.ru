@@ -424,7 +424,7 @@ final class Thread extends Entity
                     ) AS `posts` ON `threads`.`thread_id` = `posts`.`thread_id`
                     SET
                         `updated`=`updated`,
-                        `threads`.`posts` = `posts`.`count`,
+                        `threads`.`posts` = COALESCE(`posts`.`count`, 0),
                         `threads`.`last_post` = COALESCE(`posts`.`published`, `threads`.`published`),
                         `threads`.`last_poster` = COALESCE(`posts`.`author`, `threads`.`author`)
                     WHERE `threads`.`thread_id` = :thread_id;',
