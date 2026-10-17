@@ -811,6 +811,7 @@ final class Thread extends Entity
         foreach ($this->subscribers as $subscriber) {
             if (
                 $author !== $subscriber
+                && $_SESSION['user_id'] !== $subscriber
                 && !\in_array($subscriber, SystemUser::getSystemUsers(), true)
             ) {
                 (void) new ThreadChange()->save($subscriber, $for_notification);
