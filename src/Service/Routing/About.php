@@ -26,7 +26,7 @@ final class About extends Router
     protected string $service_name = 'about';
 
     /**
-     * This is the actual page generation based on further details of the $path
+     * This is the actual page generation based on further details of the $path.
      *
      * @param array $path
      *

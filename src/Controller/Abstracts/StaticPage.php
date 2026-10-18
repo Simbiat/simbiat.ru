@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Abstracts;
 
 /**
- * Class for static pages, not requiring database connection
+ * Class for static pages, not requiring database connection.
  */
 abstract class StaticPage extends Page
 {
@@ -16,7 +16,7 @@ abstract class StaticPage extends Page
     protected string $cache_strategy = 'week';
 
     /**
-     * Static pages have all the data in Twig templates, thus we usually return an empty array
+     * Static pages have all the data in Twig templates, thus we usually return an empty array.
      *
      * @param array $path
      *

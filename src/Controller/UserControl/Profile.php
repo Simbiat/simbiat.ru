@@ -37,10 +37,10 @@ final class Profile extends Page
     {
         $output_array = [];
         $output_array['user_data'] = new User($_SESSION['user_id'])->getArray();
-        $now = new \DateTime();
+        $now = new \DateTimeImmutable();
         $output_array['timezones'] = [];
         foreach (\timezone_identifiers_list() as $timezone) {
-            $now->setTimezone(new \DateTimeZone($timezone));
+            $now = $now->setTimezone(new \DateTimeZone($timezone));
             $output_array['timezones'][$timezone] = ['offset' => \sprintf('%+03d:%02d', (int) ($now->getOffset() / 3600), \abs((int) ($now->getOffset() % 3600 / 60))), 'current' => ($timezone === $output_array['user_data']['timezone'])];
         }
 

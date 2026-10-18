@@ -17,12 +17,12 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Various commands for Talks
+ * Various commands for Talks.
  */
 final class Talks
 {
     /**
-     * Clean old avatars
+     * Clean old avatars.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -32,6 +32,7 @@ final class Talks
     public function cleanAvatars(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Cleaning old avatars...'));
+
         try {
             // Connect to DB
             Config::dbConnect();
@@ -74,7 +75,7 @@ final class Talks
     }
 
     /**
-     * Lock posts older than 1 day so that only users with special permission can edit them
+     * Lock posts older than 1 day so that only users with special permission can edit them.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -84,6 +85,7 @@ final class Talks
     public function lockPosts(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Locking posts...'));
+
         try {
             // Connect to DB
             Config::dbConnect();
@@ -100,7 +102,7 @@ final class Talks
     }
 
     /**
-     * Close tickets that have been inactive for some time
+     * Close tickets that have been inactive for some time.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -130,7 +132,7 @@ final class Talks
     }
 
     /**
-     * Remove empty threads older than 1 day
+     * Remove empty threads older than 1 day.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -140,6 +142,7 @@ final class Talks
     public function removeEmptyThreads(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Removing empty threads...'));
+
         try {
             // Connect to DB
             Config::dbConnect();

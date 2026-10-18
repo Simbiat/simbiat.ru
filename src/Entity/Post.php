@@ -9,8 +9,8 @@ namespace App\Entity;
 use App\Enum\SystemUser;
 use App\Notification\NewPost;
 use App\Notification\PostChange;
-use App\Notification\TicketNewPost;
 use App\Notification\TicketCreation;
+use App\Notification\TicketNewPost;
 use App\Service\Errors;
 use App\Service\Sanitization;
 use App\Service\Search\Posts;
@@ -19,7 +19,7 @@ use Simbiat\Database\Query;
 use Simbiat\StringHelpers\Sanitize;
 
 /**
- * Forum post
+ * Forum post.
  */
 final class Post extends Entity
 {
@@ -58,7 +58,7 @@ final class Post extends Entity
     public ?string $access_token = null;
 
     /**
-     * Get post's history only if the respective permission is available. Text is retrieved only for a specific version if it exists
+     * Get post's history only if the respective permission is available. Text is retrieved only for a specific version if it exists.
      *
      * @param float $time
      *
@@ -84,7 +84,7 @@ final class Post extends Entity
     }
 
     /**
-     * Like the post
+     * Like the post.
      *
      * @param bool $dislike
      *
@@ -135,6 +135,7 @@ final class Post extends Entity
 
             return ['http_error' => 500, 'reason' => 'Failed to remove '.($dislike ? 'dis' : '').'like from post'];
         }
+
         // Insert/update the value
         try {
             $result = Query::query(
@@ -152,7 +153,7 @@ final class Post extends Entity
     }
 
     /**
-     * Move thread to another section
+     * Move thread to another section.
      *
      * @return array
      */
@@ -176,6 +177,7 @@ final class Post extends Entity
         if ($parent->id === null) {
             return ['http_error' => 400, 'reason' => 'Thread with ID `'.$data['thread_id'].'` does not exist'];
         }
+
         try {
             $affected = Query::query(
                 'UPDATE `talks__posts` SET `thread_id`=:thread_id, `updated`=`updated` WHERE `post_id`=:post_id;',
@@ -198,7 +200,7 @@ final class Post extends Entity
     }
 
     /**
-     * Add post
+     * Add post.
      *
      * @param bool $first_post Whether this is first post in thread
      *
@@ -219,6 +221,7 @@ final class Post extends Entity
         if (\is_array($sanitize)) {
             return $sanitize;
         }
+
         try {
             // Create the post itself
             $new_id = Query::query(
@@ -250,8 +253,8 @@ final class Post extends Entity
             $thread->updateStats();
             $new_location = '/talks/threads/'.$this->thread_id.($thread->last_page === 1 ? '' : '?page='.$thread->last_page);
             if (
-                $thread->type === 'Support' &&
-                $thread->author === SystemUser::Unknown->value
+                $thread->type === 'Support'
+                && $thread->author === SystemUser::Unknown->value
             ) {
                 // If we are here, it means that we need to update ticket's token
                 $this->tokenUpdate($thread->email ?? $_POST['thread_data']['contact_form_email'] ?? null, $first_post);
@@ -275,11 +278,11 @@ final class Post extends Entity
             }
             if (
                 // Not anonymous
-                $thread->author !== (int) $_SESSION['user_id'] &&
+                $thread->author !== (int) $_SESSION['user_id']
                 // Not a subscriber already
-                !\in_array((int) $_SESSION['user_id'], $thread->subscribers, true) &&
+                && !\in_array((int) $_SESSION['user_id'], $thread->subscribers, true)
                 // Has no previous posts in the thread. If there are posts, but not a subscriber - means, that user unsubscribed before.
-                !Query::query(
+                && !Query::query(
                     'SELECT `author` FROM `talks__posts` WHERE `thread_id`=:thread_id AND `author`=:user_id AND `post_id`!=:post_id;',
                     [
                         ':post_id' => [$new_id, 'int'],
@@ -307,7 +310,7 @@ final class Post extends Entity
     }
 
     /**
-     * Edit post
+     * Edit post.
      *
      * @return array<string, int|string>
      */
@@ -359,6 +362,7 @@ final class Post extends Entity
             // Do not do anything
             return $success;
         }
+
         try {
             // Prepare queries
             $queries = [];
@@ -399,7 +403,7 @@ final class Post extends Entity
     }
 
     /**
-     * Delete post
+     * Delete post.
      *
      * @return array
      */
@@ -424,6 +428,7 @@ final class Post extends Entity
         $location = !empty($this->thread_id)
             ? '/talks/threads/'.$this->thread_id
             : '/talks/sections';
+
         // Attempt removal. We also need to update thread details
         try {
             $affected = Query::query(
@@ -445,7 +450,7 @@ final class Post extends Entity
     }
 
     /**
-     * Get data from DB
+     * Get data from DB.
      *
      * @return array
      */
@@ -463,14 +468,14 @@ final class Post extends Entity
         // Get details of a post, to which this is a reply to
         if (!empty($data['reply_to'])) {
             $data['reply_to'] = new Posts([':post_id' => [$data['reply_to'], 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`post_id`=:post_id')->listEntities();
-            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             if (
                 \is_array($data['reply_to'])
                 && empty($data['reply_to']['entities'])
             ) {
                 $data['reply_to'] = [];
             } else {
-                /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+                /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
                 $data['reply_to'] = $data['reply_to']['entities'][0];
             }
         } else {
@@ -484,7 +489,7 @@ final class Post extends Entity
     }
 
     /**
-     * Function process database data
+     * Function process database data.
      *
      * @param array $from_db
      *
@@ -526,7 +531,7 @@ final class Post extends Entity
     }
 
     /**
-     * Get page number
+     * Get page number.
      *
      * @param int $thread
      *
@@ -535,6 +540,7 @@ final class Post extends Entity
     private function getPage(int $thread): int
     {
         $posts = [];
+
         try {
             // Regular list does not fit due to pagination and due to excessive data, so using a custom query to get all posts
             $posts = Query::query('SELECT `post_id` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `published`<=CURRENT_TIMESTAMP(6)').' ORDER BY `published`;', [':thread_id' => [$thread, 'int']], return: 'column');
@@ -582,9 +588,9 @@ final class Post extends Entity
     }
 
     /**
-     * Update token linked to a ticket, where post is made
+     * Update token linked to a ticket, where post is made.
      *
-     * @param string|null $email      Email to send notification to
+     * @param null|string $email      Email to send notification to
      * @param bool        $first_post Whether this is first post
      *
      * @return void
@@ -606,6 +612,7 @@ final class Post extends Entity
             return;
         }
         $new_token = \uuid_create(7);
+
         try {
             if ($this->access_token === null) {
                 $affected = Query::query('INSERT INTO `talks__contact_form` (`thread_id`, `email`, `access_token`) VALUES (:thread_id, :email, :token);', [':token' => $new_token, ':email' => [$email, ($email === null || $email === '' ? 'null' : 'string')], ':thread_id' => $this->thread_id], return: 'affected');
@@ -636,7 +643,7 @@ final class Post extends Entity
     }
 
     /**
-     * Attach file(s) to a post
+     * Attach file(s) to a post.
      *
      * @param array $regular List of files that will be displayed "near" the post
      * @param array $inline  List of files that will be displayed inside the post itself
@@ -678,7 +685,7 @@ final class Post extends Entity
     }
 
     /**
-     * Helper to add text to history
+     * Helper to add text to history.
      *
      * @param string $text
      *
@@ -701,13 +708,13 @@ final class Post extends Entity
     }
 
     /**
-     * Sanitize the data
+     * Sanitize the data.
      *
      * @param array $data
      *
-     * @return bool|array
+     * @return array|bool
      */
-    private function sanitizeInput(array &$data): bool|array
+    private function sanitizeInput(array &$data): array|bool
     {
         if (\count($data) === 0) {
             return ['http_error' => 400, 'reason' => 'No form data provided'];
@@ -756,15 +763,15 @@ final class Post extends Entity
         $this->access_token = $parent->access_token;
         if (
             // If we are in Support section
-            $this->type === 'Support' &&
+            $this->type === 'Support'
             // Posting in a thread created by unknown user (through Contact Form)
-            $parent->author === SystemUser::Unknown->value &&
+            && $parent->author === SystemUser::Unknown->value
             // And we are an unknown user ourselves
-            $parent->author === $_SESSION['user_id'] &&
+            && $parent->author === $_SESSION['user_id']
             // And thread has an empty access token or our access token does not equal the thread's token
-            ($this->access_token === null || $this->access_token === '' || $this->access_token !== ($_GET['access_token'] ?? '')) &&
+            && ($this->access_token === null || $this->access_token === '' || $this->access_token !== ($_GET['access_token'] ?? ''))
             // And we are also lacking `can_post` permission (so most likely posting in the thread directly)
-            !\in_array('can_post', $_SESSION['permissions'], true)
+            && !\in_array('can_post', $_SESSION['permissions'], true)
         ) {
             // Return same error as when no permission to minimize chances of brute-forcing the token
             return ['http_error' => 403, 'reason' => 'No `can_post` permission'];
@@ -792,11 +799,11 @@ final class Post extends Entity
         if (
             (
                 // If the current text is empty (a new post is being created)
-                $this->text === '' ||
+                $this->text === ''
                 // Or it's not empty and is different from the one we are trying to set
-                $this->text !== $data['text']
-            ) &&
-            \is_int($post_exists)
+                || $this->text !== $data['text']
+            )
+            && \is_int($post_exists)
         ) {
             return ['http_error' => 409, 'reason' => 'Post already exists in thread.', 'location' => '/talks/posts/'.$post_exists];
         }

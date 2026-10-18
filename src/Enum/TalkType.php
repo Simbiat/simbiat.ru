@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Enum;
 
 /**
- * Mapping of talks types to
+ * Mapping of talks types to.
  */
 enum TalkType: int
 {

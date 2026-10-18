@@ -14,12 +14,12 @@ use Simbiat\StringHelpers\Convert;
 use Twig\Extension\RuntimeExtensionInterface;
 
 /**
- * Collection of methods to pass to expose to Twig
+ * Collection of methods to pass to expose to Twig.
  */
 final class RuntimeExtension implements RuntimeExtensionInterface
 {
     /**
-     * Generate a link for the file
+     * Generate a link for the file.
      *
      * @param string $filename
      *
@@ -32,19 +32,19 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     }
 
     /**
-     * Format numeric as bytes
+     * Format numeric as bytes.
      *
-     * @param int|string|float $bytes
+     * @param float|int|string $bytes
      *
      * @return string
      */
-    public function cuteBytes(int|string|float $bytes): string
+    public function cuteBytes(float|int|string $bytes): string
     {
         return CuteBytes::bytes($bytes);
     }
 
     /**
-     * Generate breadcrumbs
+     * Generate breadcrumbs.
      *
      * @param array $items
      *
@@ -56,7 +56,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     }
 
     /**
-     * Generate timeline
+     * Generate timeline.
      *
      * @param array $items    Array of items
      * @param int   $br_limit Maximum number of `<br>` elements between items
@@ -69,7 +69,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     }
 
     /**
-     * Generate pagination
+     * Generate pagination.
      *
      * @param int    $current Current page
      * @param int    $total   Total pages
@@ -83,7 +83,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     }
 
     /**
-     * PHP's basename function
+     * PHP's basename function.
      *
      * @param string $string
      *
@@ -95,7 +95,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     }
 
     /**
-     * PHP's is_numeric function
+     * PHP's is_numeric function.
      *
      * @param mixed $string
      *
@@ -109,7 +109,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     }
 
     /**
-     * Sanitize HTML string
+     * Sanitize HTML string.
      *
      * @param string $string
      * @param bool   $head
@@ -122,7 +122,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     }
 
     /**
-     * Generate `<time>` tag
+     * Generate `<time>` tag.
      *
      * @param int|string $string
      * @param string     $format
@@ -147,7 +147,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     }
 
     /**
-     * Generate `<link>` tags
+     * Generate `<link>` tags.
      *
      * @param array  $links
      * @param string $type
@@ -160,7 +160,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     }
 
     /**
-     * Prettify URL
+     * Prettify URL.
      *
      * @param string $string
      *

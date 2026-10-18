@@ -13,14 +13,14 @@ use Simbiat\StringHelpers\Decode;
 use Simbiat\StringHelpers\Encode;
 
 /**
- * Various security stuff
+ * Various security stuff.
  */
 final class Security
 {
     public const string EMAIL_REGEX = '/^[a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/u';
 
     /**
-     * Function to hash password. Used mostly as a wrapper in case of future changes
+     * Function to hash password. Used mostly as a wrapper in case of future changes.
      *
      * @param string $password
      *
@@ -59,7 +59,7 @@ final class Security
     }
 
     /**
-     * Function to decrypt stuff
+     * Function to decrypt stuff.
      *
      * @param string $data
      *
@@ -85,7 +85,7 @@ final class Security
     }
 
     /**
-     * Function to generate tokens (for example, CSRF)
+     * Function to generate tokens (for example, CSRF).
      *
      * @param int $length
      *
@@ -103,7 +103,7 @@ final class Security
     }
 
     /**
-     * Function to generate passphrase for encrypt and decrypt functions
+     * Function to generate passphrase for encrypt and decrypt functions.
      *
      * @return string
      *
@@ -117,18 +117,18 @@ final class Security
     }
 
     /**
-     * Function to log actions
+     * Function to log actions.
      *
      * @param int        $type    Action type
      * @param string     $action  Message of the action
-     * @param mixed|null $extras  Extra data related to the action
-     * @param int|null   $user_id User ID of the user that triggered the action
+     * @param null|mixed $extras  Extra data related to the action
+     * @param null|int   $user_id User ID of the user that triggered the action
      *
      * @return bool
      */
     public static function log(int $type, string $action, mixed $extras = null, ?int $user_id = null): bool
     {
-        /** @noinspection IsEmptyFunctionUsageInspection Valid case, since mixed type */
+        /* @noinspection IsEmptyFunctionUsageInspection Valid case, since mixed type */
         if (
             !empty($extras)
             && !\is_scalar($extras)
@@ -150,6 +150,7 @@ final class Security
         }
         // Get User Agent
         $ua = $_SESSION['useragent']['full'] ?? null;
+
         try {
             Query::query(
                 'INSERT INTO `sys__logs` (`time`, `type`, `action`, `user_id`, `ip`, `user_agent`, `extra`) VALUES (CURRENT_TIMESTAMP(6), :type, :action, :user_id, :ip, :ua, :extras);',
@@ -182,7 +183,7 @@ final class Security
     }
 
     /**
-     * Sanitize URLs and remove tracking query parameters from them
+     * Sanitize URLs and remove tracking query parameters from them.
      *
      * @param string $url
      *
@@ -203,7 +204,7 @@ final class Security
             return '';
         }
         // Parse the query string into an associative array
-        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         \parse_str($parsed_url['query'] ?? '', $query_params);
         // Remove tracking parameters
         foreach ($query_params as $param => $value) {
@@ -212,7 +213,7 @@ final class Security
             }
         }
         // Rebuild the query string
-        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         $parsed_url['query'] = IRI::rawBuildQuery($query_params);
 
         // Reconstruct the full URL

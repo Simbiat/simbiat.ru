@@ -12,14 +12,14 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Generate sitemap
+ * Generate sitemap.
  */
 final class Sitemap
 {
     private array $index_files = ['index', 'fftracker'];
 
     /**
-     * Generate sitemap
+     * Generate sitemap.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -29,6 +29,7 @@ final class Sitemap
     public function sitemap(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Generating sitemap...'));
+
         try {
             // Connect to DB
             Config::dbConnect();

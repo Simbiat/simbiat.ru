@@ -16,12 +16,12 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Different cleaning tasks
+ * Different cleaning tasks.
  */
 final class Clean
 {
     /**
-     * Clean old sessions
+     * Clean old sessions.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -52,7 +52,7 @@ final class Clean
     }
 
     /**
-     * Clean old cookies
+     * Clean old cookies.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -62,6 +62,7 @@ final class Clean
     public function cookies(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Cleaning old cookies...'));
+
         try {
             // Connect to DB
             Config::dbConnect();
@@ -102,7 +103,7 @@ final class Clean
     }
 
     /**
-     * Clean old logs
+     * Clean old logs.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -112,6 +113,7 @@ final class Clean
     public function logs(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Cleaning old logs...'));
+
         try {
             // Connect to DB
             Config::dbConnect();
@@ -131,7 +133,7 @@ final class Clean
     }
 
     /**
-     * Clean old statistics
+     * Clean old statistics.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -141,6 +143,7 @@ final class Clean
     public function statistics(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Cleaning old statistics...'));
+
         try {
             // Connect to DB
             Config::dbConnect();
@@ -162,7 +165,7 @@ final class Clean
     }
 
     /**
-     * Remove dead links
+     * Remove dead links.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -172,6 +175,7 @@ final class Clean
     public function deadLinks(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Removing dead links...'));
+
         try {
             // Connect to DB
             Config::dbConnect();
@@ -190,7 +194,7 @@ final class Clean
     }
 
     /**
-     * Clean uploaded files that either do not physically exist or are not linked as an avatar, attachment, or og:image
+     * Clean uploaded files that either do not physically exist or are not linked as an avatar, attachment, or og:image.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -200,6 +204,7 @@ final class Clean
     public function uploads(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Removing unused uploaded files...'));
+
         try {
             // Connect to DB
             Config::dbConnect();
@@ -219,7 +224,7 @@ final class Clean
                     // Remove from DB
                     Query::query('DELETE FROM `sys__files` WHERE `file_id`=:file_id;', [':file_id' => $file['file_id']]);
                     // Remove from drive
-                    /** @noinspection PhpUsageOfSilenceOperatorInspection */
+                    /* @noinspection PhpUsageOfSilenceOperatorInspection */
                     @\unlink($full_path);
                 }
                 // Get all files from the drive
@@ -240,12 +245,12 @@ final class Clean
                         // Log the removal
                         Security::log(LogType::FileUpload->value, 'Automatically deleted file', \basename($file), user_id: SystemUser::System->value);
                         // Remove the file
-                        /** @noinspection PhpUsageOfSilenceOperatorInspection */
+                        /* @noinspection PhpUsageOfSilenceOperatorInspection */
                         @\unlink($file);
                         // Remove a directory tree, if empty
                         foreach ($dirs as $dir) {
                             if (!new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS)->valid()) {
-                                /** @noinspection PhpUsageOfSilenceOperatorInspection */
+                                /* @noinspection PhpUsageOfSilenceOperatorInspection */
                                 @\rmdir($dir);
                             }
                         }
@@ -262,7 +267,7 @@ final class Clean
     }
 
     /**
-     * Remove old notifications
+     * Remove old notifications.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -272,6 +277,7 @@ final class Clean
     public function notifications(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Removing old notifications...'));
+
         try {
             // Connect to DB
             Config::dbConnect();
@@ -288,7 +294,7 @@ final class Clean
     }
 
     /**
-     * Reset OPCache, both for web and CLI
+     * Reset OPCache, both for web and CLI.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *

@@ -14,27 +14,27 @@ use Simbiat\Database\Query;
 use Simbiat\StringHelpers\Sanitize;
 
 /**
- * Class to process the BIC library
+ * Class to process the BIC library.
  */
 final class BICLibrary
 {
     /**
-     * Base link where we download BIC files
+     * Base link where we download BIC files.
      */
     public const string BIC_DOWN_BASE = 'https://www.cbr.ru/PSystem/payment_system/?UniDbQuery.Posted=True&UniDbQuery.To=';
 
     /**
-     * Base link for href attribute
+     * Base link for href attribute.
      */
     public const string BIC_BASE_HREF = 'https://www.cbr.ru';
 
     /**
-     * Date from the XML file
+     * Date from the XML file.
      */
     private string $file_date;
 
     /**
-     * Queries to process
+     * Queries to process.
      */
     private array $queries = [];
 
@@ -48,11 +48,11 @@ final class BICLibrary
     }
 
     /**
-     * Function to update the library in the database
+     * Function to update the library in the database.
      */
-    public function update(bool $manual = false): string|bool|int
+    public function update(bool $manual = false): bool|int|string
     {
-        $current_date = \DateTime::createFromTimestamp(\time());
+        $current_date = \DateTimeImmutable::createFromTimestamp(\time());
         // Get the date of the current library
         $lib_date = $this->bicDate();
         $lib_date_initial = $lib_date->format('Y-m-d');
@@ -62,7 +62,7 @@ final class BICLibrary
                 if ($download === true) {
                     // The day does not have a library, skip it
                     $this->log($lib_date->format('d.m.Y'), 'Библиотека за день не найдена: день пропущен', $manual);
-                    $lib_date->add(new \DateInterval('P1D'));
+                    $lib_date = $lib_date->add(new \DateInterval('P1D'));
 
                     continue;
                 }
@@ -373,7 +373,7 @@ final class BICLibrary
                     return $lib_date->getTimestamp();
                 }
                 // Increase by 1 day
-                $lib_date->add(new \DateInterval('P1D'));
+                $lib_date = $lib_date->add(new \DateInterval('P1D'));
             } catch (\Throwable $exception) {
                 $error = $exception->getMessage()."\r\n".$exception->getTraceAsString();
                 $this->log($lib_date->format('d.m.Y'), $error, $manual);
@@ -389,23 +389,23 @@ final class BICLibrary
     }
 
     /**
-     * Function to get the current library date
+     * Function to get the current library date.
      *
-     * @return \DateTime
+     * @return \DateTimeImmutable
      */
-    public function bicDate(): \DateTime
+    public function bicDate(): \DateTimeImmutable
     {
         try {
             $date = Query::query('SELECT `value` FROM `bic__settings` WHERE `setting`=\'date\';', return: 'value');
 
-            return \DateTime::createFromFormat('d.m.Y', $date);
+            return \DateTimeImmutable::createFromFormat('!d.m.Y', $date);
         } catch (\Throwable) {
-            return \DateTime::createFromTimestamp(\time());
+            return \DateTimeImmutable::createFromTimestamp(\time());
         }
     }
 
     /**
-     * Get a BIC from DB
+     * Get a BIC from DB.
      */
     private function getBIC(string $bic): array
     {
@@ -427,7 +427,7 @@ final class BICLibrary
     }
 
     /**
-     * Get restrictions
+     * Get restrictions.
      */
     private function getRestrictions(string $bic): array
     {
@@ -439,7 +439,7 @@ final class BICLibrary
     }
 
     /**
-     * Get SWIFT accounts
+     * Get SWIFT accounts.
      */
     private function getSWIFTs(string $bic): array
     {
@@ -451,7 +451,7 @@ final class BICLibrary
     }
 
     /**
-     * #Get accounts
+     * #Get accounts.
      */
     private function getAccounts(string $bic): array
     {
@@ -471,7 +471,7 @@ final class BICLibrary
     }
 
     /**
-     * Get account restrictions
+     * Get account restrictions.
      */
     private function getAccountRestrictions(string $account): array
     {
@@ -490,7 +490,7 @@ final class BICLibrary
     }
 
     /**
-     * Get all BICs
+     * Get all BICs.
      */
     private function getBICs(): array
     {
@@ -498,7 +498,7 @@ final class BICLibrary
     }
 
     /**
-     * Close BIC
+     * Close BIC.
      *
      * @param string $bic
      *
@@ -523,10 +523,10 @@ final class BICLibrary
     }
 
     /**
-     * End a restriction
+     * End a restriction.
      *
      * @param string     $bic         BIC we are working with
-     * @param array|null $restriction Restriction(s) to close. If `null`, will close all restrictions.
+     * @param null|array $restriction Restriction(s) to close. If `null`, will close all restrictions.
      *
      * @return array
      */
@@ -565,15 +565,15 @@ final class BICLibrary
     }
 
     /**
-     * Close SWIFT
+     * Close SWIFT.
      *
      * @param string          $bic     BIC we are working with
-     * @param string|null     $swift   SWIFT to close
-     * @param string|int|bool $default Whether this is a default BIC or not
+     * @param null|string     $swift   SWIFT to close
+     * @param bool|int|string $default Whether this is a default BIC or not
      *
      * @return array
      */
-    private function closeSwift(string $bic, ?string $swift = null, string|int|bool $default = false): array
+    private function closeSwift(string $bic, ?string $swift = null, bool|int|string $default = false): array
     {
         if (Sanitize::whiteString($bic)) {
             return [];
@@ -604,10 +604,10 @@ final class BICLibrary
     }
 
     /**
-     * Close account(s)
+     * Close account(s).
      *
      * @param string      $bic     BIC we are working with
-     * @param string|null $account Account to close. If `null`, all accounts will be closed.
+     * @param null|string $account Account to close. If `null`, all accounts will be closed.
      *
      * @return void
      */
@@ -644,11 +644,11 @@ final class BICLibrary
     }
 
     /**
-     * End account restrictions
+     * End account restrictions.
      *
      * @param string     $bic         BIC we are working with
      * @param bool       $account     Account we are working with
-     * @param array|null $restriction Restriction(s) to close. If `null`, will close all restrictions
+     * @param null|array $restriction Restriction(s) to close. If `null`, will close all restrictions
      *
      * @return array
      */
@@ -699,7 +699,7 @@ final class BICLibrary
     }
 
     /**
-     * Function to log updates
+     * Function to log updates.
      *
      * @param string $bic_date
      * @param string $message
@@ -713,9 +713,9 @@ final class BICLibrary
     }
 
     /**
-     * Function to download BIC
+     * Function to download BIC.
      */
-    private function download(\DateTime $date): bool|string
+    private function download(\DateTimeImmutable $date): bool|string
     {
         // Generate the zip path
         $file_name = \sys_get_temp_dir().'/'.$date->format('Ymd').'_ED807_full.xml';
@@ -756,7 +756,7 @@ final class BICLibrary
                             $zip->close();
                         }
                         // Remove zip file
-                        /** @noinspection PhpUsageOfSilenceOperatorInspection */
+                        /* @noinspection PhpUsageOfSilenceOperatorInspection */
                         @\unlink($bic_file);
                         // Check if the ED807 file exists
                         if (\file_exists($file_name)) {

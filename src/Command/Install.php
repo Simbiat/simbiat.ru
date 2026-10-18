@@ -18,22 +18,24 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Run once to install the necessary stuff for the service to work correctly
+ * Run once to install the necessary stuff for the service to work correctly.
  */
 final class Install
 {
     /**
-     * Inject dependencies
+     * Inject dependencies.
      *
      * @param \Doctrine\DBAL\Connection $connection
      */
     public function __construct(
-        /** @noinspection InterfacesAsConstructorDependenciesInspection */
+        /**
+         * @noinspection InterfacesAsConstructorDependenciesInspection
+         */
         private Connection $connection,
     ) {}
 
     /**
-     * Run once to install the necessary stuff for the service to work correctly
+     * Run once to install the necessary stuff for the service to work correctly.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -43,6 +45,7 @@ final class Install
     public function install(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Installing the app...'));
+
         try {
             // TODO: Need to figure out a way to prevent run for the 2nd time
             return Command::SUCCESS;

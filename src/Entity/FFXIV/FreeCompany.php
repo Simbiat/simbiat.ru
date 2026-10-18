@@ -13,7 +13,7 @@ use Simbiat\Database\Query;
 use Simbiat\FFXIV\Lodestone;
 
 /**
- * Class representing a FFXIV free company (guild)
+ * Class representing a FFXIV free company (guild).
  */
 final class FreeCompany extends AbstractEntity
 {
@@ -38,17 +38,18 @@ final class FreeCompany extends AbstractEntity
     public array $past_members = [];
 
     /**
-     * Get data from Lodestone
+     * Get data from Lodestone.
      *
      * @param bool $allow_sleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
      *
      * @internal
      *
-     * @return string|array
+     * @return array|string
      */
-    public function getFromLodestone(bool $allow_sleep = false): string|array
+    public function getFromLodestone(bool $allow_sleep = false): array|string
     {
         $lodestone = new Lodestone();
+
         try {
             $data = $lodestone->getFreeCompany($this->id)->getFreeCompanyMembers($this->id, 0)->getResult();
         } catch (\Throwable $exception) {
@@ -104,7 +105,7 @@ final class FreeCompany extends AbstractEntity
     }
 
     /**
-     * Function to get initial data from DB
+     * Function to get initial data from DB.
      *
      * @throws \Exception
      */
@@ -129,7 +130,7 @@ final class FreeCompany extends AbstractEntity
     }
 
     /**
-     * Function to process data from DB
+     * Function to process data from DB.
      *
      * @param array $from_db
      *
@@ -203,7 +204,7 @@ final class FreeCompany extends AbstractEntity
     }
 
     /**
-     * Function to update the free company
+     * Function to update the free company.
      *
      * @return bool
      */
@@ -368,7 +369,7 @@ final class FreeCompany extends AbstractEntity
         }
     }
 
-    /** Delete free company
+    /** Delete free company.
      *
      * @return bool
      */

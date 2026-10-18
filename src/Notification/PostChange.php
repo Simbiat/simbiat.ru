@@ -8,27 +8,27 @@ use App\Service\Config;
 use App\Service\Errors;
 
 /**
- * Notifications about changes to posts for post author
+ * Notifications about changes to posts for post author.
  */
 final class PostChange extends Notification
 {
     /**
-     * Subject for email
+     * Subject for email.
      */
     protected const string SUBJECT = 'Post edited';
 
     /**
-     * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
+     * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high.
      */
     protected const int PRIORITY = 2;
 
     /**
-     * Whether to send to all emails registered for the user
+     * Whether to send to all emails registered for the user.
      */
     protected const bool ALL_EMAILS = true;
 
     /**
-     * Generate text for message
+     * Generate text for message.
      *
      * @param array $twig_vars Array of variables for Twig
      *

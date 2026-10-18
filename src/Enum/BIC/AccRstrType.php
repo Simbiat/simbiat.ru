@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Enum\BIC;
 
 /**
- * Account restriction codes (applied to individual accounts)
+ * Account restriction codes (applied to individual accounts).
  */
 enum AccRstrType: string
 {

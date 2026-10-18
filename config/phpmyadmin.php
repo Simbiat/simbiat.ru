@@ -1,10 +1,11 @@
 <?php
+
 /**
- * Custom PHPMyAdmin settings that differ from defaults. Explanations at https://docs.phpmyadmin.net/
+ * Custom PHPMyAdmin settings that differ from defaults. Explanations at https://docs.phpmyadmin.net/.
  */
 declare(strict_types=1);
 
-/**
+/*
  * Disallow editing of binary fields
  * valid values are:
  *   false - allow editing

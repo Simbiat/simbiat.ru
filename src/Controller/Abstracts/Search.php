@@ -9,7 +9,7 @@ use App\Service\Sanitization;
 use Simbiat\http20\Headers;
 
 /**
- * Search page
+ * Search page.
  */
 abstract class Search extends Page
 {
@@ -35,7 +35,7 @@ abstract class Search extends Page
     protected string $search_for = '';
 
     /**
-     * Check if types are properly set
+     * Check if types are properly set.
      *
      * @return void
      */
@@ -54,7 +54,7 @@ abstract class Search extends Page
     }
 
     /**
-     * Sanitize search term
+     * Sanitize search term.
      *
      * @param string $term
      *
@@ -81,7 +81,7 @@ abstract class Search extends Page
     }
 
     /**
-     * Generation of the page data
+     * Generation of the page data.
      *
      * @param array $path
      *
@@ -132,7 +132,7 @@ abstract class Search extends Page
     }
 
     /**
-     * Get date from results
+     * Get date from results.
      *
      * @param array $results
      *
@@ -155,7 +155,7 @@ abstract class Search extends Page
     }
 
     /**
-     * Add any extra fields, if required by overriding this function
+     * Add any extra fields, if required by overriding this function.
      *
      * @return array
      */

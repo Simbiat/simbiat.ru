@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace App\Entity\FFXIV;
 
+use App\Entity\Entity;
 use App\HomePage;
 use App\Service\Config;
 use App\Service\Errors;
@@ -15,96 +16,28 @@ use Simbiat\Cron\TaskInstance;
 use Simbiat\Database\Query;
 
 /**
- * Generic class for FFXIV entities
+ * Generic class for FFXIV entities.
  */
-abstract class AbstractEntity
+abstract class AbstractEntity extends Entity
 {
     // Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of the same object for different sets of data
     protected const string ENTITY_TYPE = 'character';
 
-    public ?string $id = null;
-
     public string $name = '';
 
-    // If ID was retrieved, this needs to not be null
-    protected bool $attempted = false;
-
-    // Format for IDs
-    protected string $id_format = '/^\d+$/m';
-
-    protected null|array $lodestone = null;
+    protected ?array $lodestone = null;
 
     /**
-     * Get entity properties
+     * Attempt to schedule an update for the entity.
      *
-     * @return $this
-     */
-    final public function get(): self
-    {
-        // Set the flag that we have tried to get data
-        $this->attempted = true;
-        try {
-            // Set ID
-            if ($this->id === null) {
-                throw new \UnexpectedValueException('ID can\'t be empty.');
-            }
-            // Get data
-            $result = $this->getFromDB();
-            if (empty($result)) {
-                // Reset ID
-                $this->id = null;
-            } else {
-                $this->process($result);
-            }
-        } catch (\Throwable $exception) {
-            $error = $exception->getMessage().$exception->getTraceAsString();
-            Errors::error_log($exception);
-            // Rethrow exception if using debug mode
-            if ($this->debug) {
-                die('<pre>'.$error.'</pre>');
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get the data in an array
-     *
-     * @return array
-     */
-    final public function getArray(): array
-    {
-        // If data was not retrieved yet - attempt to
-        if (!$this->attempted) {
-            try {
-                $this->get();
-            } catch (\Throwable) {
-                return [];
-            }
-        }
-        $array = \get_mangled_object_vars($this);
-        // Remove private and protected properties
-        foreach ($array as $key => $value) {
-            if (\preg_match('/^\x00/u', $key) === 1) {
-                unset($array[$key]);
-            }
-        }
-
-        return $array;
-    }
-
-    /**
-     * Attempt to schedule an update for the entity
-     *
-     * @return int|null
+     * @return null|int
      *
      * @internal
      */
     final public function scheduleUpdate(): ?int
     {
         // Schedule only on GET requests
-        if (\in_array(HomePage::$method, ['HEAD', 'OPTIONS'])) {
+        if (\in_array(HomePage::$method, ['HEAD', 'OPTIONS'], true)) {
             return null;
         }
         // Ignore bots
@@ -116,7 +49,7 @@ abstract class AbstractEntity
             return null;
         }
         if ($this::ENTITY_TYPE === 'achievement') {
-            /** @noinspection PhpPossiblePolymorphicInvocationInspection These attributes are specific for achievements */
+            /* @noinspection PhpPossiblePolymorphicInvocationInspection These attributes are specific for achievements */
             if (
                 \count($this->characters) !== 0
                 && (
@@ -155,7 +88,7 @@ abstract class AbstractEntity
                 // Check if there were not too many items scheduled earlier
                 $jobs = Query::query('SELECT COUNT(*) AS `count` FROM `cron__schedule` WHERE `task`=\'ff_update_entity\' AND `registered` >= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 MINUTE)', return: 'count');
                 if ($jobs < 50) {
-                    /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+                    /* @noinspection PhpPossiblePolymorphicInvocationInspection */
                     $cron_task->settingsFromArray(['priority' => 1, 'message' => 'Updating '.$this::ENTITY_TYPE.' with ID '.$this->id])->add();
                     $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
                     if ($scheduled) {
@@ -173,13 +106,13 @@ abstract class AbstractEntity
     }
 
     /**
-     * Update the entity
+     * Update the entity.
      *
      * @param bool $allow_sleep Flag to allow sleep if Lodestone is throttling us
      *
-     * @return string|bool
+     * @return bool|string
      */
-    final public function update(bool $allow_sleep = false): string|bool
+    final public function update(bool $allow_sleep = false): bool|string
     {
         // Check if ID was set
         if ($this->id === null) {
@@ -192,6 +125,7 @@ abstract class AbstractEntity
             'linkshell', 'crossworldlinkshell' => 'ls_id',
             'pvpteam' => 'pvp_id',
         };
+
         // Check if we have not updated before
         try {
             $updated = Query::query('SELECT `updated` FROM `ffxiv__'.($this::ENTITY_TYPE === 'crossworldlinkshell' ? 'linkshell' : $this::ENTITY_TYPE).'` WHERE `'.$id_column.'` = :id', [':id' => $this->id], return: 'value');
@@ -253,13 +187,13 @@ abstract class AbstractEntity
     }
 
     /**
-     * To be called from API to allow entity updates
+     * To be called from API to allow entity updates.
      *
-     * @return bool|array|string
+     * @return array|bool|string
      *
      * @internal
      */
-    final public function updateFromApi(): bool|array|string
+    final public function updateFromApi(): array|bool|string
     {
         try {
             $result = $this->update();
@@ -288,80 +222,31 @@ abstract class AbstractEntity
     }
 
     /**
-     * Get entity data from Lodestone
+     * Get entity data from Lodestone.
      *
      * @param bool $allow_sleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
      *
-     * @return string|array
+     * @return array|string
      *
      * @internal
      */
-    abstract public function getFromLodestone(bool $allow_sleep = false): string|array;
+    abstract public function getFromLodestone(bool $allow_sleep = false): array|string;
 
     /**
-     * Function to get initial data from DB
-     *
-     * @throws \Exception
-     */
-    abstract protected function getFromDB(): array;
-
-    /**
-     * Function to do processing
-     *
-     * @param array $from_db
-     *
-     * @return void
-     */
-    abstract protected function process(array $from_db): void;
-
-    /**
-     * Function to update the entity in DB
+     * Function to update the entity in DB.
      *
      * @return bool
      */
     abstract protected function updateDB(): bool;
 
     /**
-     * @param string|int|null $id    ID of an entity
-     * @param bool            $debug Flag to enable debug mode
-     */
-    final public function __construct(string|int|null $id = null, protected bool $debug = false)
-    {
-        // If ID was provided - set it as well
-        if (!empty($id)) {
-            $this->setId($id);
-        } elseif ($id !== null) {
-            throw new \UnexpectedValueException('ID can\'t be empty.');
-        }
-    }
-
-    /**
-     * Set entity ID
-     *
-     * @param string|int $id
-     *
-     * @return $this
-     */
-    public function setId(string|int $id): self
-    {
-        // Convert to string for consistency
-        $id = (string) $id;
-        if (\preg_match($this->id_format, $id) !== 1) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
-        }
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * Register the entity if it has not been registered already
+     * Register the entity if it has not been registered already.
      *
      * @return bool|int
      *
      * @internal
      */
-    public function register(): bool|int
+    final public function register(): bool|int
     {
         // Check if ID was set
         if ($this->id === null) {
@@ -374,6 +259,7 @@ abstract class AbstractEntity
             'linkshell', 'crossworldlinkshell' => 'ls_id',
             'pvpteam' => 'pvp_id',
         };
+
         try {
             $check = Query::query('SELECT `'.$id_column.'` FROM `ffxiv__'.($this::ENTITY_TYPE === 'crossworldlinkshell' ? 'linkshell' : $this::ENTITY_TYPE).'` WHERE `'.$id_column.'` = :id', [':id' => $this->id], return: 'check');
         } catch (\Throwable $exception) {
@@ -385,6 +271,7 @@ abstract class AbstractEntity
             // Entity already registered
             return 409;
         }
+
         // Try to get data from Lodestone
         try {
             $temp_lodestone = $this->getFromLodestone();
@@ -426,13 +313,13 @@ abstract class AbstractEntity
     }
 
     /**
-     * Function to download crest components from Lodestone
+     * Function to download crest components from Lodestone.
      *
      * @param array $images
      *
      * @return void
      */
-    public function downloadCrestComponents(array $images): void
+    final public function downloadCrestComponents(array $images): void
     {
         foreach ($images as $key => $image) {
             if (!empty($image)) {
@@ -474,7 +361,7 @@ abstract class AbstractEntity
                     // If it's an emblem, check that other emblem variants are downloaded as well
                     if ($key === 2) {
                         $emblem_index = (int) \preg_replace('/(.+_)(\d{2})(_.+\.png)/', '$2', \basename($image));
-                        for ($iteration = 0; $iteration <= 7; $iteration++) {
+                        for ($iteration = 0; $iteration <= 7; ++$iteration) {
                             if ($iteration !== $emblem_index) {
                                 $emblem_file = Config::$crests_components.'emblems/'.$sub_dir.'/'.\preg_replace('/(.+_)(\d{2})(_.+\.png)/', '${1}0'.$iteration.'$3', \basename($image));
                                 if (!\is_file($emblem_file)) {
@@ -482,6 +369,7 @@ abstract class AbstractEntity
                                     // In addition S7f_4f44211af230eac35370ef3e9fe15e51_07_128x128.png is not working, so it should be S7f_4f44211af230eac35370ef3e9fe15e51_08_128x128.png
                                     // This was fixed by SE at some point, but now it's broken again, so we change the URL ourselves
                                     $url_to_download = \preg_replace(['/(.+_)(\d{2})(_.+\.png)/', '/S7f_4f44211af230eac35370ef3e9fe15e51_07_128x128.png/'], ['${1}0'.$iteration.'$3', 'S7f_4f44211af230eac35370ef3e9fe15e51_08_128x128.png'], $image);
+
                                     try {
                                         Images::download($url_to_download, $emblem_file, false);
                                     } catch (\Throwable) {
@@ -497,13 +385,13 @@ abstract class AbstractEntity
     }
 
     /**
-     * Function to remove Lodestone domain(s) from image links
+     * Function to remove Lodestone domain(s) from image links.
      *
      * @param string $url
      *
      * @return string
      */
-    public static function removeLodestoneDomain(string $url): string
+    final public static function removeLodestoneDomain(string $url): string
     {
         return \str_replace([
             'https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/',
@@ -512,13 +400,13 @@ abstract class AbstractEntity
     }
 
     /**
-     * Function to turn a group crest into a favicon
+     * Function to turn a group crest into a favicon.
      *
      * @param array $images
      *
-     * @return string|null
+     * @return null|string
      */
-    public static function crestToFavicon(array $images): ?string
+    final public static function crestToFavicon(array $images): ?string
     {
         $images = self::sortComponents($images);
         $merged_filenames = (empty($images[0]) ? '' : \basename($images[0])).(empty($images[1]) ? '' : \basename($images[1])).(empty($images[2]) ? '' : \basename($images[2]));
@@ -539,13 +427,13 @@ abstract class AbstractEntity
     }
 
     /**
-     * Clean component crests to have a proper image, even if they are empty
+     * Clean component crests to have a proper image, even if they are empty.
      *
      * @param array $results
      *
      * @return array
      */
-    public static function cleanCrestResults(array $results): array
+    final public static function cleanCrestResults(array $results): array
     {
         foreach ($results as $key => $result) {
             if (
@@ -571,7 +459,7 @@ abstract class AbstractEntity
     }
 
     /**
-     * Helper function to add new characters to Cron en masse
+     * Helper function to add new characters to Cron en masse.
      *
      * @param array $members
      *
@@ -595,7 +483,7 @@ abstract class AbstractEntity
         }
     }
 
-    protected function charQuickRegister(string|int $character_id, array &$lodestone_data, array &$queries): void
+    protected function charQuickRegister(int|string $character_id, array &$lodestone_data, array &$queries): void
     {
         // Check if character is registered
         $lodestone_data[$character_id]['registered'] = Query::query('SELECT `character_id` FROM `ffxiv__character` WHERE `character_id`=:character_id', [':character_id' => $character_id], return: 'check');
@@ -621,11 +509,11 @@ abstract class AbstractEntity
     }
 
     /**
-     * Function converts image URL to a local path
+     * Function converts image URL to a local path.
      *
      * @param string $image
      *
-     * @return string|null
+     * @return null|string
      */
     protected static function crestToLocal(string $image): ?string
     {
@@ -651,7 +539,7 @@ abstract class AbstractEntity
     }
 
     /**
-     * Sort crest components
+     * Sort crest components.
      *
      * @param array $images
      *
@@ -680,14 +568,14 @@ abstract class AbstractEntity
     }
 
     /**
-     * Function to merge 1 to 3 images making up a crest on Lodestone into 1 stored on the tracker side
+     * Function to merge 1 to 3 images making up a crest on Lodestone into 1 stored on the tracker side.
      *
      * @param array  $images     Array of crest components
      * @param string $final_path Where to save the final file
      * @param bool   $debug      Debug mode to log errors
      *
      * @return bool
-     **/
+     */
     protected static function crestMerge(array $images, #[FileReference] string $final_path, bool $debug = false): bool
     {
         try {
@@ -718,14 +606,14 @@ abstract class AbstractEntity
     }
 
     /**
-     * Remove a scheduled job from Cron, if any
+     * Remove a scheduled job from Cron, if any.
      *
      * @return void
      */
     private function removeFromCron(): void
     {
         try {
-            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+            /* @noinspection PhpPossiblePolymorphicInvocationInspection */
             new TaskInstance('ff_update_entity', [(string) $this->id, $this::ENTITY_TYPE])->delete();
         } catch (\Throwable $exception) {
             // Do nothing

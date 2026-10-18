@@ -15,12 +15,12 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Run regular server status checks
+ * Run regular server status checks.
  */
 final class Healthcheck
 {
     /**
-     * Check if database is up
+     * Check if database is up.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -45,7 +45,7 @@ final class Healthcheck
         $crash_flag = $dir.'/backup_crash.flag';
         // If maintenance flag found, it's normal
         if (\is_file('/app/var/log/db_maintenance.flag')) {
-            /** @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
+            /* @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
             @\unlink($no_db_flag);
 
             return Command::SUCCESS;
@@ -75,6 +75,7 @@ final class Healthcheck
         }
         if (\is_file($crash_flag)) {
             $error_text = \file_get_contents($crash_flag);
+
             try {
                 /** @var bool $result */
                 $result = Query::query([
@@ -84,9 +85,9 @@ final class Healthcheck
             } catch (\Throwable) {
                 $result = false;
             }
-            /** @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
+            /* @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
             @\unlink($crash_flag);
-            /** @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
+            /* @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
             @\unlink($no_db_flag);
             // Send mail
             new DatabaseUp()->save(
@@ -100,7 +101,7 @@ final class Healthcheck
             return Command::SUCCESS;
         }
         if (\is_file($no_db_flag)) {
-            /** @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
+            /* @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
             @\unlink($no_db_flag);
             // If we crashed, there is a high chance that some cron jobs failed, as well. Reset any potential jobs like that.
             Query::query('UPDATE cron__schedule SET `run_by`=NULL, `status`=0 WHERE `run_by` IS NOT NULL;');

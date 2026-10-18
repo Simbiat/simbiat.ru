@@ -10,7 +10,7 @@ use App\Enum\SystemUser;
 use Simbiat\HTML\Cut;
 
 /**
- * Class for page which is currently used as home page
+ * Class for page which is currently used as home page.
  */
 final class Homepage extends Page
 {

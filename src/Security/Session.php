@@ -13,16 +13,18 @@ use Simbiat\Database\Query;
 use Simbiat\http20\Headers;
 
 /**
- * Implement session handling using database
+ * Implement session handling using database.
  */
 final class Session implements \SessionHandlerInterface, \SessionIdInterface, \SessionUpdateTimestampHandlerInterface
 {
     /**
-     * Constructor for the class
+     * Constructor for the class.
      *
      * @param int $session_life Default lifetime for session in seconds (5 minutes)
      */
-    public function __construct(private int $session_life = 300)
+    public function __construct(
+        private int $session_life = 300
+    )
     {
         if ($this->session_life < 0) {
             $this->session_life = 300;
@@ -45,17 +47,15 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Initialize session
+     * Initialize session.
      *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.open.php
+     * @see  https://php.net/manual/en/sessionhandlerinterface.open.php
      *
      * @param string $path The path where to store/retrieve the session.
      * @param string $name The session name.
      *
-     * @return bool <p>
-     *                     The return value (usually TRUE on success, FALSE on failure).
-     *                     Note this value is returned internally to PHP for processing.
-     *                     </p>
+     * @return bool The return value (usually TRUE on success, FALSE on failure).
+     *              Note this value is returned internally to PHP for processing.
      *
      * @since 5.4
      */
@@ -66,14 +66,14 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Close the session
+     * Close the session.
      *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.close.php
+     * @see  https://php.net/manual/en/sessionhandlerinterface.close.php
      *
      * @return bool <p>
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
-     * </p>
+     *                  The return value (usually TRUE on success, FALSE on failure).
+     *                  Note this value is returned internally to PHP for processing.
+     *                  </p>
      *
      * @since 5.4
      */
@@ -84,17 +84,15 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Read session data
+     * Read session data.
      *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.read.php
+     * @see  https://php.net/manual/en/sessionhandlerinterface.read.php
      *
      * @param string $id The session id to read data for.
      *
-     * @return string <p>
-     *                   Returns an encoded string of the read data.
-     * If nothing was read, it must return false.
-     * Note this value is returned internally to PHP for processing.
-     * </p>
+     * @return string Returns an encoded string of the read data.
+     *                If nothing was read, it must return false.
+     *                Note this value is returned internally to PHP for processing.
      *
      * @since 5.4
      */
@@ -122,23 +120,19 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Write session data
+     * Write session data.
      *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.write.php
+     * @see  https://php.net/manual/en/sessionhandlerinterface.write.php
      *
      * @param string $id   The session id.
-     * @param string $data <p>
-     *                     The encoded session data. This data is the
+     * @param string $data The encoded session data. This data is the
      *                     result of the PHP internally encoding
      *                     the $_SESSION superglobal to a serialized
      *                     string and passing it as this parameter.
      *                     Please note sessions use an alternative serialization method.
-     *                     </p>
      *
-     * @return bool <p>
-     *                     The return value (usually TRUE on success, FALSE on failure).
-     *                     Note this value is returned internally to PHP for processing.
-     *                     </p>
+     * @return bool The return value (usually TRUE on success, FALSE on failure).
+     *              Note this value is returned internally to PHP for processing.
      *
      * @since 5.4
      *
@@ -247,6 +241,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                 ];
             }
         }
+
         try {
             if (!empty($queries)) {
                 return Query::query($queries);
@@ -261,16 +256,14 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Destroy a session
+     * Destroy a session.
      *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.destroy.php
+     * @see  https://php.net/manual/en/sessionhandlerinterface.destroy.php
      *
      * @param string $id The session ID being destroyed.
      *
-     * @return bool <p>
-     *                   The return value (usually TRUE on success, FALSE on failure).
-     *                   Note this value is returned internally to PHP for processing.
-     *                   </p>
+     * @return bool The return value (usually TRUE on success, FALSE on failure).
+     *              Note this value is returned internally to PHP for processing.
      *
      * @since 5.4
      */
@@ -286,19 +279,15 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Cleanup old sessions
+     * Cleanup old sessions.
      *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.gc.php
+     * @see  https://php.net/manual/en/sessionhandlerinterface.gc.php
      *
-     * @param int $max_lifetime <p>
-     *                          Sessions that have not updated for
+     * @param int $max_lifetime Sessions that have not updated for
      *                          the last max_lifetime seconds will be removed.
-     *                          </p>
      *
-     * @return int|false <p>
-     *                          Returns the number of deleted sessions on success, or false on failure. Prior to PHP version 7.1, the function returned true in case of success.
-     *                          Note this value is returned internally to PHP for processing.
-     *                          </p>
+     * @return false|int Returns the number of deleted sessions on success, or false on failure. Prior to PHP version 7.1, the function returned true in case of success.
+     *                   Note this value is returned internally to PHP for processing.
      *
      * @since 5.4
      */
@@ -323,13 +312,11 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Create session ID
+     * Create session ID.
      *
-     * @link https://php.net/manual/en/sessionidinterface.create-sid.php
+     * @see https://php.net/manual/en/sessionidinterface.create-sid.php
      *
-     * @return string <p>
-     * The new session ID. Notes that this value is returned internally to PHP for processing.
-     * </p>
+     * @return string The new session ID. Note that this value is returned internally to PHP for processing.
      */
     public function create_sid(): string
     {
@@ -337,15 +324,13 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Validate session id
+     * Validate session id.
      *
-     * @link https://www.php.net/manual/sessionupdatetimestamphandlerinterface.validateid
+     * @see https://www.php.net/manual/sessionupdatetimestamphandlerinterface.validateid
      *
      * @param string $id The session id
      *
-     * @return bool <p>
-     *                   Note this value is returned internally to PHP for processing.
-     *                   </p>
+     * @return bool Note this value is returned internally to PHP for processing.
      */
     public function validateId(string $id): bool
     {
@@ -368,18 +353,16 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Update the timestamp of a session
+     * Update the timestamp of a session.
      *
-     * @link https://www.php.net/manual/sessionupdatetimestamphandlerinterface.updatetimestamp.php
+     * @see https://www.php.net/manual/sessionupdatetimestamphandlerinterface.updatetimestamp.php
      *
      * @param string $id   The session id
-     * @param string $data <p>
-     *                     The encoded session data. This data is the
+     * @param string $data The encoded session data. This data is the
      *                     result of the PHP internally encoding
      *                     the $_SESSION superglobal to a serialized
      *                     string and passing it as this parameter.
      *                     Please note sessions use an alternative serialization method.
-     *                     </p>
      *
      * @return bool
      */
@@ -395,7 +378,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Custom function to refresh data, which needs refreshing on every session (IP for tracking, groups for access control, names for rendering, etc.)
+     * Custom function to refresh data, which needs refreshing on every session (IP for tracking, groups for access control, names for rendering, etc.).
      *
      * @param array $data Main array with the data
      *
@@ -422,6 +405,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             $data['cur_page'] = HomePage::$canonical;
             $data['new_view'] = true;
         }
+
         try {
             // Check if IP is banned
             if (!empty($data['ip'])) {
@@ -475,7 +459,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Function to return IP, country and city
+     * Function to return IP, country and city.
      */
     private function getIP(array &$data): void
     {
@@ -513,7 +497,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Attempt to log in using a cookie
+     * Attempt to log in using a cookie.
      *
      * @return array
      */
@@ -527,6 +511,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         if (empty($_COOKIE[$cookie_name])) {
             return [];
         }
+
         // Validate cookie
         try {
             // Decode data

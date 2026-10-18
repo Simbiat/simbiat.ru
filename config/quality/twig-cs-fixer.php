@@ -8,13 +8,13 @@
 
 declare(strict_types=1);
 
+use TwigA11y\Standard\A11yStrict;
 use TwigCsFixer\Config\Config;
 use TwigCsFixer\File\Finder;
+use TwigCsFixer\Rules\Node\ForbiddenFilterRule;
 use TwigCsFixer\Ruleset\Ruleset;
 use TwigCsFixer\Standard\Symfony;
 use TwigCsFixer\Standard\TwigCsFixer;
-use TwigCsFixer\Rules\Node\ForbiddenFilterRule;
-use TwigA11y\Standard\A11yStrict;
 
 return new Config()
     ->allowNonFixableRules()

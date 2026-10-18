@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\HomePage;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Temporary bridge controller. Hands every request straight to the legacy
@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 final class LegacyController
 {
     /**
-     * Old page bootstrap
+     * Old page bootstrap.
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */

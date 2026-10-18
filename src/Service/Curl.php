@@ -13,7 +13,7 @@ use Simbiat\http20\Common;
 use Simbiat\http20\Sharing;
 
 /**
- * Common Curl-related functions
+ * Common Curl-related functions.
  */
 final class Curl
 {
@@ -24,10 +24,10 @@ final class Curl
     ];
 
     // cURL Handle is static to allow reuse of a single instance, if possible and needed
-    private(set) static \CurlHandle|null|false $curl_handle = null;
+    public private(set) static null|\CurlHandle|false $curl_handle = null;
 
     // cURL options
-    protected array $curl_options = [
+    private array $curl_options = [
         \CURLOPT_CONNECTTIMEOUT => 10,
         \CURLOPT_DEFAULT_PROTOCOL => 'https',
         \CURLOPT_ENCODING => '',
@@ -89,13 +89,13 @@ final class Curl
     }
 
     /**
-     * Get page content
+     * Get page content.
      *
      * @param string $link
      *
-     * @return string|false|int
+     * @return false|int|string
      */
-    public function getPage(string $link): string|false|int
+    public function getPage(string $link): false|int|string
     {
         if (!self::$curl_handle instanceof \CurlHandle) {
             return false;
@@ -121,7 +121,7 @@ final class Curl
     }
 
     /**
-     * Download a file
+     * Download a file.
      *
      * @param string $link
      *
@@ -170,7 +170,7 @@ final class Curl
     }
 
     /**
-     * POST something
+     * POST something.
      *
      * @param string $link
      * @param mixed  $payload
@@ -192,7 +192,7 @@ final class Curl
     }
 
     /**
-     * POST something as a JSON
+     * POST something as a JSON.
      *
      * @param string $link
      * @param mixed  $payload
@@ -214,7 +214,7 @@ final class Curl
     }
 
     /**
-     * Add header to CURL
+     * Add header to CURL.
      *
      * @param string $header
      *
@@ -233,7 +233,7 @@ final class Curl
     }
 
     /**
-     * Remove header from CURL
+     * Remove header from CURL.
      *
      * @param string $header
      *
@@ -253,7 +253,7 @@ final class Curl
     }
 
     /**
-     * Change CURL settings
+     * Change CURL settings.
      *
      * @param int   $option Setting to change
      * @param mixed $value  Value to set
@@ -268,7 +268,7 @@ final class Curl
     }
 
     /**
-     * Check if a remote file exists
+     * Check if a remote file exists.
      *
      * @param $remote_file
      *
@@ -290,7 +290,7 @@ final class Curl
     }
 
     /**
-     * Function to process file uploads either through POST/PUT or by using a provided link
+     * Function to process file uploads either through POST/PUT or by using a provided link.
      *
      * @param string $link        URL to process if we are to download a remote file
      * @param bool   $only_images Flag to indicate that only images are allowed

@@ -18,7 +18,7 @@ use DeviceDetector\Yaml\Pecl;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
 
 /**
- * Minimized DeviceDetector logic to help parse
+ * Minimized DeviceDetector logic to help parse.
  */
 final class UserAgentParser
 {
@@ -52,9 +52,10 @@ final class UserAgentParser
     }
 
     /**
-     * Helper to create parser objects
+     * Helper to create parser objects.
+     *
      * @param string                           $class_name   Fully qualified class name for the object to create
-     * @param \DeviceDetector\ClientHints|null $client_hints Optional client hints object
+     * @param null|\DeviceDetector\ClientHints $client_hints Optional client hints object
      *
      * @return \DeviceDetector\Parser\AbstractParser
      */
@@ -74,12 +75,13 @@ final class UserAgentParser
     }
 
     /**
-     * Get Operating System from User Agent
+     * Get Operating System from User Agent.
+     *
      * @param string $user_agent User Agent to parse
      *
-     * @return array|null
+     * @return null|array
      */
-    public function getOs(string $user_agent): array|null
+    public function getOs(string $user_agent): ?array
     {
         $this->os_parser->setUserAgent($user_agent);
 
@@ -87,12 +89,13 @@ final class UserAgentParser
     }
 
     /**
-     * Get bot from User Agent
+     * Get bot from User Agent.
+     *
      * @param string $user_agent User Agent to parse
      *
-     * @return array|null
+     * @return null|array
      */
-    public function getBot(string $user_agent): array|null
+    public function getBot(string $user_agent): ?array
     {
         $this->bot_parser->setUserAgent($user_agent);
 
@@ -100,12 +103,13 @@ final class UserAgentParser
     }
 
     /**
-     * Get bot from User Agent
+     * Get bot from User Agent.
+     *
      * @param string $user_agent User Agent to parse
      *
-     * @return array|null
+     * @return null|array
      */
-    public function getClient(string $user_agent): array|null
+    public function getClient(string $user_agent): ?array
     {
         foreach ($this->client_parsers as $parser) {
             $parser->setUserAgent($user_agent);

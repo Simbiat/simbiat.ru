@@ -9,7 +9,7 @@ use App\Service\Images;
 use Simbiat\http20\Headers;
 
 /**
- * CLass to handle page routing while generating breadcrumbs
+ * CLass to handle page routing while generating breadcrumbs.
  */
 abstract class Router
 {
@@ -38,7 +38,7 @@ abstract class Router
     protected string $redirect_main = '';
 
     /**
-     * This is a general routing check for supported page
+     * This is a general routing check for supported page.
      *
      * @param array $path
      *
@@ -107,7 +107,7 @@ abstract class Router
     }
 
     /**
-     * This is the actual page generation based on further details of the $path
+     * This is the actual page generation based on further details of the $path.
      *
      * @param array $path
      *

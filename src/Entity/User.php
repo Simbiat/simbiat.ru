@@ -28,12 +28,12 @@ use Simbiat\ArrayHelpers\Editors;
 use Simbiat\Database\Query;
 
 /**
- * Main user class
+ * Main user class.
  */
 final class User extends Entity
 {
     /**
-     * Maximum number of unused avatars per user
+     * Maximum number of unused avatars per user.
      */
     public const int AVATAR_LIMIT = 10;
     // Entity's properties
@@ -119,7 +119,7 @@ final class User extends Entity
     public int $strikes = 0;
 
     /**
-     * Get user email addresses
+     * Get user email addresses.
      *
      * @return array
      */
@@ -139,7 +139,7 @@ final class User extends Entity
     }
 
     /**
-     * Get current avatar
+     * Get current avatar.
      *
      * @return string
      */
@@ -158,7 +158,7 @@ final class User extends Entity
     }
 
     /**
-     * Get all avatars
+     * Get all avatars.
      *
      * @return array
      */
@@ -175,11 +175,11 @@ final class User extends Entity
     }
 
     /**
-     * Add avatar
+     * Add avatar.
      *
      * @param bool     $set_active Make avatar active right away
      * @param string   $link       Link to avatar
-     * @param int|null $character  FFXIV character, if avatar is from one
+     * @param null|int $character  FFXIV character, if avatar is from one
      *
      * @return array
      */
@@ -244,7 +244,7 @@ final class User extends Entity
     }
 
     /**
-     * Remove avatar
+     * Remove avatar.
      *
      * @return array
      */
@@ -263,7 +263,7 @@ final class User extends Entity
     }
 
     /**
-     * Set current avatar
+     * Set current avatar.
      *
      * @param string $file_id
      *
@@ -293,7 +293,7 @@ final class User extends Entity
     }
 
     /**
-     * Get owned FFXIV entities
+     * Get owned FFXIV entities.
      *
      * @return array
      */
@@ -309,7 +309,7 @@ final class User extends Entity
             foreach ($output_array['characters'] as $character) {
                 $output_array['groups'][$character['id']] = AbstractEntity::cleanCrestResults(
                     Query::query(
-                    /** @lang SQL */
+                        /* @lang SQL */
                         '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rank_id`=0)
                 UNION ALL
                 (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`ls_id` AS `id`, `ffxiv__linkshell`.`name` AS `name`, NULL AS `crest_part_1`, NULL AS `crest_part_2`, NULL AS `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rank_id`=`ffxiv__linkshell_rank`.`ls_rank_id` WHERE `character_id`=:id AND `ffxiv__linkshell_character`.`current`=1 AND `ffxiv__linkshell_character`.`rank_id`=1)
@@ -327,7 +327,7 @@ final class User extends Entity
     }
 
     /**
-     * Change username
+     * Change username.
      *
      * @param string $new_name
      *
@@ -354,6 +354,7 @@ final class User extends Entity
         if ($this->username === $new_name) {
             return ['response' => true];
         }
+
         try {
             $result = Query::query('UPDATE `uc__users` SET `username`=:username WHERE `user_id`=:user_id;', [
                 ':username' => $new_name,
@@ -375,7 +376,7 @@ final class User extends Entity
     }
 
     /**
-     * Update user profile data
+     * Update user profile data.
      *
      * @return array
      */
@@ -495,11 +496,11 @@ final class User extends Entity
         // Queries for other fields
         foreach (['country', 'city', 'about'] as $field) {
             $_POST['details'][$field] = Sanitization::removeNonPrintable($_POST['details'][$field] ?? '', true);
-            if ($this->$field === $_POST['details'][$field]) {
+            if ($this->{$field} === $_POST['details'][$field]) {
                 continue;
             }
 
-            $log[$field] = ['old' => $this->$field, 'new' => $_POST['details'][$field]];
+            $log[$field] = ['old' => $this->{$field}, 'new' => $_POST['details'][$field]];
             $queries[] = [
                 'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `user_id`=:user_id;',
                 [
@@ -522,7 +523,7 @@ final class User extends Entity
     }
 
     /**
-     * Function to check if a name is already used
+     * Function to check if a name is already used.
      *
      * @param string $name
      *
@@ -539,7 +540,7 @@ final class User extends Entity
     }
 
     /**
-     * Function to check whether a name is banned
+     * Function to check whether a name is banned.
      *
      * @param string $name
      *
@@ -551,6 +552,7 @@ final class User extends Entity
         if (\preg_match('/^[\p{L}\d.!$%&\'*+\/=?_`{|}~\- ^]{1,64}$/ui', $name) !== 1) {
             return true;
         }
+
         // Check against DB table
         try {
             return Query::query('SELECT `name` FROM `uc__bad_names` WHERE `name`=:name', [':name' => $name], return: 'check');
@@ -560,7 +562,7 @@ final class User extends Entity
     }
 
     /**
-     * Login to the system
+     * Login to the system.
      *
      * @param bool $after_registration Flag indicating if login is being done after initial registration
      *
@@ -607,6 +609,7 @@ final class User extends Entity
         if (Query::$dbh === null) {
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
+
         // Get the password of the user while also checking if it exists
         try {
             $credentials = Query::query(
@@ -623,7 +626,7 @@ final class User extends Entity
 
             return ['http_error' => 403, 'reason' => 'Wrong login or password'];
         }
-        /** @noinspection UnusedFunctionResultInspection Needed to just update current ID */
+        /* @noinspection UnusedFunctionResultInspection Needed to just update current ID */
         $this->setId($credentials['user_id']);
         // Get permissions
         $_SESSION['permissions'] = $this->getPermissions();
@@ -666,7 +669,7 @@ final class User extends Entity
     }
 
     /**
-     * Initiate password reset through email
+     * Initiate password reset through email.
      *
      * @return array
      */
@@ -681,6 +684,7 @@ final class User extends Entity
         if (Query::$dbh === null) {
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
+
         // Get the password of the user while also checking if it exists
         try {
             $credentials = Query::query(
@@ -696,7 +700,7 @@ final class User extends Entity
             $credentials !== null
             && $credentials !== []
         ) {
-            /** @noinspection UnusedFunctionResultInspection Needed to just update current ID */
+            /* @noinspection UnusedFunctionResultInspection Needed to just update current ID */
             $this->setId($credentials['user_id']);
             // Get permissions
             $_SESSION['permissions'] = $this->getPermissions();
@@ -707,6 +711,7 @@ final class User extends Entity
                 return ['response' => true];
             }
             $token = Security::genToken();
+
             try {
                 // Write the reset token to DB
                 Query::query('UPDATE `uc__users` SET `password_reset`=:token WHERE `user_id`=:user_id', [':user_id' => $credentials['user_id'], ':token' => Security::passHash($token)]);
@@ -721,7 +726,7 @@ final class User extends Entity
     }
 
     /**
-     * Setting cookie for remembering user
+     * Setting cookie for remembering user.
      *
      * @param string $cookie_id
      *
@@ -799,7 +804,7 @@ final class User extends Entity
                     );
                     // Another attempt to prevent race conditions
                     if ($current_pass === $hashed_pass) {
-                        /** @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
+                        /* @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
                         \setcookie(
                             'rememberme_'.Config::$http_host,
                             \json_encode(['cookie_id' => Security::encrypt($cookie_id), 'pass' => Security::encrypt($pass)], \JSON_THROW_ON_ERROR | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION),
@@ -817,7 +822,7 @@ final class User extends Entity
     }
 
     /**
-     * Function to validate password
+     * Function to validate password.
      *
      * @param string $password
      * @param string $hash
@@ -832,6 +837,7 @@ final class User extends Entity
         ) {
             return false;
         }
+
         // Validate password
         try {
             if (\password_verify($password, $hash)) {
@@ -866,7 +872,7 @@ final class User extends Entity
     }
 
     /**
-     * Function to change the password
+     * Function to change the password.
      *
      * @param string $password Password to set
      * @param bool   $refresh  Whether this is an automatic salt refresh
@@ -903,7 +909,7 @@ final class User extends Entity
     }
 
     /**
-     * Reset number of failed logins
+     * Reset number of failed logins.
      *
      * @return bool
      */
@@ -928,7 +934,7 @@ final class User extends Entity
     }
 
     /**
-     * Delete cookie
+     * Delete cookie.
      *
      * @param bool $logout Flag indicating whether a cookie is being deleted during normal logout
      *
@@ -962,7 +968,7 @@ final class User extends Entity
     }
 
     /**
-     * Delete session
+     * Delete session.
      *
      * @return bool
      */
@@ -994,7 +1000,7 @@ final class User extends Entity
     }
 
     /**
-     * Get threads created by a user
+     * Get threads created by a user.
      *
      * @return array
      */
@@ -1011,29 +1017,29 @@ final class User extends Entity
         }
         $threads = new Threads($bindings, $where, '`talks__threads`.`published` DESC')->listEntities();
         // Clean any threads with empty `first_post` (means the thread is either empty or is in progress of creation)
-        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         if (
             \is_array($threads)
             && \is_array($threads['entities'])
         ) {
-            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             foreach ($threads['entities'] as $key => $thread) {
                 if (empty($thread['first_post'])) {
-                    /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+                    /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
                     unset($threads['entities'][$key]);
                 }
             }
         } else {
-            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             $threads['entities'] = [];
         }
 
-        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         return $threads['entities'];
     }
 
     /**
-     * Get posts created by the user
+     * Get posts created by the user.
      *
      * @return array
      */
@@ -1054,7 +1060,7 @@ final class User extends Entity
             $where .= ' AND `talks__threads`.`private`=0';
         }
         $posts = new Posts($bindings, $where, '`talks__posts`.`published` DESC')->listEntities();
-        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         if (
             !\is_array($posts)
             || !\is_array($posts['entities'])
@@ -1062,12 +1068,12 @@ final class User extends Entity
             return [];
         }
 
-        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         return $posts['entities'];
     }
 
     /**
-     * Similar to getPosts(), but only gets posts, that are the first posts in threads
+     * Similar to getPosts(), but only gets posts, that are the first posts in threads.
      *
      * @param bool $only_with_banner
      *
@@ -1116,20 +1122,20 @@ final class User extends Entity
         }
         $bindings[':postIDs'] = [$ids, 'in', 'int'];
         $posts = new Posts($bindings, '`talks__posts`.`post_id` IN (:postIDs)'.$where, '`talks__posts`.`published` DESC')->listEntities();
-        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         if (
             \is_array($posts)
             && \is_array($posts['entities'])
         ) {
             // Get like value for each post if the current user has appropriate permission
-            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             foreach ($posts['entities'] as &$post) {
                 if (!empty($threads[$post['thread_id']]['og_image'])) {
                     $post['og_image'] = $threads[$post['thread_id']]['og_image'];
                 }
             }
 
-            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             return $posts['entities'];
         }
 
@@ -1137,7 +1143,7 @@ final class User extends Entity
     }
 
     /**
-     * Function to log the user out
+     * Function to log the user out.
      *
      * @return bool
      */
@@ -1146,7 +1152,7 @@ final class User extends Entity
         Security::log(LogType::Logout->value, 'Logout');
         // Remove rememberme cookie
         // From browser
-        /** @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
+        /* @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
         \setcookie(
             'rememberme_'.Config::$http_host,
             '',
@@ -1169,7 +1175,7 @@ final class User extends Entity
     }
 
     /**
-     * Register a new user
+     * Register a new user.
      *
      * @return array
      */
@@ -1196,9 +1202,9 @@ final class User extends Entity
         }
         // Check if banned or in use
         if (
-            $email->isBad() ||
-            $this->bannedName($_POST['signinup']['username']) ||
-            $this->usedName($_POST['signinup']['username'])
+            $email->isBad()
+            || $this->bannedName($_POST['signinup']['username'])
+            || $this->usedName($_POST['signinup']['username'])
         ) {
             // Do not provide details on why exactly it failed to minimize email spoofing
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
@@ -1214,6 +1220,7 @@ final class User extends Entity
         // Generate password and activation strings
         $password = Security::passHash($_POST['signinup']['password']);
         $ff_token = Security::genToken();
+
         // Try to read country and city for IP
         try {
             $geoip = new Reader(Config::$geoip.'GeoLite2-City.mmdb')->city($_SESSION['ip']);
@@ -1227,6 +1234,7 @@ final class User extends Entity
         ) {
             return $email_status;
         }
+
         try {
             $queries = [
                 // Insert to the main database
@@ -1283,9 +1291,10 @@ final class User extends Entity
         if ($this->system) {
             return false;
         }
+
         try {
             // Close the session to avoid changing it in any way
-            /** @noinspection PhpUsageOfSilenceOperatorInspection */
+            /* @noinspection PhpUsageOfSilenceOperatorInspection */
             @\session_write_close();
             // Check if hard removal or regular one was requested
             if ($hard) {
@@ -1388,7 +1397,7 @@ final class User extends Entity
     }
 
     /**
-     * Function to get initial data from DB
+     * Function to get initial data from DB.
      *
      * @return array
      */
@@ -1418,7 +1427,7 @@ final class User extends Entity
     }
 
     /**
-     * Function process database data
+     * Function process database data.
      *
      * @param array $from_db
      *
@@ -1470,7 +1479,7 @@ final class User extends Entity
     }
 
     /**
-     * Get user permissions
+     * Get user permissions.
      *
      * @return array
      */

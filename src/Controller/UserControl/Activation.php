@@ -10,7 +10,7 @@ use App\Service\Config;
 use Simbiat\Database\Query;
 
 /**
- * User activation
+ * User activation.
  */
 final class Activation extends Page
 {
@@ -35,7 +35,7 @@ final class Activation extends Page
     protected string $cache_strategy = 'private';
 
     /**
-     * Generation of the page data
+     * Generation of the page data.
      *
      * @param array $path
      *

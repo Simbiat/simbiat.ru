@@ -7,27 +7,27 @@ namespace App\Service;
 use JetBrains\PhpStorm\NoReturn;
 
 /**
- * Collection of classes to work with image files
+ * Collection of classes to work with image files.
  */
 final class Images
 {
     /**
-     * Function to download images
+     * Function to download images.
      *
      * @param string $from    URL to download from
      * @param string $to      Path to save to
      * @param bool   $convert Whether conversion is required
      *
-     * @return string|false
+     * @return false|string
      */
-    public static function download(string $from, string $to, bool $convert = true): string|false
+    public static function download(string $from, string $to, bool $convert = true): false|string
     {
         // Download to temp
         $temp = new Curl()->getFile($from);
         if ($temp === false) {
             return false;
         }
-        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         if (\is_file($temp['server_path'].'/'.$temp['server_name'])) {
             // Create directory if missing and create it recursively
             if (
@@ -38,7 +38,7 @@ final class Images
                 return false;
             }
             // Move file
-            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             \rename($temp['server_path'].'/'.$temp['server_name'], $to);
             if (\is_file($to)) {
                 if ($convert) {
@@ -54,14 +54,14 @@ final class Images
     }
 
     /**
-     * Function to merge images
+     * Function to merge images.
      *
      * @param array $images Array of images to merge
      * @param int   $width  Width of the resulting image
      * @param int   $height Height of the resulting image
      * @param bool  $output Whether to output directly to browser
      *
-     * @return \GdImage|null
+     * @return null|\GdImage
      */
     public static function merge(array $images, int $width = 128, int $height = 128, bool $output = false): ?\GdImage
     {
@@ -80,6 +80,7 @@ final class Images
             // This means that we failed to get the image thus a final object will either fail or be corrupt, thus exiting early
             throw new \RuntimeException('Failed to open `'.$image.'`');
         }
+
         try {
             // Create image object
             $gd = \imagecreatetruecolor($width, $height);
@@ -115,13 +116,13 @@ final class Images
     }
 
     /**
-     * Convert image to webp format
+     * Convert image to webp format.
      *
      * @param string $image
      *
-     * @return string|false
+     * @return false|string
      */
-    public static function toWebP(string $image): string|false
+    public static function toWebP(string $image): false|string
     {
         // Check if a file exists
         if (!\is_file($image)) {
@@ -129,7 +130,7 @@ final class Images
         }
         // Get MIME type
         $mime = \mime_content_type($image);
-        if (!\in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
+        if (!\in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'], true)) {
             // Presume that this is not something to convert in the first place, which may be normal
             return false;
         }
@@ -177,7 +178,7 @@ final class Images
 
     /**
      * Check if GIF is animated
-     * Taken from https://stackoverflow.com/a/47907134/2992851
+     * Taken from https://stackoverflow.com/a/47907134/2992851.
      *
      * @param string $gif
      *
@@ -203,7 +204,7 @@ final class Images
             && $count < 2
         ) {
             // add the last 20 characters from the previous string, to make sure the searched pattern is not split.
-            //read 100 kb at a time
+            // read 100 kb at a time
             $chunk = ($chunk ? \mb_substr($chunk, -20, encoding: 'UTF-8') : '').\fread($fh, 1024 * 100);
             $count += \preg_match_all('/\x00\x21\xF9\x04.{4}\x00[\x2C\x21]/s', $chunk);
         }
@@ -214,7 +215,7 @@ final class Images
 
     /**
      * Check if PNG is animated
-     * Taken from https://stackoverflow.com/a/68618296/2992851
+     * Taken from https://stackoverflow.com/a/68618296/2992851.
      *
      * @param string $apng
      *
@@ -250,7 +251,7 @@ final class Images
     }
 
     /**
-     * Open an image file. Suppression is used for warnings about incorrect color profiles
+     * Open an image file. Suppression is used for warnings about incorrect color profiles.
      *
      * @param string $image Path to the image file
      *
@@ -266,10 +267,11 @@ final class Images
         }
         // Get MIME type
         $mime = \mime_content_type($image);
-        if (!\in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
+        if (!\in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'], true)) {
             // Unsupported format provided
             return false;
         }
+
         // Create a GD object from a file
         try {
             return match ($mime) {
@@ -286,7 +288,7 @@ final class Images
     }
 
     /**
-     * Display an image for "no image" scenario
+     * Display an image for "no image" scenario.
      *
      * @return void
      */
@@ -301,7 +303,7 @@ final class Images
     }
 
     /**
-     * Display a red cross indicating an error
+     * Display a red cross indicating an error.
      *
      * @return void
      */
@@ -316,7 +318,7 @@ final class Images
     }
 
     /**
-     * Display a green check mark indicating success
+     * Display a green check mark indicating success.
      *
      * @return void
      */
@@ -331,12 +333,12 @@ final class Images
     }
 
     /**
-     * Function to generate data for og:image using provided file ID
+     * Function to generate data for og:image using provided file ID.
      *
      * @param string $file_id File ID to use
      * @param bool   $is_path If `true` ID is actually a path
      *
-     * @return array<string, int|string|null>
+     * @return array<string, null|int|string>
      */
     public static function ogImage(string $file_id, bool $is_path = false): array
     {
@@ -358,7 +360,7 @@ final class Images
         // Using array_merge to suppress PHPStorm's complaints about array keys
         $info = \array_merge(\pathinfo($file));
         $info['mime'] = \mime_content_type($file);
-        if (!\in_array($info['mime'], ['image/png', 'image/jpeg', 'image/webp'])) {
+        if (!\in_array($info['mime'], ['image/png', 'image/jpeg', 'image/webp'], true)) {
             return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }
         $sizes = \getimagesize($file);

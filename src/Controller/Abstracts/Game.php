@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Abstracts;
 
 /**
- * Game page class
+ * Game page class.
  */
 abstract class Game extends Page
 {
@@ -28,7 +28,7 @@ abstract class Game extends Page
     protected bool $has_music = false;
 
     /**
-     * Generation of the page data
+     * Generation of the page data.
      *
      * @param array $path
      *

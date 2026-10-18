@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Enum;
 
 /**
- * IDs of system users
+ * IDs of system users.
  */
 enum SystemUser: int
 {
@@ -15,7 +15,7 @@ enum SystemUser: int
     case Owner = 4;
 
     /**
-     * Get system users' IDs
+     * Get system users' IDs.
      *
      * @return array
      */

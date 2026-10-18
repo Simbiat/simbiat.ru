@@ -10,12 +10,12 @@ use JetBrains\PhpStorm\ExpectedValues;
 use Simbiat\Database\Query;
 
 /**
- * Custom PHP error handler
+ * Custom PHP error handler.
  */
 final class Errors
 {
     /**
-     * Human-readable description of PHP error types
+     * Human-readable description of PHP error types.
      */
     public const array PHP_ERROR_TYPES = [
         \E_COMPILE_ERROR => 'PHP Compile Error',
@@ -35,7 +35,7 @@ final class Errors
     ];
 
     /**
-     * Helper function to log errors with identifying the page
+     * Helper function to log errors with identifying the page.
      *
      * @param \Throwable $error   Error object
      * @param mixed      $context Context (extra data) to store in the log
@@ -64,7 +64,7 @@ final class Errors
     }
 
     /**
-     * Actual custom error handler
+     * Actual custom error handler.
      *
      * @param int    $level   Error level
      * @param string $message Error message
@@ -86,9 +86,8 @@ final class Errors
                 $level === \E_DEPRECATED
                 && \preg_match('/twig[\\\\\/]cache/i', $file) === 1
             )
-            ||
             // Exclude GD color profile warning
-            (
+            || (
                 $level === \E_WARNING
                 && \preg_match('/known incorrect sRGB profile/i', $file) === 1
             )
@@ -104,7 +103,7 @@ final class Errors
     }
 
     /**
-     * Custom shutdown function
+     * Custom shutdown function.
      *
      * @return void
      */
@@ -134,7 +133,7 @@ final class Errors
     }
 
     /**
-     * A simple wrapper function for var_dump to apply <pre> tag and exit the script (by default)
+     * A simple wrapper function for var_dump to apply <pre> tag and exit the script (by default).
      *
      * @param mixed $variable Variable to dump
      * @param bool  $exit     Whether to stop execution right away
@@ -144,7 +143,7 @@ final class Errors
     public static function dump(mixed $variable, bool $exit = true): void
     {
         echo '<pre>';
-        /** @noinspection ForgottenDebugOutputInspection This is intentional, since this function is meant for debugging */
+        /* @noinspection ForgottenDebugOutputInspection This is intentional, since this function is meant for debugging */
         \var_dump($variable);
         echo '</pre>';
         @\ob_flush();
@@ -155,7 +154,7 @@ final class Errors
     }
 
     /**
-     * Output for CLI
+     * Output for CLI.
      *
      * @param string $message Message to output
      * @param string $level   Message level
@@ -185,19 +184,19 @@ final class Errors
     }
 
     /**
-     * Helper to write errors in the log
+     * Helper to write errors in the log.
      *
      * @param string          $type     Error type
      * @param string          $file     The file where the error happened
-     * @param string|int      $line     Line in file where the error happened
+     * @param int|string      $line     Line in file where the error happened
      * @param string          $message  Error message
      * @param string          $trace    Trace from the error
-     * @param \Throwable|null $previous Previous Throwable, if this was re-thrown. Will be merged with context.
+     * @param null|\Throwable $previous Previous Throwable, if this was re-thrown. Will be merged with context.
      * @param mixed           $context  Optional additional cotext
      *
      * @return string
      */
-    private static function genLogEntry(string $type, string $file, string|int $line, string $message, string $trace = '', null|\Throwable $previous = null, mixed $context = ''): string
+    private static function genLogEntry(string $type, string $file, int|string $line, string $message, string $trace = '', ?\Throwable $previous = null, mixed $context = ''): string
     {
         // Determine page link
         $page = self::getRequest();
@@ -230,7 +229,7 @@ final class Errors
     }
 
     /**
-     * Helper to write errors in the log
+     * Helper to write errors in the log.
      *
      * @param string $message Error message
      *
@@ -242,7 +241,7 @@ final class Errors
     }
 
     /**
-     * Helper to attempt to get URL, which was used when the error occurred
+     * Helper to attempt to get URL, which was used when the error occurred.
      *
      * @return string
      */

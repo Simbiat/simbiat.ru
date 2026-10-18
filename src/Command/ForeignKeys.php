@@ -37,6 +37,7 @@ final class ForeignKeys
     public function clean(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Cleaning foreign keys...'));
+
         try {
             // Connect to DB
             Config::dbConnect();

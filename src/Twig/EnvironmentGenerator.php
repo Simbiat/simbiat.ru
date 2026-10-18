@@ -14,21 +14,21 @@ use Twig\Extra\CssInliner\CssInlinerExtension;
 use Twig\Loader\FilesystemLoader;
 
 /**
- * Class to prepare the Twig environment object
+ * Class to prepare the Twig environment object.
  */
 final class EnvironmentGenerator
 {
     private static ?Environment $environment = null;
 
     /**
-     * Function to get the actual Twig environment object
+     * Function to get the actual Twig environment object.
      *
      * @return \Twig\Environment
      */
     public static function getTwig(): Environment
     {
         if (!self::$environment) {
-            #TODO: needs to move to kernel.request listener
+            # TODO: needs to move to kernel.request listener
             self::$environment->getExtension(CoreExtension::class)->setTimezone($_SESSION['timezone'] ?? $_SERVER['HTTP_X_CLIENT_TIMEZONE'] ?? 'UTC');
         }
 

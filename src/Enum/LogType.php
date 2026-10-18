@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Enum;
 
 /**
- * IDs of system users
+ * IDs of system users.
  */
 enum LogType: int
 {

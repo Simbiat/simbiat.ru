@@ -7,7 +7,7 @@ namespace App\Controller\About;
 use App\Controller\Abstracts\StaticPage;
 
 /**
- * Class for the page which is currently used as a home page
+ * Class for the page which is currently used as a home page.
  */
 final class Me extends StaticPage
 {
@@ -35,7 +35,7 @@ final class Me extends StaticPage
     ];
 
     /**
-     * Static pages have all the data in Twig templates, thus we usually return the empty array
+     * Static pages have all the data in Twig templates, thus we usually return the empty array.
      *
      * @param array $path
      *

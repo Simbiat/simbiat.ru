@@ -8,7 +8,7 @@ use App\Controller\Api\Api;
 use App\Entity\User;
 
 /**
- * Handle user registration
+ * Handle user registration.
  */
 final class Register extends Api
 {
@@ -19,7 +19,7 @@ final class Register extends Api
     protected array $methods = ['POST' => ''];
 
     /**
-     * This is an actual API response generation based on further details of the $path
+     * This is an actual API response generation based on further details of the $path.
      *
      * @param array $path
      *

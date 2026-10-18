@@ -8,7 +8,7 @@ use App\Controller\Api\Api;
 use App\Entity\User;
 
 /**
- * Password reminder
+ * Password reminder.
  */
 final class Remind extends Api
 {
@@ -22,7 +22,7 @@ final class Remind extends Api
     protected bool $csrf = true;
 
     /**
-     * This is the actual API response generation based on further details of the $path
+     * This is the actual API response generation based on further details of the $path.
      *
      * @param array $path
      *

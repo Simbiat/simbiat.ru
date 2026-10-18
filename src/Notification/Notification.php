@@ -23,68 +23,68 @@ use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Address;
 
 /**
- * Abstract class for notifications
+ * Abstract class for notifications.
  */
 abstract class Notification extends Entity
 {
     // Format for IDs
     /**
-     * Maximum attempts for sending notifications over email
+     * Maximum attempts for sending notifications over email.
      */
     final public const int MAX_ATTEMPTS = 10;
 
     /**
-     * Subject for email
+     * Subject for email.
      */
     protected const string SUBJECT = '';
 
     /**
-     * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
+     * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high.
      */
     protected const int PRIORITY = 1;
 
     /**
-     * Whether a non-empty array of Twig variables is required
+     * Whether a non-empty array of Twig variables is required.
      */
     protected const bool TWIG_REQUIRED = false;
 
     /**
-     * Whether this is a security alert, and we need to collect session details and pass them to Twig
+     * Whether this is a security alert, and we need to collect session details and pass them to Twig.
      */
     protected const bool SECURITY_ALERT = false;
 
     /**
-     * Whether to send the notification to all emails registered for the user
+     * Whether to send the notification to all emails registered for the user.
      */
     protected const bool ALL_EMAILS = false;
 
     /**
-     * Whether to send the notification to email even if some details fail to be retrieved
+     * Whether to send the notification to email even if some details fail to be retrieved.
      */
     protected const bool ALWAYS_SEND = false;
 
-    protected(set) ?string $email = null;
+    public protected(set) ?string $email = null;
 
     // Whether notification is supposed to be sent via push
-    protected(set) bool $push = true;
+    public protected(set) bool $push = true;
 
     // When the notification was created
-    protected(set) ?int $created = null;
+    public protected(set) ?int $created = null;
 
     // When notification was sent
-    protected(set) ?int $sent = null;
+    public protected(set) ?int $sent = null;
 
     // When notification was read
-    protected(set) ?int $is_read = null;
+    public protected(set) ?int $is_read = null;
 
     // Number of attempts so far
-    protected(set) int $attempts = 0;
+    public protected(set) int $attempts = 0;
 
     // WHen was the last attempt
-    protected(set) ?int $last_attempt = null;
+    public protected(set) ?int $last_attempt = null;
 
     // Notification text
-    protected(set) ?string $text = null;
+    public protected(set) ?string $text = null;
 
     protected string $id_format = '/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/mui';
 
@@ -93,7 +93,7 @@ abstract class Notification extends Entity
     protected ?int $user = null;
 
     /**
-     * Mark the notification as read
+     * Mark the notification as read.
      *
      * @param string $uuid UUID of the
      * @param bool   $echo Whether to output an image directly
@@ -123,27 +123,24 @@ abstract class Notification extends Entity
     }
 
     /**
-     * Set entity ID
+     * Validate the ID
      *
-     * @param string|int $id
+     * @param int|string $id
      *
-     * @return $this
+     * @return void
      */
-    final public function setId(string|int $id): self
+    protected function validateId(int|string $id): void
     {
         if (\is_int($id)) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` needs to be a string.');
         }
         if (!\uuid_is_valid($id)) {
             throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
         }
-        $this->id = $id;
-
-        return $this;
     }
 
     /**
-     * Delete the notification
+     * Delete the notification.
      *
      * @return bool
      */
@@ -157,17 +154,17 @@ abstract class Notification extends Entity
     }
 
     /**
-     * Generate and save the notification to database (if available)
+     * Generate and save the notification to database (if available).
      *
-     * @param string|int|null $user_id        ID of the user for which to generate the notification
+     * @param null|int|string $user_id        ID of the user for which to generate the notification
      * @param array           $twig_vars      Array of variables for Twig
      * @param bool            $email          Whether the notification should be sent via email
      * @param bool            $push           Whether the notification should be shown through the app
-     * @param string|null     $email_override Email address to use, if none is found. For test environment, will not matter, since admin email will be used
+     * @param null|string     $email_override Email address to use, if none is found. For test environment, will not matter, since admin email will be used
      *
      * @return $this
      */
-    final public function save(string|int|null $user_id = null, array $twig_vars = [], bool $email = true, bool $push = true, ?string $email_override = null): self
+    final public function save(null|int|string $user_id = null, array $twig_vars = [], bool $email = true, bool $push = true, ?string $email_override = null): self
     {
         $this->push = $push;
         if (
@@ -273,11 +270,12 @@ abstract class Notification extends Entity
         }
         $constant_name = new \ReflectionClass($this)->getShortName();
         $class_name = NotificationType::class;
-        if (!\defined("$class_name::$constant_name")) {
+        if (!\defined("{$class_name}::{$constant_name}")) {
             throw new \UnexpectedValueException('Unsupported notification type');
         }
         $type = NotificationType::{$constant_name}->value;
         $result = false;
+
         try {
             // Try to save to database only if user ID is set
             if ($this->user !== null) {
@@ -346,7 +344,7 @@ abstract class Notification extends Entity
     }
 
     /**
-     * Send the notification
+     * Send the notification.
      *
      * @param bool $debug Whether to send the message or just output it to browser
      *
@@ -438,6 +436,7 @@ abstract class Notification extends Entity
         ) {
             throw new \UnexpectedValueException('No subscribed email found and no override email provided');
         }
+
         // Prepare message listener with Twig renderer
         try {
             $renderer = new BodyRenderer(Config::$twig);
@@ -474,11 +473,13 @@ abstract class Notification extends Entity
         } else {
             $email->getHeaders()->addTextHeader('Priority', 'Non-Urgent')->addTextHeader('Importance', 'Low');
         }
+
         try {
             // Add content
             $email->subject((Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT)
                     ->htmlTemplate('email.html.twig')
                     ->context(['subject' => (Config::$environment === 'prod' ? '' : '[Test] ').$this::SUBJECT, 'username' => $username, 'unsubscribe_all' => $subscribed, 'text' => $this->text, 'tracker' => $this->id, 'created' => $this->created, 'sent' => \time()]);
+
             try {
                 Query::query('UPDATE `sys__notifications` SET `attempts`=`attempts`+1, `last_attempt`=CURRENT_TIMESTAMP(6) WHERE `uuid` = :uuid;', [':uuid' => $this->id]);
             } catch (\Throwable $exception) {
@@ -516,7 +517,7 @@ abstract class Notification extends Entity
     }
 
     /**
-     * Generate text for message
+     * Generate text for message.
      *
      * @param array $twig_vars Array of variables for Twig
      *
@@ -525,7 +526,7 @@ abstract class Notification extends Entity
     abstract protected function setText(array $twig_vars = []): self;
 
     /**
-     * Get data from DB
+     * Get data from DB.
      *
      * @return array
      */
@@ -535,7 +536,7 @@ abstract class Notification extends Entity
     }
 
     /**
-     * Function process database data
+     * Function process database data.
      *
      * @param array $from_db
      *

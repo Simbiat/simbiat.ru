@@ -57,8 +57,8 @@ final class User extends Page
         $this->og_desc = 'Public profile of '.$output_array['user_data']['username'];
         // Setup OG profile for characters
         $output_array['ogtype'] = 'profile';
-        $output_array['ogextra'] =
-            '<meta property="profile:username" content="'.\htmlspecialchars($output_array['user_data']['username'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />'
+        $output_array['ogextra']
+            = '<meta property="profile:username" content="'.\htmlspecialchars($output_array['user_data']['username'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />'
             .($output_array['user_data']['name']['first_name'] === null ? '' : '<meta property="profile:first_name" content="'.\htmlspecialchars($output_array['user_data']['name']['first_name'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />')
             .($output_array['user_data']['name']['last_name'] === null ? '' : '<meta property="profile:last_name" content="'.\htmlspecialchars($output_array['user_data']['name']['last_name'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />')
             .($output_array['user_data']['sex'] === null ? '' : '<meta property="profile:gender" content="'.\htmlspecialchars(($output_array['user_data']['sex'] === 1 ? 'male' : 'female'), \ENT_QUOTES | \ENT_SUBSTITUTE).'" />');

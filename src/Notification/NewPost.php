@@ -8,27 +8,27 @@ use App\Service\Config;
 use App\Service\Errors;
 
 /**
- * Notification about a new post in a watched thread
+ * Notification about a new post in a watched thread.
  */
 final class NewPost extends Notification
 {
     /**
-     * Subject for email
+     * Subject for email.
      */
     protected const string SUBJECT = 'New post in watched thread';
 
     /**
-     * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
+     * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high.
      */
     protected const int PRIORITY = 1;
 
     /**
-     * Whether a non-empty array of Twig variables is required
+     * Whether a non-empty array of Twig variables is required.
      */
     protected const bool TWIG_REQUIRED = true;
 
     /**
-     * Generate text for message
+     * Generate text for message.
      *
      * @param array $twig_vars Array of variables for Twig
      *
@@ -45,6 +45,7 @@ final class NewPost extends Notification
 
             return $this;
         }
+
         try {
             $this->text = Config::$twig->render('notifications/new_post.html.twig', $twig_vars);
         } catch (\Throwable $throwable) {

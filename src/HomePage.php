@@ -20,18 +20,18 @@ use Simbiat\http20\Headers;
 use Simbiat\http20\Links;
 
 /**
- * Class to generate pages. "HomePage" is a legacy name
+ * Class to generate pages. "HomePage" is a legacy name.
  */
 final class HomePage
 {
     // Cache object
-    private(set) static ?Caching $data_cache = null;
+    public private(set) static ?Caching $data_cache = null;
 
     // HTTP headers object
-    private(set) static ?Headers $headers = null;
+    public private(set) static ?Headers $headers = null;
 
     // Flag indicating that cached view has been served already
-    private(set) static bool $stale_return = false;
+    public private(set) static bool $stale_return = false;
 
     // HTTP method being used
     public static ?string $method = null;
@@ -40,13 +40,13 @@ final class HomePage
     public static ?array $http_error = [];
 
     // User agent details from
-    private(set) static array $user_agent = [];
+    public private(set) static array $user_agent = [];
     public static array $links = [];
     public static string $canonical = '';
     public static ?DeviceDetector $device_detector = null;
 
     /**
-     * Twig processing of the generated page
+     * Twig processing of the generated page.
      *
      * @param array $twig_vars List of Twig variables
      * @param bool  $cache     Indicates if this is a cache pass
@@ -96,9 +96,9 @@ final class HomePage
                 // Output data
                 // TODO: when removing zEcho, need to ensure that eTag is attached, because Caddy does not do that
                 Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', false);
-                /** @noinspection PhpUsageOfSilenceOperatorInspection */
+                /* @noinspection PhpUsageOfSilenceOperatorInspection */
                 @\ob_end_flush();
-                /** @noinspection PhpUsageOfSilenceOperatorInspection */
+                /* @noinspection PhpUsageOfSilenceOperatorInspection */
                 @\ob_flush();
                 \flush();
                 if (
@@ -134,11 +134,13 @@ final class HomePage
                 }
             }
             \ob_start();
+
             try {
                 $output = Config::$twig->render($twig_vars['template_override'] ?? 'index.html.twig', $twig_vars);
             } catch (\Throwable $exception) {
                 Errors::error_log($exception);
                 Headers::clientReturn(500, false);
+
                 try {
                     // TODO: Needs to be cleaned up during refactor of pages
                     $output = Config::$twig->render('index.html.twig', [
@@ -189,7 +191,7 @@ final class HomePage
                 self::$data_cache->write($twig_vars, age: (int) $twig_vars['cache_age']);
             }
             if (self::$stale_return) {
-                /** @noinspection PhpUsageOfSilenceOperatorInspection */
+                /* @noinspection PhpUsageOfSilenceOperatorInspection */
                 @\ob_end_clean();
             } else {
                 // Output data
@@ -216,7 +218,7 @@ final class HomePage
     }
 
     /**
-     * Function to process some special files
+     * Function to process some special files.
      *
      * @return void
      */
@@ -237,7 +239,7 @@ final class HomePage
     }
 
     /**
-     * Get Bot name, OS and Browser for user agent
+     * Get Bot name, OS and Browser for user agent.
      *
      * @return array
      */
@@ -255,7 +257,7 @@ final class HomePage
         if (\is_array($bot)) {
             // Do not waste resources on bots
 
-            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             return ['bot' => \mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => null, 'client' => null, 'unsupported' => false, 'browser' => false, 'ai' => \strncasecmp($bot['category'] ?? '', 'ai', 2) === 0];
         }
         // Get OS
@@ -269,8 +271,8 @@ final class HomePage
         // Get client
         $client = $device_detector->getClient($_SERVER['HTTP_USER_AGENT']);
         // Check if a client is supported
-        $unsupported =
-            \preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser)/ui', $client['name'] ?? '') === 1
+        $unsupported
+            = \preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser)/ui', $client['name'] ?? '') === 1
             || (
                 \array_key_exists($client['name'] ?? '', Config::$teapot_browsers)
                 && (
@@ -306,8 +308,8 @@ final class HomePage
             self::$canonical = \preg_replace('/([^\/])$/u', '$1/', self::$canonical);
         }
         // Also return some of the GET parameters that we do support
-        self::$canonical .=
-            '?'
+        self::$canonical
+            .= '?'
             .\http_build_query(
                 [
                     // Do not add the 1st page as a query (since it is excessive)
@@ -346,7 +348,7 @@ final class HomePage
     }
 
     /**
-     * Initial routing logic
+     * Initial routing logic.
      *
      * @return void
      */
@@ -370,6 +372,7 @@ final class HomePage
             'timezone' => 'UTC',
             'user_id' => SystemUser::Unknown->value,
         ];
+
         try {
             // Maybe a client is using HTTP1.0, and there is little to worry about, but maybe there is.
             if (empty($_SERVER['HTTP_HOST'])) {
@@ -388,7 +391,7 @@ final class HomePage
             // Process requests to file or cache
             $this->filesRequests();
             // Exploding further processing
-            /* @noinspection NotOptimalRegularExpressionsInspection False positive, since does not know what can be in the string */
+            /** @noinspection NotOptimalRegularExpressionsInspection False positive, since does not know what can be in the string */
             $uri = \explode('/', \preg_replace('/^(\/)([^?]*)(\?'.\preg_quote($_SERVER['QUERY_STRING'] ?? '', '/').')?/ui', '$2', $_SERVER['REQUEST_URI']));
             // Check if there was an internal redirect to a custom error page.
             // If there was no Caddy error, then the value of the variable will be `{http.error.status_code}`. Otherwise - it will be a numeric HTTP code.
@@ -399,7 +402,7 @@ final class HomePage
                 self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR'], 'reason' => $_SERVER['CADDY_HTTP_ERROR_MSG'] ?? ''];
             }
             // Suppress inspection, since we only need headers to be sent
-            /** @noinspection UnusedFunctionResultInspection */
+            /* @noinspection UnusedFunctionResultInspection */
             Links::links(self::$links, force_cross_origin: true);
             // Send standard headers
             if ($uri[0] === 'api') {
@@ -432,8 +435,7 @@ final class HomePage
                     // Also block any bot known as AI one
                     if (
                         !empty(self::$user_agent['bot'])
-                        &&
-                        (
+                        && (
                             \array_key_exists('ai', self::$user_agent)
                             && self::$user_agent['ai'] === true
                         )

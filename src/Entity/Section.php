@@ -19,7 +19,7 @@ use Simbiat\Database\Query;
 use Simbiat\StringHelpers\Sanitize;
 
 /**
- * Forum section
+ * Forum section.
  */
 final class Section extends Entity
 {
@@ -61,7 +61,7 @@ final class Section extends Entity
     private bool $for_thread = false;
 
     /**
-     * Function to set a flag to return only the data required for a thread (for the sake of optimization)
+     * Function to set a flag to return only the data required for a thread (for the sake of optimization).
      *
      * @param bool $for_thread
      *
@@ -75,7 +75,7 @@ final class Section extends Entity
     }
 
     /**
-     * Function to (un)mark the section as private
+     * Function to (un)mark the section as private.
      *
      * @param bool $private
      *
@@ -87,6 +87,7 @@ final class Section extends Entity
         if (!\in_array('edit_sections', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
         }
+
         try {
             $affected = Query::query(
                 'UPDATE `talks__sections` SET `private`=:private, `editor`=:user_id WHERE `section_id`=:section_id;',
@@ -110,7 +111,7 @@ final class Section extends Entity
     }
 
     /**
-     * Function to close/open a section
+     * Function to close/open a section.
      *
      * @param bool $closed
      *
@@ -122,6 +123,7 @@ final class Section extends Entity
         if (!\in_array('edit_sections', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
         }
+
         try {
             $affected = Query::query(
                 'UPDATE `talks__sections` SET `closed`=:closed, `editor`=:user_id WHERE `section_id`=:section_id;',
@@ -144,7 +146,7 @@ final class Section extends Entity
     }
 
     /**
-     * Move section to another parent section
+     * Move section to another parent section.
      *
      * @return array
      */
@@ -162,6 +164,7 @@ final class Section extends Entity
         if ($parent->id === null) {
             return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parent_id'].'` does not exist'];
         }
+
         try {
             $affected = Query::query(
                 'UPDATE `talks__sections` SET `parent_id`=:parent_id, `editor`=:user_id WHERE `section_id`=:section_id;',
@@ -186,7 +189,7 @@ final class Section extends Entity
     }
 
     /**
-     * Create a new section
+     * Create a new section.
      *
      * @return array
      */
@@ -198,6 +201,7 @@ final class Section extends Entity
         if (\is_array($sanitize)) {
             return $sanitize;
         }
+
         try {
             $new_id = Query::query(
                 'INSERT INTO `talks__sections`(`section_id`, `name`, `description`, `parent_id`, `sequence`, `type`, `closed`, `private`, `published`, `author`, `editor`, `icon`) VALUES (NULL,:name,:description,:parent_id,:sequence,:type,:closed,:private,:time,:user_id,:user_id,:icon);',
@@ -272,7 +276,7 @@ final class Section extends Entity
     }
 
     /**
-     * Edit section data
+     * Edit section data.
      *
      * @return array<string, bool|int|string>
      */
@@ -291,6 +295,7 @@ final class Section extends Entity
         ) {
             return ['http_error' => 400, 'reason' => 'Can\'t change section type to `Category`, because it has threads in it'];
         }
+
         try {
             $queries = [];
             $queries[] = [
@@ -322,7 +327,7 @@ final class Section extends Entity
     }
 
     /**
-     * Delete section
+     * Delete section.
      *
      * @return array
      */
@@ -357,6 +362,7 @@ final class Section extends Entity
         $location = $this->parent_id === 0
             ? '/talks/edit/sections/'
             : '/talks/edit/sections/'.$this->parent_id.'/';
+
         // Attempt removal
         try {
             $affected = Query::query('DELETE FROM `talks__sections` WHERE `section_id`=:section_id;', [':section_id' => [$this->id, 'int']], return: 'affected');
@@ -373,13 +379,13 @@ final class Section extends Entity
     }
 
     /**
-     * Function to get section types allowed inside a section
+     * Function to get section types allowed inside a section.
      *
-     * @param string|int $type
+     * @param int|string $type
      *
      * @return array
      */
-    public static function getSectionTypes(string|int $type = ''): array
+    public static function getSectionTypes(int|string $type = ''): array
     {
         $where = '';
         switch (\mb_strtolower($type, 'UTF-8')) {
@@ -414,7 +420,7 @@ final class Section extends Entity
     }
 
     /**
-     * Function to get initial data from DB
+     * Function to get initial data from DB.
      *
      * @return array
      */
@@ -484,8 +490,8 @@ final class Section extends Entity
                     default => $data['detailed_type'],
                 };
             }
-            $data['owned'] =
-                $inherited_ownership
+            $data['owned']
+                = $inherited_ownership
                 || $data['author'] === $_SESSION['user_id'];
             // Get children
             $where = '';
@@ -603,7 +609,7 @@ final class Section extends Entity
     }
 
     /**
-     * Function process database data
+     * Function process database data.
      *
      * @param array $from_db
      *
@@ -645,7 +651,7 @@ final class Section extends Entity
     }
 
     /**
-     * Get parents of the section
+     * Get parents of the section.
      *
      * @param int $id
      *
@@ -660,12 +666,11 @@ final class Section extends Entity
             return [];
         }
         // If the parent has its own parent - get it and add to array
-        $parents = !empty($parents[0]['parent_id'])
+        return !empty($parents[0]['parent_id'])
             ? \array_merge($parents, $this->getParents((int) $parents[0]['parent_id']))
             : \array_reverse($parents);
 
         // Reverse array to make it from top to bottom
-        return $parents;
     }
 
     /**
@@ -725,14 +730,14 @@ final class Section extends Entity
     }
 
     /**
-     * Sanitize section data
+     * Sanitize section data.
      *
      * @param array $data Data to check
      * @param bool  $edit Flag to indicate if this is an edit or not
      *
-     * @return bool|array
+     * @return array|bool
      */
-    private function sanitizeInput(array &$data, bool $edit = false): bool|array
+    private function sanitizeInput(array &$data, bool $edit = false): array|bool
     {
         if (\count($data) === 0) {
             return ['http_error' => 400, 'reason' => 'No form data provided'];
@@ -880,12 +885,12 @@ final class Section extends Entity
         // Check if the name is duplicated
         $section_exists = Query::query('SELECT `section_id` FROM `talks__sections` WHERE `parent_id`=:section_id AND `name`=:name;', [':name' => $data['name'], ':section_id' => [$data['parent_id'], 'int']], return: 'value');
         if (
-            \is_int($section_exists) &&
-            (
+            \is_int($section_exists)
+            && (
                 // If the name is empty (a new section is being created)
-                Sanitize::whiteString($this->name) ||
+                Sanitize::whiteString($this->name)
                 // Or it's not empty and is different from the one we are trying to set
-                $this->name !== $data['name']
+                || $this->name !== $data['name']
             )
         ) {
             return ['http_error' => 409, 'reason' => 'Subsection `'.$data['name'].'` already exists in section.', 'location' => '/talks/sections/'.$section_exists];

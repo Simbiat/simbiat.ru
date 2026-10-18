@@ -37,6 +37,7 @@ abstract class General extends Page
     protected function generate(array $path): array
     {
         $output_array = [];
+
         // Attempt to ingest dats from JSON file
         try {
             if (empty($this->json_to_ingest)) {

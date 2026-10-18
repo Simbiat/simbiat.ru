@@ -8,7 +8,7 @@ use App\Controller\Abstracts\Page;
 use Simbiat\Database\Query;
 
 /**
- * Class for pages that can be counted (that is, they have multiple items)
+ * Class for pages that can be counted (that is, they have multiple items).
  */
 final class Countables extends Page
 {
@@ -36,7 +36,7 @@ final class Countables extends Page
     protected int $max_elements = 50000;
 
     /**
-     * Generation of the page data
+     * Generation of the page data.
      *
      * @param array $path
      *
@@ -56,8 +56,8 @@ final class Countables extends Page
             $path[1] = \preg_replace('/\.xml$/ui', '', $path[1]);
         }
         // Get page
-        $path[1] =
-            empty($path[1])
+        $path[1]
+            = empty($path[1])
             || !\is_numeric($path[1])
             || $path[1] < 1
                 ? 1

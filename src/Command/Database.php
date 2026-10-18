@@ -15,22 +15,24 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Run tasks related to database maintenance
+ * Run tasks related to database maintenance.
  */
 final readonly class Database
 {
     /**
-     * Inject dependencies
+     * Inject dependencies.
      *
      * @param \Doctrine\DBAL\Connection $connection
      */
     public function __construct(
-        /** @noinspection InterfacesAsConstructorDependenciesInspection */
+        /**
+         * @noinspection InterfacesAsConstructorDependenciesInspection
+         */
         private Connection $connection,
     ) {}
 
     /**
-     * Create a list of ordered tables for backup generation
+     * Create a list of ordered tables for backup generation.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -40,6 +42,7 @@ final readonly class Database
     public function order(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Generating ordered list of tables...'));
+
         try {
             /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
@@ -66,7 +69,7 @@ final readonly class Database
     }
 
     /**
-     * Generate DDLs
+     * Generate DDLs.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -76,6 +79,7 @@ final readonly class Database
     public function ddl(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Generating DDLs...'));
+
         try {
             // Run only ony DEV
             if (Config::$environment !== 'dev') {
@@ -118,7 +122,7 @@ final readonly class Database
     }
 
     /**
-     * Create optimization scripts to run during database backup
+     * Create optimization scripts to run during database backup.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -128,6 +132,7 @@ final readonly class Database
     public function optimize(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Generating optimization scripts...'));
+
         try {
             /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();

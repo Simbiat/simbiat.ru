@@ -47,7 +47,7 @@ final class SupOps extends Router
     protected string $og_image = '/supops/logo/ogimage.webp';
 
     /**
-     * This is the actual page generation based on further details of the $path
+     * This is the actual page generation based on further details of the $path.
      *
      * @param array $path
      *

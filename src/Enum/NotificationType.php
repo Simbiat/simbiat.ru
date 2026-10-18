@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Enum;
 
 /**
- * Mapping of notification types to
+ * Mapping of notification types to.
  */
 enum NotificationType: int
 {

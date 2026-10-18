@@ -19,22 +19,24 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Various commands for FFXIV Tracker
+ * Various commands for FFXIV Tracker.
  */
 final readonly class FFTracker
 {
     /**
-     * Inject dependencies
+     * Inject dependencies.
      *
      * @param \Doctrine\DBAL\Connection $connection
      */
     public function __construct(
-        /** @noinspection InterfacesAsConstructorDependenciesInspection */
+        /**
+         * @noinspection InterfacesAsConstructorDependenciesInspection
+         */
         private Connection $connection,
     ) {}
 
     /**
-     * Generate tasks to attempt to register new characters
+     * Generate tasks to attempt to register new characters.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -44,6 +46,7 @@ final readonly class FFTracker
     public function registerNewCharacters(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Registering new FFXIV characters...'));
+
         try {
             /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
@@ -57,7 +60,7 @@ final readonly class FFTracker
             // We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
             $new_max_id = \min($max_id + 500, 4294967295);
             if ((int) $max_id < (int) $new_max_id) {
-                for ($character = ($max_id + 1); (int) $character <= (int) $new_max_id; $character++) {
+                for ($character = ($max_id + 1); (int) $character <= (int) $new_max_id; ++$character) {
                     $extra_for_error = 'character ID '.$character;
                     $cron->settingsFromArray(
                         ['task' => 'ff_update_entity', 'arguments' => [(string) $character, 'character'], 'message' => 'Updating character with ID '.$character],
@@ -74,7 +77,7 @@ final readonly class FFTracker
     }
 
     /**
-     * Update FFXIV statistics
+     * Update FFXIV statistics.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -84,6 +87,7 @@ final readonly class FFTracker
     public function updateStatistics(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Updating FFXIV statistics...'));
+
         try {
             // Create a path if missing
             if (
@@ -146,7 +150,7 @@ final readonly class FFTracker
     }
 
     /**
-     * Update FFXIV servers
+     * Update FFXIV servers.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -156,6 +160,7 @@ final readonly class FFTracker
     public function updateServers(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Updating FFXIV servers...'));
+
         try {
             /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
@@ -190,7 +195,7 @@ final readonly class FFTracker
     }
 
     /**
-     * Get data raw data for character statistics based on counts
+     * Get data raw data for character statistics based on counts.
      *
      * @param array $data Array of gathered data
      *
@@ -212,7 +217,7 @@ final readonly class FFTracker
     }
 
     /**
-     * Get data for character-based statistics
+     * Get data for character-based statistics.
      *
      * @param array $data Array of gathered data
      *
@@ -275,7 +280,7 @@ final readonly class FFTracker
     }
 
     /**
-     * Get data for statistics related to different groups
+     * Get data for statistics related to different groups.
      *
      * @param array $data Array of gathered data
      *
@@ -323,7 +328,7 @@ final readonly class FFTracker
     }
 
     /**
-     * Get data for achievements' statistics
+     * Get data for achievements' statistics.
      *
      * @param array $data Array of gathered data
      *
@@ -349,7 +354,7 @@ final readonly class FFTracker
     }
 
     /**
-     * Get data statistics linked to dates
+     * Get data statistics linked to dates.
      *
      * @param array $data Array of gathered data
      *
@@ -394,7 +399,7 @@ final readonly class FFTracker
     }
 
     /**
-     * Get data for potential data bugs
+     * Get data for potential data bugs.
      *
      * @param array $data Array of gathered data
      *
@@ -418,7 +423,7 @@ final readonly class FFTracker
         ));
         // Get entities with duplicate names
         $duplicate_names = Query::query(
-        /** @lang MariaDB */
+            /* @lang MariaDB */
             '(
                         SELECT
                             \'character\' AS `type`,
@@ -561,7 +566,7 @@ final readonly class FFTracker
     }
 
     /**
-     * Get data for uncategorized statistics
+     * Get data for uncategorized statistics.
      *
      * @param array $data Array of gathered data
      *
@@ -570,7 +575,7 @@ final readonly class FFTracker
     private function getOthers(array &$data): void
     {
         // Communities
-        $data['other']['communities'] = Query::query(/** @lang MySQL */ '
+        $data['other']['communities'] = Query::query(/* @lang MySQL */ '
                             (SELECT \'Free Company\' AS `type`, \'No community\' AS `value`, COUNT(*) as `count` FROM `ffxiv__freecompany` WHERE `deleted` IS NULL AND `community_id` IS NULL)
                             UNION ALL
                             (SELECT \'Free Company\' AS `type`, \'Community\' AS `value`, COUNT(*) as `count` FROM `ffxiv__freecompany` WHERE `deleted` IS NULL AND `community_id` IS NOT NULL)
@@ -589,7 +594,7 @@ final readonly class FFTracker
                             ORDER BY `type`, `value`
                     ', return: 'all');
         // Deleted entities statistics
-        $data['other']['entities'] = Query::query(/** @lang MySQL */ '
+        $data['other']['entities'] = Query::query(/* @lang MySQL */ '
                             (SELECT \'Active Character\' AS `value`, COUNT(*) AS `count` FROM `ffxiv__character` WHERE `deleted` IS NULL)
                             UNION ALL
                             (SELECT \'Deleted Character\' AS `value`, COUNT(*) AS `count` FROM `ffxiv__character` WHERE `deleted` IS NOT NULL)
@@ -613,7 +618,7 @@ final readonly class FFTracker
                     ', return: 'all');
         // Number of updated entities in the last 30 days
         $data['updates_stats'] = Query::query(
-        /** @lang MariaDB */
+            /* @lang MariaDB */
             '(SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'characters\' as `type` FROM `ffxiv__character` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
                             UNION
                             (SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'free_companies\' as `type` FROM `ffxiv__freecompany` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
@@ -632,7 +637,7 @@ final readonly class FFTracker
     }
 
     /**
-     * Adds jobs for all entities considered as potential bugs
+     * Adds jobs for all entities considered as potential bugs.
      *
      * @param array $data Array of gathered data
      *

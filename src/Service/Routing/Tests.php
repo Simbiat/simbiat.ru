@@ -23,7 +23,7 @@ final class Tests extends Router
     protected string $og_desc = 'Tests';
 
     /**
-     * This is the actual page generation based on further details of the $path
+     * This is the actual page generation based on further details of the $path.
      *
      * @param array $path
      *

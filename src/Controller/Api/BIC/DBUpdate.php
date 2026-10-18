@@ -10,7 +10,7 @@ use App\Service\BICLibrary;
 use App\Service\Errors;
 
 /**
- * API endpoint to update BIC library
+ * API endpoint to update BIC library.
  */
 final class DBUpdate extends Api
 {
@@ -26,7 +26,7 @@ final class DBUpdate extends Api
     ];
 
     /**
-     * This is actual API response generation based on further details of the $path
+     * This is actual API response generation based on further details of the $path.
      *
      * @param array $path
      *
@@ -37,6 +37,7 @@ final class DBUpdate extends Api
         if (!\array_key_exists(HomePage::$method, $this->methods)) {
             return ['http_error' => 405];
         }
+
         try {
             $data = new BICLibrary()->update(true);
         } catch (\Throwable $exception) {

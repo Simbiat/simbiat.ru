@@ -35,6 +35,7 @@ abstract class General extends Api
         if (empty($path[1])) {
             $path[1] = '';
         }
+
         try {
             if (
                 $path[1] === 'update'
@@ -52,21 +53,21 @@ abstract class General extends Api
                 // User is not authenticated. Abuse of Lodestone can slow down automated updates, and Update requires authentication either way
                 return ['http_error' => 403, 'reason' => 'Authentication required'];
             }
-            $data =
-                $this->name_for_links === 'achievement'
+            $data
+                = $this->name_for_links === 'achievement'
                     ? match ($path[1]) {
-                    'update' => new Achievement($path[0])->updateFromApi(),
-                    'lodestone' => new Achievement($path[0])->getFromLodestone(),
-                    default => new Achievement($path[0])->getArray(),
-                    // phpcs:ignore Generic.WhiteSpace.ScopeIndent.IncorrectExact, Squiz.WhiteSpace.ScopeClosingBrace.Indent - Just does not look good when it's moved
-                }
-                    : match ($path[1]) {
-                    'update' => new $this->entity_class()->setId($path[0])->updateFromApi(),
-                    'register' => new $this->entity_class()->setId($path[0])->register(),
-                    'lodestone' => new $this->entity_class()->setId($path[0])->getFromLodestone(),
-                    default => new $this->entity_class()->setId($path[0])->getArray(),
-                    // phpcs:ignore Generic.WhiteSpace.ScopeIndent.IncorrectExact, Squiz.WhiteSpace.ScopeClosingBrace.Indent - Just does not look good when it's moved
-                };
+                        'update' => new Achievement($path[0])->updateFromApi(),
+                        'lodestone' => new Achievement($path[0])->getFromLodestone(),
+                        default => new Achievement($path[0])->getArray(),
+                        // phpcs:ignore Generic.WhiteSpace.ScopeIndent.IncorrectExact, Squiz.WhiteSpace.ScopeClosingBrace.Indent - Just does not look good when it's moved
+                    }
+            : match ($path[1]) {
+                'update' => new $this->entity_class()->setId($path[0])->updateFromApi(),
+                'register' => new $this->entity_class()->setId($path[0])->register(),
+                'lodestone' => new $this->entity_class()->setId($path[0])->getFromLodestone(),
+                default => new $this->entity_class()->setId($path[0])->getArray(),
+                // phpcs:ignore Generic.WhiteSpace.ScopeIndent.IncorrectExact, Squiz.WhiteSpace.ScopeClosingBrace.Indent - Just does not look good when it's moved
+            };
         } catch (\UnexpectedValueException) {
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];
         } catch (\Throwable $exception) {
@@ -98,7 +99,7 @@ abstract class General extends Api
         }
         if (
             $data === 403
-            && \in_array($this->name_for_links, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'])
+            && \in_array($this->name_for_links, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'], true)
         ) {
             return ['http_error' => 403, 'reason' => $this->name_for_errors.' has empty page on Lodestone'];
         }

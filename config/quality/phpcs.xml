@@ -55,6 +55,9 @@
         <!-- Duplicates SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing -->
         <exclude name="Symfony.Formatting.BlankLineBeforeReturn"/>
     </rule>
+    <rule ref="Symfony.Files.AlphanumericFilename">
+        <exclude-pattern>/app/config/quality/php-cs-fixer.php</exclude-pattern>
+    </rule>
 
     <!-- PHP compatibility -->
     <rule ref="PHPCompatibility"/>

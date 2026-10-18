@@ -13,7 +13,7 @@ use Twig\Extension\GlobalsInterface;
 use Twig\TwigFunction;
 
 /**
- * Class to implement some extension stuff for Twig
+ * Class to implement some extension stuff for Twig.
  */
 final class Extension extends AbstractExtension implements GlobalsInterface
 {

@@ -12,7 +12,7 @@ use Simbiat\Database\Query;
 use Simbiat\DDCIcons;
 
 /**
- * Page to manage user sessions
+ * Page to manage user sessions.
  */
 final class Sessions extends Page
 {
@@ -40,7 +40,7 @@ final class Sessions extends Page
     protected bool $authentication_needed = true;
 
     /**
-     * Generation of the page data
+     * Generation of the page data.
      *
      * @param array $path
      *
@@ -91,8 +91,8 @@ final class Sessions extends Page
                     ? DDCIcons::getClient($output_array[$type][$key]['client']['name'], $output_array[$type][$key]['client']['type'])
                     : null;
                 // Set country icon if a flag exists
-                $output_array[$type][$key]['country_icon'] =
-                    !empty($output_array[$type][$key]['country'])
+                $output_array[$type][$key]['country_icon']
+                    = !empty($output_array[$type][$key]['country'])
                     && \is_file(Config::$img_dir.'flags/'.$output_array[$type][$key]['country'].'.svg')
                         ? '/assets/images/flags/'.$output_array[$type][$key]['country'].'.svg'
                         : null;

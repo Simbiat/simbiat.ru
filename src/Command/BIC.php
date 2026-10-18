@@ -12,12 +12,12 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Run tasks related to BIC library
+ * Run tasks related to BIC library.
  */
 final class BIC
 {
     /**
-     * Clean old sessions
+     * Clean old sessions.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -27,6 +27,7 @@ final class BIC
     public function libraryUpdate(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Updating BIC library...'));
+
         try {
             // Connect to DB
             Config::dbConnect();
@@ -34,9 +35,9 @@ final class BIC
                 $result = new BICLibrary()->update(true);
                 // Ignore failures to download the file. CBR started using DDoS-Guard, which seems to be blocking the server most of the time now
                 if (
-                    \is_string($result) &&
-                    !\is_numeric($result) &&
-                    !\str_contains($result, 'Не удалось скачать файл')
+                    \is_string($result)
+                    && !\is_numeric($result)
+                    && !\str_contains($result, 'Не удалось скачать файл')
                 ) {
                     throw new \RuntimeException($result);
                 }

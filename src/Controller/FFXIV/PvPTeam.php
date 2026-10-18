@@ -44,20 +44,20 @@ final class PvPTeam extends Page
         // Try to exit early based on the modification date
         $this->lastModified($output_array['pvpteam']['dates']['updated']);
         // Check if linked to the current user
-        $output_array['pvpteam']['linked'] =
-            $_SESSION['user_id'] !== 1
+        $output_array['pvpteam']['linked']
+            = $_SESSION['user_id'] !== 1
             && \in_array($_SESSION['user_id'], \array_column($output_array['pvpteam']['members'], 'user_id'), true)
             ? true
             : false;
         $output_array['pvpteam']['dates']['scheduled'] = $entity->scheduleUpdate();
-        $output_array['pvpteam']['can_refresh'] =
-            (
+        $output_array['pvpteam']['can_refresh']
+            = (
                 empty($output_array['pvpteam']['dates']['deleted']) && (
-                    empty($output_array['pvpteam']['dates']['scheduled']) ||
-                    $output_array['pvpteam']['linked']
+                    empty($output_array['pvpteam']['dates']['scheduled'])
+                    || $output_array['pvpteam']['linked']
                 )
-            ) ||
-            \in_array('refresh_all_ff', $_SESSION['permissions'], true)
+            )
+            || \in_array('refresh_all_ff', $_SESSION['permissions'], true)
             ? true
             : false;
         // Continue breadcrumbs

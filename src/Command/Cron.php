@@ -12,22 +12,24 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Run CRON tasks from the database (using CRON library)
+ * Run CRON tasks from the database (using CRON library).
  */
 final readonly class Cron
 {
     /**
-     * Inject dependencies
+     * Inject dependencies.
      *
      * @param \Doctrine\DBAL\Connection $connection
      */
     public function __construct(
-        /** @noinspection InterfacesAsConstructorDependenciesInspection */
+        /**
+         * @noinspection InterfacesAsConstructorDependenciesInspection
+         */
         private Connection $connection,
     ) {}
 
     /**
-     * Run CRON tasks from the database (using CRON library)
+     * Run CRON tasks from the database (using CRON library).
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *

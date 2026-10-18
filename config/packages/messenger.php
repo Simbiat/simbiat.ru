@@ -23,8 +23,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             ],
             'default_bus' => 'messenger.bus.default',
             'buses' => [
-                'messenger.bus.default' => [
-                ],
+                'messenger.bus.default' => [],
             ],
             'routing' => [
                 SendEmailMessage::class => 'async',

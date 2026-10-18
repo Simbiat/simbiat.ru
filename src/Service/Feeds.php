@@ -9,12 +9,12 @@ use Simbiat\http20\Atom;
 use Simbiat\http20\RSS;
 
 /**
- * Class to generate various feeds (RSS, Atom, etc.)
+ * Class to generate various feeds (RSS, Atom, etc.).
  */
 final class Feeds
 {
     /**
-     * Function to parse URI and generate appropriate feed
+     * Function to parse URI and generate appropriate feed.
      *
      * @throws \Exception
      */
@@ -32,7 +32,7 @@ final class Feeds
     }
 
     /**
-     * Generate Atom/RSS
+     * Generate Atom/RSS.
      *
      * @param array  $uri    List of URIs
      * @param string $format What format should be used
@@ -96,7 +96,7 @@ final class Feeds
                 // Change language for BICs
                 if (
                     $format === 'rss'
-                    && \in_array($uri[0], ['bicchanged', 'bicdeleted'])
+                    && \in_array($uri[0], ['bicchanged', 'bicdeleted'], true)
                 ) {
                     $settings['language'] = 'ru-ru';
                 }

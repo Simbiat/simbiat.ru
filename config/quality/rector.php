@@ -8,7 +8,7 @@ use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\ClassMethod\RemoveUselessReturnTagRector;
 use Rector\Symfony\Set\SymfonySetList;
 
-/** @noinspection PhpUnhandledExceptionInspection */
+/* @noinspection PhpUnhandledExceptionInspection */
 return RectorConfig::configure()
                    ->withFileExtensions(['php'])
                    ->withCache('/app/data/temp/rector')
@@ -17,7 +17,7 @@ return RectorConfig::configure()
                        '/app/config',
                        '/app/packages',
                        '/app/src',
-                       '/app/tests'
+                       '/app/tests',
                    ])
                    ->withSkip([
                        '/app/bin/console',

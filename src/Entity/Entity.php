@@ -7,7 +7,7 @@ namespace App\Entity;
 use App\Service\Errors;
 
 /**
- * Generic entity class
+ * Generic entity class.
  */
 abstract class Entity
 {
@@ -21,14 +21,15 @@ abstract class Entity
     protected string $id_format = '/^\d+$/m';
 
     /**
-     * Get entity properties
+     * Get entity properties.
      *
      * @return $this
      */
     final public function get(): self
     {
-        // Set flag, that we have tried to get data
+        // Set the flag that we have tried to get data
         $this->attempted = true;
+
         try {
             // Set ID
             if ($this->id === null) {
@@ -42,12 +43,12 @@ abstract class Entity
             } else {
                 $this->process($result);
             }
-        } catch (\Throwable $e) {
-            $error = $e->getMessage().$e->getTraceAsString();
-            Errors::error_log($e);
-            // Rethrow exception, if using debug mode
+        } catch (\Throwable $exception) {
+            $error = $exception->getMessage().$exception->getTraceAsString();
+            Errors::error_log($exception);
+            // Rethrow exception if using debug mode
             if ($this->debug) {
-                die('<pre>'.$error.'</pre>');
+                exit('<pre>'.$error.'</pre>');
             }
         }
 
@@ -55,7 +56,7 @@ abstract class Entity
     }
 
     /**
-     * Get the data in an array
+     * Get the data in an array.
      *
      * @return array
      */
@@ -81,14 +82,14 @@ abstract class Entity
     }
 
     /**
-     * Function to get initial data from DB
+     * Function to get initial data from DB.
      *
      * @return array
      */
     abstract protected function getFromDB(): array;
 
     /**
-     * Function process database data
+     * Function process database data.
      *
      * @param array $from_db
      *
@@ -97,10 +98,13 @@ abstract class Entity
     abstract protected function process(array $from_db): void;
 
     /**
-     * @param string|int|null $id    ID of an entity
+     * @param null|int|string $id    ID of an entity
      * @param bool            $debug Flag to enable debug mode
      */
-    final public function __construct(string|int|null $id = null, protected bool $debug = false)
+    final public function __construct(
+        null|int|string $id = null,
+        protected bool $debug = false
+    )
     {
         // If ID was provided - set it as well
         if (!empty($id)) {
@@ -111,21 +115,33 @@ abstract class Entity
     }
 
     /**
-     * Set entity ID
+     * Set entity ID.
      *
-     * @param string|int $id
+     * @param int|string $id
      *
      * @return $this
      */
-    public function setId(string|int $id): self
+    final public function setId(int|string $id): self
     {
         // Convert to string for consistency
         $id = (string) $id;
-        if (\preg_match($this->id_format, $id) !== 1) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
-        }
+        $this->validateId($id);
         $this->id = $id;
 
         return $this;
+    }
+
+    /**
+     * Validate the ID
+     *
+     * @param int|string $id
+     *
+     * @return void
+     */
+    protected function validateId(int|string $id): void
+    {
+        if (\preg_match($this->id_format, $id) !== 1) {
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
+        }
     }
 }

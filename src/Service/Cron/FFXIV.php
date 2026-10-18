@@ -21,19 +21,19 @@ use Simbiat\Database\Query;
 use Simbiat\FFXIV\Lodestone;
 
 /**
- * Class handling regular tasks for FFXIV tracker
+ * Class handling regular tasks for FFXIV tracker.
  */
 final class FFXIV
 {
     /**
-     * Update a FFXIV entity
+     * Update a FFXIV entity.
      *
-     * @param string|int $id   Entity ID
+     * @param int|string $id   Entity ID
      * @param string     $type Entity type
      *
      * @return bool|string
      */
-    public function updateEntity(string|int $id, #[ExpectedValues(['character', 'freecompany', 'pvpteam', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'achievement'])] string $type): bool|string
+    public function updateEntity(int|string $id, #[ExpectedValues(['character', 'freecompany', 'pvpteam', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'achievement'])] string $type): bool|string
     {
         return match ($type) {
             'character' => new Character($id)->update(true),
@@ -47,7 +47,7 @@ final class FFXIV
     }
 
     /**
-     * Function to update old entities
+     * Function to update old entities.
      *
      * @param int $limit    How many entities to process
      * @param int $instance Instance number that called the function
@@ -62,6 +62,7 @@ final class FFXIV
         if ($limit < 1) {
             $limit = 1;
         }
+
         try {
             $entities = Query::query(
                 '
@@ -112,7 +113,7 @@ final class FFXIV
     }
 
     /**
-     * Register any new linkshells found
+     * Register any new linkshells found.
      *
      * @return bool|string
      *
@@ -143,15 +144,16 @@ final class FFXIV
                     foreach ([10, 30, 50, 51] as $count) {
                         // Loop through pages
                         $cron_agent->log('Parsing '.$world['entity'].'s on '.$world['world'].' (pages for count '.$count.', order '.$order.')...', EventTypes::CustomInformation);
-                        for ($page = 1; $page <= 20; $page++) {
+                        for ($page = 1; $page <= 20; ++$page) {
                             if (
-                                !\array_key_exists($page, $json[$world['entity']][$world['world']][$order][$count]) ||
+                                !\array_key_exists($page, $json[$world['entity']][$world['world']][$order][$count])
                                 // Count of 0 may mean that the last attempt failed (rate limit or maintenance)
-                                $json[$world['entity']][$world['world']][$order][$count][$page]['count'] === 0 ||
+                                || $json[$world['entity']][$world['world']][$order][$count][$page]['count'] === 0
                                 // Cycle through everything every 5 days. At the time of writing, there should be less than 30000 pages, with 500 pages per hourly scan; the full cycle finishes in less than 3 days
-                                \time() - $json[$world['entity']][$world['world']][$order][$count][$page]['date'] > 432000
+                                || \time() - $json[$world['entity']][$world['world']][$order][$count][$page]['date'] > 432000
                             ) {
                                 ++$pages_parsed;
+
                                 // Get linkshells
                                 try {
                                     $lodestone->searchLinkshell('', $world['world'], $count, $order, $page, $world['entity'] === 'crossworldlinkshell');

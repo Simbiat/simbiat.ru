@@ -12,7 +12,7 @@ use Simbiat\Database\Query;
 use Simbiat\FFXIV\Lodestone;
 
 /**
- * Class representing a FFXIV linkshell (chat group)
+ * Class representing a FFXIV linkshell (chat group).
  */
 final class Linkshell extends AbstractEntity
 {
@@ -27,17 +27,18 @@ final class Linkshell extends AbstractEntity
     public array $past_members = [];
 
     /**
-     * Get linkshell data from Lodestone
+     * Get linkshell data from Lodestone.
      *
      * @param bool $allow_sleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
      *
      * @internal
      *
-     * @return string|array
+     * @return array|string
      */
-    public function getFromLodestone(bool $allow_sleep = false): string|array
+    public function getFromLodestone(bool $allow_sleep = false): array|string
     {
         $lodestone = new Lodestone();
+
         try {
             $data = $lodestone->getLinkshellMembers($this->id, 0)->getResult();
         } catch (\Throwable $exception) {
@@ -96,7 +97,7 @@ final class Linkshell extends AbstractEntity
         return $data;
     }
 
-    /**Function to get initial data from DB
+    /** Function to get initial data from DB
      * @throws \Exception
      */
     protected function getFromDB(): array
@@ -121,7 +122,7 @@ final class Linkshell extends AbstractEntity
     }
 
     /**
-     * Function to process data from DB
+     * Function to process data from DB.
      *
      * @param array $from_db
      *
@@ -145,7 +146,7 @@ final class Linkshell extends AbstractEntity
     }
 
     /**
-     * Function to update the entity
+     * Function to update the entity.
      *
      * @return bool
      */
@@ -247,7 +248,7 @@ final class Linkshell extends AbstractEntity
     }
 
     /**
-     * Delete linkshell
+     * Delete linkshell.
      *
      * @return bool
      */

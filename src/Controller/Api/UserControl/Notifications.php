@@ -8,7 +8,7 @@ use App\Controller\Api\Api;
 use App\Notification\Test;
 
 /**
- * API endpoint to control notifications
+ * API endpoint to control notifications.
  */
 final class Notifications extends Api
 {
@@ -24,7 +24,7 @@ final class Notifications extends Api
     ];
 
     /**
-     * This is an actual API response generation based on further details of the $path
+     * This is an actual API response generation based on further details of the $path.
      *
      * @param array $path
      *

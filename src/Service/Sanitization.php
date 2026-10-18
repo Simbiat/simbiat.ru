@@ -11,24 +11,24 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 /**
- * Class for some common sanitization function
+ * Class for some common sanitization function.
  */
 final class Sanitization
 {
     /**
-     * Elements names, that can be used for sanitization
+     * Elements names, that can be used for sanitization.
      */
     public const array SANITIZATION_ELEMENT_NAMES = ['body', 'head', 'timeline'];
 
     /**
-     * Static sanitizer configs for a little bit of performance
+     * Static sanitizer configs for a little bit of performance.
      *
-     * @var array<string, \Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig|null>
+     * @var array<string, null|\Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig>
      */
-    private(set) static array $sanitizer_config = ['body' => null, 'head' => null, 'timeline' => null];
+    public private(set) static array $sanitizer_config = ['body' => null, 'head' => null, 'timeline' => null];
 
     /**
-     * Sanitize HTML string
+     * Sanitize HTML string.
      *
      * @param string $string String to sanitize
      * @param string $for    Flag indicating for which element we are doing sanitization
@@ -46,12 +46,11 @@ final class Sanitization
         $string = \preg_replace(['/(\s*<br \/>\s*){5,}/mi', '/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi'], ['<br>', ''], $string);
         // Run the sanitizer
         $sanitizer = new HtmlSanitizer($config);
-        $string = $for === 'head'
+        return $for === 'head'
             ? $sanitizer->sanitizeFor('head', $string)
             : $sanitizer->sanitize($string);
 
         // TODO add loading="lazy" decoding="async" to all images
-        return $string;
     }
 
     /**
@@ -98,7 +97,9 @@ final class Sanitization
      *
      * @return bool
      */
-    /** @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection */
+    /**
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
+     */
     public static function checkboxToBoolean(mixed &$checkbox): bool
     {
         if (!isset($checkbox)) {
@@ -112,14 +113,14 @@ final class Sanitization
     }
 
     /**
-     * Function to sanitize time for creating scheduled section/threads/posts
+     * Function to sanitize time for creating scheduled section/threads/posts.
      *
-     * @param string|int|null $time
-     * @param string|null     $timezone
+     * @param null|int|string $time
+     * @param null|string     $timezone
      *
-     * @return int|null
+     * @return null|int
      */
-    public static function scheduledTime(string|int|null &$time, ?string &$timezone = null): ?int
+    public static function scheduledTime(null|int|string &$time, ?string &$timezone = null): ?int
     {
         if (\in_array('post_scheduled', $_SESSION['permissions'], true)) {
             if (empty($time)) {
@@ -150,7 +151,7 @@ final class Sanitization
     }
 
     /**
-     * Function to generate a "hash tree" from string
+     * Function to generate a "hash tree" from string.
      *
      * @param string $string
      *
@@ -162,7 +163,7 @@ final class Sanitization
     }
 
     /**
-     * Get a link for the uploaded file based on its filename (ID + extension)
+     * Get a link for the uploaded file based on its filename (ID + extension).
      *
      * @param string $filename
      *
@@ -185,7 +186,7 @@ final class Sanitization
     }
 
     /**
-     * Helper function to generate HtmlSanitizerConfig if it's not created yet
+     * Helper function to generate HtmlSanitizerConfig if it's not created yet.
      *
      * @param string $for Flag indicating for which element we are doing sanitization
      *
@@ -204,8 +205,7 @@ final class Sanitization
                 'iframe', 'input', 'image', 'keygen', 'legend', 'link', 'main', 'map', 'marquee', 'menuitem', 'meter', 'nav', 'nobr', 'noembed', 'noframes',
                 'noscript', 'object', 'optgroup', 'option', 'param', 'picture', 'plaintext', 'portal', 'pre', 'progress', 'rb', 'rp', 'rt', 'rtc', 'ruby', 'script',
                 'select', 'selectmenu', 'shadow', 'slot', 'strike', 'style', 'spacer', 'template', 'textarea', 'title', 'tt', 'xmp',
-            ]
-            as $element
+            ] as $element
         ) {
             // Need to update the original, because a clone is returned, instead of the same instance.
             $config = $config->blockElement($element);
@@ -232,8 +232,7 @@ final class Sanitization
                 'aria-live', 'aria-live', 'aria-modal', 'aria-multiline', 'aria-multiselectable', 'aria-orientation', 'aria-owns', 'aria-owns', 'aria-placeholder',
                 'aria-posinset', 'aria-pressed', 'aria-readonly', 'aria-relevant', 'aria-relevant', 'aria-required', 'aria-roledescription', 'aria-rowcount',
                 'aria-rowindex', 'aria-rowspan', 'aria-selected', 'aria-setsize', 'aria-sort', 'aria-valuemax', 'aria-valuemin', 'aria-valuenow', 'aria-valuetext',
-            ]
-            as $attribute
+            ] as $attribute
         ) {
             $config = $config->allowAttribute($attribute, '*');
         }

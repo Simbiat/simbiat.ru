@@ -8,7 +8,7 @@ use App\Controller\Abstracts\Page;
 use App\Entity\Email;
 
 /**
- * Page to unsubscribe email addresses from messages
+ * Page to unsubscribe email addresses from messages.
  */
 final class Unsubscribe extends Page
 {
@@ -33,7 +33,7 @@ final class Unsubscribe extends Page
     protected string $cache_strategy = 'private';
 
     /**
-     * Actual page generation based on further details of the $path
+     * Actual page generation based on further details of the $path.
      *
      * @param array $path URL path
      *

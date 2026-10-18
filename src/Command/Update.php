@@ -11,7 +11,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Update the app
+ * Update the app.
  */
 final class Update
 {
@@ -28,6 +28,7 @@ final class Update
     public function update(OutputInterface $output): int
     {
         $output->writeln(Errors::logfmt('Updating the app...'));
+
         try {
             // Connect to DB
             Config::dbConnect();

@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 
 /**
- * Symfony's Kernel
+ * Symfony's Kernel.
  */
 final class Kernel extends BaseKernel
 {
@@ -28,7 +28,7 @@ final class Kernel extends BaseKernel
     private bool $app_bootstrapped = false;
 
     /**
-     * Overriding Symfony's boot to replace the previous `Bootstrap.php`
+     * Overriding Symfony's boot to replace the previous `Bootstrap.php`.
      *
      * @return void
      */

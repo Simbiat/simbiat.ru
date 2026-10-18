@@ -8,7 +8,7 @@ use App\Controller\Abstracts\Sitemap;
 use Simbiat\Database\Query;
 
 /**
- * Class for the main sitemap index file
+ * Class for the main sitemap index file.
  */
 final class Index extends Sitemap
 {
@@ -48,7 +48,7 @@ final class Index extends Sitemap
                 ';
 
     /**
-     * Generation of the page data
+     * Generation of the page data.
      *
      * @param array $path
      *
@@ -67,6 +67,7 @@ final class Index extends Sitemap
         $links = $this->main_index ? [
                 ['loc' => 'general.xml', 'name' => 'General links'],
             ] : [];
+
         // Get countable links
         try {
             $counts = Query::query($this->query, return: 'all');
@@ -79,7 +80,7 @@ final class Index extends Sitemap
                 $links[] = ['loc' => $link_type['link'].'.xml', 'name' => $link_type['name']];
             } else {
                 $pages = (int) \ceil($link_type['count'] / $this->max_elements);
-                for ($page = 1; $page <= $pages; $page++) {
+                for ($page = 1; $page <= $pages; ++$page) {
                     $links[] = ['loc' => $link_type['link'].'/'.$page.'.xml', 'name' => $link_type['name'].', Page '.$page];
                 }
             }

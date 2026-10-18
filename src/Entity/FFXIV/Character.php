@@ -18,7 +18,7 @@ use Simbiat\Database\Query;
 use Simbiat\FFXIV\Lodestone;
 
 /**
- * Class representing a FFXIV character
+ * Class representing a FFXIV character.
  */
 final class Character extends AbstractEntity
 {
@@ -41,17 +41,18 @@ final class Character extends AbstractEntity
     public array $red_flags = [];
 
     /**
-     * Get character data from Lodestone
+     * Get character data from Lodestone.
      *
      * @param bool $allow_sleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
      *
-     * @return string|array
+     * @return array|string
      *
      * @internal
      */
-    public function getFromLodestone(bool $allow_sleep = false): string|array
+    public function getFromLodestone(bool $allow_sleep = false): array|string
     {
         $lodestone = new Lodestone();
+
         try {
             $data = $lodestone->getCharacter($this->id)->getResult();
         } catch (\Throwable $exception) {
@@ -98,6 +99,7 @@ final class Character extends AbstractEntity
 
             return 'Failed to get all necessary data for Character '.$this->id;
         }
+
         // Try to get jobs and achievements now, that we got basic information, and there were no issues with it.
         try {
             $data = $lodestone->getCharacterJobs($this->id)
@@ -127,7 +129,7 @@ final class Character extends AbstractEntity
     }
 
     /**
-     * Link user to character
+     * Link user to character.
      *
      * @return array
      *
@@ -183,7 +185,7 @@ final class Character extends AbstractEntity
     }
 
     /**
-     * Function to get initial data from DB
+     * Function to get initial data from DB.
      *
      * @throws \Exception
      */
@@ -193,7 +195,7 @@ final class Character extends AbstractEntity
         $data = Query::query('SELECT *, `ffxiv__character`.`character_id`, `ffxiv__achievement`.`icon` AS `title_icon`, `ffxiv__character`.`name`, `ffxiv__character`.`registered`, `ffxiv__character`.`updated`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`) AS `user_id` FROM `ffxiv__character` LEFT JOIN `ffxiv__clan` ON `ffxiv__character`.`clan_id` = `ffxiv__clan`.`clan_id` LEFT JOIN `ffxiv__guardian` ON `ffxiv__character`.`guardian_id` = `ffxiv__guardian`.`guardian_id` LEFT JOIN `ffxiv__nameday` ON `ffxiv__character`.`nameday_id` = `ffxiv__nameday`.`nameday_id` LEFT JOIN `ffxiv__city` ON `ffxiv__character`.`city_id` = `ffxiv__city`.`city_id` LEFT JOIN `ffxiv__server` ON `ffxiv__character`.`server_id` = `ffxiv__server`.`server_id` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__character`.`gc_rank_id` = `ffxiv__grandcompany_rank`.`gc_rank_id` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__grandcompany_rank`.`gc_id` = `ffxiv__grandcompany`.`gc_id` LEFT JOIN `ffxiv__achievement` ON `ffxiv__character`.`title_id` = `ffxiv__achievement`.`achievement_id` WHERE `ffxiv__character`.`character_id` = :id;', [':id' => $this->id], return: 'row');
         if (!empty($data['hidden'])) {
             foreach ($data as $key => $value) {
-                if (!\in_array($key, ['avatar', 'registered', 'updated', 'deleted', 'hidden', 'name'])) {
+                if (!\in_array($key, ['avatar', 'registered', 'updated', 'deleted', 'hidden', 'name'], true)) {
                     unset($data[$key]);
                 }
             }
@@ -223,7 +225,7 @@ final class Character extends AbstractEntity
             // Get affiliated groups' details
             $data['groups'] = AbstractEntity::cleanCrestResults(
                 Query::query(
-                /** @lang SQL */
+                    /* @lang SQL */
                     '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `current`, `ffxiv__freecompany_character`.`rank_id`, `ffxiv__freecompany_rank`.`rankname` AS `rank`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id)
                             UNION ALL
                             (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`ls_id` AS `id`, `ffxiv__linkshell`.`name` AS `name`, `current`, `ffxiv__linkshell_character`.`rank_id`, `ffxiv__linkshell_rank`.`rank` AS `rank`, NULL AS `crest_part_1`, NULL AS `crest_part_2`, NULL AS `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rank_id`=`ffxiv__linkshell_rank`.`ls_rank_id` WHERE `character_id`=:id)
@@ -247,7 +249,7 @@ final class Character extends AbstractEntity
     }
 
     /**
-     * Function to process data from DB
+     * Function to process data from DB.
      *
      * @param array $from_db
      *
@@ -335,7 +337,7 @@ final class Character extends AbstractEntity
     }
 
     /**
-     * Function to update the entity
+     * Function to update the entity.
      *
      * @return bool
      */
@@ -685,7 +687,7 @@ final class Character extends AbstractEntity
     }
 
     /**
-     * Function to mark character as private
+     * Function to mark character as private.
      *
      * @return bool
      */
@@ -725,7 +727,7 @@ final class Character extends AbstractEntity
     }
 
     /**
-     * Function to update the entity
+     * Function to update the entity.
      *
      * @param bool $hard Whether to do hard removal
      *
@@ -784,6 +786,7 @@ final class Character extends AbstractEntity
                 'UPDATE `ffxiv__character` SET `deleted` = COALESCE(`deleted`, CURRENT_TIMESTAMP(6)), `updated`=CURRENT_TIMESTAMP(6) WHERE `character_id` = :character_id;',
             ];
         }
+
         try {
             return Query::query($queries, [':character_id' => $this->id]);
         } catch (\Throwable $exception) {
@@ -794,7 +797,7 @@ final class Character extends AbstractEntity
     }
 
     /**
-     * Extracted function to update server and name of the character
+     * Extracted function to update server and name of the character.
      *
      * @param array $queries
      *
@@ -823,7 +826,7 @@ final class Character extends AbstractEntity
     }
 
     /**
-     * Check if character is a potential stalker
+     * Check if character is a potential stalker.
      *
      * @param array $queries
      *

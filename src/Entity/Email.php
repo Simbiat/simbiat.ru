@@ -16,24 +16,24 @@ use Simbiat\Database\Query;
 use Simbiat\StringHelpers\Sanitize;
 
 /**
- * Class to handle emails
+ * Class to handle emails.
  */
 final class Email extends Entity
 {
     // Whether mail is registered
-    private(set) bool $registered = false;
+    public private(set) bool $registered = false;
 
     // User id that the email is linked to
-    private(set) ?int $user_id = null;
+    public private(set) ?int $user_id = null;
 
     // Username linked to the email
-    private(set) ?string $username = null;
+    public private(set) ?string $username = null;
 
     // Whether this is anonymous user
-    private(set) bool $anonymous = true;
+    public private(set) bool $anonymous = true;
 
     // Whether mail is banned
-    private(set) bool $banned = false;
+    public private(set) bool $banned = false;
 
     // Whether email is subscribed to notifications (when not null)
     private ?string $subscribed = null;
@@ -42,31 +42,27 @@ final class Email extends Entity
     private ?string $activation = 'not yet activated';
 
     /**
-     * Overriding the standard function to use a standard email filter
+     * Validate the ID
      *
-     * @param string|int $id
+     * @param int|string $id
      *
-     * @return $this
+     * @return void
      */
-    #[\Override]
-    public function setId(#[\SensitiveParameter] string|int $id): self
+    protected function validateId(#[\SensitiveParameter] int|string $id): void
     {
-        // Convert to string for consistency
-        $id = (string) $id;
         // Validate that string is email
         if (\filter_var($id, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
             // Not an email, something is wrong, protect ourselves
             throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.self::class.'` has incorrect format.');
         }
+        // For email, we also need to get details right away, this is the best place to do it
         $this->id = $id;
-        /** @noinspection UnusedFunctionResultInspection */
+        /* @noinspection UnusedFunctionResultInspection */
         $this->getFromDB();
-
-        return $this;
     }
 
     /**
-     * Check if mail is either banned or used
+     * Check if mail is either banned or used.
      *
      * @return bool
      */
@@ -83,7 +79,7 @@ final class Email extends Entity
     }
 
     /**
-     * Subscribe email to notifications
+     * Subscribe email to notifications.
      *
      * @return bool
      */
@@ -121,7 +117,7 @@ final class Email extends Entity
     }
 
     /**
-     * Unsubscribe email
+     * Unsubscribe email.
      *
      * @param string $token
      *
@@ -132,8 +128,9 @@ final class Email extends Entity
         if ($token === '') {
             return ['http_error' => 400, 'reason' => 'No email token provided'];
         }
+
         try {
-            /* @noinspection PhpUsageOfSilenceOperatorInspection Suppressing to avoid warnings in log, which are pointless in this case */
+            /** @noinspection PhpUsageOfSilenceOperatorInspection Suppressing to avoid warnings in log, which are pointless in this case */
             $email = \explode("\n", @\gzinflate(@\hex2bin($token)));
             if (!\array_key_exists(0, $email)) {
                 throw new \UnexpectedValueException('Malformed token');
@@ -143,6 +140,7 @@ final class Email extends Entity
         } catch (\Throwable) {
             return ['http_error' => 400, 'reason' => 'Token provided looks malformed'];
         }
+
         try {
             // Get the details for email
             $this->setId($email);
@@ -175,7 +173,7 @@ final class Email extends Entity
     }
 
     /**
-     * Delete email
+     * Delete email.
      *
      * @return bool
      */
@@ -199,7 +197,7 @@ final class Email extends Entity
     }
 
     /**
-     * Add email
+     * Add email.
      *
      * @param bool $confirm Whether to generate confirmation mail right away or not
      *
@@ -246,7 +244,7 @@ final class Email extends Entity
     }
 
     /**
-     * Activate user
+     * Activate user.
      *
      * @param int    $user_id    User ID for which we are trying to activate the email
      * @param string $activation Activation code that we are trying to validate
@@ -286,6 +284,7 @@ final class Email extends Entity
             // Remove the access token for respective Contact Form threads
             ['DELETE FROM `talks__contact_form` WHERE `email`=:email;', [':email' => $this->id]],
         ];
+
         try {
             $result = Query::query($queries);
             // Subscribe the email if it's the only one for the user
@@ -306,7 +305,7 @@ final class Email extends Entity
     }
 
     /**
-     * Confirm email
+     * Confirm email.
      *
      * @return bool
      */
@@ -318,6 +317,7 @@ final class Email extends Entity
         }
         // Generate activation code
         $activation = Security::genToken();
+
         // Insert into mails database
         try {
             Query::query(
@@ -337,7 +337,7 @@ final class Email extends Entity
     }
 
     /**
-     * Function to get initial data from DB
+     * Function to get initial data from DB.
      *
      * @return array
      */
@@ -365,7 +365,7 @@ final class Email extends Entity
     }
 
     /**
-     * Function process database data
+     * Function process database data.
      *
      * @param array $from_db
      *
@@ -377,7 +377,7 @@ final class Email extends Entity
     }
 
     /**
-     * Check if it's safe to unsubscribe the email
+     * Check if it's safe to unsubscribe the email.
      *
      * @return bool
      */
@@ -388,14 +388,14 @@ final class Email extends Entity
 
         return !(
             // Safe to unsubscribe if mail does not exist for the user
-            $exists !== false &&
+            $exists !== false
             // Safe to unsubscribe only if there are other emails that are subscribed
-            $emails['emails'][$exists]['activation'] === null && $emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1
+            && $emails['emails'][$exists]['activation'] === null && $emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1
         );
     }
 
     /**
-     * Check if it's safe to remove the email
+     * Check if it's safe to remove the email.
      *
      * @return bool
      */
@@ -408,17 +408,13 @@ final class Email extends Entity
             return true;
         }
 
-        if (
+        return !(
             // Safe to delete if it's not activated
-            $emails['emails'][$exists]['activation'] !== null ||
+            $emails['emails'][$exists]['activation'] !== null
             // Safe to delete if it is activated, but not the only one
-            $emails['count_activated'] === 1 ||
+            || $emails['count_activated'] === 1
             // Safe to delete if it's not the only one subscribed
-            ($emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1)
-        ) {
-            return false;
-        }
-
-        return true;
+            || ($emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1)
+        );
     }
 }

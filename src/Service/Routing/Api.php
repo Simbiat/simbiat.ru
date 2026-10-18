@@ -32,7 +32,7 @@ final class Api extends \App\Controller\Api\Api
     protected bool $top_level = true;
 
     /**
-     * This is an actual API response generation based on further details of the $path
+     * This is an actual API response generation based on further details of the $path.
      *
      * @param array $path
      *

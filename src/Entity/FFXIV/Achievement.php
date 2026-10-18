@@ -14,7 +14,7 @@ use Simbiat\Database\Query;
 use Simbiat\FFXIV\Lodestone;
 
 /**
- * Class representing a FFXIV achievement
+ * Class representing a FFXIV achievement.
  */
 final class Achievement extends AbstractEntity
 {
@@ -32,17 +32,17 @@ final class Achievement extends AbstractEntity
     public array $characters = [];
 
     /**
-     * Get data from Lodestone
+     * Get data from Lodestone.
      *
      * @param bool $allow_sleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
      *
      * @internal
      *
-     * @return string|array
+     * @return array|string
      *
      * @throws \Exception
      */
-    public function getFromLodestone(bool $allow_sleep = false): string|array
+    public function getFromLodestone(bool $allow_sleep = false): array|string
     {
         $achievement = $this->getFromDB(true);
         if (empty($achievement['name'])) {
@@ -137,7 +137,7 @@ final class Achievement extends AbstractEntity
     }
 
     /**
-     * Function to get initial data from DB
+     * Function to get initial data from DB.
      *
      * @param bool $non_private Whether selection of characters is only for non-private characters
      *
@@ -178,7 +178,7 @@ final class Achievement extends AbstractEntity
     }
 
     /**
-     * Function to do processing of DB data
+     * Function to do processing of DB data.
      *
      * @param array $from_db
      *
@@ -210,7 +210,7 @@ final class Achievement extends AbstractEntity
     }
 
     /**
-     * Function to update the entity in DB
+     * Function to update the entity in DB.
      *
      * @return bool
      */
@@ -255,6 +255,7 @@ final class Achievement extends AbstractEntity
         $bindings[':db_id'] = empty($this->lodestone['db_id'])
             ? [null, 'null']
             : $this->lodestone['db_id'];
+
         try {
             return Query::query('INSERT INTO `ffxiv__achievement` SET `achievement_id`=:achievement_id, `name`=:name, `icon`=:icon, `points`=:points, `category`=:category, `subcategory`=:subcategory, `how_to`=:how_to, `title`=:title, `item`=:item, `item_icon`=:item_icon, `item_id`=:item_id, `db_id`=:db_id ON DUPLICATE KEY UPDATE `achievement_id`=:achievement_id, `name`=:name, `icon`=:icon, `points`=:points, `category`=:category, `subcategory`=:subcategory, `how_to`=:how_to, `title`=:title, `item`=:item, `item_icon`=:item_icon, `item_id`=:item_id, `db_id`=:db_id, `updated`=CURRENT_TIMESTAMP(6)', $bindings);
         } catch (\Throwable $exception) {
@@ -265,13 +266,13 @@ final class Achievement extends AbstractEntity
     }
 
     /**
-     * Helper function to get db_id from Lodestone based on the achievement name
+     * Helper function to get db_id from Lodestone based on the achievement name.
      *
      * @param string $search_for
      *
-     * @return string|null
+     * @return null|string
      */
-    private function getDBID(string $search_for): string|null
+    private function getDBID(string $search_for): ?string
     {
         try {
             $db_search_result = new Lodestone()->searchDatabase('achievement', 0, 0, $search_for)->getResult();

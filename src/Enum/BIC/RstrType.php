@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Enum\BIC;
 
 /**
- * BIC restriction codes (applied to whole organization)
+ * BIC restriction codes (applied to whole organization).
  */
 enum RstrType: string
 {

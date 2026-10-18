@@ -15,7 +15,7 @@ use Simbiat\http20\Links;
 use Simbiat\StringHelpers\Sanitize;
 
 /**
- * General page class
+ * General page class.
  */
 abstract class Page
 {
@@ -90,7 +90,7 @@ abstract class Page
     protected array $h2_push_extra = [];
 
     /**
-     * Get the page
+     * Get the page.
      *
      * @param array $path
      *
@@ -195,7 +195,7 @@ abstract class Page
         $page['static_page'] = $this->static;
         // Set error for Twig
         if (!empty($page['http_error'])) {
-            if (\in_array($page['http_error'], ['database', 'maintenance'])) {
+            if (\in_array($page['http_error'], ['database', 'maintenance'], true)) {
                 Headers::clientReturn(503, false);
             } else {
                 Headers::clientReturn($page['http_error'], false);
@@ -210,7 +210,7 @@ abstract class Page
         ) {
             $query = IRI::parseUri(HomePage::$canonical);
             if (\is_array($query)) {
-                /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+                /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
                 $page['cache_reset'] = HomePage::$canonical.(empty($query['query']) ? '?cache_reset=true' : '&cache_reset=true');
             } else {
                 $page['cache_reset'] = '';
@@ -221,13 +221,13 @@ abstract class Page
     }
 
     /**
-     * Generate Last-Modified header
+     * Generate Last-Modified header.
      *
-     * @param int|string|null $time
+     * @param null|int|string $time
      *
      * @return void
      */
-    final protected function lastModified(int|string|null $time = null): void
+    final protected function lastModified(null|int|string $time = null): void
     {
         // Convert string to int
         if (\is_string($time)) {
@@ -251,7 +251,7 @@ abstract class Page
     }
 
     /**
-     * Function to append a breadcrumb, which is based on the last crumb currently set
+     * Function to append a breadcrumb, which is based on the last crumb currently set.
      *
      * @param string $path  Current path node
      * @param string $name  Current path name
@@ -269,7 +269,7 @@ abstract class Page
     }
 
     /**
-     * Function to get last breadcrumb's href
+     * Function to get last breadcrumb's href.
      *
      * @return string
      */
@@ -279,7 +279,7 @@ abstract class Page
     }
 
     /**
-     * Function to set og:desc
+     * Function to set og:desc.
      *
      * @param string $string
      *
@@ -313,7 +313,7 @@ abstract class Page
     }
 
     /**
-     * This is the actual page generation based on further details of the `$path`
+     * This is the actual page generation based on further details of the `$path`.
      *
      * @param array $path
      *

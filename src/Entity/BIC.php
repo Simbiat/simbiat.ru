@@ -14,7 +14,7 @@ use Simbiat\ArrayHelpers\Sorters;
 use Simbiat\Database\Query;
 
 /**
- * Class representing a Bank Identification Code (BIC)
+ * Class representing a Bank Identification Code (BIC).
  */
 final class BIC extends Entity
 {
@@ -25,7 +25,7 @@ final class BIC extends Entity
     public string $NameP;
 
     // Bank code of parent entity
-    public null|string|array $PrntBIC = null;
+    public null|array|string $PrntBIC = null;
 
     // English name of the entity
     public ?string $EnglName = null;
@@ -103,7 +103,7 @@ final class BIC extends Entity
     public array $DBF = [];
 
     /**
-     * Get BIC data from DB
+     * Get BIC data from DB.
      *
      * @return array
      */
@@ -118,7 +118,7 @@ final class BIC extends Entity
     }
 
     /**
-     * Function to return current data about the bank
+     * Function to return current data about the bank.
      *
      * @throws \Exception
      */
@@ -215,7 +215,7 @@ final class BIC extends Entity
     }
 
     /**
-     * Function to get a list of all predecessors (direct or not)
+     * Function to get a list of all predecessors (direct or not).
      *
      * @throws \Exception
      */
@@ -240,7 +240,7 @@ final class BIC extends Entity
     }
 
     /**
-     * Function to get all successors (each as a chain)
+     * Function to get all successors (each as a chain).
      *
      * @throws \Exception
      */
@@ -268,7 +268,7 @@ final class BIC extends Entity
     }
 
     /**
-     * Function to get all RKCs for a bank as a chain
+     * Function to get all RKCs for a bank as a chain.
      *
      * @throws \Exception
      */
@@ -304,7 +304,7 @@ final class BIC extends Entity
     }
 
     /**
-     * Function to get authorized branches as a chain
+     * Function to get authorized branches as a chain.
      *
      * @throws \Exception
      */
@@ -338,7 +338,7 @@ final class BIC extends Entity
     }
 
     /**
-     * Function to get all branches of a bank
+     * Function to get all branches of a bank.
      *
      * @throws \Exception
      */
@@ -363,7 +363,7 @@ final class BIC extends Entity
     }
 
     /**
-     * Function to format a list of phones
+     * Function to format a list of phones.
      *
      * @param string $phone_string
      *
@@ -434,7 +434,7 @@ final class BIC extends Entity
     }
 
     /**
-     * Pad BICs with zeros
+     * Pad BICs with zeros.
      *
      * @param string $bic
      *

@@ -7,7 +7,7 @@ namespace App\Controller\BIC;
 use App\Controller\Abstracts\Page;
 
 /**
- * Class to generate pages for individual BICs
+ * Class to generate pages for individual BICs.
  */
 final class Bic extends Page
 {
@@ -35,7 +35,7 @@ final class Bic extends Page
     protected array $required_permission = ['view_bic'];
 
     /**
-     * Generation of the page data
+     * Generation of the page data.
      *
      * @param array $path
      *
@@ -71,8 +71,8 @@ final class Bic extends Page
         // Link header/tag for API
         $this->alt_links = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'Представление в формате JSON', 'href' => '/api/bictracker/bics/'.$bic]];
         if (
-            \in_array($output_array['bicdetails']['Rgn'], ['ДОНЕЦКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ЗАПОРОЖСКАЯ ОБЛАСТЬ', 'ЛУГАНСКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ХЕРСОНСКАЯ ОБЛАСТЬ', 'РЕСПУБЛИКА КРЫМ', 'Г СЕВАСТОПОЛЬ'], true) ||
-            \in_array($output_array['bicdetails']['Nnp'], ['Донецк', 'Луганск', 'Херсон', 'Мелитополь', 'ФЕОДОСИЯ', 'ГЕОРГИЕВКА 2'], true)
+            \in_array($output_array['bicdetails']['Rgn'], ['ДОНЕЦКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ЗАПОРОЖСКАЯ ОБЛАСТЬ', 'ЛУГАНСКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ХЕРСОНСКАЯ ОБЛАСТЬ', 'РЕСПУБЛИКА КРЫМ', 'Г СЕВАСТОПОЛЬ'], true)
+            || \in_array($output_array['bicdetails']['Nnp'], ['Донецк', 'Луганск', 'Херсон', 'Мелитополь', 'ФЕОДОСИЯ', 'ГЕОРГИЕВКА 2'], true)
         ) {
             $output_array['bicdetails']['Ukraine'] = true;
             $this->title = 'Це Україна! Іди додому, окупанте!';

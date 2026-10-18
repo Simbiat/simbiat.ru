@@ -15,12 +15,12 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Send queued notification emails
+ * Send queued notification emails.
  */
 final class Mailer
 {
     /**
-     * Send queued notification emails
+     * Send queued notification emails.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
@@ -59,7 +59,7 @@ final class Mailer
                         new Test($uuid)->delete();
                     } else {
                         $to_call = "\App\Notification\\".$class_name->name;
-                        /** @psalm-suppress MixedMethodCall */
+                        /* @psalm-suppress MixedMethodCall */
                         new $to_call($uuid)->get()->send();
                     }
                 }

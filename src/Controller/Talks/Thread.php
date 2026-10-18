@@ -109,7 +109,7 @@ final class Thread extends Page
             return [];
         }
         // Changelogs have Unix timestamp for names, need to convert those to the desired format
-        /** @noinspection DuplicatedCode */
+        /* @noinspection DuplicatedCode */
         if (
             $output_array['type'] === 'Changelog'
             && \is_numeric($output_array['name'])
@@ -146,9 +146,9 @@ final class Thread extends Page
         // Set ogtype
         $output_array['ogtype'] = 'article';
         // Add article open graph tags
-        /** @noinspection DuplicatedCode */
-        $output_array['ogextra'] =
-            '<meta property="article:published_time" content="'.\date('c', $output_array['created']).'" />
+        /* @noinspection DuplicatedCode */
+        $output_array['ogextra']
+            = '<meta property="article:published_time" content="'.\date('c', $output_array['created']).'" />
             <meta property="article:modified_time" content="'.\date('c', $output_array['updated']).'" />'
             .($output_array['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />')
             .($output_array['editor'] !== 1 && $output_array['editor'] !== $output_array['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />' : '')
@@ -173,8 +173,7 @@ final class Thread extends Page
                 $output_array['owned']
                 && \in_array('edit_own_threads', $_SESSION['permissions'], true)
             )
-            ||
-            (
+            || (
                 !$output_array['owned']
                 && \in_array('edit_others_threads', $_SESSION['permissions'], true)
             )
@@ -183,8 +182,8 @@ final class Thread extends Page
             $output_array['thread_link_types'] = \App\Entity\Thread::getAltLinkTypes();
         }
         // Add access token
-        $output_array['get_access_token'] =
-            $output_array['author'] === SystemUser::Unknown->value
+        $output_array['get_access_token']
+            = $output_array['author'] === SystemUser::Unknown->value
             && $_SESSION['user_id'] === SystemUser::Unknown->value
             ? $_GET['access_token'] ?? null
             : null;

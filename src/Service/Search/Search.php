@@ -8,7 +8,7 @@ use App\Service\Errors;
 use Simbiat\Database\Query;
 
 /**
- * Function to search for entities
+ * Function to search for entities.
  */
 abstract class Search
 {
@@ -58,7 +58,7 @@ abstract class Search
     protected array $like = [];
 
     /**
-     * Actually run the search
+     * Actually run the search.
      *
      * @param string $what  What to search for
      * @param int    $limit How many results to provide
@@ -84,14 +84,14 @@ abstract class Search
     }
 
     /**
-     * Function to generate a list of entities or get a proper page number for redirect
+     * Function to generate a list of entities or get a proper page number for redirect.
      *
      * @param int    $page Page number
      * @param string $what What to search for
      *
-     * @return int|array
+     * @return array|int
      */
-    final public function listEntities(int $page = 1, string $what = ''): int|array
+    final public function listEntities(int $page = 1, string $what = ''): array|int
     {
         // Suggest redirect if the page number is lower than 1
         if ($page < 1) {
@@ -108,6 +108,7 @@ abstract class Search
         if ($page > $pages) {
             return $pages;
         }
+
         try {
             return ['count' => $count, 'pages' => $pages, 'entities' => $this->selectEntities($what, $this->list_items, $this->list_items * ($page - 1), true)];
         } catch (\Throwable $e) {
@@ -118,7 +119,7 @@ abstract class Search
     }
 
     /**
-     * Generalized function to count entities
+     * Generalized function to count entities.
      *
      * @param string $what What to search for
      *
@@ -170,7 +171,7 @@ abstract class Search
     }
 
     /**
-     * Generalized function to select entities
+     * Generalized function to select entities.
      *
      * @param string $what   What to search for
      * @param int    $limit  How much to select
@@ -225,7 +226,7 @@ abstract class Search
     }
 
     /**
-     * Generate WHERE for direct comparison
+     * Generate WHERE for direct comparison.
      *
      * @return string
      */
@@ -235,7 +236,7 @@ abstract class Search
     }
 
     /**
-     * Generate WHERE for %LIKE% comparison
+     * Generate WHERE for %LIKE% comparison.
      *
      * @return string
      */
@@ -245,7 +246,7 @@ abstract class Search
     }
 
     /**
-     * Helper function to generate relevancy statement
+     * Helper function to generate relevancy statement.
      *
      * @return string
      */
@@ -264,11 +265,16 @@ abstract class Search
 
     /**
      * @param array       $bindings Optional bindings, in the case of more complex WHERE clauses. Needs to be set during construction, since this implies "unique" values.
-     * @param string|null $where    WHERE clause
-     * @param string|null $order    ORDER BY clause
-     * @param string|null $group    GROUP BY clause
+     * @param null|string $where    WHERE clause
+     * @param null|string $order    ORDER BY clause
+     * @param null|string $group    GROUP BY clause
      */
-    final public function __construct(protected array $bindings = [], ?string $where = null, ?string $order = null, ?string $group = null)
+    final public function __construct(
+        protected array $bindings = [],
+        ?string $where = null,
+        ?string $order = null,
+        ?string $group = null
+    )
     {
         // Check that subclass has set appropriate properties, except $where, which is ok to inherit
         foreach (['entity_type', 'table', 'fields', 'order_default', 'order_list'] as $property) {

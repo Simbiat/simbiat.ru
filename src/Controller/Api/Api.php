@@ -14,7 +14,7 @@ use Simbiat\ArrayHelpers\Sorters;
 use Simbiat\http20\Headers;
 
 /**
- * Abstract class to handle API stuff
+ * Abstract class to handle API stuff.
  */
 abstract class Api
 {
@@ -61,7 +61,7 @@ abstract class Api
     protected array $allowed_origins = [];
 
     /**
-     * This is a general routing check for supported node
+     * This is a general routing check for supported node.
      *
      * @param array $path
      *
@@ -87,15 +87,15 @@ abstract class Api
             $data = ['http_error' => 400, 'reason' => 'Unsupported endpoint', 'endpoints' => \array_combine($this->sub_routes, $this->routes_description)];
         } elseif (
             (
-                $this->authentication_needed &&
-                (
-                    empty($_SESSION['user_id']) ||
-                    $_SESSION['user_id'] < SystemUser::Owner->value
+                $this->authentication_needed
+                && (
+                    empty($_SESSION['user_id'])
+                    || $_SESSION['user_id'] < SystemUser::Owner->value
                 )
-            ) &&
-            (
-                !$this->access_token_possible ||
-                empty($_GET['access_token'])
+            )
+            && (
+                !$this->access_token_possible
+                || empty($_GET['access_token'])
             )
         ) {
             // User is not authenticated or there is no access_token provided
@@ -107,8 +107,8 @@ abstract class Api
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
             try {
-                $data =
-                    \count($this->required_permission) !== 0
+                $data
+                    = \count($this->required_permission) !== 0
                     && \count(\array_intersect($this->required_permission, $_SESSION['permissions'])) === 0
                     ? ['http_error' => 403, 'reason' => 'No `'.\implode('` or `', $this->required_permission).'` permission']
                     : $this->getData($path);
@@ -140,7 +140,7 @@ abstract class Api
                 if (!empty($data['reason'])) {
                     $result['json_ready']['reason'] = $data['reason'];
                 }
-                if (\in_array($data['http_error'], ['database', 'maintenance'])) {
+                if (\in_array($data['http_error'], ['database', 'maintenance'], true)) {
                     $result['json_ready']['status'] = 503;
                     $result['json_ready']['reason'] = 'Database required, but unavailable';
                 } else {
@@ -157,7 +157,7 @@ abstract class Api
                 // Filter out results if data is an array
                 if (\is_array($result['json_ready']['data'])) {
                     // Suppressed due to https://youtrack.jetbrains.com/issue/WI-65237/Wrong-array-element-type-is-inferred-on-assignment
-                    /** @noinspection PhpParamsInspection */
+                    /* @noinspection PhpParamsInspection */
                     $this->fieldFilter($result['json_ready']['data']);
                 }
                 // Location is for returning a link for the new resource
@@ -192,6 +192,7 @@ abstract class Api
             } else {
                 $result['json_ready']['csrf'] = 'no active session';
             }
+
             try {
                 $result['json_ready'] = \json_encode($result['json_ready'], \JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION);
             } catch (\JsonException) {
@@ -210,7 +211,7 @@ abstract class Api
     }
 
     /**
-     * Method to filter output fields
+     * Method to filter output fields.
      *
      * @param array $array
      *
@@ -236,7 +237,7 @@ abstract class Api
     }
 
     /**
-     * Check that method used is allowed
+     * Check that method used is allowed.
      *
      * @return bool
      */
@@ -251,12 +252,12 @@ abstract class Api
         }
         // Check if allowed method is used. EA incorrectly suggests use of `array_key_exists`, which does not fit here, due to how $allowed_methods is used in the whole method
 
-        /** @noinspection InArrayMissUseInspection */
+        /* @noinspection InArrayMissUseInspection */
         return \in_array(HomePage::$method, $allowed_methods, true);
     }
 
     /**
-     * Function to help protect against CSRF. Suggested using for forms or APIs. Needs to be used before writing anything to `$_SESSION`
+     * Function to help protect against CSRF. Suggested using for forms or APIs. Needs to be used before writing anything to `$_SESSION`.
      *
      * @param array $allow_origins
      *
@@ -282,11 +283,12 @@ abstract class Api
                     // Check if HTTP Origin is among allowed ones if we want to restrict them.
                     // Note that this will be applied to forms or APIs you want to restrict. For global restriction use \Simbiat\http20\headers->security()
                     if (
-                        \count($allow_origins) === 0 ||
+                        \count($allow_origins) === 0
                         // If origins are limited, check if origin is present
-                        (!empty($origin) &&
+                        || (
+                            !empty($origin)
                             // Check if it's a valid origin and is allowed
-                            (\preg_match('/'.Headers::ORIGIN_REGEX.'/i', $origin) === 1 || \in_array($origin, $allow_origins, true))
+                            && (\preg_match('/'.Headers::ORIGIN_REGEX.'/i', $origin) === 1 || \in_array($origin, $allow_origins, true))
                         )
                     ) {
                         // All checks passed
@@ -327,7 +329,7 @@ abstract class Api
     }
 
     /**
-     * This is an actual API response generation based on further details of the $path
+     * This is an actual API response generation based on further details of the $path.
      *
      * @param array $path
      *
@@ -336,7 +338,7 @@ abstract class Api
     abstract protected function genData(array $path): array;
 
     /**
-     * This is a wrapper to allow some common checks
+     * This is a wrapper to allow some common checks.
      *
      * @param array $path
      *
@@ -367,7 +369,7 @@ abstract class Api
             // Override based on method only if method is not HEAD, OPTIONS or GET and if a respective method has a verb set for it
             if (
                 !empty($this->methods[HomePage::$method])
-                && !\in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET'])
+                && !\in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET'], true)
             ) {
                 if (\is_string($this->methods[HomePage::$method])) {
                     $path[1] = $this->methods[HomePage::$method];

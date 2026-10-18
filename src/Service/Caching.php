@@ -9,19 +9,21 @@ use JetBrains\PhpStorm\FileReference;
 use Simbiat\StringHelpers\Sanitize;
 
 /**
- * Class to handle page caching
+ * Class to handle page caching.
  */
 final class Caching
 {
     /**
      * @param string $cache_dir Directory to use for cache files
      */
-    public function __construct(#[FileReference] private string $cache_dir = '')
+    public function __construct(
+        #[FileReference] private string $cache_dir = ''
+    )
     {
         if (Sanitize::whiteString($this->cache_dir)) {
             $this->cache_dir = Config::$html_cache;
         }
-        /** @noinspection PhpUsageOfSilenceOperatorInspection */
+        /* @noinspection PhpUsageOfSilenceOperatorInspection */
         if (
             !\is_dir($this->cache_dir)
             && !@\mkdir($this->cache_dir, recursive: true)
@@ -35,7 +37,7 @@ final class Caching
     }
 
     /**
-     * Write cache to file
+     * Write cache to file.
      *
      * @param array|string $data Data to write
      * @param string       $key  Key to write to
@@ -74,7 +76,7 @@ final class Caching
             // Generate subdirectory name
             $sub_dir = \mb_substr($key, 0, 2, 'UTF-8').'/'.\mb_substr($key, 2, 2, 'UTF-8').'/'.\mb_substr($key, 4, 2, 'UTF-8').'/';
             // Create the folder if missing. Silencing operator because of potential concurrency
-            /** @noinspection PhpUsageOfSilenceOperatorInspection */
+            /* @noinspection PhpUsageOfSilenceOperatorInspection */
             if (
                 !\is_dir($this->cache_dir.$sub_dir)
                 && !@\mkdir($this->cache_dir.$sub_dir, recursive: true)
@@ -83,7 +85,7 @@ final class Caching
                 throw new \RuntimeException(\sprintf('Directory "%s" was not created', $this->cache_dir.$sub_dir));
             }
             // Write the file. We do not care much if it fails, so silencing
-            /** @noinspection PhpUsageOfSilenceOperatorInspection */
+            /* @noinspection PhpUsageOfSilenceOperatorInspection */
             if (@\file_put_contents($this->cache_dir.$sub_dir.$key.'.json', $data)) {
                 if (!\headers_sent()) {
                     \header('X-Server-Cached: true');
@@ -102,7 +104,7 @@ final class Caching
     }
 
     /**
-     * Read from cache
+     * Read from cache.
      *
      * @param string $key
      *
@@ -140,7 +142,7 @@ final class Caching
     }
 
     /**
-     * Generate key
+     * Generate key.
      *
      * @param string $key
      *
@@ -158,7 +160,7 @@ final class Caching
     }
 
     /**
-     * Gets JSON decoded array from a file
+     * Gets JSON decoded array from a file.
      *
      * @param string $cache_path
      *

@@ -12,7 +12,7 @@ use Simbiat\Database\Query;
 use Simbiat\FFXIV\Lodestone;
 
 /**
- * Class representing a FFXIV PvP Team
+ * Class representing a FFXIV PvP Team.
  */
 final class PvPTeam extends AbstractEntity
 {
@@ -29,17 +29,18 @@ final class PvPTeam extends AbstractEntity
     protected string $id_format = '/^[a-z\d]{40}$/m';
 
     /**
-     * Get PvP team data from Lodestone
+     * Get PvP team data from Lodestone.
      *
      * @param bool $allow_sleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
      *
      * @internal
      *
-     * @return string|array
+     * @return array|string
      */
-    public function getFromLodestone(bool $allow_sleep = false): string|array
+    public function getFromLodestone(bool $allow_sleep = false): array|string
     {
         $lodestone = new Lodestone();
+
         try {
             $data = $lodestone->getPvPTeam($this->id)->getResult();
         } catch (\Throwable $exception) {
@@ -89,7 +90,7 @@ final class PvPTeam extends AbstractEntity
     }
 
     /**
-     * Function to get initial data from DB
+     * Function to get initial data from DB.
      *
      * @throws \Exception
      */
@@ -112,7 +113,7 @@ final class PvPTeam extends AbstractEntity
     }
 
     /**
-     * Process data from DB
+     * Process data from DB.
      *
      * @param array $from_db
      *
@@ -144,7 +145,7 @@ final class PvPTeam extends AbstractEntity
     }
 
     /**
-     * Function to update the entity
+     * Function to update the entity.
      *
      * @return bool
      */
@@ -237,7 +238,7 @@ final class PvPTeam extends AbstractEntity
     }
 
     /**
-     * Delete PvP Team
+     * Delete PvP Team.
      *
      * @return bool
      */

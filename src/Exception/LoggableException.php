@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Exception;
 
 /**
- * Something went wrong with saving the notification to database
+ * Something went wrong with saving the notification to database.
  */
 final class LoggableException extends \Exception
 {

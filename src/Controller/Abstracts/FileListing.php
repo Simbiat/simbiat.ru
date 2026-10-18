@@ -10,7 +10,7 @@ use Simbiat\http20\Headers;
 use Simbiat\StringHelpers\Convert;
 
 /**
- * Class to generate directory/file listing pages
+ * Class to generate directory/file listing pages.
  */
 abstract class FileListing extends StaticPage
 {
@@ -38,7 +38,7 @@ abstract class FileListing extends StaticPage
     protected int $page = 1;
 
     /**
-     * Generate the page
+     * Generate the page.
      *
      * @param array $path
      *
@@ -116,7 +116,7 @@ abstract class FileListing extends StaticPage
     }
 
     /**
-     * Get a list of files
+     * Get a list of files.
      *
      * @param string $path       Base path
      * @param bool   $count_only Whether we just count or generate a full list with details
@@ -129,7 +129,7 @@ abstract class FileListing extends StaticPage
             ? new \CallbackFilterIterator(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST), static fn($cur) => $cur->isFile())
             : new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), static fn($cur) => $cur->isFile());
         // Order results
-        /* @noinspection IteratorToArrayKeysCollisionInspection */
+        /** @noinspection IteratorToArrayKeysCollisionInspection */
         $iterator = \iterator_to_array($iterator);
         \ksort($iterator, \SORT_NATURAL);
         // Prepare the array
@@ -178,7 +178,7 @@ abstract class FileListing extends StaticPage
     }
 
     /**
-     * Override the function to do some extra processing over the array
+     * Override the function to do some extra processing over the array.
      *
      * @param array $file_details
      *
@@ -187,14 +187,14 @@ abstract class FileListing extends StaticPage
     protected function extra(array &$file_details): void {}
 
     /**
-     * Try to get the actual subdirectory path, based on an actual case of the name, and not the lower case as was passed in URL
+     * Try to get the actual subdirectory path, based on an actual case of the name, and not the lower case as was passed in URL.
      *
      * @param string $path    Base folder
      * @param array  $sub_dir Array of subdirectories to check
      *
-     * @return string|false
+     * @return false|string
      */
-    private function getRealSubDirPath(#[FileReference] string $path, array $sub_dir): string|false
+    private function getRealSubDirPath(#[FileReference] string $path, array $sub_dir): false|string
     {
         $full_sub_dir = '/';
         foreach ($sub_dir as $sub_path) {
@@ -216,7 +216,7 @@ abstract class FileListing extends StaticPage
     }
 
     /**
-     * Generate a list of files
+     * Generate a list of files.
      *
      * @param string $path    Base path
      * @param string $sub_dir Subdirectory path, if any
@@ -274,7 +274,7 @@ abstract class FileListing extends StaticPage
     }
 
     /**
-     * Get a list of directories
+     * Get a list of directories.
      *
      * @param string $path       Base path
      * @param bool   $count_only Whether we just count or generate a full list with details
@@ -284,7 +284,7 @@ abstract class FileListing extends StaticPage
     private function getDirs(#[FileReference] string $path, bool $count_only = false): array
     {
         // Order results
-        /* @noinspection IteratorToArrayKeysCollisionInspection */
+        /** @noinspection IteratorToArrayKeysCollisionInspection */
         $iterator = \iterator_to_array(new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), static fn($cur) => $cur->isDir()));
         \ksort($iterator, \SORT_NATURAL);
         // Prepare the array

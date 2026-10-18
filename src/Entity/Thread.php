@@ -24,7 +24,7 @@ use Simbiat\Database\Query;
 use Simbiat\StringHelpers\Sanitize;
 
 /**
- * Forum thread
+ * Forum thread.
  */
 final class Thread extends Entity
 {
@@ -65,12 +65,12 @@ final class Thread extends Entity
     public array $external_links = [];
 
     /**
-     * @var string|null Access token for support tickets from contact form
+     * @var null|string Access token for support tickets from contact form
      */
     public ?string $access_token = null;
 
     /**
-     * @var string|null Contact email for the anonymous creator of the ticket
+     * @var null|string Contact email for the anonymous creator of the ticket
      */
     public ?string $email = null;
 
@@ -83,7 +83,7 @@ final class Thread extends Entity
     private bool $for_post = false;
 
     /**
-     * Function to set a flag, indicating that data is needed for a post (for optimization)
+     * Function to set a flag, indicating that data is needed for a post (for optimization).
      *
      * @param bool $for_post
      *
@@ -97,7 +97,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Function that (un)marks a section as thread
+     * Function that (un)marks a section as thread.
      *
      * @param bool $private
      *
@@ -113,6 +113,7 @@ final class Thread extends Entity
         if (!\in_array('mark_private', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `mark_private` permission'];
         }
+
         try {
             $affected = Query::query(
                 'UPDATE `talks__threads` SET `private`=:private, `editor`=:user_id WHERE `thread_id`=:thread_id;',
@@ -135,7 +136,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Function to close/open a thread
+     * Function to close/open a thread.
      *
      * @param bool $closed
      *
@@ -160,6 +161,7 @@ final class Thread extends Entity
         ) {
             return ['http_error' => 403, 'reason' => 'No `close_others_threads` permission'];
         }
+
         try {
             $affected = Query::query(
                 'UPDATE `talks__threads` SET `closed`=:closed, `editor`=:user_id WHERE `thread_id`=:thread_id;',
@@ -182,7 +184,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Move thread to another section
+     * Move thread to another section.
      *
      * @return array
      */
@@ -210,6 +212,7 @@ final class Thread extends Entity
         if ($parent->id === null) {
             return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parent_id'].'` does not exist'];
         }
+
         try {
             $affected = Query::query(
                 'UPDATE `talks__threads` SET `section_id`=:parent_id, `editor`=:user_id WHERE `thread_id`=:thread_id;',
@@ -234,7 +237,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Function to pin/unpin a thread
+     * Function to pin/unpin a thread.
      *
      * @param bool $pinned
      *
@@ -250,6 +253,7 @@ final class Thread extends Entity
         if (!\in_array('can_pin', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `can_pin` permission'];
         }
+
         try {
             $affected = Query::query(
                 'UPDATE `talks__threads` SET `pinned`=:pinned, `editor`=:user_id WHERE `thread_id`=:thread_id;',
@@ -272,7 +276,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Add thread
+     * Add thread.
      *
      * @param bool $with_post Flag allows creating a thread without a post. Useful when creating "special" threads, meant to not be owned by a user posting, so that they cannot edit it.
      *
@@ -324,6 +328,7 @@ final class Thread extends Entity
         if (\is_array($sanitize)) {
             return $sanitize;
         }
+
         try {
             $new_id = Query::query(
                 'INSERT INTO `talks__threads`(`thread_id`, `name`, `section_id`, `language`, `pinned`, `closed`, `private`, `og_image`, `published`, `author`, `editor`, `last_poster`) VALUES (NULL, :name, :parent_id, :language, COALESCE(:pinned, DEFAULT(`pinned`)), COALESCE(:closed, DEFAULT(`closed`)), COALESCE(:private, DEFAULT(`private`)), :og_image, :time,:user_id,:user_id,:user_id);',
@@ -408,7 +413,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Update thread's posts stats
+     * Update thread's posts stats.
      *
      * @return void
      */
@@ -433,7 +438,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Edit section data
+     * Edit section data.
      *
      * @return array<string, bool|int|string>
      */
@@ -469,6 +474,7 @@ final class Thread extends Entity
         ) {
             return ['http_error' => 403, 'reason' => 'No `move_threads` permission'];
         }
+
         try {
             $queries = [];
             // Update the thread
@@ -548,7 +554,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Delete section
+     * Delete section.
      *
      * @return array
      */
@@ -577,6 +583,7 @@ final class Thread extends Entity
         $location = !empty($this->parent['id'])
             ? '/talks/sections/'.$this->parent['id'].'/'
             : '/talks/sections/';
+
         // Attempt removal
         try {
             $affected = Query::query('DELETE FROM `talks__threads` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'affected');
@@ -593,7 +600,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Get language from DB
+     * Get language from DB.
      *
      * @return array
      */
@@ -603,7 +610,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Get supported alternative link types
+     * Get supported alternative link types.
      *
      * @return array
      */
@@ -613,7 +620,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Function to get initial data from DB
+     * Function to get initial data from DB.
      *
      * @return array
      */
@@ -648,14 +655,14 @@ final class Thread extends Entity
             $data['subscribers'] = Query::query('SELECT `user_id` FROM `subs__threads` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'column');
             // Get posts
             $data['posts'] = new Posts([':thread_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)'), '`talks__posts`.`published` ASC')->listEntities($page);
-            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             if (
                 \is_array($data['posts'])
                 && \is_array($data['posts']['entities'])
             ) {
-                /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+                /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
                 foreach ($data['posts']['entities'] as $post_key => $post) {
-                    /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+                    /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
                     $data['posts']['entities'][$post_key]['attachments'] = Query::query('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`file_id` = `sys__files`.`file_id` WHERE `post_id`=:post_id;', [':post_id' => $post['id']], return: 'all');
                 }
             }
@@ -669,7 +676,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Function process database data
+     * Function process database data.
      *
      * @param array $from_db
      *
@@ -723,7 +730,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Get alternative links for the thread
+     * Get alternative links for the thread.
      *
      * @return array
      */
@@ -820,14 +827,14 @@ final class Thread extends Entity
     }
 
     /**
-     * Sanitize section data
+     * Sanitize section data.
      *
      * @param array $data Data to sanitize
      * @param bool  $edit Flag indicating whether this is an edit
      *
-     * @return bool|array
+     * @return array|bool
      */
-    private function sanitizeInput(array &$data, bool $edit = false): bool|array
+    private function sanitizeInput(array &$data, bool $edit = false): array|bool
     {
         if (empty($data)) {
             return ['http_error' => 400, 'reason' => 'No form data provided'];
@@ -908,11 +915,11 @@ final class Thread extends Entity
         if (
             (
                 // If the name is empty (a new thread is being created)
-                $this->name === '' ||
+                $this->name === ''
                 // Or it's not empty and is different from the one we are trying to set
-                $this->name !== $data['name']
-            ) &&
-            \is_int($thread_exists)
+                || $this->name !== $data['name']
+            )
+            && \is_int($thread_exists)
         ) {
             return ['http_error' => 409, 'reason' => 'Thread `'.$data['name'].'` already exists in section.', 'location' => '/talks/threads/'.$thread_exists];
         }
@@ -932,8 +939,7 @@ final class Thread extends Entity
                         || $parent->type === 'Support'
                     )
                 )
-                ||
-                (
+                || (
                     !$this->owned
                     && !\in_array('close_others_threads', $_SESSION['permissions'], true)
                 )
@@ -985,7 +991,7 @@ final class Thread extends Entity
     }
 
     /**
-     * Sanitize list of alternative links
+     * Sanitize list of alternative links.
      *
      * @param array $alt_links
      *
@@ -996,7 +1002,7 @@ final class Thread extends Entity
         // Get supported links and set keys to the respective values of the `type` field
         $supported = Editors::digitToKey(self::getAltLinkTypes(), 'type');
         foreach ($alt_links as $key => $link) {
-            /** @noinspection IsEmptyFunctionUsageInspection We have less control on what values come here, so treat all possible empty values as bad one */
+            /* @noinspection IsEmptyFunctionUsageInspection We have less control on what values come here, so treat all possible empty values as bad one */
             if (empty($link)) {
                 $alt_links[$key] = null;
 

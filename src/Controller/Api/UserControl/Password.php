@@ -11,7 +11,7 @@ use App\Service\Config;
 use Simbiat\Database\Query;
 
 /**
- * Function to change password through API
+ * Function to change password through API.
  */
 final class Password extends Api
 {
