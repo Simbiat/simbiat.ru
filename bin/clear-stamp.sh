@@ -10,7 +10,7 @@ stamp="$ALERT_STATE_DIR/$1"
 
 mkdir -p "$ALERT_STATE_DIR"
 
-find "$ALERT_STATE_DIR" -type f -name '*' -mtime +7 -delete
+find "$ALERT_STATE_DIR" -type f -name '*' -mtime +7 -delete || true
 
 # Remove a stamp only if no sibling is concurrently alerting on it (holding the
 # flock on the .lock inode). Leaving the .lock file itself in place is correct:

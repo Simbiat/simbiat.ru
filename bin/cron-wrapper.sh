@@ -67,8 +67,8 @@ cat "$TMP_STDOUT"
 cat "$TMP_STDERR" >&2
 
 if [ "$RC" -eq 0 ]; then
-    "$CLEAR_STAMP" "$CMD_STAMP"
-    "$CLEAR_STAMP" "$INTERNAL_STAMP"
+    "$CLEAR_STAMP" "$CMD_STAMP" || log "Warning: Failed to clear $CMD_STAMP"
+    "$CLEAR_STAMP" "$INTERNAL_STAMP" || log "Warning: Failed to clear $INTERNAL_STAMP"
     exit 0
 fi
 
