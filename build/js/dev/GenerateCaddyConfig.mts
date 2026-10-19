@@ -6,28 +6,30 @@
 
 /* eslint-disable no-console */
 
-import hosts from '../../../config/Caddy/hosts.jsonc';
-import logs from '../../../config/Caddy/logs.jsonc';
 import crowdsec from '../../../config/Caddy/crowdsec.jsonc';
-import https from '../../../config/Caddy/https.jsonc';
-import hsts from '../../../config/Caddy/hsts.jsonc';
-import headers_remove from '../../../config/Caddy/headers/remove.jsonc';
-import headers_add from '../../../config/Caddy/headers/add.jsonc';
-import headers_deny from '../../../config/Caddy/headers/deny.jsonc';
 import headers_access_control from '../../../config/Caddy/headers/access_control.jsonc';
+import headers_add from '../../../config/Caddy/headers/add.jsonc';
 import headers_cache_control from '../../../config/Caddy/headers/cache_control.jsonc';
-import headers_path_based from '../../../config/Caddy/headers/path_based.jsonc';
-import headers_cross_origin from '../../../config/Caddy/headers/cross_origin.jsonc';
-import headers_vary from '../../../config/Caddy/headers/vary.jsonc';
-import headers_utf from '../../../config/Caddy/headers/utf.jsonc';
 import headers_compression from '../../../config/Caddy/headers/compression.jsonc';
-import internal_redirects from '../../../config/Caddy/redirects/internal.jsonc';
-import domain_redirects from '../../../config/Caddy/redirects/domain.jsonc';
-import rewrites from '../../../config/Caddy/rewrites.jsonc';
-import php from '../../../config/Caddy/php.jsonc';
-import hotlinks from '../../../config/Caddy/hotlinks.jsonc';
-import rate_limit from '../../../config/Caddy/rate_limit.jsonc';
+import headers_cross_origin from '../../../config/Caddy/headers/cross_origin.jsonc';
+import headers_deny from '../../../config/Caddy/headers/deny.jsonc';
 import for_html from '../../../config/Caddy/headers/for_html.jsonc';
+import headers_path_based from '../../../config/Caddy/headers/path_based.jsonc';
+import headers_remove from '../../../config/Caddy/headers/remove.jsonc';
+import headers_utf from '../../../config/Caddy/headers/utf.jsonc';
+import headers_vary from '../../../config/Caddy/headers/vary.jsonc';
+import hosts from '../../../config/Caddy/hosts.jsonc';
+import hotlinks from '../../../config/Caddy/hotlinks.jsonc';
+import hsts from '../../../config/Caddy/hsts.jsonc';
+import https from '../../../config/Caddy/https.jsonc';
+import logs from '../../../config/Caddy/logs.jsonc';
+import php from '../../../config/Caddy/php.jsonc';
+import rate_limit from '../../../config/Caddy/rate_limit.jsonc';
+import domain_redirects from '../../../config/Caddy/redirects/domain.jsonc';
+import internal_redirects from '../../../config/Caddy/redirects/internal.jsonc';
+import rewrites from '../../../config/Caddy/rewrites.jsonc';
+import server_healthcheck from '../../../config/Caddy/servers/healthcheck.jsonc';
+import server_reset from '../../../config/Caddy/servers/reset.jsonc';
 
 // The following 3 interfaces are just to help with suppressing type-related errors
 interface HostMatch {
@@ -183,69 +185,17 @@ async function main(): Promise<void> {
                         ],
                     },
                 },
-                frankenphp: {},
+                frankenphp: {
+                    max_idle_time: 30,
+                    max_wait_time: 600,
+                },
                 http: {
                     grace_period: '30s',
                     shutdown_delay: '10s',
                     metrics: {},
                     servers: {
-                        // Endpoint for custom health check, available only from inside the container
-                        healthcheck: {
-                            listen: [':2026'],
-                            routes: [
-                                {
-                                    match: [
-                                        {
-                                            remote_ip: {
-                                                ranges: [
-                                                    '127.0.0.1/32',
-                                                    '::1/128',
-                                                ],
-                                            },
-                                        },
-                                    ],
-                                    handle: [
-                                        {
-                                            handler: 'static_response',
-                                            status_code: 200,
-                                        },
-                                    ],
-                                    terminal: true,
-                                },
-                            ],
-                        },
-                        // Endpoint for opcache reset, available only from inside the container
-                        reset: {
-                            listen: [':2027'],
-                            routes: [
-                                {
-                                    match: [
-                                        {
-                                            remote_ip: {
-                                                ranges: [
-                                                    '127.0.0.1/32',
-                                                    '::1/128',
-                                                ],
-                                            },
-                                        },
-                                    ],
-                                    handle: [
-                                        {
-                                            handler: 'vars',
-                                            root: '/built-in',
-                                        },
-                                        {
-                                            handler: 'rewrite',
-                                            uri: '/reset.php',
-                                        },
-                                        {
-                                            handler: 'php',
-                                        },
-                                    ],
-                                    terminal: true,
-                                },
-                            ],
-                        },
+                        healthcheck: server_healthcheck as Record<string, unknown>,
+                        reset: server_reset as Record<string, unknown>,
                         frankenphp: {
                             listen: [
                                 ':80',
@@ -340,7 +290,7 @@ async function main(): Promise<void> {
                                                         handle: [
                                                             {
                                                                 handler: 'static_response',
-                                                                status_code: "{http.error.status_code}",
+                                                                status_code: '{http.error.status_code}',
                                                             },
                                                         ],
                                                     },

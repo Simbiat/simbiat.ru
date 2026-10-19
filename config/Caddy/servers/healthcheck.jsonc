@@ -1,0 +1,27 @@
+// Endpoint for custom health check, available only from inside the container
+{
+    "listen": [
+        ":2026"
+    ],
+    "routes": [
+        {
+            "match": [
+                {
+                    "remote_ip": {
+                        "ranges": [
+                            "127.0.0.1/32",
+                            "::1/128"
+                        ]
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "status_code": 200
+                }
+            ],
+            "terminal": true
+        }
+    ]
+}

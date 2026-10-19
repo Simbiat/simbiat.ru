@@ -20,13 +20,20 @@ return RectorConfig::configure()
                        '/app/tests',
                    ])
                    ->withSkip([
+                       '/app/assets/',
                        '/app/bin/console',
                        '/app/bin/phpunit',
-                       '/app/packages/DDCIcons/icons',
-                       '/app/public',
+                       '/app/build/',
                        '/app/config/bundles.php',
                        '/app/config/preload.php',
                        '/app/config/reference.php',
+                       '/app/data/',
+                       '/app/node_modules/',
+                       '/app/packages/DDCIcons/icons/',
+                       '/app/public/',
+                       '/app/templates/',
+                       '/app/var/',
+                       '/app/vendor/',
                    ])
                    ->withSkip([
                        // Conflicts Symfony.Commenting.FunctionComment.MissingReturn sniff

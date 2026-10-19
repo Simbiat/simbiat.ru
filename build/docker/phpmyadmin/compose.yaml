@@ -10,9 +10,10 @@ services:
       - SETUID
       - SETGID
     container_name: phpmyadmin
-    depends_on:
-      mariadb:
-        condition: service_healthy
+    # Container itself is technically not dependent on MariaDB, although it needs to be up to manage the DB.
+    #depends_on:
+    #  mariadb:
+    #    condition: service_healthy
     environment:
       PMA_CONTROLPASS: ${PHPMYADMIN_PASSWORD}
       PMA_PASSWORD: ${DATABASE_PASSWORD}

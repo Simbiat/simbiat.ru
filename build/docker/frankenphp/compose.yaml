@@ -13,13 +13,17 @@ services:
     cap_drop:
       - ALL
     container_name: frankenphp
-    depends_on:
-      crowdsec:
-        condition: service_healthy
-      geoip:
-        condition: service_healthy
-      mariadb:
-        condition: service_healthy
+    # The container is technically *not* dependent on these, but proper functioning of the service does require them.
+    # It can function without CrowdSec due to "enable_hard_fails": false.
+    # It can function without MariaDB, it will just show respective error page.
+    # It will ignore errors with accessing GeoIP files (since this is not critical).
+    #depends_on:
+    #  crowdsec:
+    #    condition: service_healthy
+    #  geoip:
+    #    condition: service_healthy
+    #  mariadb:
+    #    condition: service_healthy
     environment:
       CROWDSEC_API_KEY: ${CROWDSEC_CADDY_KEY}
     links:

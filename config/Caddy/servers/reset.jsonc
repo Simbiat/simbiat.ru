@@ -1,0 +1,34 @@
+// Endpoint for opcache reset, available only from inside the container
+{
+    "listen": [
+        ":2027"
+    ],
+    "routes": [
+        {
+            "match": [
+                {
+                    "remote_ip": {
+                        "ranges": [
+                            "127.0.0.1/32",
+                            "::1/128"
+                        ]
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "vars",
+                    "root": "/built-in"
+                },
+                {
+                    "handler": "rewrite",
+                    "uri": "/reset.php"
+                },
+                {
+                    "handler": "php"
+                }
+            ],
+            "terminal": true
+        }
+    ]
+}

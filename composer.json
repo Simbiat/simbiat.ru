@@ -270,7 +270,7 @@
         "php-cs-fixer": "php-cs-fixer fix --dry-run --config=/app/config/quality/php-cs-fixer.php --using-cache=yes --cache-file=/app/data/temp/.php-cs-fixer.cache --verbose --allow-risky=yes --path-mode=intersection",
         "phpcbf": "phpcbf --standard=/app/config/quality/phpcs.xml",
         "phpcs": "phpcs --standard=/app/config/quality/phpcs.xml -s",
-        "phpmd": "phpmd analyze --cache --cache-file=/app/data/temp/.phpmd.result-cache.php --cache-strategy=content --ruleset=/app/config/quality/phpmd.yaml --threads=4 --jetbrains=simbiat.eu",
+        "phpmd": "phpmd analyze --cache --cache-file=/app/data/temp/.phpmd.result-cache.php --cache-strategy=content --ruleset=/app/config/quality/phpmd.yaml --threads=1 --no-progress --jetbrains=simbiat.eu",
         "phpstan": "phpstan analyse --configuration=/app/config/quality/phpstan.neon --memory-limit=1G",
         "post-install-cmd": [
             "@auto-scripts"
