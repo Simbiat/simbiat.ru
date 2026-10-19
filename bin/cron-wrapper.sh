@@ -2,17 +2,12 @@
 # cron-wrapper.sh - run a command inside a container with alerting on failure
 set -Eeuo pipefail
 
-STATE_DIR="/var/log/cron"
-COOLDOWN=3600                       # seconds between repeated alerts for the same signature
-MAINTENANCE_CONTAINERS="frankenphp mariadb"   # containers for which the flag is meaningful
-MAINTENANCE_FLAG="/var/log/db_maintenance.flag"
-MAILER="/etc/supercronic/bin/send-mail.sh"
-POSTFIX_CONTAINER="postfix"         # container delivering the alert mail
-HEALTH_GRACE=120                    # seconds to wait for healthcheck after container start
-ALERT_LOCK_WAIT=120                 # seconds to wait for a sibling holding the alert lock
-
 WRAPPER_ARGS="$*"                   # captured early, safe to reference in on_error
-INTERNAL_STAMP="$STATE_DIR/cron_wrapper_internal"
+STATE_DIR="/var/log/cron"
+INTERNAL_STAMP="cron_wrapper_internal"
+ALERT_ONCE="/etc/supercronic/bin/alert-once.sh"
+CLEAR_STAMP="/etc/supercronic/bin/clear-stamp.sh"
+CHECK_CONTAINER="/etc/supercronic/bin/check-container.sh"
 
 log() {
     echo "time=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" msg=\"$1\"" >&2
@@ -24,7 +19,7 @@ on_error() {
     local rc=$?
     trap - ERR
     log "INTERNAL ERROR rc=$rc at line $1, command: ${BASH_COMMAND:-?}"
-    alert_once "$INTERNAL_STAMP" "[Alert] Cron wrapper crashed" \
+    "$ALERT_ONCE" "$INTERNAL_STAMP" "[Alert] Cron wrapper crashed" \
             "cron-wrapper for '${CONTAINER:-unknown}' (args: ${WRAPPER_ARGS:-none}) failed internally at line $1, rc=$rc. Command: ${BASH_COMMAND:-?}"
     exit "$rc"
 }
@@ -45,66 +40,6 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Remove a stamp only if no sibling is concurrently alerting on it (holding the
-# flock on the .lock inode). Leaving the .lock file itself in place is correct:
-# deleting a lock file splits the lock into two inodes and breaks deduplication.
-clear_stamp() {
-    (
-        flock -n 9 2>/dev/null || exit 0   # busy: sibling is alerting, leave its stamp alone
-        rm -f -- "$1"
-    ) 9>"$1.lock"
-}
-
-# Send at most one alert per COOLDOWN window, serialized against concurrent
-# instances of the same signature. Args: stamp, subject, body.
-alert_once() {
-    local stamp="$1" subject="$2" body="$3"
-
-    # Maintenance gate: only meaningful for the DB/web containers
-    if [ -f "$MAINTENANCE_FLAG" ]; then
-        for c in $MAINTENANCE_CONTAINERS; do
-            if [ "${CONTAINER:-}" = "$c" ]; then
-                log "Maintenance flag present, alert suppressed: $body"
-                return 0
-            fi
-        done
-    fi
-
-    (
-        LOCK_ACQUIRED=0
-        DEADLINE=$(( $(date +%s) + ALERT_LOCK_WAIT ))
-        while :; do
-            if flock -n 9 2>/dev/null; then
-                LOCK_ACQUIRED=1
-                break
-            fi
-            # Lock held by a sibling: poll until it's free or we time out
-            [ "$(date +%s)" -ge "$DEADLINE" ] && break
-            sleep 2
-        done
-
-        if [ "$LOCK_ACQUIRED" -eq 0 ]; then
-            log "Alert lock busy for over ${ALERT_LOCK_WAIT}s, assuming sibling handled it"
-            exit 0
-        fi
-
-        ALERT=1
-        if [ -f "$stamp" ]; then
-            MTIME=$(stat -c %Y "$stamp" 2>/dev/null || echo 0)   # unreadable stamp -> re-alert
-            if [ $(( $(date +%s) - MTIME )) -lt "$COOLDOWN" ]; then
-                ALERT=0
-            fi
-        fi
-        if [ "$ALERT" -eq 1 ]; then
-            if "$MAILER" "$subject" "$body" 2; then
-                printf '%s [%s] %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$$" "$body" > "$stamp"
-            else
-                log "Alert mailer failed for: $subject (no stamp written, will retry next run)"
-            fi
-        fi
-    ) 9>"$stamp.lock"
-}
-
 if [ $# -lt 2 ]; then
     log "Usage: $0 <container_name> <command>"
     exit 1
@@ -113,84 +48,17 @@ fi
 CONTAINER="$1"
 shift
 
-# Pre-flight: shared stamps (not per-job) so a global outage emails once per
-# cooldown across ALL cron jobs, not once per job signature.
-DOCKER_STAMP="$STATE_DIR/cron_docker"
-POSTFIX_STAMP="$STATE_DIR/cron_postfix"
-
 # unique signature per container + command combination
-CMD_SIG=$(printf '%s|%s' "$CONTAINER" "$*" | md5sum | cut -c1-12)
-CTR_SIG=$(printf '%s' "$CONTAINER" | md5sum | cut -c1-12)
-CMD_STAMP="$STATE_DIR/cron_fail-$CMD_SIG"
-CTR_STAMP="$STATE_DIR/cron_container-$CTR_SIG"
+CMD_SIG=$(printf '%s' "$*" | md5sum | cut -c1-12)
+CMD_STAMP="cron_fail-$CONTAINER-$CMD_SIG"
 
-# 1. Docker socket sanity check. Without it every job produces its own
-#    "cannot connect" email; the shared stamp collapses those into one.
-if ! docker ps >/dev/null 2>&1; then
-    log "Docker is not available (socket unreachable or daemon down)."
-    touch "$DOCKER_STAMP"   # marker only, no alert on purpose
-    exit 1
-fi
-clear_stamp "$DOCKER_STAMP"
-
-# 2. If postfix is down, alerts cannot be delivered - exit quietly, leaving a
-#    marker for post-mortem. Cleared as soon as postfix is healthy again.
-POSTFIX_HEALTH=$(docker inspect --format '{{.State.Health.Status}}' "$POSTFIX_CONTAINER" 2>/dev/null || true)
-if [ -z "$POSTFIX_HEALTH" ] || [ "$POSTFIX_HEALTH" = "<no value>" ]; then
-    POSTFIX_HEALTH="none"
-fi
-if [ "$POSTFIX_HEALTH" != "healthy" ] && [ "$POSTFIX_HEALTH" != "none" ]; then
-    log "Postfix container '$POSTFIX_CONTAINER' not healthy ($POSTFIX_HEALTH); skipping (alerts cannot be delivered)."
-    touch "$POSTFIX_STAMP"   # marker only, no alert on purpose
-    exit 1
-fi
-clear_stamp "$POSTFIX_STAMP"
-
-STATE=$(docker inspect --format '{{.State.Status}}' "$CONTAINER" 2>/dev/null || true)
-
-if [ -z "$STATE" ]; then
-    log "Container '$CONTAINER' not found."
-    alert_once "$CTR_STAMP" "[Alert] Missing container" \
-        "Container '$CONTAINER' (expected by cron job: $*) not found on the host; command '${WRAPPER_ARGS:-none}' not executed."
-    exit 1
+RC=0
+"$CHECK_CONTAINER" "$CONTAINER" || RC=$?
+if [ "$RC" -ne 0 ]; then
+    exit "$RC"
 fi
 
-if [ "$STATE" != "running" ]; then
-    log "Container '$CONTAINER' is not running (status: $STATE)."
-    alert_once "$CTR_STAMP" "[Alert] Container not running" \
-        "Container '$CONTAINER' is not running (status: $STATE); command '${WRAPPER_ARGS:-none}' not executed."
-    exit 1
-fi
-
-HEALTH=$(docker inspect --format '{{.State.Health.Status}}' "$CONTAINER" 2>/dev/null || true)
-if [ -z "$HEALTH" ] || [ "$HEALTH" = "<no value>" ]; then
-    HEALTH="none"
-fi
-
-if [ "$HEALTH" != "healthy" ]; then
-    # Grace period: give a just-started container time to finish its healthcheck.
-    STARTED_AT=$(docker inspect --format '{{.State.StartedAt}}' "$CONTAINER" 2>/dev/null || true)
-    if [ -n "$STARTED_AT" ]; then
-        # BusyBox/Alpine do not like `T` and fractional seconds in the timestamp
-        STARTED_AT_SEC=$(printf '%s' "$STARTED_AT" | sed 's/T/ /; s/\.[0-9]*Z$//')
-        CONTAINER_AGE=$(( $(date +%s) - $(date -d "$STARTED_AT_SEC" +%s) ))
-        if [ "$CONTAINER_AGE" -lt "$HEALTH_GRACE" ]; then
-            log "Container '$CONTAINER' not healthy ($HEALTH) but started ${CONTAINER_AGE}s ago (< ${HEALTH_GRACE}s), staying quiet."
-            exit 1
-        fi
-    fi
-    log "Container '$CONTAINER' is not healthy ($HEALTH)."
-    alert_once "$CTR_STAMP" "[Alert] Container not healthy" \
-        "Container '$CONTAINER' is not healthy (status: $HEALTH); command '${WRAPPER_ARGS:-none}' not executed."
-    exit 1
-fi
-
-# Container confirmed running + healthy: any outstanding container-level alert
-# is resolved, so retire it (and give the next failure a fresh cooldown).
-clear_stamp "$CTR_STAMP"
-
-# Run the command, capturing stdout and stderr separately, then replay both so
-# Supercronic's own log capture is untouched.
+# Run the command, capturing stdout and stderr separately, then replay both so Supercronic's own log capture is untouched.
 RC=0
 docker exec "$CONTAINER" "$@" >"$TMP_STDOUT" 2>"$TMP_STDERR" || RC=$?
 
@@ -199,12 +67,12 @@ cat "$TMP_STDOUT"
 cat "$TMP_STDERR" >&2
 
 if [ "$RC" -eq 0 ]; then
-    clear_stamp "$CMD_STAMP"
-    clear_stamp "$INTERNAL_STAMP"
+    "$CLEAR_STAMP" "$CMD_STAMP"
+    "$CLEAR_STAMP" "$INTERNAL_STAMP"
     exit 0
 fi
 
-# Build a snippet of the failing run's output for the alert body / stamp.
+# Embed the failing run's output for the alert body / stamp.
 SNIPPET=""
 [ -s "$TMP_STDOUT" ] && SNIPPET="--- captured stdout ---
 $(cat "$TMP_STDOUT")"
@@ -212,8 +80,8 @@ $(cat "$TMP_STDOUT")"
 }--- captured stderr ---
 $(cat "$TMP_STDERR")"
 
-alert_once "$CMD_STAMP" "[Alert] Failed cron job" \
+"$ALERT_ONCE" "$CMD_STAMP" "[Alert] Failed cron job" \
     "Cron job \`$CONTAINER: $*\` failed with exit code $RC.${SNIPPET:+
-}$SNIPPET"
+}$SNIPPET" || log "Failed to send alert"
 
 exit "$RC"

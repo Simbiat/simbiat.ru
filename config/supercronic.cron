@@ -30,6 +30,10 @@
 # This one is not ready yet
 #0 0 * * * /etc/supercronic/bin/cron-php.sh app:clean:dead_links
 
+# Check containers' health. Only covering those, that are not involved in regular jobs
+*/10 * * * * /etc/supercronic/bin/check-container.sh crowdsec
+*/20 * * * * /etc/supercronic/bin/check-container.sh geoip
+
 # Daily non-PHP tasks
 0 3 * * * /etc/supercronic/bin/cron-wrapper.sh mariadb /etc/mysql/cron/mariadb-backup.sh
 0 0 * * * /etc/supercronic/bin/cron-wrapper.sh geoip /usr/bin/geoipupdate --output
