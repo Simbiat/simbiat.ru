@@ -65,6 +65,9 @@ DEPLOY_ARTIFACTS_DIR="${LOCAL_PROJECT_ROOT}/var/deploy"
 # Maintenance flag is seen by FrankenPHP and results in custom error pages
 # This is relative to PROD directory, not the system's `/var/log`, so `.` is important.
 MAINTENANCE_FLAG="./var/log/db_maintenance.flag"
+# PHP error log (and flag) can happen during updates, so we want to remove them right away.
+PHP_LOG="./var/log/php.log"
+PHP_ERROR_FLAG="./var/log/error_log.flag"
 
 PATTERN_ROOT_COMPOSE='^compose\.ya?ml$'
 
@@ -376,6 +379,8 @@ if ! $frankenphp_recreated; then
 fi
 # Remove maintenance flag
 ACTIONS+=("rm -f ${MAINTENANCE_FLAG}")
+ACTIONS+=("rm -f ${PHP_LOG}")
+ACTIONS+=("rm -f ${PHP_ERROR_FLAG}")
 
 echo ""
 echo "===== DEPLOY SUMMARY ====="
