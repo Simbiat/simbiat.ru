@@ -141,7 +141,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
         }
         // Create DateTime object while converting the time
         $datetime = SandClock::convertTimezone($string, 'UTC', $timezone);
-        $datetime->setTimezone(new \DateTimeZone($timezone));
+        $datetime = $datetime->setTimezone(new \DateTimeZone($timezone));
 
         return '<time datetime="'.$datetime->format('c').'"'.(empty($classes) ? '' : 'class="'.$classes.'"').'>'.$datetime->format($format).'</time>';
     }
