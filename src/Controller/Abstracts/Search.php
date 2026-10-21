@@ -14,6 +14,7 @@ use Simbiat\http20\Headers;
 abstract class Search extends Page
 {
     // Cache age, in case we prefer the generated page to be cached
+    #[\Override]
     protected int $cache_age = 1440;
 
     // Linking types to classes
@@ -45,6 +46,7 @@ abstract class Search extends Page
         if (\count($this->types) === 0) {
             throw new \RuntimeException('Search types are not set');
         }
+
         // Check that classes are available
         foreach ($this->types as $type) {
             if (!\is_subclass_of($type['class'], \App\Service\Search\Search::class)) {
@@ -65,13 +67,15 @@ abstract class Search extends Page
         if (empty($term)) {
             return true;
         }
-        $sanitized = Sanitization::removeNonPrintable($term, true);
+
+        $sanitized = Sanitization::removeNonPrintable($term, full_list: true);
         // Remove disallowed characters. Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in the future
         $decoded_search = \preg_replace([$this->regex_search, '/:/'], '', $sanitized);
         // Check if the new value is just the set of operators and if it is - consider a bad request
         if (\preg_match('/^[+\-<>~()"*]+$/', $decoded_search)) {
             return false;
         }
+
         // If the value is empty, ensure it's an empty string
         if (!empty($decoded_search)) {
             $this->search_for = $decoded_search;
@@ -99,21 +103,25 @@ abstract class Search extends Page
             // Redirect to a proper version using GET value
             Headers::redirect(\preg_replace('/(.*)(?>\/([^\/]+)\/?$)/u', '$1/?search=$2', HomePage::$canonical));
         }
+
         // Sanitize search value
         if (!$this->sanitize($_GET['search'] ?? '')) {
             return ['http_error' => 400, 'reason' => 'Bad search term'];
         }
+
         // Get search results
         $output_array = [];
         foreach ($this->types as $type => $class) {
             $output_array['search_result'][$type] = new $class['class']()->Search($this->search_for, $this->search_items);
         }
+
         // Get the freshest date
         $date = $this->getDate($output_array['search_result']);
         // Attempt to exit a bit earlier with Last Modified header
         if (!empty($date)) {
             $this->lastModified($date);
         }
+
         if (!empty($this->search_for)) {
             // Continue breadcrumbs
             $this->attachCrumb('?search='.\rawurlencode($this->search_for), \sprintf($this->short_title, $this->search_for));
@@ -142,9 +150,10 @@ abstract class Search extends Page
     {
         // Prepare the array of dates
         $dates = [];
-        foreach ($results as $type) {
-            $dates[] = \array_column($type['results'], 'updated');
+        foreach ($results as $result) {
+            $dates[] = \array_column($result['results'], 'updated');
         }
+
         $dates = \array_merge(...$dates);
         // Return max value if the array is not empty or 0 otherwise
         if (\count($dates) === 0) {

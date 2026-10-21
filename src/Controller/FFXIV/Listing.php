@@ -15,27 +15,38 @@ use App\Service\Search\RedFlags;
 
 final class Listing extends \App\Controller\Abstracts\Listing
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/fftracker/search', 'name' => 'Search'],
     ];
 
     // Service name for breadcrumbs
+    #[\Override]
     protected string $service_name = 'fftracker';
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'search';
 
     // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'FFXIV Tracker Search';
 
     // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'FFXIV Tracker Search';
 
     // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'FFXIV Tracker Search';
 
     // Linking types to classes
+    #[\Override]
     protected array $types = [
         'achievements' => ['name' => 'Achievements', 'class' => Achievements::class],
         'characters' => ['name' => 'Characters', 'class' => Characters::class],
@@ -48,8 +59,10 @@ final class Listing extends \App\Controller\Abstracts\Listing
     ];
 
     // Full title to be used for description metatags when having a search value
+    #[\Override]
     protected string $full_title = 'Search for `%s` on Final Fantasy XIV Tracker';
 
     // List of permissions, from which at least 1 is required to have access to the page
+    #[\Override]
     protected array $required_permission = ['view_ff'];
 }

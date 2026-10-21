@@ -10,24 +10,34 @@ use App\Service\Config;
 
 final class Post extends Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/talks/sections/', 'name' => 'Sections'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'post';
 
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'Talks';
 
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'Talks';
 
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'Talks';
 
     // List of permissions, from which at least 1 is required to have access to the page
+    #[\Override]
     protected array $required_permission = ['view_posts'];
 
     // This is the actual page generation based on further details of the $path
@@ -41,6 +51,7 @@ final class Post extends Page
         ) {
             return ['http_error' => 400, 'reason' => 'Wrong ID'];
         }
+
         $post = new \App\Entity\Post($id);
         $output_array = $post->getArray();
         if (
@@ -49,6 +60,7 @@ final class Post extends Page
         ) {
             return ['http_error' => 404, 'reason' => 'Post does not exist', 'suggested_link' => '/talks/sections/'];
         }
+
         // Check if private
         if ($output_array['private']) {
             if (
@@ -68,34 +80,38 @@ final class Post extends Page
                 }
             } elseif (
                 $output_array['owned'] !== true
-                && !\in_array('view_private', $_SESSION['permissions'], true)
+                && !\in_array('view_private', $_SESSION['permissions'], strict: true)
             ) {
                 return ['http_error' => 403, 'reason' => 'This post is private and you lack `view_private` permission'];
             }
         }
+
         // Check if scheduled
         if (
             $output_array['created'] >= \time()
-            && !\in_array('view_scheduled', $_SESSION['permissions'], true)
+            && !\in_array('view_scheduled', $_SESSION['permissions'], strict: true)
         ) {
             return ['http_error' => 404, 'reason' => 'Post does not exist', 'suggested_link' => '/talks/sections/'];
         }
+
         // Check if we are trying to edit a post, that we can't edit
         $output_array['can_edit_post'] = false;
         if ($post->owned) {
-            if (\in_array('edit_own_posts', $_SESSION['permissions'], true)) {
+            if (\in_array('edit_own_posts', $_SESSION['permissions'], strict: true)) {
                 $output_array['can_edit_post'] = true;
             }
-        } elseif (\in_array('edit_others_posts', $_SESSION['permissions'], true)) {
+        } elseif (\in_array('edit_others_posts', $_SESSION['permissions'], strict: true)) {
             $output_array['can_edit_post'] = true;
         }
+
         if (
             $output_array['can_edit_post']
             && $post->locked
-            && !\in_array('edit_locked', $_SESSION['permissions'], true)
+            && !\in_array('edit_locked', $_SESSION['permissions'], strict: true)
         ) {
             $output_array['can_edit_post'] = false;
         }
+
         // Try to exit early based on modification date
         $this->lastModified($output_array['updated']);
         // Changelogs have Unix timestamp for names, need to convert those to the desired format
@@ -105,11 +121,12 @@ final class Post extends Page
         ) {
             $output_array['name'] = \date('Y.m.d', (int) $output_array['name']);
         }
+
         // Get history
         $history = false;
         $time = 0;
         $output_array['history'] = null;
-        if (\in_array('view_posts_history', $_SESSION['permissions'], true)) {
+        if (\in_array('view_posts_history', $_SESSION['permissions'], strict: true)) {
             $time = (float) ($path[1] ?? 0);
             if ($time > 0) {
                 $old_version = $post->getHistory($time);
@@ -129,10 +146,12 @@ final class Post extends Page
                 $output_array['history'] = $post->getHistory();
             }
         }
+
         // Add parents to breadcrumbs
         foreach ($output_array['parents'] as $parent) {
             $this->breadcrumb[] = ['href' => '/talks/sections/'.$parent['section_id'], 'name' => $parent['name']];
         }
+
         // Add thread
         $this->breadcrumb[] = ['href' => '/talks/threads/'.$output_array['thread_id'].($output_array['page'] > 1 ? '?page='.$output_array['page'] : '').'#post_'.$id, 'name' => $output_array['name']];
         // Add current page
@@ -144,6 +163,7 @@ final class Post extends Page
         ) {
             $this->breadcrumb[] = ['href' => '/talks/posts/'.$id.'/'.$time, 'name' => \date('d/m/Y H:i', (int) $time)];
         }
+
         // Update title, h1 and og_desc
         $this->h1 = 'Post #'.$id;
         $this->title = $this->h1;

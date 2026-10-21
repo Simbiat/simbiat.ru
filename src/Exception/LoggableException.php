@@ -11,7 +11,7 @@ final class LoggableException extends \Exception
 {
     public function __construct($message, $code = 0, ?\Throwable $previous = null, bool $log = true, mixed $context = null)
     {
-        if ($log) {
+        if ($log && $context) {
             // Do something
         }
 

@@ -52,6 +52,7 @@ final class Mailer
                         [':uuid' => [\array_keys($notifications), 'in', 'string']],
                     );
                 }
+
                 foreach ($notifications as $uuid => $type) {
                     $class_name = NotificationType::tryFrom($type);
                     if ($class_name === null) {

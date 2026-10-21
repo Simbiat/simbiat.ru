@@ -36,11 +36,13 @@ abstract class Listing extends Search
         if (empty($path[0])) {
             return ['http_error' => 400, 'reason' => 'No endpoint provided'];
         }
+
         $this->subservice_name = $path[0];
         // Sanitize search value
         if (!$this->sanitize($_GET['search'] ?? '')) {
             return ['http_error' => 400, 'reason' => 'Bad search term'];
         }
+
         // Set page number
         $page = (int) ($_GET['page'] ?? 1);
         // Get search results
@@ -51,16 +53,18 @@ abstract class Listing extends Search
         // If int is returned, we have a bad page
         if (\is_int($output_array['search_result'])) {
             // Redirect
-            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.$this->service_name.'/'.$this->subservice_name.'/'.(!empty($this->search_for) ? '?search='.\rawurlencode($this->search_for).'&page='.$output_array['search_result'] : '?page='.$output_array['search_result']), false);
+            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.$this->service_name.'/'.$this->subservice_name.'/'.(!empty($this->search_for) ? '?search='.\rawurlencode($this->search_for).'&page='.$output_array['search_result'] : '?page='.$output_array['search_result']), permanent: false);
 
             return [];
         }
+
         // Get the freshest date
         $date = $this->getDate($output_array['search_result']);
         // Attempt to exit a bit earlier with Last Modified header
         if (!empty($date)) {
             $this->lastModified($date);
         }
+
         // Generate pagination data
         $output_array['pagination'] = ['current' => $page, 'total' => $output_array['search_result']['pages'], 'prefix' => '?'.(empty($this->search_for) ? '' : 'search='.\rawurlencode($this->search_for).'&').'page=', 'per' => $listing_type->list_items];
         if (!empty($this->search_for)) {
@@ -68,8 +72,9 @@ abstract class Listing extends Search
             $this->attachCrumb('?search='.\rawurlencode($this->search_for), \sprintf($this->short_title, $this->search_for));
             $this->breadcrumb[] = ['href' => '/'.$this->service_name.'/'.$this->subservice_name.'/?search='.\rawurlencode($this->search_for), 'name' => $this->types[$this->subservice_name]['name']];
             if ($page > 1) {
-                $this->attachCrumb('page='.$page, \mb_ucfirst($this->page_word, 'UTF-8').' '.$page, true);
+                $this->attachCrumb('page='.$page, \mb_ucfirst($this->page_word, 'UTF-8').' '.$page, query: true);
             }
+
             // Set search value, if available
             $output_array['search_value'] = $this->search_for;
             // Set titles
@@ -83,6 +88,7 @@ abstract class Listing extends Search
             if ($page > 1) {
                 $this->attachCrumb('/?page='.$page, \mb_ucfirst($this->page_word, 'UTF-8').' '.$page);
             }
+
             // Set titles
             $this->og_desc = $this->types[$this->subservice_name]['name'].', '.$this->page_word.' '.$page;
             $this->title = $this->og_desc;

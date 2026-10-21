@@ -18,20 +18,36 @@ use App\Controller\FFXIV\Track;
 final class FFTracker extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
+    #[\Override]
     protected array $sub_routes = [
         'search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'crossworldlinkshells', 'achievements', 'statistics', 'crests', 'track', 'points', 'red_flags',
         // legacy singular nodes
         'character', 'freecompany', 'pvpteam', 'linkshell', 'crossworld_linkshell', 'crossworldlinkshell', 'achievement',
     ];
 
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/fftracker/', 'name' => 'FFXIV Tracker'],
     ];
+
+    #[\Override]
     protected string $title = 'Final Fantasy XIV Tracker';
+
+    #[\Override]
     protected string $h1 = 'Final Fantasy XIV Tracker';
+
+    #[\Override]
     protected string $og_desc = 'Tracker for Final Fantasy XIV entities and respective statistics';
+
+    #[\Override]
     protected string $og_image = '/ogimages/fftracker.webp';
+
+    #[\Override]
     protected string $service_name = 'fftracker';
 
     // This is the actual page generation based on further details of the $path

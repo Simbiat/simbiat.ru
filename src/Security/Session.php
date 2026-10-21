@@ -29,6 +29,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         if ($this->session_life < 0) {
             $this->session_life = 300;
         }
+
         if (\headers_sent()) {
             return;
         }
@@ -42,8 +43,8 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         \ini_set('session.cookie_httponly', Config::$cookie_settings['httponly']);
         \ini_set('session.cookie_path', Config::$cookie_settings['path']);
         \ini_set('session.cookie_samesite', Config::$cookie_settings['samesite']);
-        \ini_set('session.use_strict_mode', true);
-        \ini_set('session.use_only_cookies', true);
+        \ini_set('session.use_strict_mode', value: true);
+        \ini_set('session.use_only_cookies', value: true);
     }
 
     /**
@@ -62,7 +63,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     public function open(string $path, string $name): bool
     {
         // If the controller was initialized - session is ready
-        return Query::$dbh !== null;
+        return Query::$dbh instanceof \PDO;
     }
 
     /**
@@ -104,6 +105,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         } catch (\Throwable) {
             $data = '';
         }
+
         if (!empty($data)) {
             // Decrypt data
             $data = Security::decrypt($data);
@@ -112,6 +114,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         } else {
             $data = [];
         }
+
         // Login through cookie if it is present
         $data = \array_merge($data, $this->cookieLogin());
         $this->dataRefresh($data);
@@ -243,7 +246,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         }
 
         try {
-            if (!empty($queries)) {
+            if ($queries !== []) {
                 return Query::query($queries);
             }
 
@@ -305,6 +308,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             if (\mb_stripos($throwable->getMessage(), 'Deadlock', 0, 'UTF-8') !== false) {
                 return 0;
             }
+
             Errors::error_log($throwable);
 
             return false;
@@ -342,6 +346,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
 
             return false;
         }
+
         // Check if it was returned
         if (empty($session_id)) {
             // No such session exists
@@ -380,7 +385,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     /**
      * Custom function to refresh data, which needs refreshing on every session (IP for tracking, groups for access control, names for rendering, etc.).
      *
-     * @param array $data Main array with the data
+     * @param array<string, mixed> $data Main array with the data
      *
      * @return void
      */
@@ -415,6 +420,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                     $data['banned_ip'] = false;
                 }
             }
+
             // Add CSRF token, if missing
             if (empty($data['csrf'])) {
                 $data['csrf'] = Security::genToken();
@@ -424,6 +430,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
             } elseif (!\headers_sent()) {
                 \header('X-CSRF-Token: '.$data['csrf']);
             }
+
             if (empty($data['user_id'])) {
                 $data['user_id'] = SystemUser::Unknown->value;
                 $data['username'] = $data['useragent']['bot'] ?? null;
@@ -460,6 +467,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
 
     /**
      * Function to return IP, country and city.
+     * @param array<string, mixed> $data
      */
     private function getIP(array &$data): void
     {
@@ -468,17 +476,19 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
             $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
+
         // Check if behind proxy
         $forwarded = $_SERVER['HTTP_X_FORWARDED'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_FORWARDED'] ?? $_SERVER['HTTP_FORWARDED_FOR'] ?? '';
         if (!empty($forwarded)) {
             // Get a list of IPs that do validate as proper IP
-            $ips = \array_filter(\array_map('\trim', \explode(',', $forwarded)), static fn($value) => \filter_var($value, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6));
+            $ips = \array_filter(\array_map(\trim(...), \explode(',', $forwarded)), static fn($value): string|false => \filter_var($value, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6));
             // Check if any are left
-            if (!empty($ips)) {
+            if ($ips !== []) {
                 // Get the right-most IP
                 $ip = \array_pop($ips);
             }
         }
+
         // Check if REMOTE_ADDR is set (it's more appropriate and secure to use it)
         if (
             empty($ip)
@@ -486,6 +496,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         ) {
             $ip = \filter_var($_SERVER['REMOTE_ADDR'], \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6);
         }
+
         // Check if Client-IP is set. Can be easily spoofed, but it's not like we have a choice at this moment
         if (
             empty($ip)
@@ -493,6 +504,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         ) {
             $ip = \filter_var($_SERVER['HTTP_CLIENT_IP'], \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6);
         }
+
         $data['ip'] = $ip ?? null;
     }
 
@@ -507,6 +519,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         if (!\is_string($cookie_name)) {
             return [];
         }
+
         // Check if a cookie exists
         if (empty($_COOKIE[$cookie_name])) {
             return [];
@@ -515,7 +528,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         // Validate cookie
         try {
             // Decode data
-            $data = \json_decode($_COOKIE[$cookie_name], true, flags: \JSON_THROW_ON_ERROR);
+            $data = \json_decode($_COOKIE[$cookie_name], associative: true, flags: \JSON_THROW_ON_ERROR);
             if (
                 empty($data['cookie_id'])
                 || empty($data['pass'])
@@ -523,6 +536,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                 // No expected data found
                 return [];
             }
+
             // Cache Security object
             $data['cookie_id'] = Security::decrypt($data['cookie_id']);
             $data['pass'] = Security::decrypt($data['pass']);
@@ -539,11 +553,13 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                 // No cookie found or no password present
                 return [];
             }
+
             // Validate cookie password
             if (!\password_verify($data['pass'], $saved_data['validator'])) {
                 // Wrong password
                 return [];
             }
+
             $user = new User($saved_data['user_id']);
             // Reset strikes if any
             $user->resetStrikes();

@@ -34,6 +34,7 @@ final class Maintain
 
                 return Command::FAILURE;
             }
+
             foreach ($result as $key => $value) {
                 $output->writeln("Argon setting {$key}: {$value}");
             }

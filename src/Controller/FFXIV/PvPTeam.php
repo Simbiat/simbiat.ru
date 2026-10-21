@@ -9,24 +9,34 @@ use App\Entity\FFXIV\AbstractEntity;
 
 final class PvPTeam extends Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/fftracker/pvpteams', 'name' => 'PvP Teams'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'pvpteam';
 
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'PvP Team';
 
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'PvP Team';
 
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'PvP Team';
 
     // List of permissions, from which at least 1 is required to have access to the page
+    #[\Override]
     protected array $required_permission = ['view_ff'];
 
     // This is the actual page generation based on further details of the $path
@@ -41,14 +51,13 @@ final class PvPTeam extends Page
         if (empty($output_array['pvpteam']['id'])) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
+
         // Try to exit early based on the modification date
         $this->lastModified($output_array['pvpteam']['dates']['updated']);
         // Check if linked to the current user
         $output_array['pvpteam']['linked']
             = $_SESSION['user_id'] !== 1
-            && \in_array($_SESSION['user_id'], \array_column($output_array['pvpteam']['members'], 'user_id'), true)
-            ? true
-            : false;
+            && \in_array($_SESSION['user_id'], \array_column($output_array['pvpteam']['members'], 'user_id'), strict: true);
         $output_array['pvpteam']['dates']['scheduled'] = $entity->scheduleUpdate();
         $output_array['pvpteam']['can_refresh']
             = (
@@ -57,9 +66,7 @@ final class PvPTeam extends Page
                     || $output_array['pvpteam']['linked']
                 )
             )
-            || \in_array('refresh_all_ff', $_SESSION['permissions'], true)
-            ? true
-            : false;
+            || \in_array('refresh_all_ff', $_SESSION['permissions'], strict: true);
         // Continue breadcrumbs
         $this->breadcrumb[] = ['href' => '/fftracker/pvpteams/'.$id, 'name' => $output_array['pvpteam']['name']];
         // Update meta
@@ -76,11 +83,12 @@ final class PvPTeam extends Page
             $this->alt_links[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/pvpteams/'.$id.'/lodestone'];
             $this->alt_links[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => $output_array['pvpteam']['lodestone_url']];
             if (!empty($output_array['pvpteam']['community'])) {
-                $this->alt_links[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/'.$output_array['pvpteam']['community']];
+                $this->alt_links[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => "Group's community page on Lodestone EU", 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/'.$output_array['pvpteam']['community']];
             }
         } else {
             $output_array['pvpteam']['lodestone_url'] = null;
         }
+
         // Merge crest and update favicon
         $output_array['pvpteam']['crest'] = AbstractEntity::crestToFavicon($output_array['pvpteam']['crest']);
         $output_array['favicon'] = $output_array['pvpteam']['crest'];

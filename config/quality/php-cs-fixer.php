@@ -31,9 +31,7 @@ final readonly class SkipSpecificFilesPolicy implements RuleCustomisationPolicyI
     #[Pure]
     public function getRuleCustomisers(): array
     {
-        $skip_for_files = static function (array $paths) {
-            return static fn(SplFileInfo $file): bool => !in_array($file->getPathname(), $paths, true);
-        };
+        $skip_for_files = (static fn(array $paths): \Closure => static fn(SplFileInfo $file): bool => !in_array($file->getPathname(), $paths, strict: true));
 
         return [
             'date_time_immutable' => $skip_for_files([

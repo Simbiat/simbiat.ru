@@ -10,12 +10,15 @@ namespace App\Controller\Abstracts;
 abstract class Game extends Page
 {
     // Flag to indicate this is a static page
+    #[\Override]
     protected bool $static = true;
 
     // Cache age set to 0 by default, because there is normally no need to cache static pages
+    #[\Override]
     protected int $cache_age = 0;
 
     // Cache strategy: aggressive, private, live, month, week, day, hour
+    #[\Override]
     protected string $cache_strategy = 'week';
 
     // Path to game's JS file
@@ -39,10 +42,12 @@ abstract class Game extends Page
         if (empty($this->gamemaker_js)) {
             return ['http_error' => 500, 'reason' => 'No game script file setup'];
         }
+
         $file = '/app/public'.$this->gamemaker_js;
         if (!\file_exists($file)) {
             return ['http_error' => 500, 'reason' => 'Game script file is missing'];
         }
+
         $output_array = [];
         $output_array['gamemaker_js'] = $this->gamemaker_js.'?'.\filemtime($file);
         $output_array['has_sound'] = $this->has_sound;

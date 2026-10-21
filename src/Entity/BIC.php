@@ -129,26 +129,31 @@ final class BIC extends Entity
         if (!empty($from_db['PrntBIC'])) {
             $from_db['PrntBIC'] = $this->padBic((string) $from_db['PrntBIC']);
         }
+
         if (!empty($from_db['RKC'])) {
             $from_db['RKC'] = $this->padBic((string) $from_db['RKC']);
         }
+
         if (!empty($from_db['OLD_NEWNUM'])) {
             $from_db['OLD_NEWNUM'] = $this->padBic((string) $from_db['OLD_NEWNUM']);
         }
+
         // Get authorized branch
         if (!empty($from_db['PrntBIC'])) {
             $from_db['PrntBIC'] = $this->bicUf($from_db['PrntBIC']);
         }
+
         // Get all branches of the bank (if any)
         $from_db['branches'] = $this->getBranches($from_db['BIC']);
         $from_db['branches'] = Sorters::multiArrSort($from_db['branches'], 'name');
         // Get SWIFT codes
         $from_db['SWIFTs'] = Query::query('SELECT `SWBIC`, `DefaultSWBIC`, `DateIn`, `DateOut` FROM `bic__swift` WHERE `BIC`=:BIC ORDER BY `DefaultSWBIC` DESC, `DateOut` DESC', [':BIC' => $this->id], return: 'all');
         // Get restrictions for BIC
-        $from_db['restrictions'] = Query::query('SELECT `bic__bic_rstr`.`Rstr` as `name`, `RstrDate` as `start_time`, `DateOut` as `end_time`, \'bic\' as `type` FROM `bic__bic_rstr` WHERE `BIC`=:BIC ORDER BY `RstrDate` DESC;', [':BIC' => $this->id], return: 'all');
+        $from_db['restrictions'] = Query::query("SELECT `bic__bic_rstr`.`Rstr` as `name`, `RstrDate` as `start_time`, `DateOut` as `end_time`, 'bic' as `type` FROM `bic__bic_rstr` WHERE `BIC`=:BIC ORDER BY `RstrDate` DESC;", [':BIC' => $this->id], return: 'all');
         foreach ($from_db['restrictions'] as $key => $restriction) {
             $from_db['restrictions'][$key]['description'] = RstrType::{$restriction['name']}->value;
         }
+
         // Get accounts
         $from_db['accounts'] = Query::query(
             'SELECT `Account`, `bic__acc_type`.`Description` as `AccountType`, `CK`, `DateIn`, `DateOut`, `AccountCBRBIC` FROM `bic__accounts`
@@ -158,22 +163,24 @@ final class BIC extends Entity
         );
         foreach ($from_db['accounts'] as $key => $account) {
             // Get restrictions
-            $account_restrictions = Query::query('SELECT `bic__acc_rstr`.`AccRstr` as `name`, `AccRstrDate` as `start_time`, `DateOut` as `end_time`, `SuccessorBIC`, \'account\' as `type`, `account` FROM `bic__acc_rstr` WHERE `account`=:account ORDER BY `AccRstrDate` DESC;', [':account' => $account['Account']], return: 'all');
+            $account_restrictions = Query::query("SELECT `bic__acc_rstr`.`AccRstr` as `name`, `AccRstrDate` as `start_time`, `DateOut` as `end_time`, `SuccessorBIC`, 'account' as `type`, `account` FROM `bic__acc_rstr` WHERE `account`=:account ORDER BY `AccRstrDate` DESC;", [':account' => $account['Account']], return: 'all');
             // Get successor details for restrictions
             foreach ($account_restrictions as $key_rstr => $restriction) {
                 $account_restrictions[$key_rstr]['description'] = AccRstrType::{$restriction['name']}->value;
                 if (!empty($restriction['SuccessorBIC'])) {
-                    $account_restrictions[$key_rstr]['SuccessorBIC'] = Query::query('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `BIC`=:BIC;', [':BIC' => $this->padBic((string) $restriction['SuccessorBIC'])], return: 'row');
+                    $account_restrictions[$key_rstr]['SuccessorBIC'] = Query::query("SELECT 'bic' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `BIC`=:BIC;", [':BIC' => $this->padBic((string) $restriction['SuccessorBIC'])], return: 'row');
                 }
+
                 $from_db['restrictions'][] = $account_restrictions[$key_rstr];
             }
         }
+
         // Count banks that are serviced by this one
         $from_db['service_for'] = Query::query('SELECT COUNT(*) AS `count` FROM `bic__accounts` WHERE `AccountCBRBIC`=:BIC', [':BIC' => $this->id], return: 'count');
         // Get a list of banks that used the same BIC
-        $from_db['same_bic'] = Query::query('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `OLD_NEWNUM`=:NEWNUM AND `BIC`<>:BIC;', [':NEWNUM' => $from_db['OLD_NEWNUM'] ?? $from_db['BIC'], ':BIC' => $from_db['BIC']], return: 'all');
+        $from_db['same_bic'] = Query::query("SELECT 'bic' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `OLD_NEWNUM`=:NEWNUM AND `BIC`<>:BIC;", [':NEWNUM' => $from_db['OLD_NEWNUM'] ?? $from_db['BIC'], ':BIC' => $from_db['BIC']], return: 'all');
         // Get a list of banks on the same address
-        $from_db['same_address'] = Query::query('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `Adr`=:Adr AND `BIC`<>:BIC;', [':Adr' => $from_db['Adr'], ':BIC' => $this->id], return: 'all');
+        $from_db['same_address'] = Query::query("SELECT 'bic' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `Adr`=:Adr AND `BIC`<>:BIC;", [':Adr' => $from_db['Adr'], ':BIC' => $this->id], return: 'all');
 
         // Old DBF data processing
         // Gets a list of phones
@@ -184,10 +191,12 @@ final class BIC extends Entity
         if ($from_db['RKC'] === $from_db['BIC']) {
             $from_db['RKC'] = null;
         }
+
         // Chains based on DBF data
         if (!empty($from_db['RKC'])) {
             $from_db['RKC'] = $this->rkcChain($from_db['RKC']);
         }
+
         // Get the chain of predecessors (if any) based on DBF data
         $from_db['DBF']['predecessors'] = (empty($from_db['VKEY']) ? [] : $this->predecessors($from_db['VKEY']));
         $from_db['DBF']['predecessors'] = Sorters::multiArrSort($from_db['DBF']['predecessors'], 'name');
@@ -197,19 +206,24 @@ final class BIC extends Entity
         foreach (['NAMEMAXB', 'NAMEN', 'SWIFT_NAME'] as $key) {
             Editors::moveToSubarray($from_db, $key, ['DBF', 'names', $key]);
         }
+
         foreach (['AT1', 'AT2', 'TELEF', 'CKS'] as $key) {
             Editors::moveToSubarray($from_db, $key, ['DBF', 'contacts', $key]);
         }
+
         foreach (['R_CLOSE', 'PRIM1', 'PRIM2', 'PRIM3'] as $key) {
             Editors::moveToSubarray($from_db, $key, ['DBF', 'removal', $key]);
         }
+
         foreach (['DATE_CH', 'VKEY', 'VKEYDEL', 'BVKEY', 'FVKEY', 'RKC', 'SROK', 'NEWKS', 'OKPO', 'PERMFO'] as $key) {
             Editors::moveToSubarray($from_db, $key, ['DBF', 'misc', $key]);
         }
+
         // If RKC equals headquarters - remove it. For newer entries, they were essentially replaced
         if ($from_db['DBF']['misc']['RKC'] === $from_db['PrntBIC']) {
             $from_db['DBF']['misc']['RKC'] = null;
         }
+
         // Convert the array to properties
         Converters::arrayToProperties($this, $from_db);
     }
@@ -221,7 +235,7 @@ final class BIC extends Entity
      */
     private function predecessors(string $vkey): array
     {
-        $banks = Query::query('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`, `VKEY` FROM `bic__list` WHERE `VKEYDEL` = :BIC ORDER BY `NameP`', [':BIC' => $vkey], return: 'all');
+        $banks = Query::query("SELECT 'bic' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`, `VKEY` FROM `bic__list` WHERE `VKEYDEL` = :BIC ORDER BY `NameP`", [':BIC' => $vkey], return: 'all');
         $predecessors[] = $banks;
         if ($banks !== false) {
             foreach ($banks as $key => $bank) {
@@ -231,12 +245,11 @@ final class BIC extends Entity
                     $predecessors[] = $predecessor;
                 }
             }
-            $predecessors = \array_merge(...$predecessors);
-        } else {
-            $predecessors = [];
+
+            return \array_merge(...$predecessors);
         }
 
-        return $predecessors;
+        return [];
     }
 
     /**
@@ -247,7 +260,7 @@ final class BIC extends Entity
     private function successors(string $vkey): array
     {
         // Get the initial list
-        $bank = Query::query('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `VKEYDEL`, `VKEY`, `DateOut` FROM `bic__list` WHERE `VKEY` = :BIC ORDER BY `NameP`', [':BIC' => $vkey], return: 'all');
+        $bank = Query::query("SELECT 'bic' as `type`, `BIC` as `id`, `NameP` as `name`, `VKEYDEL`, `VKEY`, `DateOut` FROM `bic__list` WHERE `VKEY` = :BIC ORDER BY `NameP`", [':BIC' => $vkey], return: 'all');
         if ($bank !== false) {
             // Get successors for each successor
             foreach ($bank as $key => $item) {
@@ -276,20 +289,23 @@ final class BIC extends Entity
     {
         $banks = [];
         // Get the initial list
-        $bank = Query::query('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`, `RKC`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC', [':BIC' => $bic], return: 'row');
+        $bank = Query::query("SELECT 'bic' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`, `RKC`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC", [':BIC' => $bic], return: 'row');
         if (
             $bank === false
             || $bank === []
         ) {
             return [];
         }
+
         $bank['id'] = $this->padBic((string) $bank['id']);
         if (!empty($bank['RKC'])) {
             $bank['RKC'] = $this->padBic((string) $bank['RKC']);
         }
+
         if (!empty($bank['PrntBIC'])) {
             $bank['PrntBIC'] = $this->padBic((string) $bank['PrntBIC']);
         }
+
         $banks[] = $bank;
         // Get RKC for RKC
         if (
@@ -297,7 +313,7 @@ final class BIC extends Entity
             && $bank['RKC'] !== $bic
             && $bank['RKC'] !== $bank['id']
         ) {
-            $banks = \array_merge($banks, $this->rkcChain($bank['RKC']));
+            return \array_merge($banks, $this->rkcChain($bank['RKC']));
         }
 
         return $banks;
@@ -312,17 +328,20 @@ final class BIC extends Entity
     {
         $banks = [];
         // Get the initial list
-        $bank = Query::query('SELECT \'bic\' as `type`,`BIC` as `id`,`NameP` as `name`, `DateOut`, `RKC`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC', [':BIC' => $bic], return: 'row');
+        $bank = Query::query("SELECT 'bic' as `type`,`BIC` as `id`,`NameP` as `name`, `DateOut`, `RKC`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC", [':BIC' => $bic], return: 'row');
         if (empty($bank)) {
             return $banks;
         }
+
         $bank['id'] = $this->padBic((string) $bank['id']);
         if (!empty($bank['PrntBIC'])) {
             $bank['PrntBIC'] = $this->padBic((string) $bank['PrntBIC']);
         }
+
         if (!empty($bank['RKC'])) {
             $bank['RKC'] = $this->padBic((string) $bank['RKC']);
         }
+
         $banks[] = $bank;
         // Get authorized branch of authorized branch
         if (
@@ -331,7 +350,7 @@ final class BIC extends Entity
             && !empty($bank['id'])
             && $bank['PrntBIC'] !== $bank['id']
         ) {
-            $banks = \array_merge($banks, $this->bicUf($bank['PrntBIC']));
+            return \array_merge($banks, $this->bicUf($bank['PrntBIC']));
         }
 
         return $banks;
@@ -344,7 +363,7 @@ final class BIC extends Entity
      */
     private function getBranches(string $bic): array
     {
-        $banks = Query::query('SELECT \'bic\' as `type`, `BIC` as `id`, `BIC`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `PrntBIC` = :BIC ORDER BY `NameP`;', [':BIC' => $bic], return: 'all');
+        $banks = Query::query("SELECT 'bic' as `type`, `BIC` as `id`, `BIC`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `PrntBIC` = :BIC ORDER BY `NameP`;", [':BIC' => $bic], return: 'all');
         $branches[] = $banks;
         if ($banks !== false) {
             foreach ($banks as $key => $bank) {
@@ -354,12 +373,11 @@ final class BIC extends Entity
                     $branches[] = $branch;
                 }
             }
-            $branches = \array_merge(...$branches);
-        } else {
-            $branches = [];
+
+            return \array_merge(...$branches);
         }
 
-        return $branches;
+        return [];
     }
 
     /**
@@ -367,7 +385,7 @@ final class BIC extends Entity
      *
      * @param string $phone_string
      *
-     * @return array
+     * @return array<string, string|\non-empty-list<array<string, (string | null)>>>
      */
     private function phoneList(string $phone_string): array
     {
@@ -401,6 +419,7 @@ final class BIC extends Entity
                 }
             }
         }
+
         // Check if there are additional numbers
         if (empty($dob[1])) {
             $dobs = '';
@@ -411,6 +430,7 @@ final class BIC extends Entity
             $dobs = \explode(',', $dobs);
             $dobs = \implode(' или ', $dobs);
         }
+
         // Get actual phones
         $phones = \explode(',', $dob[0]);
         // Attempting to sanitize the phone numbers to use +7 code only
@@ -427,6 +447,7 @@ final class BIC extends Entity
             } else {
                 $phone = $code.$phone;
             }
+
             $phones[$key] = ['phone' => $phone, 'url' => \preg_replace('/[^\d+]/', '', $phone)];
         }
 

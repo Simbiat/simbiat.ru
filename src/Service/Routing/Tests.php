@@ -12,14 +12,26 @@ use App\Service\Errors;
 final class Tests extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
+    #[\Override]
     protected array $sub_routes = ['mail', 'styling'];
 
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/tests/', 'name' => 'Tests'],
     ];
+
+    #[\Override]
     protected string $title = 'Tests';
+
+    #[\Override]
     protected string $h1 = 'Tests';
+
+    #[\Override]
     protected string $og_desc = 'Tests';
 
     /**
@@ -46,13 +58,15 @@ final class Tests extends Router
                 return $output_array;
             }
         }
+
         switch ($path[0]) {
             case 'mail':
                 try {
-                    new Test()->save(SystemUser::Owner->value, email_override: Config::$admin_email)->send(true);
+                    new Test()->save(SystemUser::Owner->value, email_override: Config::$admin_email)->send(debug: true);
                 } catch (\Throwable $throwable) {
                     Errors::error_log($throwable, debug: true);
                 }
+
                 exit(0);
             case 'styling':
                 return ['service_name' => 'styling_test', 'static_page' => true];

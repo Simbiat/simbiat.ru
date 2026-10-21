@@ -278,8 +278,8 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "psalter": "psalter --config=/app/config/quality/psalm.xml --memory-limit=1G",
-        "psalm": "psalm --config=/app/config/quality/psalm.xml --memory-limit=1G --show-info=true",
+        "psalter": "psalter --config=/app/config/quality/psalm.xml",
+        "psalm": "psalm --config=/app/config/quality/psalm.xml --show-info=true",
         "rector": "rector --config=/app/config/quality/rector.php --dry-run",
         "twig-cs": "twig-cs-fixer lint --config=/app/config/quality/twig-cs-fixer.php"
     },

@@ -29,21 +29,37 @@ use Simbiat\StringHelpers\Sanitize;
 final class Thread extends Entity
 {
     public string $name = '';
+
     public string $type = 'Blog';
+
     public bool $system = false;
+
     public bool $private = false;
+
     public bool $pinned = false;
+
     public ?int $closed = null;
+
     public bool $owned = false;
+
     public ?int $created = null;
+
     public ?int $published = null;
+
     public int $author = 1;
+
     public ?int $updated = null;
+
     public int $editor = 1;
+
     public ?int $last_post = null;
+
     public int $last_poster = 1;
+
     public int $last_page = 1;
+
     public ?string $og_image = null;
+
     public string $language = 'en';
 
     // List of parents for the thread
@@ -109,8 +125,9 @@ final class Thread extends Entity
         if (!$this->attempted) {
             $this->get();
         }
+
         // Check permission
-        if (!\in_array('mark_private', $_SESSION['permissions'], true)) {
+        if (!\in_array('mark_private', $_SESSION['permissions'], strict: true)) {
             return ['http_error' => 403, 'reason' => 'No `mark_private` permission'];
         }
 
@@ -148,16 +165,18 @@ final class Thread extends Entity
         if (!$this->attempted) {
             $this->get();
         }
+
         // Check permissions
         if (
             $this->owned
-            && !\in_array('close_own_threads', $_SESSION['permissions'], true)
+            && !\in_array('close_own_threads', $_SESSION['permissions'], strict: true)
         ) {
             return ['http_error' => 403, 'reason' => 'No `close_own_threads` permission'];
         }
+
         if (
             !$this->owned
-            && !\in_array('close_others_threads', $_SESSION['permissions'], true)
+            && !\in_array('close_others_threads', $_SESSION['permissions'], strict: true)
         ) {
             return ['http_error' => 403, 'reason' => 'No `close_others_threads` permission'];
         }
@@ -194,21 +213,24 @@ final class Thread extends Entity
         if (!$this->attempted) {
             $this->get();
         }
+
         // Check permission
-        if (!\in_array('move_threads', $_SESSION['permissions'], true)) {
+        if (!\in_array('move_threads', $_SESSION['permissions'], strict: true)) {
             return ['http_error' => 403, 'reason' => 'No `move_threads` permission'];
         }
+
         $data = $_POST['thread_data'] ?? [];
         if (empty($data['parent_id'])) {
             return ['http_error' => 400, 'reason' => 'No section ID provided'];
         }
+
         if (!\is_numeric($data['parent_id'])) {
             return ['http_error' => 400, 'reason' => 'Parent ID `'.$data['parent_id'].'` is not numeric'];
         }
 
         $data['parent_id'] = (int) $data['parent_id'];
         // Check if parent exists
-        $parent = new Section($data['parent_id'])->setForThread(true)->get();
+        $parent = new Section($data['parent_id'])->setForThread(for_thread: true)->get();
         if ($parent->id === null) {
             return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parent_id'].'` does not exist'];
         }
@@ -249,8 +271,9 @@ final class Thread extends Entity
         if (!$this->attempted) {
             $this->get();
         }
+
         // Check permission
-        if (!\in_array('can_pin', $_SESSION['permissions'], true)) {
+        if (!\in_array('can_pin', $_SESSION['permissions'], strict: true)) {
             return ['http_error' => 403, 'reason' => 'No `can_pin` permission'];
         }
 
@@ -285,9 +308,10 @@ final class Thread extends Entity
     public function add(bool $with_post = true): array
     {
         // Check permission
-        if (!\in_array('can_post', $_SESSION['permissions'], true)) {
+        if (!\in_array('can_post', $_SESSION['permissions'], strict: true)) {
             return ['http_error' => 403, 'reason' => 'No `can_post` permission'];
         }
+
         if (
             $with_post
             && (
@@ -298,6 +322,7 @@ final class Thread extends Entity
         ) {
             return ['http_error' => 400, 'reason' => 'No post text provided'];
         }
+
         // Check email, if it was provided with contact form
         if (!empty($_POST['thread_data']['contact_form_email'])) {
             try {
@@ -306,10 +331,12 @@ final class Thread extends Entity
                 // Email validation failed
                 return ['http_error' => 403, 'reason' => 'Bad email provided'];
             }
+
             // Check if banned
             if ($email->banned) {
                 return ['http_error' => 403, 'reason' => 'Bad email provided'];
             }
+
             // Attempt to register email
             if (!$email->registered) {
                 $email_status = $email->add();
@@ -319,9 +346,11 @@ final class Thread extends Entity
                 ) {
                     return $email_status;
                 }
+
                 $email->subscribe();
             }
         }
+
         // Sanitize data
         $data = $_POST['thread_data'] ?? [];
         $sanitize = $this->sanitizeInput($data);
@@ -338,7 +367,7 @@ final class Thread extends Entity
                         ($data['closed'] ? 'datetime' : 'null'),
                     ],
                     ':language' => $data['language'],
-                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
+                    ':name' => \mb_trim($data['name'], encoding: 'UTF-8'),
                     ':og_image' => [
                         (empty($data['og_image']) ? null : $data['og_image']),
                         (empty($data['og_image']) ? 'null' : 'string'),
@@ -369,6 +398,7 @@ final class Thread extends Entity
                     ];
                 }
             }
+
             if (\count($queries) !== 0) {
                 try {
                     Query::query($queries);
@@ -377,23 +407,27 @@ final class Thread extends Entity
                     Errors::error_log($throwable);
                 }
             }
+
             // Add post
             if ($with_post) {
                 $_POST['post_data']['thread_id'] = $new_id;
                 $_POST['post_data']['time'] = $data['time'];
-                $result = new Post()->add(true);
+                $result = new Post()->add(first_post: true);
                 if (empty($result['location'])) {
                     // An error occurred, return it
                     return $result;
                 }
+
                 $location = $result['location'];
             } else {
                 $location = '/talks/threads/'.$new_id;
             }
+
             $section = new Section($data['parent_id'])->get();
             foreach ($section->subscribers as $subscriber) {
-                (void) new NewThread()->save($subscriber, ['thread_name' => \mb_trim($data['name'], null, 'UTF-8'), 'section_name' => $section->name, 'location' => \preg_replace('/[?&]access_token=.*/ui', '', $location)]);
+                (void) new NewThread()->save($subscriber, ['thread_name' => \mb_trim($data['name'], encoding: 'UTF-8'), 'section_name' => $section->name, 'location' => \preg_replace('/[?&]access_token=.*/ui', '', $location)]);
             }
+
             if ((int) $_SESSION['user_id'] !== SystemUser::Unknown->value) {
                 Query::query(
                     'INSERT INTO `subs__threads` (`thread_id`, `user_id`) VALUES (:thread_id,:user_id);',
@@ -422,6 +456,7 @@ final class Thread extends Entity
         if ($this->id === null) {
             return;
         }
+
         Query::query(
             'UPDATE `talks__threads` AS `threads`
                     LEFT JOIN (
@@ -448,29 +483,33 @@ final class Thread extends Entity
         if (!$this->attempted) {
             $this->get();
         }
+
         // Check permissions
         if (
             $this->owned
-            && !\in_array('edit_own_threads', $_SESSION['permissions'], true)
+            && !\in_array('edit_own_threads', $_SESSION['permissions'], strict: true)
         ) {
             return ['http_error' => 403, 'reason' => 'No `edit_own_threads` permission'];
         }
+
         if (
             !$this->owned
-            && !\in_array('edit_others_threads', $_SESSION['permissions'], true)
+            && !\in_array('edit_others_threads', $_SESSION['permissions'], strict: true)
         ) {
             return ['http_error' => 403, 'reason' => 'No `edit_others_threads` permission'];
         }
+
         // Sanitize data
         $data = $_POST['thread_data'] ?? [];
-        $sanitize = $this->sanitizeInput($data, true);
+        $sanitize = $this->sanitizeInput($data, edit: true);
         if (\is_array($sanitize)) {
             return $sanitize;
         }
+
         // Check if we are moving a thread and have permission for that
         if (
             $this->parent_id !== $data['parent_id']
-            && !\in_array('move_threads', $_SESSION['permissions'], true)
+            && !\in_array('move_threads', $_SESSION['permissions'], strict: true)
         ) {
             return ['http_error' => 403, 'reason' => 'No `move_threads` permission'];
         }
@@ -482,7 +521,7 @@ final class Thread extends Entity
                 'UPDATE `talks__threads` SET `name`=:name, `language`=:language, `editor`=:user_id, `og_image`=COALESCE(:og_image, `og_image`) WHERE `thread_id`=:thread_id;',
                 [
                     ':language' => $data['language'],
-                    ':name' => \mb_trim($data['name'], null, 'UTF-8'),
+                    ':name' => \mb_trim($data['name'], encoding: 'UTF-8'),
                     ':og_image' => [
                         (empty($data['og_image']) ? null : $data['og_image']),
                         (empty($data['og_image']) ? 'null' : 'string'),
@@ -500,6 +539,7 @@ final class Thread extends Entity
                     ],
                 );
             }
+
             $data['alt_links'] = $this->altLinksSanitize($data['alt_links']);
             // Add alt links as per the edited form
             foreach ($data['alt_links'] as $key => $link) {
@@ -539,6 +579,7 @@ final class Thread extends Entity
                     ];
                 }
             }
+
             // Run the queries
             $affected = Query::query($queries, return: 'affected');
             if ($affected > 0) {
@@ -561,24 +602,29 @@ final class Thread extends Entity
     public function delete(): array
     {
         // Check permission
-        if (!\in_array('remove_threads', $_SESSION['permissions'], true)) {
+        if (!\in_array('remove_threads', $_SESSION['permissions'], strict: true)) {
             return ['http_error' => 403, 'reason' => 'No `remove_threads` permission'];
         }
+
         // Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
         if (!$this->attempted) {
             $this->get();
         }
+
         if ($this->id === null) {
             return ['http_error' => 404, 'reason' => 'Thread not found'];
         }
+
         // Check if the section is system one
         if ($this->system) {
-            return ['http_error' => 403, 'reason' => 'Can\'t delete system thread'];
+            return ['http_error' => 403, 'reason' => "Can't delete system thread"];
         }
+
         // Check if the section has any subsections or threads
         if (!empty($this->posts['entities'])) {
-            return ['http_error' => 400, 'reason' => 'Can\'t delete non-empty thread'];
+            return ['http_error' => 400, 'reason' => "Can't delete non-empty thread"];
         }
+
         // Set location for successful removal
         $location = !empty($this->parent['id'])
             ? '/talks/sections/'.$this->parent['id'].'/'
@@ -636,17 +682,19 @@ final class Thread extends Entity
         ) {
             return [];
         }
+
         $data = $data['entities'][0];
         // Get section details
-        $data['section'] = new Section($data['section_id'])->setForThread(true)->getArray();
+        $data['section'] = new Section($data['section_id'])->setForThread(for_thread: true)->getArray();
         if ($data['detailed_type'] === 'Support') {
             $data['access_token'] = Query::query('SELECT `access_token`, `email` FROM `talks__contact_form` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'row');
         }
+
         if ($this->for_post) {
             // Get pagination data
             try {
                 // Regular list does not fit due to pagination and due to excessive data, so using a custom query to get all posts
-                $data['posts']['pages'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `published`<=CURRENT_TIMESTAMP(6)').';', [':thread_id' => [$this->id, 'int']], return: 'count');
+                $data['posts']['pages'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], strict: true) ? '' : ' AND `published`<=CURRENT_TIMESTAMP(6)').';', [':thread_id' => [$this->id, 'int']], return: 'count');
             } catch (\Throwable) {
                 $data['posts']['pages'] = 1;
             }
@@ -654,7 +702,7 @@ final class Thread extends Entity
             // Get subscribers
             $data['subscribers'] = Query::query('SELECT `user_id` FROM `subs__threads` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'column');
             // Get posts
-            $data['posts'] = new Posts([':thread_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)'), '`talks__posts`.`published` ASC')->listEntities($page);
+            $data['posts'] = new Posts([':thread_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], strict: true) ? '' : ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)'), '`talks__posts`.`published` ASC')->listEntities($page);
             /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             if (
                 \is_array($data['posts'])
@@ -666,6 +714,7 @@ final class Thread extends Entity
                     $data['posts']['entities'][$post_key]['attachments'] = Query::query('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`file_id` = `sys__files`.`file_id` WHERE `post_id`=:post_id;', [':post_id' => $post['id']], return: 'all');
                 }
             }
+
             // Get tags
             $data['tags'] = Query::query('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tag_id`=`talks__tags`.`tag_id` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'column');
             // Get external links
@@ -717,6 +766,7 @@ final class Thread extends Entity
         if ($this->last_page < 1) {
             $this->last_page = 1;
         }
+
         $this->access_token = $from_db['access_token']['access_token'] ?? null;
         $this->email = $from_db['access_token']['email'] ?? null;
         if ($this->for_post) {
@@ -802,24 +852,27 @@ final class Thread extends Entity
                 return;
             }
         }
+
         // Notify Ticket creator
         if ($this->type === 'Support' && $author === SystemUser::Unknown->value && $author !== $_SESSION['user_id'] && $this->email !== null) {
-            (void) new ThreadChange()->save($author, \array_merge($for_notification, ['token' => $this->access_token, 'ticket' => true, 'name' => \preg_replace('/^\[Contact Form]\s*/ui', '', $this->name)]), true, false, $this->email);
+            (void) new ThreadChange()->save($author, \array_merge($for_notification, ['token' => $this->access_token, 'ticket' => true, 'name' => \preg_replace('/^\[Contact Form]\s*/ui', '', $this->name)]), email: true, push: false, email_override: $this->email);
         }
+
         // Notify non-anonymous author
         if (
             $author !== $_SESSION['user_id']
-            && !\in_array($author, SystemUser::getSystemUsers(), true)
+            && !\in_array($author, SystemUser::getSystemUsers(), strict: true)
         ) {
             (void) new ThreadChange()->save($author, $for_notification);
         }
+
         // Notify subscribers
         $for_notification['subscriber'] = true;
         foreach ($this->subscribers as $subscriber) {
             if (
                 $author !== $subscriber
                 && $_SESSION['user_id'] !== $subscriber
-                && !\in_array($subscriber, SystemUser::getSystemUsers(), true)
+                && !\in_array($subscriber, SystemUser::getSystemUsers(), strict: true)
             ) {
                 (void) new ThreadChange()->save($subscriber, $for_notification);
             }
@@ -829,36 +882,40 @@ final class Thread extends Entity
     /**
      * Sanitize section data.
      *
-     * @param array $data Data to sanitize
+     * @param array<string, mixed> $data Data to sanitize
      * @param bool  $edit Flag indicating whether this is an edit
      *
      * @return array|bool
      */
     private function sanitizeInput(array &$data, bool $edit = false): array|bool
     {
-        if (empty($data)) {
+        if ($data === []) {
             return ['http_error' => 400, 'reason' => 'No form data provided'];
         }
+
         $data['closed'] = Sanitization::checkboxToBoolean($data['closed']);
         $data['private'] = Sanitization::checkboxToBoolean($data['private']);
         if (
             !$edit
-            && !\in_array('post_private', $_SESSION['permissions'], true)
+            && !\in_array('post_private', $_SESSION['permissions'], strict: true)
         ) {
             $data['private'] = false;
         }
+
         $data['pinned'] = Sanitization::checkboxToBoolean($data['pinned']);
-        if (!\in_array('can_pin', $_SESSION['permissions'], true)) {
+        if (!\in_array('can_pin', $_SESSION['permissions'], strict: true)) {
             $data['pinned'] = false;
         }
+
         $data['clear_og_image'] = Sanitization::checkboxToBoolean($data['clear_og_image']);
-        $data['og_image'] = !(\mb_strtolower($data['og_image'] ?? '', 'UTF-8') === 'false');
+        $data['og_image'] = \mb_strtolower($data['og_image'] ?? '', 'UTF-8') !== 'false';
         if (
             !$edit
             && empty($data['parent_id'])
         ) {
             return ['http_error' => 400, 'reason' => 'No section ID provided'];
         }
+
         if (!$edit) {
             if (!\is_numeric($data['parent_id'])) {
                 return ['http_error' => 400, 'reason' => 'Parent ID `'.$data['parent_id'].'` is not numeric'];
@@ -866,18 +923,21 @@ final class Thread extends Entity
 
             $data['parent_id'] = (int) $data['parent_id'];
         }
+
         // If time was set, convert to UTC
         $data['time'] = Sanitization::scheduledTime($data['time'], $data['timezone']);
         // Check if the name is empty or whitespaces
-        $data['name'] = Sanitization::removeNonPrintable($data['name'], true);
+        $data['name'] = Sanitization::removeNonPrintable($data['name'], full_list: true);
         if (Sanitize::whiteString($data['name'])) {
             return ['http_error' => 400, 'reason' => 'Name cannot be empty'];
         }
+
         // Check if parent exists
-        $parent = new Section($data['parent_id'])->setForThread(true)->get();
+        $parent = new Section($data['parent_id'])->setForThread(for_thread: true)->get();
         if ($parent->id === null) {
             return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parent_id'].'` does not exist'];
         }
+
         // Check if posting to Knowledgebase and have proper permission, unless created by the poster
         if (
             $parent->type === 'Knowledgebase'
@@ -885,6 +945,7 @@ final class Thread extends Entity
         ) {
             return ['http_error' => 403, 'reason' => 'Cannot post in not owned Knowledgebase section.'];
         }
+
         // Check if posting to Blog and have proper permission, unless created by the poster
         if (
             $parent->type === 'Blog'
@@ -892,6 +953,7 @@ final class Thread extends Entity
         ) {
             return ['http_error' => 403, 'reason' => 'Cannot post in not owned Blog section'];
         }
+
         // Check if posting to Changelog and have proper permission, unless created by the poster
         if (
             $parent->type === 'Changelog'
@@ -899,17 +961,20 @@ final class Thread extends Entity
         ) {
             return ['http_error' => 403, 'reason' => 'Cannot post in not owned Changelog section'];
         }
+
         // Check if the parent is closed
         if (
             $parent->closed
-            && !\in_array('post_in_closed', $_SESSION['permissions'], true)
+            && !\in_array('post_in_closed', $_SESSION['permissions'], strict: true)
         ) {
             return ['http_error' => 403, 'reason' => 'No `post_in_closed` permission to post in closed section.'];
         }
+
         // Check if category (where we cannot create threads)
         if ($parent->type === 'Category') {
-            return ['http_error' => 400, 'reason' => 'Can\' post in categories'];
+            return ['http_error' => 400, 'reason' => "Can' post in categories"];
         }
+
         // Check if the name is duplicated
         $thread_exists = Query::query('SELECT `thread_id` FROM `talks__threads` WHERE `section_id`=:section_id AND `author`=:author AND `name`=:name;', [':name' => $data['name'], ':section_id' => [$data['parent_id'], 'int'], ':author' => [$_SESSION['user_id'], 'int']], return: 'value');
         if (
@@ -923,41 +988,42 @@ final class Thread extends Entity
         ) {
             return ['http_error' => 409, 'reason' => 'Thread `'.$data['name'].'` already exists in section.', 'location' => '/talks/threads/'.$thread_exists];
         }
+
         if ($parent->type === 'Support') {
             // Support threads need to be private by default
             $data['private'] = true;
             // Prevent time change
             $data['time'] = null;
         }
+
         if ($edit) {
             if (
                 // Closing of own threads should be possible for Support even without the respective permission
                 (
                     $this->owned
-                    && !(
-                        \in_array('close_own_threads', $_SESSION['permissions'], true)
-                        || $parent->type === 'Support'
-                    )
+                    && (!\in_array('close_own_threads', $_SESSION['permissions'], strict: true) && $parent->type !== 'Support')
                 )
                 || (
                     !$this->owned
-                    && !\in_array('close_others_threads', $_SESSION['permissions'], true)
+                    && !\in_array('close_others_threads', $_SESSION['permissions'], strict: true)
                 )
             ) {
                 $data['closed'] = null;
             }
-        } elseif (!\in_array('close_own_threads', $_SESSION['permissions'], true)) {
+        } elseif (!\in_array('close_own_threads', $_SESSION['permissions'], strict: true)) {
             $data['closed'] = null;
         }
+
         // Check language
         if (empty($data['language'])) {
             $data['language'] = 'en';
         } else {
             $languages = self::getLanguages();
-            if (!\in_array($data['language'], \array_column($languages, 'value'), true)) {
+            if (!\in_array($data['language'], \array_column($languages, 'value'), strict: true)) {
                 $data['language'] = 'en';
             }
         }
+
         // Check alt links, but only if we are not in `Support` (where it will not make sense)
         if (
             empty($data['alt_links'])
@@ -966,6 +1032,7 @@ final class Thread extends Entity
             // Ensure it's an array
             $data['alt_links'] = [];
         }
+
         $data['alt_links'] = $this->altLinksSanitize($data['alt_links']);
         // Check if og_image was sent and try to process it, unless `clear_og_image` is set, or the section type is Support
         if (
@@ -978,10 +1045,12 @@ final class Thread extends Entity
             if (!empty($upload['http_error'])) {
                 return $upload;
             }
+
             $og_image = Images::ogImage($upload['hash']);
             if ($og_image['og_image'] === null) {
                 return ['http_error' => 400, 'reason' => 'Bad image for banner provided. JPEG, PNG and WEBP files are allowed. Resolution ratio needs to be 1.9:1 with minimum being 1200x630 pixels.'];
             }
+
             $data['og_image'] = $upload['hash'];
         } else {
             $data['og_image'] = null;
@@ -1008,6 +1077,7 @@ final class Thread extends Entity
 
                 continue;
             }
+
             $link = Security::sanitizeURL($link);
             // Check if a website (sent as a key) is supported and check the value against regex (to avoid using field for YouTube (as an example) for some random website that is not YouTube)
             if (
@@ -1021,6 +1091,7 @@ final class Thread extends Entity
                 $alt_links[$key] = $link;
             }
         }
+
         foreach ($supported as $key => $link) {
             if (!\array_key_exists($key, $alt_links)) {
                 $alt_links[$key] = null;

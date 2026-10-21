@@ -16,7 +16,11 @@ abstract class Router
     // List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = [];
 
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
     protected array $breadcrumb = [];
 
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
@@ -40,7 +44,7 @@ abstract class Router
     /**
      * This is a general routing check for supported page.
      *
-     * @param array $path
+     * @param array<int, mixed> $path
      *
      * @return array
      */
@@ -49,7 +53,7 @@ abstract class Router
         // Start data
         $page_data = [];
         // The main page of the segment is called
-        if (empty($path)) {
+        if ($path === []) {
             // If no path is provided, but we want to show a specific page, instead of a stub - redirect
             if (
                 !empty($this->redirect_main)
@@ -57,8 +61,9 @@ abstract class Router
             ) {
                 Headers::redirect('https://'.(\preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config::$http_host) === 1 ? 'www.' : '').Config::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').$this->redirect_main);
             }
+
             $page_data['breadcrumbs'] = $this->breadcrumb;
-        } elseif (\in_array($path[0], $this->sub_routes, true)) {
+        } elseif (\in_array($path[0], $this->sub_routes, strict: true)) {
             // Generate page
             $page_data = $this->pageGen($path);
             // Update breadcrumbs
@@ -70,8 +75,9 @@ abstract class Router
             $page_data['breadcrumbs'] = $this->breadcrumb;
             $page_data['reason'] = 'Unsupported route';
             $page_data['http_error'] = 404;
-            Headers::clientReturn($page_data['http_error'], false);
+            Headers::clientReturn($page_data['http_error'], exit: false);
         }
+
         // Inherit title, H1 and description, if page does not have them and router does
         if (
             empty($page_data['title'])
@@ -79,28 +85,32 @@ abstract class Router
         ) {
             $page_data['title'] = $this->title;
         }
+
         if (
             empty($page_data['h1'])
             && !empty($this->h1)
         ) {
             $page_data['h1'] = $this->h1;
         }
+
         if (
             empty($page_data['og_desc'])
             && !empty($this->ogdesc)
         ) {
             $page_data['og_desc'] = $this->ogdesc;
         }
+
         // Set service name if available
         if (!empty($this->service_name)) {
             $page_data['service_name'] = $this->service_name;
         }
+
         // Set custom og_image if available
         if (
             !empty($this->og_image)
             && empty($page_data['og_image'])
         ) {
-            $page_data = \array_merge($page_data, Images::ogImage($this->og_image, true));
+            return \array_merge($page_data, Images::ogImage($this->og_image, is_path: true));
         }
 
         return $page_data;

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\Abstracts;
 
 use App\HomePage;
-use App\Service\Config;
 use App\Service\Errors;
 use App\Service\Images;
 use Simbiat\HTML\Cut;
@@ -19,7 +18,11 @@ use Simbiat\StringHelpers\Sanitize;
  */
 abstract class Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
     protected array $breadcrumb = [];
 
     // Alternative representations of the content
@@ -54,9 +57,6 @@ abstract class Page
 
     // Flag to indicate this is a static page
     protected bool $static = false;
-
-    // Flag to indicate that session data change is possible on this page
-    protected bool $session_change = false;
 
     // Allowed methods
     protected array $methods = ['GET', 'POST', 'HEAD', 'OPTIONS'];
@@ -105,10 +105,12 @@ abstract class Page
         ) {
             \header('Content-Language: '.$this->language);
         }
+
         // If we have a static page, and HTTP error is set at this stage, it can break the rendering of the page. As such we remove the error.
         if ($this->static) {
             HomePage::$http_error = [];
         }
+
         // Check if user has required permission
         if (
             \count($this->required_permission) > 0
@@ -127,8 +129,9 @@ abstract class Page
                 \header('Access-Control-Allow-Methods: '.\implode(', ', $allowed_methods));
                 \header('Allow: '.\implode(', ', $allowed_methods));
             }
+
             // Check if allowed method is used
-            if (!\in_array(HomePage::$method, $allowed_methods, true)) {
+            if (!\in_array(HomePage::$method, $allowed_methods, strict: true)) {
                 $page = ['http_error' => 405];
                 // Check that user is authenticated
             } elseif (
@@ -148,15 +151,18 @@ abstract class Page
                         $page = ['http_error' => 500, 'reason' => 'Unknown error occurred'];
                     }
                 }
+
                 // Send Last Modified header to potentially allow earlier exit
                 if (!$this->header_sent) {
                     $this->lastModified($this->last_modified);
                 }
+
                 $page = \array_merge($page, HomePage::$http_error);
             }
         } else {
             $page = HomePage::$http_error;
         }
+
         // Ensure properties are included
         $page['http_method'] = HomePage::$method;
         $page['breadcrumbs'] = $this->breadcrumb;
@@ -168,8 +174,9 @@ abstract class Page
             !empty($this->og_image)
             && empty($page['og_image'])
         ) {
-            $page = \array_merge($page, Images::ogImage($this->og_image, true));
+            $page = \array_merge($page, Images::ogImage($this->og_image, is_path: true));
         }
+
         $page['cache_age'] = $this->cache_age;
         $page['cache_strategy'] = $this->cache_strategy;
         if (
@@ -181,26 +188,31 @@ abstract class Page
             foreach ($this->h2_push as $key => $image) {
                 $this->h2_push[$key] = ['href' => $image, 'rel' => 'preload', 'as' => 'image'];
             }
+
             Links::links($this->h2_push, force_cross_origin: true);
         }
+
         if (\count($this->alt_links) !== 0) {
             // Send HTTP header
             if (!HomePage::$stale_return) {
                 Links::links($this->alt_links, force_cross_origin: true);
             }
+
             // Add a link to HTML
             $page['link_extra'] = $this->alt_links;
         }
+
         // Check if we are loading a static page
         $page['static_page'] = $this->static;
         // Set error for Twig
         if (!empty($page['http_error'])) {
-            if (\in_array($page['http_error'], ['database', 'maintenance'], true)) {
-                Headers::clientReturn(503, false);
+            if (\in_array($page['http_error'], ['database', 'maintenance'], strict: true)) {
+                Headers::clientReturn(503, exit: false);
             } else {
-                Headers::clientReturn($page['http_error'], false);
+                Headers::clientReturn($page['http_error'], exit: false);
             }
         }
+
         // Limit Ogdesc to 120 characters
         $page['og_desc'] = \mb_substr($page['og_desc'], 0, 120, 'UTF-8');
         // Generate a link for cache reset if page uses cache
@@ -233,6 +245,7 @@ abstract class Page
         if (\is_string($time)) {
             $time = \strtotime($time);
         }
+
         // If time is less than 0, use the Last Modified set initially
         if (
             $time === null
@@ -240,12 +253,14 @@ abstract class Page
         ) {
             $time = $this->last_modified;
         }
+
         // Set Last Modified to the time
         $this->last_modified = $time;
         // Send the header
         if (!HomePage::$stale_return) {
-            Headers::lastModified($this->last_modified, true);
+            Headers::lastModified($this->last_modified, exit: true);
         }
+
         // Set the flag indicating, that header was sent, but we did not exit, so that the header will not be sent the 2nd time
         $this->header_sent = true;
     }
@@ -301,6 +316,7 @@ abstract class Page
         foreach (new \DOMXPath($html)->query('//details') as $element) {
             $element->parentNode->removeChild($element);
         }
+
         // Get the cleaned HTML
         $cleaned_html = $html->saveHTML();
         // Strip the excessive HTML tags if we added them
@@ -329,6 +345,7 @@ abstract class Page
                 throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
             }
         }
+
         // Set last modified data
         $this->last_modified = \time();
     }

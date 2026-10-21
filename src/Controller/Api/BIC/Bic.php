@@ -11,9 +11,11 @@ use Simbiat\http20\Headers;
 final class Bic extends Api
 {
     // Flag to indicate, that this is the lowest level
+    #[\Override]
     protected bool $final_node = true;
 
     // Description of the node
+    #[\Override]
     protected array $description = [
         'description' => 'JSON representation of a Russian organization based on Bank Identification Code',
         'ID_regexp' => '/^\d+$/mi',
@@ -30,13 +32,16 @@ final class Bic extends Api
 
             return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         }
+
         // Check if 404
         if (empty($data['id'])) {
             return ['http_error' => 404, 'reason' => 'BIC with ID `'.$path[0].'` is not found on Tracker'];
         }
+
         if (!empty($data['updated'])) {
-            Headers::lastModified($data['dates']['updated'], true);
+            Headers::lastModified($data['dates']['updated'], exit: true);
         }
+
         $result = ['response' => $data];
         // Link header/tag for API
         $result['alt_links'] = [

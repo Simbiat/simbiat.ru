@@ -9,27 +9,38 @@ use App\Entity\User;
 
 final class Profile extends Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/uc/profile', 'name' => 'Profile'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'profile';
 
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'Profile';
 
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'Your profile';
 
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'Page to edit your profile';
 
     // Cache strategy: aggressive, private, live, month, week, day, hour
+    #[\Override]
     protected string $cache_strategy = 'private';
 
     // Flag indicating that authentication is required
+    #[\Override]
     protected bool $authentication_needed = true;
 
     // This is the actual page generation based on further details of the $path

@@ -11,21 +11,30 @@ use App\Controller\Abstracts\StaticPage;
  */
 final class Me extends StaticPage
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/about/me', 'name' => 'me'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'me';
 
     // Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'About me';
 
     // Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'About owner of Simbiat Software';
 
     // List of images to H2 push
+    #[\Override]
     protected array $h2_push_extra = [
         '/assets/images/ogimages/jiangshi.webp',
         '/assets/images/ogimages/dden.webp',
@@ -298,7 +307,7 @@ final class Me extends StaticPage
                     'position' => 'Engineer',
                     'responsibilities' => [
                         'Manage office hardware and software',
-                        'Manage company\'s website',
+                        "Manage company's website",
                         'Create digital training courses',
                     ],
                     'start_time' => '2009-02-02',
@@ -365,7 +374,7 @@ final class Me extends StaticPage
                         'Participate in projects',
                         'Testing of fixes and new features in supported applications',
                         'Assistance with integration of new applications or processes',
-                        'Primary contact person for clearing operations\' technology, processes and applications including cryptography',
+                        "Primary contact person for clearing operations' technology, processes and applications including cryptography",
                         'Write technical and user documentation',
                         'Participate in audits both internal and external',
                         'Team leader for operators working in shifts',
@@ -388,7 +397,7 @@ final class Me extends StaticPage
                         'Level 1 to level 3 support of local applications',
                         'Subject matter expert for local applications',
                         'Participate in projects',
-                        'Primary contact person for clearing operations\' technology, processes and applications including cryptography',
+                        "Primary contact person for clearing operations' technology, processes and applications including cryptography",
                         'Write technical and user documentation',
                         'Participate in audits both internal and external',
                         'Changes management',

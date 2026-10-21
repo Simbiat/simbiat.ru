@@ -53,10 +53,12 @@ final class Errors
             echo $message;
             exit(0);
         }
+
         if ($debug) {
             echo '<pre>'.$message.'</pre>';
             exit(0);
         }
+
         // Write to file
         self::write($message);
 
@@ -79,6 +81,7 @@ final class Errors
         if (!(\error_reporting() & $level)) {
             return false;
         }
+
         // Excluding some warnings from processing
         if (
             // Exclude Twig cache
@@ -94,6 +97,7 @@ final class Errors
         ) {
             return false;
         }
+
         // Generate message
         $message = self::genLogEntry(self::PHP_ERROR_TYPES[$level], $file, $line, $message);
         // Write to file
@@ -123,9 +127,10 @@ final class Errors
             // Write to file
             self::write($message);
         }
+
         // Rollback if there was an open transaction
         if (
-            Query::$dbh !== null
+            Query::$dbh instanceof \PDO
             && Query::$dbh->inTransaction()
         ) {
             Query::$dbh->rollBack();
@@ -201,7 +206,7 @@ final class Errors
         // Determine page link
         $page = self::getRequest();
         $previous_throw = '';
-        if ($previous !== null) {
+        if ($previous instanceof \Throwable) {
             $previous_trace = $previous->getTraceAsString();
             $previous_throw = "\t".'Previous Exception: '."\r\n\t\t"
                 .'File: '.$previous->getFile()."\r\n\t\t"
@@ -209,6 +214,7 @@ final class Errors
                 .'Message: '.$previous->getMessage()."\r\n"
                 .($previous_trace === '' ? '' : "\t\t".'Trace: '.$previous_trace."\r\n");
         }
+
         // Prepare context
         if (!\is_string($context)) {
             try {

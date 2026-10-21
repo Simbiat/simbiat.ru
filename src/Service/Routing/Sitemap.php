@@ -13,22 +13,37 @@ use Simbiat\http20\Headers;
 final class Sitemap extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
+    #[\Override]
     protected array $sub_routes = [
         'index', 'fftracker',
         'general', 'bics', 'threads', 'users',
         'ffxiv_characters', 'ffxiv_freecompanies', 'ffxiv_linkshells', 'ffxiv_pvpteams', 'ffxiv_achievements',
     ];
 
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/sitemap/', 'name' => 'Sitemap'],
     ];
+
+    #[\Override]
     protected string $title = 'Sitemap';
+
+    #[\Override]
     protected string $h1 = 'Sitemap';
+
+    #[\Override]
     protected string $og_desc = 'Sitemap';
+
+    #[\Override]
     protected string $service_name = 'sitemap';
 
     // If no path[0] is provided, but we want to show specific page, instead of a stub - redirect to page with this address
+    #[\Override]
     protected string $redirect_main = '/sitemap/index';
 
     // This is the actual page generation based on further details of the $path
@@ -40,6 +55,7 @@ final class Sitemap extends Router
         if (empty($path[0])) {
             $path[0] = 'index';
         }
+
         $result = match ($path[0]) {
             'general' => new General()->get($path),
             'bics', 'ffxiv_characters', 'ffxiv_freecompanies', 'ffxiv_linkshells', 'ffxiv_pvpteams', 'ffxiv_achievements', 'threads', 'users' => new Countables()->get($path),

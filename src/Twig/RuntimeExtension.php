@@ -136,9 +136,10 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     {
         // Set time zone
         $timezone = $_SESSION['timezone'] ?? 'UTC';
-        if (!\in_array($timezone, \timezone_identifiers_list(), true)) {
+        if (!\in_array($timezone, \timezone_identifiers_list(), strict: true)) {
             $timezone = 'UTC';
         }
+
         // Create DateTime object while converting the time
         $datetime = SandClock::convertTimezone($string, 'UTC', $timezone);
         $datetime = $datetime->setTimezone(new \DateTimeZone($timezone));
@@ -156,7 +157,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
      */
     public function linkTags(array $links, string $type = 'header'): string
     {
-        return Links::links($links, $type, true);
+        return Links::links($links, $type, force_cross_origin: true);
     }
 
     /**

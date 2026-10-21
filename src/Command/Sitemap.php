@@ -16,6 +16,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class Sitemap
 {
+    /**
+     * @var array<int, string>
+     */
     private array $index_files = ['index', 'fftracker'];
 
     /**
@@ -51,23 +54,25 @@ final class Sitemap
                         $links[] = $url->nodeValue;
                     }
                 }
+
                 $xml_files = \array_merge(\glob(Config::$sitemap.'*.xml'), \glob(Config::$sitemap.'*/*.xml'), \glob(Config::$sitemap.'*/*/*.xml'));
                 // Remove XML files, which no longer exist as per new index
-                foreach ($xml_files as $file) {
+                foreach ($xml_files as $xml_file) {
                     if (
-                        !\in_array(\basename($file, '.xml'), $this->index_files, true)
-                        && !\in_array(\str_replace('.xml', '', Config::$base_url.'/sitemap/'.\str_replace(Config::$sitemap, '', $file)), $links, true)
+                        !\in_array(\basename($xml_file, '.xml'), $this->index_files, strict: true)
+                        && !\in_array(\str_replace('.xml', '', Config::$base_url.'/sitemap/'.\str_replace(Config::$sitemap, '', $xml_file)), $links, strict: true)
                     ) {
-                        @\unlink($file);
+                        @\unlink($xml_file);
                     }
                 }
+
                 // Generate sitemaps for each link in index
                 foreach ($links as $link) {
                     if (!empty($link)) {
                         // Get path to use for router function (without format)
                         $path = \explode('/', \mb_trim(\str_replace(Config::$base_url.'/sitemap/', '', $link), '/', 'UTF-8'));
                         // Strip trailing .xml extension
-                        $path[\array_key_last($path)] = \str_replace('.xml', '', $path[\array_key_last($path)]);
+                        $path[\array_key_last($path)] = \str_replace('.xml', '', array_last($path));
                         // Get filepath and filename
                         $file_path = \mb_rtrim(Config::$sitemap.\implode('/', \array_slice($path, 0, -1)), '/', 'UTF-8');
                         $file_name = \implode('/', \array_slice($path, -1));
@@ -78,6 +83,7 @@ final class Sitemap
                         ) {
                             throw new \RuntimeException(\sprintf('Directory `%s` was not created', $file_path));
                         }
+
                         // Generate and write file
                         $map_vars = $router->route(\array_merge($path));
                         $content = Config::$twig->render($map_vars['template_override'] ?? 'index.html.twig', $map_vars);
@@ -92,6 +98,7 @@ final class Sitemap
                         }
                     }
                 }
+
                 // Write XML index
                 foreach ($this->index_files as $index_file) {
                     // Check if the index file already exists and if its contents are the same

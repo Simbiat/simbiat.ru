@@ -16,27 +16,38 @@ use Simbiat\DDCIcons;
  */
 final class Sessions extends Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/uc/sessions', 'name' => 'Sessions'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'sessions';
 
     // Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'Sessions';
 
     // Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'Active sessions';
 
     // Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'Page to manage active sessions';
 
     // Cache strategy: aggressive, private, live, month, week, day, hour
+    #[\Override]
     protected string $cache_strategy = 'private';
 
     // Flag indicating that authentication is required
+    #[\Override]
     protected bool $authentication_needed = true;
 
     /**
@@ -73,12 +84,14 @@ final class Sessions extends Page
                             $ips[$item['ip']] = ['country' => $geoip->country->name ?? null, 'city' => $geoip->city->name ?? null];
                         }
                     }
+
                     $output_array[$type][$key]['country'] = $ips[$item['ip']]['country'];
                     $output_array[$type][$key]['city'] = $ips[$item['ip']]['city'];
                 } else {
                     $output_array[$type][$key]['country'] = '';
                     $output_array[$type][$key]['city'] = '';
                 }
+
                 // Get OS
                 $output_array[$type][$key]['os'] = $device_detector->getOs((string) $item['user_agent']);
                 // Get client
@@ -98,6 +111,7 @@ final class Sessions extends Page
                         : null;
             }
         }
+
         $output_array['current_session'] = \session_id();
 
         return $output_array;

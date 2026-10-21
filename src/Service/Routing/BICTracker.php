@@ -12,16 +12,32 @@ use App\Controller\BIC\Search;
 final class BICTracker extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
+    #[\Override]
     protected array $sub_routes = ['keying', 'search', 'bics', 'openbics', 'closedbics', 'bic'];
 
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/bictracker/', 'name' => 'БИК Трекер'],
     ];
+
+    #[\Override]
     protected string $title = 'БИК Трекер';
+
+    #[\Override]
     protected string $h1 = 'БИК Трекер';
+
+    #[\Override]
     protected string $og_desc = 'Трекер БИК предоставляемых Центральным Банком Российской Федерации';
+
+    #[\Override]
     protected string $og_image = '/ogimages/bictracker.webp';
+
+    #[\Override]
     protected string $service_name = 'bictracker';
 
     // This is the actual page generation based on further details of the $path

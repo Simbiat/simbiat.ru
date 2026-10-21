@@ -24,12 +24,12 @@ final class Tests
 
     // Function to test file upload using PUT
     #[NoReturn]
-    public function uploadPut(#[FileReference] string $filepath): void
+    public function uploadPut(#[FileReference] string $filepath): never
     {
         $curl = new Curl()::$curl_handle;
         \curl_setopt($curl, \CURLOPT_URL, Config::$base_url);
-        \curl_setopt($curl, \CURLOPT_UPLOAD, true);
-        \curl_setopt($curl, \CURLOPT_HEADER, false);
+        \curl_setopt($curl, \CURLOPT_UPLOAD, value: true);
+        \curl_setopt($curl, \CURLOPT_HEADER, value: false);
         \curl_setopt($curl, \CURLOPT_PUT, 1);
         \curl_setopt($curl, \CURLOPT_HTTPHEADER, ['Content-type: '.\mime_content_type($filepath), 'Content-Disposition: attachment; filename="'.\basename($filepath).'"']);
         \curl_setopt($curl, \CURLOPT_INFILE, \fopen($filepath, 'rb'));
@@ -55,11 +55,12 @@ final class Tests
             Common::zEcho($output);
         } else {
             try {
-                Errors::dump(Sharing::upload($upload_path, false, false, [], false));
+                Errors::dump(Sharing::upload($upload_path, preserve_names: false, overwrite: false, allowed_mime: [], intolerant: false));
             } catch (\Throwable $exception) {
                 echo $exception->getMessage().'<br><br>'.$exception->getTraceAsString();
             }
         }
+
         exit(0);
     }
 
@@ -70,7 +71,8 @@ final class Tests
         if (!empty($bytes)) {
             $_SERVER['HTTP_RANGE'] = 'bytes='.$bytes;
         }
-        Sharing::download($filepath, '', '', true);
+
+        Sharing::download($filepath, '', '', inline: true);
         exit(0);
     }
 }

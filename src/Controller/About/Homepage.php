@@ -14,21 +14,30 @@ use Simbiat\HTML\Cut;
  */
 final class Homepage extends Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/', 'name' => 'Home'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'homepage';
 
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'Home';
 
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'Homepage of Simbiat Software';
 
     // List of images to H2 push
+    #[\Override]
     protected array $h2_push_extra = [
         '/assets/images/ogimages/jiangshi.webp',
         '/assets/images/ogimages/dden.webp',
@@ -41,7 +50,7 @@ final class Homepage extends Page
     protected function generate(array $path): array
     {
         $output_array = ['h1' => 'Home', 'service_name' => 'homepage'];
-        $output_array['posts'] = new User(SystemUser::Owner->value)->getTalksStarters(true);
+        $output_array['posts'] = new User(SystemUser::Owner->value)->getTalksStarters(only_with_banner: true);
         foreach ($output_array['posts'] as $post_id => $post) {
             // Add ogimages to H2 push
             $this->h2_push_extra[] = $post['og_image']['og_image'];

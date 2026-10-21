@@ -14,24 +14,34 @@ use Simbiat\Database\Query;
  */
 final class Activation extends Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/uc/activation', 'name' => 'Activation'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'activation';
 
     // Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'User/email activation';
 
     // Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'User/email activation';
 
     // Page's description. Practically needed only for the main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'Page used for user or email activation';
 
     // Cache strategy: aggressive, private, live, month, week, day, hour
+    #[\Override]
     protected string $cache_strategy = 'private';
 
     /**
@@ -51,6 +61,7 @@ final class Activation extends Page
         } else {
             $user_id = (int) $_SESSION['user_id'];
         }
+
         // Get activation ID
         $activation = $path[1] ?? null;
         if (
@@ -60,11 +71,13 @@ final class Activation extends Page
         ) {
             return ['http_error' => 403];
         }
+
         // Check if a user exists
         if (!Query::query('SELECT `user_id` FROM `uc__users` WHERE `user_id`=:user_id', [':user_id' => [$user_id, 'int']], return: 'check')) {
             // While technically this is closer to 404, we do not want potential abuse to get user IDs, although an attack vector here is unlikely
             return ['http_error' => 403];
         }
+
         $output_array = [];
         // Check if the user requires activation
         $output_array['activation'] = Query::query('SELECT `user_id` FROM `uc__user_to_group` WHERE `user_id`=:user_id AND `group_id`=:group_id', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::$group_ids['Unverified'], 'int']], return: 'check');
@@ -78,8 +91,9 @@ final class Activation extends Page
                 break;
             }
         }
+
         if (!\array_key_exists('activated', $output_array)) {
-            $output_array = ['activated' => false];
+            return ['activated' => false];
         }
 
         return $output_array;

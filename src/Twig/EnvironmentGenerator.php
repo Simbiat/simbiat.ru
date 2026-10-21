@@ -7,11 +7,8 @@ declare(strict_types=1);
 namespace App\Twig;
 
 // Twig environment
-use App\Service\Config;
 use Twig\Environment;
 use Twig\Extension\CoreExtension;
-use Twig\Extra\CssInliner\CssInlinerExtension;
-use Twig\Loader\FilesystemLoader;
 
 /**
  * Class to prepare the Twig environment object.
@@ -27,7 +24,7 @@ final class EnvironmentGenerator
      */
     public static function getTwig(): Environment
     {
-        if (!self::$environment) {
+        if (self::$environment !== null) {
             # TODO: needs to move to kernel.request listener
             self::$environment->getExtension(CoreExtension::class)->setTimezone($_SESSION['timezone'] ?? $_SERVER['HTTP_X_CLIENT_TIMEZONE'] ?? 'UTC');
         }

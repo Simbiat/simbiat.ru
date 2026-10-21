@@ -9,25 +9,37 @@ use App\Service\Config;
 
 abstract class General extends Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/fftracker/statistics', 'name' => 'Statistics'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'statistics';
 
     // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'Statistics';
 
     // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'Statistics';
 
     // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'Statistics';
 
     // List of permissions, from which at least 1 is required to have access to the page
+    #[\Override]
     protected array $required_permission = ['view_ff'];
+
+    #[\Override]
     protected bool $static = true;
 
     // Name of JSON file to attempt to ingest
@@ -43,6 +55,7 @@ abstract class General extends Page
             if (empty($this->json_to_ingest)) {
                 return ['http_error' => 500, 'reason' => 'No JSON file defined for category'];
             }
+
             $output_array['ffstats']['category'] = $this->json_to_ingest;
             if (!\is_file(Config::$statistics.$this->json_to_ingest.'.json')) {
                 return ['http_error' => 500, 'reason' => 'File `'.$this->json_to_ingest.'.json` not found'];

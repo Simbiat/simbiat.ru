@@ -15,17 +15,35 @@ use App\Controller\FFXIV\Statistics\Timelines;
 final class FFStatistics extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
+    #[\Override]
     protected array $sub_routes = ['raw', 'achievements', 'bugs', 'characters', 'groups', 'other', 'timelines'];
 
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/fftracker/statistics', 'name' => 'FFXIV Statistics'],
     ];
+
+    #[\Override]
     protected string $title = 'Final Fantasy XIV Statistics';
+
+    #[\Override]
     protected string $h1 = 'Final Fantasy XIV Statistics';
+
+    #[\Override]
     protected string $og_desc = 'Final Fantasy XIV Statistics';
+
+    #[\Override]
     protected string $og_image = '/ogimages/fftracker.webp';
+
+    #[\Override]
     protected string $service_name = 'fftracker';
+
+    #[\Override]
     protected string $redirect_main = '/fftracker/statistics/characters';
 
     // This is the actual page generation based on further details of the $path

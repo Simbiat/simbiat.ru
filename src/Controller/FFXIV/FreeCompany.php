@@ -9,24 +9,34 @@ use App\Entity\FFXIV\AbstractEntity;
 
 final class FreeCompany extends Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/fftracker/freecompanies', 'name' => 'Free Companies'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'freecompany';
 
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'Free Company';
 
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'Free Company';
 
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'Free Company';
 
     // List of permissions, from which at least 1 is required to have access to the page
+    #[\Override]
     protected array $required_permission = ['view_ff'];
 
     // This is the actual page generation based on further details of the $path
@@ -41,15 +51,14 @@ final class FreeCompany extends Page
         if (empty($output_array['freecompany']['id'])) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
+
         // Try to exit early based on the modification date
         $this->lastModified($output_array['freecompany']['dates']['updated']);
         $output_array['freecompany']['dates']['scheduled'] = $entity->scheduleUpdate();
         // Check if linked to the current user
         $output_array['freecompany']['linked']
             = $_SESSION['user_id'] !== 1
-            && \in_array($_SESSION['user_id'], \array_column($output_array['freecompany']['members'], 'user_id'), true)
-            ? true
-            : false;
+            && \in_array($_SESSION['user_id'], \array_column($output_array['freecompany']['members'], 'user_id'), strict: true);
         $output_array['freecompany']['can_refresh']
             = (
                 empty($output_array['freecompany']['dates']['deleted']) && (
@@ -57,9 +66,7 @@ final class FreeCompany extends Page
                     || $output_array['freecompany']['linked']
                 )
             )
-            || \in_array('refresh_all_ff', $_SESSION['permissions'], true)
-            ? true
-            : false;
+            || \in_array('refresh_all_ff', $_SESSION['permissions'], strict: true);
         // Continue breadcrumbs
         $this->breadcrumb[] = ['href' => '/fftracker/freecompanies/'.$id, 'name' => $output_array['freecompany']['name']];
         // Update meta
@@ -76,11 +83,12 @@ final class FreeCompany extends Page
             $this->alt_links[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/freecompanies/'.$id.'/lodestone'];
             $this->alt_links[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => $output_array['freecompany']['lodestone_url']];
             if (!empty($output_array['freecompany']['community'])) {
-                $this->alt_links[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/'.$output_array['freecompany']['community']];
+                $this->alt_links[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => "Group's community page on Lodestone EU", 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/'.$output_array['freecompany']['community']];
             }
         } else {
             $output_array['freecompany']['lodestone_url'] = null;
         }
+
         // Merge crest and update favicon
         $output_array['freecompany']['crest'] = AbstractEntity::crestToFavicon($output_array['freecompany']['crest']);
         $output_array['favicon'] = $output_array['freecompany']['crest'];

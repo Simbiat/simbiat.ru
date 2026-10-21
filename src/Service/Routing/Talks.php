@@ -12,16 +12,32 @@ use App\Controller\Talks\User;
 final class Talks extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
+    #[\Override]
     protected array $sub_routes = ['sections', 'threads', 'posts', 'users', 'edit'];
 
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/talks/', 'name' => 'Talks'],
     ];
+
+    #[\Override]
     protected string $title = 'Talks';
+
+    #[\Override]
     protected string $h1 = 'Talks';
+
+    #[\Override]
     protected string $og_desc = 'Talks';
+
+    #[\Override]
     protected string $service_name = 'talks';
+
+    #[\Override]
     protected string $redirect_main = '/talks/sections/';
 
     // This is actual page generation based on further details of the $path

@@ -13,24 +13,34 @@ use Simbiat\StringHelpers\Sanitize;
 
 final class Thread extends Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/talks/sections/', 'name' => 'Sections'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'thread';
 
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'Talks';
 
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'Talks';
 
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'Talks';
 
     // List of permissions, from which at least 1 is required to have access to the page
+    #[\Override]
     protected array $required_permission = ['view_posts'];
 
     // This is the actual page generation based on further details of the $path
@@ -44,10 +54,12 @@ final class Thread extends Page
         ) {
             return ['http_error' => 400, 'reason' => 'Wrong ID'];
         }
+
         $output_array = new \App\Entity\Thread($id)->getArray();
         if (empty($output_array['id'])) {
             return ['http_error' => 404, 'reason' => 'Thread does not exist', 'suggested_link' => '/talks/sections/'];
         }
+
         // Check if private
         if ($output_array['private']) {
             if (
@@ -65,37 +77,43 @@ final class Thread extends Page
                         // Return same error to limit potential of brute-forcing a token
                         return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
                     }
+
                     // If token is valid - temporary give permission to allow posting
                     $_SESSION['permissions'][] = 'can_post';
                 }
             } elseif (
                 $output_array['author'] !== $_SESSION['user_id']
-                && !\in_array('view_private', $_SESSION['permissions'], true)
+                && !\in_array('view_private', $_SESSION['permissions'], strict: true)
             ) {
                 return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
             }
         }
+
         // Check if scheduled
         if (
             $output_array['created'] >= \time()
-            && !\in_array('view_scheduled', $_SESSION['permissions'], true)
+            && !\in_array('view_scheduled', $_SESSION['permissions'], strict: true)
         ) {
             return ['http_error' => 404, 'reason' => 'Thread does not exist', 'suggested_link' => '/talks/sections/'];
         }
+
         // Collect times
         $times = [];
         // Add time for the current section
         if (!empty($output_array['updated'])) {
             $times[] = $output_array['updated'];
         }
+
         // Add posts times
         if (!empty($output_array['posts']['entities'])) {
             $times = \array_merge($times, \array_column($output_array['posts']['entities'], 'updated'));
         }
+
         // Try to exit early based on modification date
-        if (!empty($times)) {
+        if ($times !== []) {
             $this->lastModified(\max($times) ?? 0);
         }
+
         // Generate pagination data
         $page = (int) ($_GET['page'] ?? 1);
         $output_array['pagination'] = ['current' => $page, 'total' => $output_array['posts']['pages'] ?? 1, 'prefix' => '?page='];
@@ -104,10 +122,11 @@ final class Thread extends Page
             && $output_array['pagination']['total'] !== 0
         ) {
             // Redirect to last page
-            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/talks/threads/'.$id.'?page='.$output_array['pagination']['total'], false);
+            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/talks/threads/'.$id.'?page='.$output_array['pagination']['total'], permanent: false);
 
             return [];
         }
+
         // Changelogs have Unix timestamp for names, need to convert those to the desired format
         /* @noinspection DuplicatedCode */
         if (
@@ -116,16 +135,19 @@ final class Thread extends Page
         ) {
             $output_array['name'] = \date('Y.m.d', (int) $output_array['name']);
         }
+
         // Add parents to breadcrumbs if we have any
         foreach ($output_array['parents'] as $parent) {
             $this->breadcrumb[] = ['href' => '/talks/sections/'.$parent['section_id'], 'name' => $parent['name']];
         }
+
         // Add thread
         $this->breadcrumb[] = ['href' => '/talks/threads/'.$output_array['id'], 'name' => $output_array['name']];
         // Add a page if there is one
         if ($page > 1) {
             $this->attachCrumb('?page='.$page, 'Page '.$page);
         }
+
         // Update title, h1 and og_desc
         $this->title = '`'.$output_array['name'].'` thread';
         $this->h1 = $output_array['name'];
@@ -134,6 +156,7 @@ final class Thread extends Page
         } else {
             $this->og_desc = $output_array['name'];
         }
+
         // Set og_image
         if (!empty($output_array['og_image'])) {
             $output_array = \array_merge($output_array, Images::ogImage($output_array['og_image']));
@@ -143,6 +166,7 @@ final class Thread extends Page
                 $this->h2_push_extra[] = $this->og_image;
             }
         }
+
         // Set ogtype
         $output_array['ogtype'] = 'article';
         // Add article open graph tags
@@ -152,10 +176,11 @@ final class Thread extends Page
             <meta property="article:modified_time" content="'.\date('c', $output_array['updated']).'" />'
             .($output_array['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />')
             .($output_array['editor'] !== 1 && $output_array['editor'] !== $output_array['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />' : '')
-            .'<meta property="article:section" content="'.$output_array['parents'][\array_key_last($output_array['parents'])]['name'].'" />';
+            .'<meta property="article:section" content="'.array_last($output_array['parents'])['name'].'" />';
         foreach ($output_array['tags'] as $tag) {
             $output_array['ogextra'] .= '<meta property="article:tag" content="'.$tag.'" />';
         }
+
         // Process alternative links, if any
         $output_array['external_links_list'] = $output_array['external_links'];
         foreach ($output_array['external_links'] as $type => $link) {
@@ -165,22 +190,24 @@ final class Thread extends Page
                 $this->alt_links[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => $type, 'href' => $link['url']];
             }
         }
+
         // Set language
         $this->language = $output_array['language'];
         // Get stuff for thread's editing
         if (
             (
                 $output_array['owned']
-                && \in_array('edit_own_threads', $_SESSION['permissions'], true)
+                && \in_array('edit_own_threads', $_SESSION['permissions'], strict: true)
             )
             || (
                 !$output_array['owned']
-                && \in_array('edit_others_threads', $_SESSION['permissions'], true)
+                && \in_array('edit_others_threads', $_SESSION['permissions'], strict: true)
             )
         ) {
             $output_array['thread_languages'] = \App\Entity\Thread::getLanguages();
             $output_array['thread_link_types'] = \App\Entity\Thread::getAltLinkTypes();
         }
+
         // Add access token
         $output_array['get_access_token']
             = $output_array['author'] === SystemUser::Unknown->value

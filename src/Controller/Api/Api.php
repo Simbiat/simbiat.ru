@@ -63,7 +63,7 @@ abstract class Api
     /**
      * This is a general routing check for supported node.
      *
-     * @param array $path
+     * @param array<int, mixed> $path
      *
      * @return array
      */
@@ -73,6 +73,7 @@ abstract class Api
         if (!empty(HomePage::$user_agent['bot'])) {
             return ['http_error' => 403, 'reason' => 'No access to API for bots'];
         }
+
         // Check if proper endpoint
         if (
             \count($this->sub_routes) !== 0
@@ -80,7 +81,7 @@ abstract class Api
                 empty($path[0])
                 || (
                     !$this->final_node
-                    && !\in_array($path[0], $this->sub_routes, true)
+                    && !\in_array($path[0], $this->sub_routes, strict: true)
                 )
             )
         ) {
@@ -102,7 +103,7 @@ abstract class Api
             $data = ['http_error' => 403, 'reason' => 'Authentication required'];
         } elseif (
             $this->csrf
-            && !$this->antiCSRF($this->allowed_origins)
+            && !$this->antiCSRF()
         ) {
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
@@ -121,6 +122,7 @@ abstract class Api
                 }
             }
         }
+
         if ($this->top_level) {
             // Override template
             $result['template_override'] = 'common/pages/api.html.twig';
@@ -132,20 +134,24 @@ abstract class Api
             ) {
                 $result['cache_age'] = $data['cache_age'];
             }
+
             if (!empty($data['http_error'])) {
                 // Location is for returning a link for the already existing resource if we tried to create a new one or for links to which we should redirect after an action
                 if (!empty($data['location'])) {
                     $result['json_ready']['location'] = $data['location'];
                 }
+
                 if (!empty($data['reason'])) {
                     $result['json_ready']['reason'] = $data['reason'];
                 }
-                if (\in_array($data['http_error'], ['database', 'maintenance'], true)) {
+
+                if (\in_array($data['http_error'], ['database', 'maintenance'], strict: true)) {
                     $result['json_ready']['status'] = 503;
                     $result['json_ready']['reason'] = 'Database required, but unavailable';
                 } else {
                     $result['json_ready']['status'] = $data['http_error'];
                 }
+
                 if (!empty($data['endpoints'])) {
                     $result['json_ready']['reason'] = 'Unsupported endpoint';
                     $result['json_ready']['endpoints'] = $data['endpoints'];
@@ -160,34 +166,43 @@ abstract class Api
                     /* @noinspection PhpParamsInspection */
                     $this->fieldFilter($result['json_ready']['data']);
                 }
+
                 // Location is for returning a link for the new resource
                 if (!empty($data['location'])) {
                     $result['json_ready']['location'] = $data['location'];
                 }
+
                 if (!empty($data['alt_links'])) {
                     $result['json_ready']['links'] = $data['alt_links'];
                 }
+
                 if (!empty($data['edges'])) {
                     $result['json_ready']['edges'] = $data['edges'];
                 }
+
                 if (!empty($data['endpoints'])) {
                     $result['json_ready']['endpoints'] = $data['endpoints'];
                 }
+
                 if (!empty($data['status'])) {
                     $result['json_ready']['status'] = $data['status'];
                 }
             }
+
             if ($result['json_ready']['status'] !== 200) {
-                Headers::clientReturn($result['json_ready']['status'], false);
+                Headers::clientReturn($result['json_ready']['status'], exit: false);
             }
+
             if (!empty($data['about'])) {
                 $result['json_ready']['about'] = $data['about'];
             }
+
             if (\session_status() === \PHP_SESSION_ACTIVE) {
                 $_SESSION['csrf'] = Security::genToken();
                 if (!\headers_sent()) {
                     \header('X-CSRF-Token: '.$_SESSION['csrf']);
                 }
+
                 $result['json_ready']['csrf'] = $_SESSION['csrf'];
             } else {
                 $result['json_ready']['csrf'] = 'no active session';
@@ -201,11 +216,13 @@ abstract class Api
     "reason": "Failed to generate JSON output"
 }';
             }
-            Sorters::recursiveSort($result, true, false, \SORT_NATURAL);
+
+            Sorters::recursiveSort($result, key: true, desc: false, sort_flag: \SORT_NATURAL);
 
             return $result;
         }
-        Sorters::recursiveSort($data, true, false, \SORT_NATURAL);
+
+        Sorters::recursiveSort($data, key: true, desc: false, sort_flag: \SORT_NATURAL);
 
         return $data;
     }
@@ -230,7 +247,7 @@ abstract class Api
         }
 
         foreach ($array as $field => $value) {
-            if (!\in_array($field, $filter, true)) {
+            if (!\in_array($field, $filter, strict: true)) {
                 unset($array[$field]);
             }
         }
@@ -250,25 +267,25 @@ abstract class Api
             \header('Access-Control-Allow-Methods: '.\implode(', ', $allowed_methods));
             \header('Allow: '.\implode(', ', $allowed_methods));
         }
+
         // Check if allowed method is used. EA incorrectly suggests use of `array_key_exists`, which does not fit here, due to how $allowed_methods is used in the whole method
 
         /* @noinspection InArrayMissUseInspection */
-        return \in_array(HomePage::$method, $allowed_methods, true);
+        return \in_array(HomePage::$method, $allowed_methods, strict: true);
     }
 
     /**
      * Function to help protect against CSRF. Suggested using for forms or APIs. Needs to be used before writing anything to `$_SESSION`.
      *
-     * @param array $allow_origins
-     *
      * @return bool
      */
-    final protected function antiCSRF(array $allow_origins = []): bool
+    final protected function antiCSRF(): bool
     {
         // By default, allow only our own origin
-        if (\count($allow_origins) === 0) {
-            $allow_origins = [Config::$base_url];
+        if (\count($this->allowed_origins) === 0) {
+            $this->allowed_origins = [Config::$base_url];
         }
+
         // Get CSRF token
         $token = $_POST['X-CSRF-Token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_SERVER['HTTP_X_XSRF_TOKEN'] ?? null;
         // Get origin
@@ -283,12 +300,12 @@ abstract class Api
                     // Check if HTTP Origin is among allowed ones if we want to restrict them.
                     // Note that this will be applied to forms or APIs you want to restrict. For global restriction use \Simbiat\http20\headers->security()
                     if (
-                        \count($allow_origins) === 0
+                        \count($this->allowed_origins) === 0
                         // If origins are limited, check if origin is present
                         || (
                             !empty($origin)
                             // Check if it's a valid origin and is allowed
-                            && (\preg_match('/'.Headers::ORIGIN_REGEX.'/i', $origin) === 1 || \in_array($origin, $allow_origins, true))
+                            && (\preg_match('/'.Headers::ORIGIN_REGEX.'/i', $origin) === 1 || \in_array($origin, $this->allowed_origins, strict: true))
                         )
                     ) {
                         // All checks passed
@@ -299,6 +316,7 @@ abstract class Api
 
                         return true;
                     }
+
                     $reason = 'Bad origin';
                 } else {
                     $reason = 'Different hashes';
@@ -309,6 +327,7 @@ abstract class Api
         } else {
             $reason = 'No token from client';
         }
+
         // Log attack details. Suppressing errors, so that values will be turned into NULLs if they are not set
         Security::log(LogType::CSRF->value, 'CSRF attack detected', [
             'origin' => $_SERVER['HTTP_ORIGIN'] ?? null,
@@ -318,8 +337,9 @@ abstract class Api
         ]);
         // Send `403` error code in header, with an option to force close connection
         if (!HomePage::$stale_return) {
-            Headers::clientReturn(403, false);
+            Headers::clientReturn(403, exit: false);
         }
+
         $_SESSION['csrf'] = Security::genToken();
         if (!\headers_sent()) {
             \header('X-CSRF-Token: '.$_SESSION['csrf']);
@@ -340,7 +360,7 @@ abstract class Api
     /**
      * This is a wrapper to allow some common checks.
      *
-     * @param array $path
+     * @param array<int, mixed> $path
      *
      * @return array
      */
@@ -352,6 +372,7 @@ abstract class Api
         ) {
             $path[0] = '';
         }
+
         $result = [];
         // If this is a final node, "convert" methods to GET "actions" if such mapping is set. Required for consistency
         if ($this->final_node) {
@@ -361,15 +382,17 @@ abstract class Api
                 $result['about']['verbs'] = $this->verbs;
                 $result['about']['methods'] = $this->methods;
             }
+
             if (!$this->methodCheck()) {
                 return \array_merge($result, ['http_error' => 405, 'reason' => 'Unsupported HTTP method used']);
             }
+
             // Override $path[1] with `verb` from POST, if it was provided
             $path[1] = $_POST['verb'] ?? $path[1] ?? '';
             // Override based on method only if method is not HEAD, OPTIONS or GET and if a respective method has a verb set for it
             if (
                 !empty($this->methods[HomePage::$method])
-                && !\in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET'], true)
+                && !\in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET'], strict: true)
             ) {
                 if (\is_string($this->methods[HomePage::$method])) {
                     $path[1] = $this->methods[HomePage::$method];
@@ -378,17 +401,20 @@ abstract class Api
                     if (empty($path[1])) {
                         return \array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method supports multiple API verbs, none provided']);
                     }
-                    if (!\in_array($path[1], $this->methods[HomePage::$method], true)) {
+
+                    if (!\in_array($path[1], $this->methods[HomePage::$method], strict: true)) {
                         return \array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method does not support `'.$path[1].'` API verb']);
                     }
                 }
             }
+
             if (
                 !empty($path[1])
                 && !\array_key_exists($path[1], $this->verbs)
             ) {
                 return \array_merge($result, ['http_error' => 405, 'reason' => 'Unsupported API verb used']);
             }
+
             if (
                 !empty(HomePage::$http_error)
                 && !$this->static
@@ -396,6 +422,7 @@ abstract class Api
                 return \array_merge($result, HomePage::$http_error);
             }
         }
+
         $result = \array_merge($result, $this->genData($path));
         // Add extra data if final node
         if ($this->final_node) {

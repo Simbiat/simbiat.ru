@@ -8,15 +8,22 @@ use App\Controller\Abstracts\Sitemap;
 
 final class FFTracker extends Sitemap
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/sitemap/xml/fftracker.xml', 'name' => 'Index'],
     ];
 
     // Flag indicating the main index file (index.xml)
+    #[\Override]
     protected bool $main_index = false;
 
     // Query for countables
+    #[\Override]
     protected string $query = '
                     SELECT \'ffxiv_characters\' AS `link`, \'FFXIV Characters\' AS `name`, COUNT(*) AS `count` FROM `ffxiv__character` WHERE `hidden` IS NULL
                     UNION ALL

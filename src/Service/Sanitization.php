@@ -37,20 +37,22 @@ final class Sanitization
      */
     public static function sanitizeHTML(string $string, #[ExpectedValues(self::SANITIZATION_ELEMENT_NAMES)] string $for = 'body'): string
     {
-        if (!\in_array($for, self::SANITIZATION_ELEMENT_NAMES, true)) {
+        if (!\in_array($for, self::SANITIZATION_ELEMENT_NAMES, strict: true)) {
             return '';
         }
+
         // Check if config has been created already
         $config = self::$sanitizer_config[$for] ?: self::initSanitizer($for);
         // Remove excessive new lines
         $string = \preg_replace(['/(\s*<br \/>\s*){5,}/mi', '/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi'], ['<br>', ''], $string);
         // Run the sanitizer
         $sanitizer = new HtmlSanitizer($config);
+
         return $for === 'head'
             ? $sanitizer->sanitizeFor('head', $string)
             : $sanitizer->sanitize($string);
 
-        // TODO add loading="lazy" decoding="async" to all images
+        // TODO add loading="lazy" decoding="async" to all images. Also probably need to sanitize classes. At least gallery_zoom showed the need for that (needed to replace galleryZoom).
     }
 
     /**
@@ -105,6 +107,7 @@ final class Sanitization
         if (!isset($checkbox)) {
             return false;
         }
+
         if (\is_string($checkbox)) {
             return \mb_strtolower($checkbox, 'UTF-8') !== 'off';
         }
@@ -122,23 +125,24 @@ final class Sanitization
      */
     public static function scheduledTime(null|int|string &$time, ?string &$timezone = null): ?int
     {
-        if (\in_array('post_scheduled', $_SESSION['permissions'], true)) {
+        if (\in_array('post_scheduled', $_SESSION['permissions'], strict: true)) {
             if (empty($time)) {
                 $time = null;
             } else {
                 if (
                     empty($timezone)
-                    || !\in_array($timezone, \timezone_identifiers_list(), true)
+                    || !\in_array($timezone, \timezone_identifiers_list(), strict: true)
                 ) {
                     $timezone = 'UTC';
                 }
+
                 $datetime = SandClock::convertTimezone($time, $_SESSION['timezone'] ?? $timezone);
                 $time = $datetime->getTimestamp();
                 $cur_time = \time();
                 // Do not allow past, unless respective permission is present
                 if (
                     $time < $cur_time
-                    && !\in_array('post_backlog', $_SESSION['permissions'], true)
+                    && !\in_array('post_backlog', $_SESSION['permissions'], strict: true)
                 ) {
                     $time = $cur_time;
                 }
@@ -178,6 +182,7 @@ final class Sanitization
         if (\file_exists(Config::$uploaded_img.$hash_tree.'/'.$filename)) {
             return '/assets/images/uploaded/'.$hash_tree.'/'.$filename;
         }
+
         if (\file_exists(Config::$uploaded.$hash_tree.'/'.$filename)) {
             return '/assets/uploaded/'.$hash_tree.'/'.$filename;
         }
@@ -210,15 +215,18 @@ final class Sanitization
             // Need to update the original, because a clone is returned, instead of the same instance.
             $config = $config->blockElement($element);
         }
+
         // Allow timeline elements
         if ($for === 'timeline') {
             $config = $config->allowElement('time-line');
             $config = $config->allowElement('time-line-shortcut');
         }
+
         // Allow some property attributes for meta-tags
         if ($for === 'head') {
             $config = $config->allowAttribute('property', 'meta');
         }
+
         // Allow class attribute
         $config = $config->allowAttribute('class', '*');
         // Allow ARIA attributes
@@ -236,6 +244,7 @@ final class Sanitization
         ) {
             $config = $config->allowAttribute($attribute, '*');
         }
+
         // Allow data-* attributes in blockquotes, code and samp
         $config = $config->allowAttribute('data-author', 'blockquote');
         $config = $config->allowAttribute('data-description', ['code', 'samp']);

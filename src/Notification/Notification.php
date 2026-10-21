@@ -86,6 +86,7 @@ abstract class Notification extends Entity
     // Notification text
     public protected(set) ?string $text = null;
 
+    #[\Override]
     protected string $id_format = '/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/mui';
 
     // ID of the user the notification belongs to
@@ -111,6 +112,7 @@ abstract class Notification extends Entity
                 Errors::error_log($throwable);
             }
         }
+
         if ($echo) {
             if ($result) {
                 Images::successImage();
@@ -134,6 +136,7 @@ abstract class Notification extends Entity
         if (\is_int($id)) {
             throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` needs to be a string.');
         }
+
         if (!\uuid_is_valid($id)) {
             throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
         }
@@ -157,7 +160,7 @@ abstract class Notification extends Entity
      * Generate and save the notification to database (if available).
      *
      * @param null|int|string $user_id        ID of the user for which to generate the notification
-     * @param array           $twig_vars      Array of variables for Twig
+     * @param array<string, mixed> $twig_vars Array of variables for Twig
      * @param bool            $email          Whether the notification should be sent via email
      * @param bool            $push           Whether the notification should be shown through the app
      * @param null|string     $email_override Email address to use, if none is found. For test environment, will not matter, since admin email will be used
@@ -173,15 +176,18 @@ abstract class Notification extends Entity
         ) {
             throw new \RuntimeException('Notification requires a DB, but DB is down');
         }
+
         if ($this->id !== null) {
             throw new \UnexpectedValueException('Saving of a notification is only possible for new ones, lacking ID');
         }
+
         if (
             !$email
             && !$push
         ) {
-            throw new \UnexpectedValueException('Can\'t save notification with neither email nor push enabled');
+            throw new \UnexpectedValueException("Can't save notification with neither email nor push enabled");
         }
+
         if ($user_id !== null) {
             try {
                 if (Query::query('SELECT `user_id` FROM `uc__users` WHERE `user_id`=:user_id;', [':user_id' => [$user_id, 'int']], return: 'check')) {
@@ -193,6 +199,7 @@ abstract class Notification extends Entity
                 }
             }
         }
+
         // If DB is not required, then we are ok with not saving to the database
         if (
             $this->user === null
@@ -200,6 +207,7 @@ abstract class Notification extends Entity
         ) {
             throw new \UnexpectedValueException('No user is set for notification');
         }
+
         // If email override is provided, but not a valid email - nullify it
         if (
             $email_override !== null
@@ -207,6 +215,7 @@ abstract class Notification extends Entity
         ) {
             $email_override = null;
         }
+
         // Get email
         if ($email) {
             if ($email_override === null) {
@@ -226,7 +235,7 @@ abstract class Notification extends Entity
                 } catch (\Throwable $throwable) {
                     Errors::error_log($throwable);
 
-                    throw new \RuntimeException('Failed to get valid addresses for the notification');
+                    throw new \RuntimeException('Failed to get valid addresses for the notification', $throwable->getCode(), $throwable);
                 }
             } else {
                 $emails = [$email_override];
@@ -234,6 +243,7 @@ abstract class Notification extends Entity
         } else {
             $emails = [];
         }
+
         // Add some sessional data
         if ($this::SECURITY_ALERT) {
             $session_details = [
@@ -254,8 +264,10 @@ abstract class Notification extends Entity
                 $session_details['country'] = null;
                 $session_details['city'] = null;
             }
+
             $twig_vars['session_details'] = $session_details;
         }
+
         // If Twig variables are required but not provided, we do not do anything
         if (
             $this::TWIG_REQUIRED
@@ -265,14 +277,17 @@ abstract class Notification extends Entity
         } else {
             $this->setText($twig_vars);
         }
+
         if (Sanitize::whiteString($this->text ?? '')) {
             throw new \UnexpectedValueException('No text is set for notification');
         }
+
         $constant_name = new \ReflectionClass($this)->getShortName();
         $class_name = NotificationType::class;
         if (!\defined("{$class_name}::{$constant_name}")) {
             throw new \UnexpectedValueException('Unsupported notification type');
         }
+
         $type = NotificationType::{$constant_name}->value;
         $result = false;
 
@@ -286,6 +301,7 @@ abstract class Notification extends Entity
                         if (\filter_var($address, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
                             continue;
                         }
+
                         $this->id = \uuid_create(4);
                         $this->email = $address;
                         $result = Query::query(
@@ -322,6 +338,7 @@ abstract class Notification extends Entity
                 ) {
                     $this->email = $emails[0];
                 }
+
                 $result = true;
             }
         } catch (\Throwable $exception) {
@@ -333,11 +350,13 @@ abstract class Notification extends Entity
                 $this->id = null;
             }
         }
+
         if ($result === false) {
             $this->id = null;
 
             throw new \RuntimeException('Failed to save notification to database');
         }
+
         $this->created = \time();
 
         return $this;
@@ -356,19 +375,23 @@ abstract class Notification extends Entity
             // Don't do anything if we already tried to send the message too many times
             return false;
         }
+
         if (Sanitize::whiteString($this->text ?? '')) {
             throw new \UnexpectedValueException('No text is set for notification');
         }
+
         if (
             !$this::ALWAYS_SEND
             && $this->created === null
         ) {
             throw new \UnexpectedValueException('Sending of a notification is only possible for those that have been saved');
         }
+
         if ($this->sent !== null) {
             // If notification is already sent - no need to send it again
             return true;
         }
+
         if ($this->is_read !== null) {
             // If already read, disable email type to avoid further attempts
             try {
@@ -380,12 +403,14 @@ abstract class Notification extends Entity
 
             return true;
         }
+
         if (
             $this->email !== null
             && \filter_var($this->email, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false
         ) {
             $this->email = null;
         }
+
         if ($this->email === null) {
             // Disable email flag for this notification and return true
             try {
@@ -396,9 +421,11 @@ abstract class Notification extends Entity
 
             return true;
         }
+
         if (Sanitize::whiteString($this::SUBJECT)) {
             throw new \RuntimeException('No subject set for the email');
         }
+
         $subscribed = null;
         $username = '';
         if ($this->user !== null) {
@@ -413,6 +440,7 @@ abstract class Notification extends Entity
                 }
             }
         }
+
         // If we are not forcing, and email is not subscribed - disable email sending for this notification
         if (
             $subscribed === null
@@ -430,6 +458,7 @@ abstract class Notification extends Entity
             // Consider this being "success", but do not set the time
             return true;
         }
+
         if (
             $subscribed === null
             && !$this::ALWAYS_SEND
@@ -440,16 +469,17 @@ abstract class Notification extends Entity
         // Prepare message listener with Twig renderer
         try {
             $renderer = new BodyRenderer(Config::$twig);
-            $message_listener = new MessageListener(null, $renderer);
+            $message_listener = new MessageListener(renderer: $renderer);
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
 
             return false;
         }
+
         $event_dispatcher = new EventDispatcher();
         $event_dispatcher->addSubscriber($message_listener);
         // Create transport
-        $mailer = new Mailer(Transport::fromDsn(Config::$mailer_dsn, $event_dispatcher), null, $event_dispatcher);
+        $mailer = new Mailer(Transport::fromDsn(Config::$mailer_dsn, $event_dispatcher), dispatcher: $event_dispatcher);
         // Create basic email
         $email = new TemplatedEmail()
             ->from(new Address(Config::$from_email, Config::$site_name))
@@ -461,6 +491,7 @@ abstract class Notification extends Entity
             // On test always use admin mail
             $email = $email->addTo(Config::$admin_email);
         }
+
         // Set priority
         if (Config::$environment === 'prod') {
             if ($this::PRIORITY > 1) {
@@ -489,19 +520,22 @@ abstract class Notification extends Entity
                     return false;
                 }
             }
+
             if ($debug) {
                 // For some reason using `getHtmlBody` right after send does not work, and returns `null`, so have to render it again. Not critical, since this is for testing only.
                 $renderer->render($email);
                 // Need to include the CSS file, since embedded does not seem to apply properly in browser. It's not exactly the same as when email is sent, but close enough.
-                Common::zEcho('<link href="/assets/styles/1234567890.css" rel="stylesheet preload" type="text/css" as="style">'.$email->getHtmlBody(), 'live', false);
+                Common::zEcho('<link href="/assets/styles/1234567890.css" rel="stylesheet preload" type="text/css" as="style">'.$email->getHtmlBody(), 'live', exit: false);
                 exit(0);
             }
+
             $mailer->send($email);
         } catch (\Throwable $exception) {
             Errors::error_log($exception, debug: $debug);
 
             return false;
         }
+
         if ($this->id !== null) {
             try {
                 Query::query('UPDATE `sys__notifications` SET `sent`=CURRENT_TIMESTAMP(6) WHERE `uuid`=:uuid;', [':uuid' => $this->id]);
@@ -553,6 +587,7 @@ abstract class Notification extends Entity
         if ($this->created === null) {
             $this->id = null;
         }
+
         $this->sent = $from_db['sent'] !== null
             ? \strtotime($from_db['sent'])
             : null;

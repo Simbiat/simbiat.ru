@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Run once to install the necessary stuff for the service to work correctly.
  */
-final class Install
+final readonly class Install
 {
     /**
      * Inject dependencies.
@@ -47,11 +47,11 @@ final class Install
         $output->writeln(Errors::logfmt('Installing the app...'));
 
         try {
-            // TODO: Need to figure out a way to prevent run for the 2nd time
-            return Command::SUCCESS;
-
             /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
+
+            // TODO: Need to figure out a way to prevent run for the 2nd time
+            return Command::SUCCESS;
             // Install CRON
             if (new Installer($pdo)->install()) {
                 // Update settings
@@ -71,6 +71,7 @@ final class Install
                 new TaskInstance(dbh: $pdo)->settingsFromArray(['task' => 'ff_update_old', 'arguments' => '[50, "$cron_instance"]', 'instance' => 5, 'enabled' => 1, 'system' => 1, 'frequency' => 60, 'priority' => 0, 'message' => 'Updating old FFXIV entities', 'next_run' => \time()])->add();
                 new TaskInstance(dbh: $pdo)->settingsFromArray(['task' => 'ff_update_old', 'arguments' => '[50, "$cron_instance"]', 'instance' => 6, 'enabled' => 1, 'system' => 1, 'frequency' => 60, 'priority' => 0, 'message' => 'Updating old FFXIV entities', 'next_run' => \time()])->add();
             }
+
             // Install the Maintainer library. This *SHOULD* be the last operation, so that all tables are added in the initial update.
             if (new \Simbiat\Database\Maintainer\Installer($pdo)->install()) {
                 new Analyzer($pdo)->updateTables(Config::$database_name);

@@ -97,6 +97,7 @@ final readonly class FFTracker
             ) {
                 throw new \RuntimeException(\sprintf('Directory "%s" was not created', Config::$statistics));
             }
+
             /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
             new Query($pdo);
@@ -134,6 +135,7 @@ final readonly class FFTracker
 
                         break;
                 }
+
                 // Attempt to write to cache
                 \file_put_contents($cache_path, \json_encode($data, \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR | \JSON_PRESERVE_ZERO_FRACTION | \JSON_PRETTY_PRINT));
                 if ($type === 'bugs') {
@@ -178,6 +180,7 @@ final readonly class FFTracker
                         ];
                     }
                 }
+
                 new Query($pdo);
                 Query::query($queries);
             } else {
@@ -197,7 +200,7 @@ final readonly class FFTracker
     /**
      * Get data raw data for character statistics based on counts.
      *
-     * @param array $data Array of gathered data
+     * @param array<string, mixed> $data Array of gathered data
      *
      * @return void
      */
@@ -219,7 +222,7 @@ final readonly class FFTracker
     /**
      * Get data for character-based statistics.
      *
-     * @param array $data Array of gathered data
+     * @param array<string, mixed> $data Array of gathered data
      *
      * @return void
      */
@@ -231,25 +234,25 @@ final readonly class FFTracker
             return: 'pair',
         );
         // Most name changes
-        $data['characters']['changes']['name'] = Query::query('SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__character_names`.`character_id`, count(`ffxiv__character_names`.`character_id`) AS `count` FROM `ffxiv__character_names` GROUP BY `ffxiv__character_names`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC', return: 'all');
+        $data['characters']['changes']['name'] = Query::query("SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, 'character' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__character_names`.`character_id`, count(`ffxiv__character_names`.`character_id`) AS `count` FROM `ffxiv__character_names` GROUP BY `ffxiv__character_names`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC", return: 'all');
         Editors::renameColumn($data['characters']['changes']['name'], 'value', 'name');
         // Most reincarnation
-        $data['characters']['changes']['clan'] = Query::query('SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__character_clans`.`character_id`, count(`ffxiv__character_clans`.`character_id`) AS `count` FROM `ffxiv__character_clans` GROUP BY `ffxiv__character_clans`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC', return: 'all');
+        $data['characters']['changes']['clan'] = Query::query("SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, 'character' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__character_clans`.`character_id`, count(`ffxiv__character_clans`.`character_id`) AS `count` FROM `ffxiv__character_clans` GROUP BY `ffxiv__character_clans`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC", return: 'all');
         Editors::renameColumn($data['characters']['changes']['clan'], 'value', 'name');
         // Most servers
-        $data['characters']['changes']['server'] = Query::query('SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__character_servers`.`character_id`, count(`ffxiv__character_servers`.`character_id`) AS `count` FROM `ffxiv__character_servers` GROUP BY `ffxiv__character_servers`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC', return: 'all');
+        $data['characters']['changes']['server'] = Query::query("SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, 'character' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__character_servers`.`character_id`, count(`ffxiv__character_servers`.`character_id`) AS `count` FROM `ffxiv__character_servers` GROUP BY `ffxiv__character_servers`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC", return: 'all');
         Editors::renameColumn($data['characters']['changes']['server'], 'value', 'name');
         // Most companies
-        $data['characters']['groups']['Free Companies'] = Query::query('SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__freecompany_character`.`character_id`, count(`ffxiv__freecompany_character`.`character_id`) AS `count` FROM `ffxiv__freecompany_character` GROUP BY `ffxiv__freecompany_character`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC', return: 'all');
+        $data['characters']['groups']['Free Companies'] = Query::query("SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, 'character' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__freecompany_character`.`character_id`, count(`ffxiv__freecompany_character`.`character_id`) AS `count` FROM `ffxiv__freecompany_character` GROUP BY `ffxiv__freecompany_character`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC", return: 'all');
         Editors::renameColumn($data['characters']['groups']['Free Companies'], 'value', 'name');
         // Most PvP teams
-        $data['characters']['groups']['PvP Teams'] = Query::query('SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__pvpteam_character`.`character_id`, count(`ffxiv__pvpteam_character`.`character_id`) AS `count` FROM `ffxiv__pvpteam_character` GROUP BY `ffxiv__pvpteam_character`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC', return: 'all');
+        $data['characters']['groups']['PvP Teams'] = Query::query("SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, 'character' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__pvpteam_character`.`character_id`, count(`ffxiv__pvpteam_character`.`character_id`) AS `count` FROM `ffxiv__pvpteam_character` GROUP BY `ffxiv__pvpteam_character`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC", return: 'all');
         Editors::renameColumn($data['characters']['groups']['PvP Teams'], 'value', 'name');
         // Most x-linkshells
-        $data['characters']['groups']['Linkshells'] = Query::query('SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__linkshell_character`.`character_id`, count(`ffxiv__linkshell_character`.`character_id`) AS `count` FROM `ffxiv__linkshell_character` GROUP BY `ffxiv__linkshell_character`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC', return: 'all');
+        $data['characters']['groups']['Linkshells'] = Query::query("SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, 'character' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__linkshell_character`.`character_id`, count(`ffxiv__linkshell_character`.`character_id`) AS `count` FROM `ffxiv__linkshell_character` GROUP BY `ffxiv__linkshell_character`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC", return: 'all');
         Editors::renameColumn($data['characters']['groups']['Linkshells'], 'value', 'name');
         // Most linkshells
-        $data['characters']['groups']['simultaneous_linkshells'] = Query::query('SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__linkshell_character`.`character_id`, count(`ffxiv__linkshell_character`.`character_id`) AS `count` FROM `ffxiv__linkshell_character` WHERE `ffxiv__linkshell_character`.`current`=1 GROUP BY `ffxiv__linkshell_character`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC', return: 'all');
+        $data['characters']['groups']['simultaneous_linkshells'] = Query::query("SELECT `tempresult`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, 'character' AS `type`, `ffxiv__character`.`name` AS `value`, `count` FROM (SELECT `ffxiv__linkshell_character`.`character_id`, count(`ffxiv__linkshell_character`.`character_id`) AS `count` FROM `ffxiv__linkshell_character` WHERE `ffxiv__linkshell_character`.`current`=1 GROUP BY `ffxiv__linkshell_character`.`character_id` ORDER BY `count` DESC LIMIT 20) `tempresult` INNER JOIN `ffxiv__character` ON `tempresult`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `count` DESC", return: 'all');
         Editors::renameColumn($data['characters']['groups']['simultaneous_linkshells'], 'value', 'name');
         // Groups affiliation
         $data['characters']['groups']['participation'] = Query::query('
@@ -274,7 +277,7 @@ final readonly class FFTracker
                         GROUP BY `affiliation`;
                     ', return: 'all');
         // Get characters with most PvP matches. Using regular SQL since we do not count unique values, but rather use the regular column values
-        $data['characters']['most_pvp'] = Query::query('SELECT `ffxiv__character`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`, `pvp_matches` AS `count` FROM `ffxiv__character` ORDER BY `ffxiv__character`.`pvp_matches` DESC LIMIT 20', return: 'all');
+        $data['characters']['most_pvp'] = Query::query("SELECT `ffxiv__character`.`character_id` AS `id`, `ffxiv__character`.`avatar` AS `icon`, 'character' AS `type`, `ffxiv__character`.`name`, `pvp_matches` AS `count` FROM `ffxiv__character` ORDER BY `ffxiv__character`.`pvp_matches` DESC LIMIT 20", return: 'all');
         // Characters
         $data['servers']['characters'] = Query::query('SELECT `ffxiv__character`.`gender`, `ffxiv__server`.`server` AS `value`, count(`ffxiv__character`.`server_id`) AS `count` FROM `ffxiv__character` INNER JOIN `ffxiv__server` ON `ffxiv__character`.`server_id`=`ffxiv__server`.`server_id` WHERE `ffxiv__character`.`deleted` IS NULL GROUP BY `ffxiv__character`.`gender`, `value` ORDER BY `count` DESC', return: 'all');
     }
@@ -282,16 +285,16 @@ final readonly class FFTracker
     /**
      * Get data for statistics related to different groups.
      *
-     * @param array $data Array of gathered data
+     * @param array<string, mixed> $data Array of gathered data
      *
      * @return void
      */
     private function getGroups(array &$data): void
     {
         // Get most popular estate locations
-        $data['freecompany']['estate'] = Splitters::topAndBottom(Query::query('SELECT `ffxiv__estate`.`area`, `ffxiv__estate`.`plot`, CONCAT(`ffxiv__estate`.`area`, \', plot \', `ffxiv__estate`.`plot`) AS `value`, count(`ffxiv__freecompany`.`estate_id`) AS `count` FROM `ffxiv__freecompany` INNER JOIN `ffxiv__estate` ON `ffxiv__freecompany`.`estate_id`=`ffxiv__estate`.`estate_id` WHERE `ffxiv__freecompany`.`deleted` IS NULL AND `ffxiv__freecompany`.`estate_id` IS NOT NULL GROUP BY `value` ORDER BY `count` DESC', return: 'all'), 20);
+        $data['freecompany']['estate'] = Splitters::topAndBottom(Query::query("SELECT `ffxiv__estate`.`area`, `ffxiv__estate`.`plot`, CONCAT(`ffxiv__estate`.`area`, ', plot ', `ffxiv__estate`.`plot`) AS `value`, count(`ffxiv__freecompany`.`estate_id`) AS `count` FROM `ffxiv__freecompany` INNER JOIN `ffxiv__estate` ON `ffxiv__freecompany`.`estate_id`=`ffxiv__estate`.`estate_id` WHERE `ffxiv__freecompany`.`deleted` IS NULL AND `ffxiv__freecompany`.`estate_id` IS NOT NULL GROUP BY `value` ORDER BY `count` DESC", return: 'all'), 20);
         // Get statistics by activity time
-        $data['freecompany']['active'] = Query::query('SELECT IF(`ffxiv__freecompany`.`recruitment`=1, \'Recruiting\', \'Not recruiting\') AS `recruiting`, SUM(IF(`ffxiv__freecompany`.`active_id` = 1, 1, 0)) AS `Always`, SUM(IF(`ffxiv__freecompany`.`active_id` = 2, 1, 0)) AS `Weekdays`, SUM(IF(`ffxiv__freecompany`.`active_id` = 3, 1, 0)) AS `Weekends` FROM `ffxiv__freecompany` INNER JOIN `ffxiv__timeactive` ON `ffxiv__freecompany`.`active_id`=`ffxiv__timeactive`.`active_id` WHERE `ffxiv__freecompany`.`deleted` IS NULL GROUP BY 1 ORDER BY 1 DESC', return: 'all');
+        $data['freecompany']['active'] = Query::query("SELECT IF(`ffxiv__freecompany`.`recruitment`=1, 'Recruiting', 'Not recruiting') AS `recruiting`, SUM(IF(`ffxiv__freecompany`.`active_id` = 1, 1, 0)) AS `Always`, SUM(IF(`ffxiv__freecompany`.`active_id` = 2, 1, 0)) AS `Weekdays`, SUM(IF(`ffxiv__freecompany`.`active_id` = 3, 1, 0)) AS `Weekends` FROM `ffxiv__freecompany` INNER JOIN `ffxiv__timeactive` ON `ffxiv__freecompany`.`active_id`=`ffxiv__timeactive`.`active_id` WHERE `ffxiv__freecompany`.`deleted` IS NULL GROUP BY 1 ORDER BY 1 DESC", return: 'all');
         // Get statistics by activities
         $data['freecompany']['activities'] = Query::query('SELECT  SUM(`role_playing`)/COUNT(`fc_id`)*100 AS `Role-playing`, SUM(`leveling`)/COUNT(`fc_id`)*100 AS `Leveling`, SUM(`casual`)/COUNT(`fc_id`)*100 AS `Casual`, SUM(`hardcore`)/COUNT(`fc_id`)*100 AS `Hardcore`, SUM(`dungeons`)/COUNT(`fc_id`)*100 AS `Dungeons`, SUM(`guildhests`)/COUNT(`fc_id`)*100 AS `Guildhests`, SUM(`trials`)/COUNT(`fc_id`)*100 AS `Trials`, SUM(`raids`)/COUNT(`fc_id`)*100 AS `Raids`, SUM(`pvp`)/COUNT(`fc_id`)*100 AS `PvP` FROM `ffxiv__freecompany` WHERE `deleted` IS NULL', return: 'row');
         \arsort($data['freecompany']['activities']);
@@ -330,7 +333,7 @@ final readonly class FFTracker
     /**
      * Get data for achievements' statistics.
      *
-     * @param array $data Array of gathered data
+     * @param array<string, mixed> $data Array of gathered data
      *
      * @return void
      */
@@ -349,6 +352,7 @@ final readonly class FFTracker
         foreach ($data['achievements'] as $key => $category) {
             $data['achievements'][$key] = \array_slice($category, 0, 20);
         }
+
         // Get the most and least popular titles
         $data['titles'] = Splitters::topAndBottom(Query::query('SELECT COUNT(*) as `count`, `ffxiv__achievement`.`title`, `ffxiv__achievement`.`achievement_id` FROM `ffxiv__character` LEFT JOIN `ffxiv__achievement` ON `ffxiv__achievement`.`achievement_id`=`ffxiv__character`.`title_id` WHERE `ffxiv__character`.`title_id` IS NOT NULL GROUP BY `title_id` ORDER BY `count` DESC;', return: 'all'), 20);
     }
@@ -356,7 +360,7 @@ final readonly class FFTracker
     /**
      * Get data statistics linked to dates.
      *
-     * @param array $data Array of gathered data
+     * @param array<string, mixed> $data Array of gathered data
      *
      * @return void
      */
@@ -393,24 +397,25 @@ final readonly class FFTracker
         );
         $data['timelines'] = Splitters::splitByKey($data['timelines'], 'date');
         foreach ($data['timelines'] as $date => $datapoint) {
-            $data['timelines'][$date] = Converters::multiToSingle(Editors::digitToKey($datapoint, 'type', true), 'count');
+            $data['timelines'][$date] = Converters::multiToSingle(Editors::digitToKey($datapoint, 'type', key_unset: true), 'count');
         }
+
         \krsort($data['timelines']);
     }
 
     /**
      * Get data for potential data bugs.
      *
-     * @param array $data Array of gathered data
+     * @param array<string, mixed> $data Array of gathered data
      *
      * @return void
      */
     private function getBugs(array &$data): void
     {
         // Characters with no clan/race
-        $data['bugs']['no_clan'] = Query::query('SELECT `character_id` AS `id`, `name`, `avatar` AS `icon`, \'character\' AS `type` FROM `ffxiv__character` WHERE `clan_id` IS NULL AND `deleted` IS NULL AND `hidden` IS NULL ORDER BY `updated`, `name`;', return: 'all');
+        $data['bugs']['no_clan'] = Query::query("SELECT `character_id` AS `id`, `name`, `avatar` AS `icon`, 'character' AS `type` FROM `ffxiv__character` WHERE `clan_id` IS NULL AND `deleted` IS NULL AND `hidden` IS NULL ORDER BY `updated`, `name`;", return: 'all');
         // Characters with no avatar
-        $data['bugs']['no_avatar'] = Query::query('SELECT `character_id` AS `id`, `name`, `avatar` AS `icon`, \'character\' AS `type` FROM `ffxiv__character` WHERE `avatar` LIKE \'defaultf%\' AND `deleted` IS NULL AND `hidden` IS NULL ORDER BY `updated`, `name`;', return: 'all');
+        $data['bugs']['no_avatar'] = Query::query("SELECT `character_id` AS `id`, `name`, `avatar` AS `icon`, 'character' AS `type` FROM `ffxiv__character` WHERE `avatar` LIKE 'defaultf%' AND `deleted` IS NULL AND `hidden` IS NULL ORDER BY `updated`, `name`;", return: 'all');
         // Groups with no members
         $data['bugs']['no_members'] = AbstractEntity::cleanCrestResults(Query::query(
             'SELECT `fc_id` AS `id`, `name`, \'freecompany\' AS `type`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany` as `fc` WHERE `deleted` IS NULL AND `fc_id` NOT IN (SELECT `fc_id` FROM `ffxiv__freecompany_character` WHERE `fc_id`=`fc`.`fc_id` AND `current`=1)
@@ -541,22 +546,24 @@ final readonly class FFTracker
         $data['bugs']['duplicate_names'] = Splitters::splitByKey($duplicate_names, 'type', keep_key: true);
         foreach ($data['bugs']['duplicate_names'] as $entity_type => $names_data) {
             // Split by server/data center
-            $data['bugs']['duplicate_names'][$entity_type] = Splitters::splitByKey($names_data, (\in_array($entity_type, ['pvpteam', 'crossworldlinkshell'], true) ? 'data_center' : 'server'));
+            $data['bugs']['duplicate_names'][$entity_type] = Splitters::splitByKey($names_data, (\in_array($entity_type, ['pvpteam', 'crossworldlinkshell'], strict: true) ? 'data_center' : 'server'));
             foreach ($data['bugs']['duplicate_names'][$entity_type] as $server => $server_data) {
                 // Split by name
                 $data['bugs']['duplicate_names'][$entity_type][$server] = Splitters::splitByKey($server_data, 'name', keep_key: true, case_insensitive: true);
                 foreach ($data['bugs']['duplicate_names'][$entity_type][$server] as $name => $name_data) {
-                    if (\in_array($entity_type, ['freecompany', 'pvpteam'], true)) {
+                    if (\in_array($entity_type, ['freecompany', 'pvpteam'], strict: true)) {
                         $name_data = AbstractEntity::cleanCrestResults($name_data);
                     }
+
                     foreach ($name_data as $key => $duplicates) {
                         // Clean up
                         unset($duplicates['crest_part_1'], $duplicates['crest_part_2'], $duplicates['crest_part_3']);
-                        if (\in_array($entity_type, ['crossworldlinkshell', 'pvpteam'], true)) {
+                        if (\in_array($entity_type, ['crossworldlinkshell', 'pvpteam'], strict: true)) {
                             unset($duplicates['server']);
                         } else {
                             unset($duplicates['data_center']);
                         }
+
                         // Update array
                         $data['bugs']['duplicate_names'][$entity_type][$server][$name][$key] = $duplicates;
                     }
@@ -568,7 +575,7 @@ final readonly class FFTracker
     /**
      * Get data for uncategorized statistics.
      *
-     * @param array $data Array of gathered data
+     * @param array<string, mixed> $data Array of gathered data
      *
      * @return void
      */
@@ -630,8 +637,9 @@ final readonly class FFTracker
         );
         $data['updates_stats'] = Splitters::splitByKey($data['updates_stats'], 'date');
         foreach ($data['updates_stats'] as $date => $datapoint) {
-            $data['updates_stats'][$date] = Converters::multiToSingle(Editors::digitToKey($datapoint, 'type', true), 'count');
+            $data['updates_stats'][$date] = Converters::multiToSingle(Editors::digitToKey($datapoint, 'type', key_unset: true), 'count');
         }
+
         \krsort($data['updates_stats']);
         $data['updates_stats'] = \array_slice($data['updates_stats'], 0, 30);
     }
@@ -639,7 +647,7 @@ final readonly class FFTracker
     /**
      * Adds jobs for all entities considered as potential bugs.
      *
-     * @param array $data Array of gathered data
+     * @param array<string, mixed> $data Array of gathered data
      *
      * @return void
      *
@@ -654,17 +662,20 @@ final readonly class FFTracker
         foreach ($data['bugs']['no_clan'] as $character) {
             $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $character['id'], 'character'], 'message' => 'Updating character with ID '.$character['id']])->add();
         }
+
         foreach ($data['bugs']['no_avatar'] as $character) {
             $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $character['id'], 'character'], 'message' => 'Updating character with ID '.$character['id']])->add();
         }
+
         foreach ($data['bugs']['no_members'] as $group) {
             $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $group['id'], $group['type']], 'message' => 'Updating group with ID '.$group['id']])->add();
         }
+
         foreach ($data['bugs']['duplicate_names'] as $servers) {
             foreach ($servers as $server) {
                 foreach ($server as $names) {
-                    foreach ($names as $duplicate) {
-                        $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $duplicate['id'], $duplicate['type']], 'message' => 'Updating entity with ID '.$duplicate['id']])->add();
+                    foreach ($names as $name) {
+                        $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $name['id'], $name['type']], 'message' => 'Updating entity with ID '.$name['id']])->add();
                     }
                 }
             }

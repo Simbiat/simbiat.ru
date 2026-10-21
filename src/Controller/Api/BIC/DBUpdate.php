@@ -15,12 +15,15 @@ use App\Service\Errors;
 final class DBUpdate extends Api
 {
     // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    #[\Override]
     protected array $methods = ['PUT' => ''];
 
     // Flag to indicate, that this is the lowest level
+    #[\Override]
     protected bool $final_node = true;
 
     // Description of the node
+    #[\Override]
     protected array $description = [
         'description' => 'Node to force BIC database update',
     ];
@@ -34,17 +37,18 @@ final class DBUpdate extends Api
      */
     protected function genData(array $path): array
     {
-        if (!\array_key_exists(HomePage::$method, $this->methods)) {
+        if (!\array_key_exists((string) HomePage::$method, $this->methods)) {
             return ['http_error' => 405];
         }
 
         try {
-            $data = new BICLibrary()->update(true);
+            $data = new BICLibrary()->update(manual: true);
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
 
             return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         }
+
         if (\is_string($data)) {
             return ['http_error' => 500, 'reason' => $data];
         }

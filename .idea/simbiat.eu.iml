@@ -58,8 +58,6 @@
       <excludeFolder url="file://$MODULE_DIR$/public/assets/controllers" />
       <excludeFolder url="file://$MODULE_DIR$/public/assets/html5games" />
       <excludeFolder url="file://$MODULE_DIR$/public/assets/styles" />
-      <excludeFolder url="file://$MODULE_DIR$/build/PSDs" />
-      <excludeFolder url="file://$MODULE_DIR$/build/phpmyadmin" />
       <excludeFolder url="file://$MODULE_DIR$/lib/DDCIcons/src/icons" />
       <excludeFolder url="file://$MODULE_DIR$/lib/FFXIV/CrestComponents" />
       <excludeFolder url="file://$MODULE_DIR$/lib/FFXIV/EstateMaps" />
@@ -68,7 +66,6 @@
       <excludeFolder url="file://$MODULE_DIR$/public/assets/images/fftracker/crests-components" />
       <excludeFolder url="file://$MODULE_DIR$/public/assets/images/fftracker/icons" />
       <excludeFolder url="file://$MODULE_DIR$/public/assets/images/fftracker/maps" />
-      <excludeFolder url="file://$MODULE_DIR$/build/BIC" />
       <excludeFolder url="file://$MODULE_DIR$/packages/DDCIcons/icons" />
       <excludeFolder url="file://$MODULE_DIR$/var/cache" />
       <excludeFolder url="file://$MODULE_DIR$/var/log" />
@@ -83,6 +80,7 @@
       <excludeFolder url="file://$MODULE_DIR$/public/assets/app.js.map" />
       <excludePattern pattern="public\assets\app.*" />
     </content>
+    <content url="file://$MODULE_DIR$/build/DDL" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

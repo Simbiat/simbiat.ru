@@ -11,12 +11,15 @@ use App\HomePage;
 final class Sections extends Api
 {
     // Flag to indicate, that this is the lowest level
+    #[\Override]
     protected bool $final_node = true;
 
     // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    #[\Override]
     protected array $methods = ['POST' => ['add', 'edit'], 'DELETE' => 'delete', 'PATCH' => ['move', 'close', 'open', 'mark_private', 'mark_public']];
 
     // Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+    #[\Override]
     protected array $verbs = [
         'add' => 'Add section',
         'close' => 'Close section',
@@ -29,9 +32,11 @@ final class Sections extends Api
     ];
 
     // Flag indicating that authentication is required
+    #[\Override]
     protected bool $authentication_needed = true;
 
     // Flag to indicate need to validate CSRF
+    #[\Override]
     protected bool $csrf = true;
 
     protected function genData(array $path): array
@@ -40,6 +45,7 @@ final class Sections extends Api
         if (empty($path[1])) {
             $path[1] = 'add';
         }
+
         // Check for ID
         if (empty($path[0])) {
             // Limit accidental spam by extra checks
@@ -53,9 +59,11 @@ final class Sections extends Api
             // Only support adding a new post here
             return new Section()->add();
         }
+
         if (!\is_numeric($path[0])) {
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` is not numeric'];
         }
+
         $section = new Section($path[0])->get();
         if ($section->id === null) {
             return ['http_error' => 404, 'reason' => 'ID `'.$path[0].'` not found'];
@@ -64,9 +72,9 @@ final class Sections extends Api
         return match ($path[1]) {
             'edit' => $section->edit(),
             'delete' => $section->delete(),
-            'mark_private' => $section->setPrivate(true),
+            'mark_private' => $section->setPrivate(private: true),
             'mark_public' => $section->setPrivate(),
-            'close' => $section->setClosed(true),
+            'close' => $section->setClosed(closed: true),
             'open' => $section->setClosed(),
             'move' => $section->move(),
             default => ['http_error' => 405, 'reason' => 'Unsupported API verb used'],

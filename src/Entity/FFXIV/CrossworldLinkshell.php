@@ -17,12 +17,20 @@ final class CrossworldLinkshell extends AbstractEntity
     protected const string ENTITY_TYPE = 'crossworldlinkshell';
 
     public array $dates = [];
+
     public ?string $community = null;
+
     public ?string $server = null;
+
     public ?string $data_center = null;
+
     public array $old_names = [];
+
     public array $members = [];
+
     public array $past_members = [];
+
+    #[\Override]
     protected string $id_format = '/^[a-z\d]{40}$/m';
 
     /**
@@ -49,12 +57,14 @@ final class CrossworldLinkshell extends AbstractEntity
 
                 return 'Request throttled by Lodestone';
             }
+
             if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) !== 1) {
                 Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
             }
 
             return 'Failed to get all necessary data for Linkshell '.$this->id;
         }
+
         if (
             empty($data['linkshells'])
             || empty($data['linkshells'][$this->id]['server'])
@@ -75,6 +85,7 @@ final class CrossworldLinkshell extends AbstractEntity
 
                 return ['404' => true];
             }
+
             if (
                 empty($data['linkshells'])
                 || empty($data['linkshells'][$this->id])
@@ -85,9 +96,11 @@ final class CrossworldLinkshell extends AbstractEntity
 
                 return 'Failed to get all necessary data for Crossworld Linkshell '.$this->id;
             }
+
             // At some point, empty linkshells became possible on lodestone, those that have a page, but no members at all, and are not searchable by name. Possibly private linkshells or something like that
             $data['linkshells'][$this->id]['empty'] = true;
         }
+
         $data = $data['linkshells'][$this->id];
         $data['id'] = $this->id;
         $data['404'] = false;
@@ -107,10 +120,11 @@ final class CrossworldLinkshell extends AbstractEntity
         if ($data === []) {
             return [];
         }
+
         // Get old names
         $data['old_names'] = Query::query('SELECT `name` FROM `ffxiv__linkshell_names` WHERE `ls_id`=:id AND `name`<>:name', [':id' => $this->id, ':name' => $data['name']], return: 'column');
         // Get members
-        $data['members'] = Query::query('SELECT \'character\' AS `type`, `ffxiv__linkshell_character`.`character_id` AS `id`, `ffxiv__character`.`name`, `current`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__linkshell_rank`.`rank`, `ffxiv__linkshell_rank`.`ls_rank_id`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE uc__user_to_ff_character.`character_id`=`ffxiv__linkshell_character`.`character_id`) AS `user_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_rank`.`ls_rank_id`=`ffxiv__linkshell_character`.`rank_id` LEFT JOIN `ffxiv__character` ON `ffxiv__linkshell_character`.`character_id`=`ffxiv__character`.`character_id` WHERE `ffxiv__linkshell_character`.`ls_id`=:id ORDER BY `ffxiv__linkshell_character`.`rank_id` , `ffxiv__character`.`name` ', [':id' => $this->id], return: 'all');
+        $data['members'] = Query::query("SELECT 'character' AS `type`, `ffxiv__linkshell_character`.`character_id` AS `id`, `ffxiv__character`.`name`, `current`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__linkshell_rank`.`rank`, `ffxiv__linkshell_rank`.`ls_rank_id`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE uc__user_to_ff_character.`character_id`=`ffxiv__linkshell_character`.`character_id`) AS `user_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_rank`.`ls_rank_id`=`ffxiv__linkshell_character`.`rank_id` LEFT JOIN `ffxiv__character` ON `ffxiv__linkshell_character`.`character_id`=`ffxiv__character`.`character_id` WHERE `ffxiv__linkshell_character`.`ls_id`=:id ORDER BY `ffxiv__linkshell_character`.`rank_id` , `ffxiv__character`.`name` ", [':id' => $this->id], return: 'all');
         // Clean up the data from unnecessary (technical) clutter
         unset($data['server_id']);
         if ($data['crossworld']) {
@@ -189,6 +203,7 @@ final class CrossworldLinkshell extends AbstractEntity
                     ],
                 ];
             }
+
             // Register Linkshell name if it's not registered already
             $queries[] = [
                 'INSERT IGNORE INTO `ffxiv__linkshell_names`(`ls_id`, `name`) VALUES (:ls_id, :name);',
@@ -204,7 +219,7 @@ final class CrossworldLinkshell extends AbstractEntity
                 // Check if member from tracker is present in a Lodestone list
                 if (
                     !\array_key_exists('members', $this->lodestone)
-                    || !\array_key_exists($member, $this->lodestone['members'])
+                    || !\array_key_exists((string) $member, $this->lodestone['members'])
                 ) {
                     // Update status for the character
                     $queries[] = [
@@ -216,6 +231,7 @@ final class CrossworldLinkshell extends AbstractEntity
                     ];
                 }
             }
+
             // Process Lodestone members
             if (!empty($this->lodestone['members'])) {
                 foreach ($this->lodestone['members'] as $member => $details) {
@@ -231,6 +247,7 @@ final class CrossworldLinkshell extends AbstractEntity
                     ];
                 }
             }
+
             // Running the queries we've accumulated
             Query::query($queries);
             // Schedule a proper update of any newly added characters
@@ -251,7 +268,7 @@ final class CrossworldLinkshell extends AbstractEntity
      *
      * @return bool
      */
-    protected function delete(): bool
+    private function delete(): bool
     {
         try {
             $queries = [];

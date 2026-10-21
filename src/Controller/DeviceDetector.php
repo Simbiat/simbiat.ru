@@ -8,25 +8,37 @@ use App\Controller\Abstracts\FileListing;
 
 final class DeviceDetector extends FileListing
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/simplepages/devicedetector', 'name' => 'Device Detector'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'devicedetector';
 
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'Device Detector Icons';
 
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'Device Detector Icons';
 
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'Icons or logos of operating systems, browsers and other applications based on respective items detectable by matomo-org/device-detector library';
+
+    #[\Override]
     protected string $og_image = '/ogimages/devicedetector.webp';
 
     // Directories relative to working dir
+    #[\Override]
     protected array $dirs = [
         'app' => ['path' => '/packages/DDCIcons/icons/client/mobile app', 'name' => 'Applications'],
         'bot' => ['path' => '/packages/DDCIcons/icons/bot', 'name' => 'Bots'],

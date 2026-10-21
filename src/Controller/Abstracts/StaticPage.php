@@ -10,9 +10,11 @@ namespace App\Controller\Abstracts;
 abstract class StaticPage extends Page
 {
     // Flag to indicate this is a static page
+    #[\Override]
     protected bool $static = true;
 
     // Cache strategy: aggressive, private, live, month, week, day, hour
+    #[\Override]
     protected string $cache_strategy = 'week';
 
     /**

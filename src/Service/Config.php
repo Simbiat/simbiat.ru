@@ -15,34 +15,63 @@ final class Config
 {
     // Handled in Symfony YAML settings
     public private(set) static string $work_dir = '';
+
     public private(set) static string $environment = 'dev';
+
     public private(set) static string $admin_email = '';
+
     public private(set) static string $admin_name = '';
+
     public private(set) static string $site_name = '';
+
     public private(set) static string $from_email = '';
+
     public private(set) static string $http_host = '';
+
     public private(set) static string $base_url = '';
+
     public private(set) static string $html_cache = '';
+
     public private(set) static string $sitemap = '';
+
     public private(set) static string $js_dir = '';
+
     public private(set) static string $css_dir = '';
+
     public private(set) static string $img_dir = '';
+
     public private(set) static string $uploaded = '';
+
     public private(set) static string $uploaded_img = '';
+
     public private(set) static string $ddl_dir = '';
+
     public private(set) static string $geoip = '';
+
     public private(set) static string $crests_components = '';
+
     public private(set) static string $merged_crests_cache = '';
+
     public private(set) static string $icons = '';
+
     public private(set) static string $statistics = '';
+
     public private(set) static array $cookie_settings = [];
+
     public private(set) static array $group_ids = [];
+
     public private(set) static array $tracking_query_parameters = [];
+
     public private(set) static array $teapot_browsers = [];
+
     public private(set) static string $mailer_dsn = '';
+
     public private(set) static string $database_name = '';
+
     public private(set) static string $encryption_passphrase = '';
+
     public private(set) static array $argon_settings = [];
+
     public private(set) static Environment $twig;
 
     // Track if the DB connection is up
@@ -102,6 +131,7 @@ final class Config
 
             return false;
         }
+
         // Check in case we accidentally call this for the 2nd time
         if (!self::$dbup) {
             try {
@@ -114,6 +144,7 @@ final class Config
                 if (\preg_match('/HY000.*\[(2002|2006)]/u', $exception->getMessage()) !== 1) {
                     Errors::error_log($exception);
                 }
+
                 self::$dbup = false;
 
                 return false;

@@ -33,11 +33,12 @@ abstract class Entity
         try {
             // Set ID
             if ($this->id === null) {
-                throw new \UnexpectedValueException('ID can\'t be empty.');
+                throw new \UnexpectedValueException("ID can't be empty.");
             }
+
             // Get data
             $result = $this->getFromDB();
-            if (empty($result)) {
+            if ($result === []) {
                 // Reset ID
                 $this->id = null;
             } else {
@@ -70,6 +71,7 @@ abstract class Entity
                 return [];
             }
         }
+
         $array = \get_mangled_object_vars($this);
         // Remove private and protected properties
         foreach ($array as $key => $value) {
@@ -110,7 +112,7 @@ abstract class Entity
         if (!empty($id)) {
             $this->setId($id);
         } elseif ($id !== null) {
-            throw new \UnexpectedValueException('ID can\'t be empty.');
+            throw new \UnexpectedValueException("ID can't be empty.");
         }
     }
 

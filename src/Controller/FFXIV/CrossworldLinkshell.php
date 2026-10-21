@@ -8,24 +8,34 @@ use App\Controller\Abstracts\Page;
 
 final class CrossworldLinkshell extends Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/fftracker/crossworld_linkshells', 'name' => 'Crossworld Linkshell'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'crossworld_linkshell';
 
     // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'Crossworld Linkshell';
 
     // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'Crossworld Linkshell';
 
     // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'Crossworld Linkshell';
 
     // List of permissions, from which at least 1 is required to have access to the page
+    #[\Override]
     protected array $required_permission = ['view_ff'];
 
     // This is the actual page generation based on further details of the $path
@@ -40,15 +50,14 @@ final class CrossworldLinkshell extends Page
         if (empty($output_array['linkshell']['id'])) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
+
         $output_array['linkshell']['crossworld'] = true;
         // Try to exit early based on the modification date
         $this->lastModified($output_array['linkshell']['dates']['updated']);
         // Check if linked to the current user
         $output_array['linkshell']['linked']
             = $_SESSION['user_id'] !== 1
-            && \in_array($_SESSION['user_id'], \array_column($output_array['linkshell']['members'], 'user_id'), true)
-                    ? true
-                    : false;
+            && \in_array($_SESSION['user_id'], \array_column($output_array['linkshell']['members'], 'user_id'), strict: true);
         $output_array['linkshell']['dates']['scheduled'] = $entity->scheduleUpdate();
         $output_array['linkshell']['can_refresh']
             = (
@@ -57,9 +66,7 @@ final class CrossworldLinkshell extends Page
                     || $output_array['linkshell']['linked']
                 )
             )
-            || \in_array('refresh_all_ff', $_SESSION['permissions'], true)
-                    ? true
-                    : false;
+            || \in_array('refresh_all_ff', $_SESSION['permissions'], strict: true);
         // Continue breadcrumbs
         $this->breadcrumb[] = ['href' => '/fftracker/crossworld_linkshells/'.$id, 'name' => $output_array['linkshell']['name']];
         // Update meta
@@ -76,7 +83,7 @@ final class CrossworldLinkshell extends Page
             $this->alt_links[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/crossworld_linkshells/'.$id.'/lodestone/'];
             $this->alt_links[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => $output_array['linkshell']['lodestone_url']];
             if (!empty($output_array['linkshell']['community'])) {
-                $this->alt_links[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/'.$output_array['linkshell']['community']];
+                $this->alt_links[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => "Group's community page on Lodestone EU", 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/'.$output_array['linkshell']['community']];
             }
         } else {
             $output_array['linkshell']['lodestone_url'] = null;

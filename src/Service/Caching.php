@@ -23,6 +23,7 @@ final class Caching
         if (Sanitize::whiteString($this->cache_dir)) {
             $this->cache_dir = Config::$html_cache;
         }
+
         /* @noinspection PhpUsageOfSilenceOperatorInspection */
         if (
             !\is_dir($this->cache_dir)
@@ -31,6 +32,7 @@ final class Caching
         ) {
             throw new \RuntimeException(\sprintf('Directory "%s" was not created', $this->cache_dir));
         }
+
         if (\preg_match('/\/$/', $this->cache_dir) !== 1) {
             $this->cache_dir .= '/';
         }
@@ -61,12 +63,14 @@ final class Caching
                 if ($age > 0) {
                     $data['cache_expires_at'] = \time() + $age;
                 }
+
                 // JSON encode the data
                 $data = \json_encode($data, \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR | \JSON_PRESERVE_ZERO_FRACTION | \JSON_PRETTY_PRINT);
             }
         } catch (\Throwable) {
             $data = '';
         }
+
         if (
             $data !== ''
             && $data !== []
@@ -84,6 +88,7 @@ final class Caching
             ) {
                 throw new \RuntimeException(\sprintf('Directory "%s" was not created', $this->cache_dir.$sub_dir));
             }
+
             // Write the file. We do not care much if it fails, so silencing
             /* @noinspection PhpUsageOfSilenceOperatorInspection */
             if (@\file_put_contents($this->cache_dir.$sub_dir.$key.'.json', $data)) {
@@ -95,6 +100,7 @@ final class Caching
                 return true;
             }
         }
+
         if (!\headers_sent()) {
             \header('X-Server-Cached: false');
             \header('X-Server-Cache-Hit: false');
@@ -127,14 +133,16 @@ final class Caching
             $data['cached_page'] = true;
             if (!empty($data['http_headers'])) {
                 // Send headers
-                \array_map('\header', $data['http_headers']);
+                \array_map(\header(...), $data['http_headers']);
             }
+
             // Send header indicating that cached response was sent
             if (\headers_sent()) {
                 \header('X-Server-Cached: true');
                 \header('X-Server-Cache-Hit: true');
             }
         }
+
         // Ensure we use fresh CSRF
         unset($data['X-CSRF-Token']);
 
@@ -151,12 +159,10 @@ final class Caching
     public function key(string $key): string
     {
         if ($key === '') {
-            $key = \hash('sha3-512', (empty(HomePage::$user_agent['bot']) ? '' : 'bot_').HomePage::$canonical);
-        } else {
-            $key = \hash('sha3-512', $key);
+            return \hash('sha3-512', (empty(HomePage::$user_agent['bot']) ? '' : 'bot_').HomePage::$canonical);
         }
 
-        return $key;
+        return \hash('sha3-512', $key);
     }
 
     /**
@@ -183,10 +189,11 @@ final class Caching
         }
 
         try {
-            $json = \json_decode($json, true, 512, \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR);
+            $json = \json_decode($json, associative: true, depth: 512, flags: \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR);
         } catch (\Throwable) {
             $json = [];
         }
+
         if ($json === null) {
             return [];
         }

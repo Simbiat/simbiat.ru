@@ -8,27 +8,38 @@ use App\Controller\Abstracts\Page;
 
 final class Password extends Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/uc/password', 'name' => 'Password'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'password';
 
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'Password';
 
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'Password change';
 
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'Page to change password';
 
     // Cache strategy: aggressive, private, live, month, week, day, hour
+    #[\Override]
     protected string $cache_strategy = 'private';
 
     // Flag indicating that authentication is required
+    #[\Override]
     protected bool $authentication_needed = false;
 
     // This is the actual page generation based on further details of the $path
@@ -49,6 +60,7 @@ final class Password extends Page
             if (empty($path[1])) {
                 return ['http_error' => 403];
             }
+
             $output_array = ['user_id' => $path[0], 'token' => $path[1]];
         }
 

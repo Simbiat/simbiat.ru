@@ -17,6 +17,7 @@ final class Feeds
      * Function to parse URI and generate appropriate feed.
      *
      * @throws \Exception
+     * @param array<int, mixed> $uri
      */
     public function uriParse(array $uri): array
     {
@@ -34,7 +35,7 @@ final class Feeds
     /**
      * Generate Atom/RSS.
      *
-     * @param array  $uri    List of URIs
+     * @param array<int, mixed> $uri List of URIs
      * @param string $format What format should be used
      *
      * @return array<string, int>
@@ -79,6 +80,7 @@ final class Feeds
                         'webMaster' => Config::$admin_email,
                     ];
                 }
+
                 // Set description
                 $description = match ($uri[0]) {
                     'bicchanged' => 'Последние 25 изменений банков',
@@ -93,13 +95,15 @@ final class Feeds
                         $settings['description'] = $description;
                     }
                 }
+
                 // Change language for BICs
                 if (
                     $format === 'rss'
-                    && \in_array($uri[0], ['bicchanged', 'bicdeleted'], true)
+                    && \in_array($uri[0], ['bicchanged', 'bicdeleted'], strict: true)
                 ) {
                     $settings['language'] = 'ru-ru';
                 }
+
                 // Set a query for the feed
                 if ($format === 'atom') {
                     $query = match ($uri[0]) {
@@ -108,10 +112,11 @@ final class Feeds
                     };
                 } elseif ($format === 'rss') {
                     $query = match ($uri[0]) {
-                        'bicchanged' => 'SELECT CONCAT(:base_url, `BIC`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
-                        'bicdeleted' => 'SELECT CONCAT(:base_url, `BIC`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25',
+                        'bicchanged' => "SELECT CONCAT(:base_url, `BIC`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, 'BICs' AS `category` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25",
+                        'bicdeleted' => "SELECT CONCAT(:base_url, `BIC`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, 'BICs' AS `category` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25",
                     };
                 }
+
                 // Generate the feed
                 if (!empty($query)) {
                     if ($format === 'atom') {

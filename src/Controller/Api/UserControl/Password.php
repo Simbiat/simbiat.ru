@@ -16,12 +16,15 @@ use Simbiat\Database\Query;
 final class Password extends Api
 {
     // Flag to indicate that this is the lowest level
+    #[\Override]
     protected bool $final_node = true;
 
     // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    #[\Override]
     protected array $methods = ['PATCH' => ''];
 
     // Flag to indicate need to validate CSRF
+    #[\Override]
     protected bool $csrf = true;
 
     /**
@@ -40,20 +43,25 @@ final class Password extends Api
             if ($_SESSION['user_id'] === 1) {
                 return ['http_error' => 403, 'reason' => 'Not logged in'];
             }
+
             $id = $_SESSION['user_id'];
         }
+
         if (
             empty($_POST['current_password'])
             && empty($_POST['pass_reset'])
         ) {
             return ['http_error' => 400, 'reason' => 'No current password or reset token provided'];
         }
+
         if (empty($_POST['new_password'])) {
             return ['http_error' => 400, 'reason' => 'New password not provided'];
         }
+
         if (!Config::$dbup) {
             return ['http_error' => 503, 'reason' => 'Database is not available'];
         }
+
         $user = new User($id);
         if (empty($_POST['pass_reset'])) {
             // Get password
@@ -66,9 +74,11 @@ final class Password extends Api
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
+
             if (empty($password)) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
+
             // Validate current password
             if (!$user->passValid($_POST['current_password'], $password)) {
                 return ['http_error' => 403, 'reason' => 'Bad password'];
@@ -84,15 +94,18 @@ final class Password extends Api
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
+
             if (empty($pw_reset)) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
+
             // Validate token
             if (!\password_verify($_POST['pass_reset'], $pw_reset)) {
                 return ['http_error' => 403, 'reason' => 'Bad password reset token'];
             }
         }
-        Security::session_regenerate_id(true);
+
+        Security::session_regenerate_id(delete_old_session: true);
         // Change password
         if ($user->passChange($_POST['new_password'])) {
             return ['response' => true];

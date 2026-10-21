@@ -14,11 +14,13 @@ use App\Service\Upload;
 final class Api extends \App\Controller\Api\Api
 {
     // Supported edges
+    #[\Override]
     protected array $sub_routes = [
         'fftracker', 'bictracker', 'uc', 'upload', 'talks', 'contact',
     ];
 
     // Description of the nodes (need to be in the same order)
+    #[\Override]
     protected array $routes_description = [
         'Endpoints related to Final Fantasy XIV Tracker',
         'Endpoints related to BIC Tracker',
@@ -29,6 +31,7 @@ final class Api extends \App\Controller\Api\Api
     ];
 
     // Flag to indicate that this is a top level node (false by default)
+    #[\Override]
     protected bool $top_level = true;
 
     /**

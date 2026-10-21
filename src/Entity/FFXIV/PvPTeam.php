@@ -20,12 +20,20 @@ final class PvPTeam extends AbstractEntity
     protected const string ENTITY_TYPE = 'pvpteam';
 
     public array $dates = [];
+
     public ?string $community = null;
+
     public array $crest = [];
+
     public string $data_center;
+
     public array $old_names = [];
+
     public array $members = [];
+
     public array $past_members = [];
+
+    #[\Override]
     protected string $id_format = '/^[a-z\d]{40}$/m';
 
     /**
@@ -52,12 +60,14 @@ final class PvPTeam extends AbstractEntity
 
                 return 'Request throttled by Lodestone';
             }
+
             if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) !== 1) {
                 Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
             }
 
             return 'Failed to get all necessary data for PvPTeam '.$this->id;
         }
+
         if (
             empty($data['pvpteams'][$this->id]['data_center'])
             || empty($data['pvpteams'][$this->id]['members'])
@@ -70,10 +80,12 @@ final class PvPTeam extends AbstractEntity
 
                 return ['404' => true];
             }
+
             Errors::error_log(new \RuntimeException('Failed to get all necessary data for PvP Team '.$this->id), ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
 
             return 'Failed to get all necessary data for PvP Team '.$this->id;
         }
+
         if (
             empty($data['pvpteams'][$this->id]['crest'][2])
             && !empty($data['pvpteams'][$this->id]['crest'][1])
@@ -81,6 +93,7 @@ final class PvPTeam extends AbstractEntity
             $data['pvpteams'][$this->id]['crest'][2] = $data['pvpteams'][$this->id]['crest'][1];
             $data['pvpteams'][$this->id]['crest'][1] = null;
         }
+
         $data = $data['pvpteams'][$this->id];
         $data['id'] = $this->id;
         $data['404'] = false;
@@ -102,10 +115,11 @@ final class PvPTeam extends AbstractEntity
         if ($data === []) {
             return [];
         }
+
         // Get old names
         $data['old_names'] = Query::query('SELECT `name` FROM `ffxiv__pvpteam_names` WHERE `pvp_id`=:id AND `name`<>:name', [':id' => $this->id, ':name' => $data['name']], return: 'column');
         // Get members
-        $data['members'] = Query::query('SELECT \'character\' AS `type`, `ffxiv__pvpteam_character`.`character_id` AS `id`, `ffxiv__character`.`pvp_matches` AS `matches`, `ffxiv__character`.`name`, `current`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__pvpteam_rank`.`rank`, `ffxiv__pvpteam_rank`.`pvp_rank_id`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE uc__user_to_ff_character.`character_id`=`ffxiv__pvpteam_character`.`character_id`) AS `user_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_rank`.`pvp_rank_id`=`ffxiv__pvpteam_character`.`rank_id` LEFT JOIN `ffxiv__character` ON `ffxiv__pvpteam_character`.`character_id`=`ffxiv__character`.`character_id` WHERE `ffxiv__pvpteam_character`.`pvp_id`=:id ORDER BY `ffxiv__pvpteam_character`.`rank_id` , `ffxiv__character`.`name` ', [':id' => $this->id], return: 'all');
+        $data['members'] = Query::query("SELECT 'character' AS `type`, `ffxiv__pvpteam_character`.`character_id` AS `id`, `ffxiv__character`.`pvp_matches` AS `matches`, `ffxiv__character`.`name`, `current`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__pvpteam_rank`.`rank`, `ffxiv__pvpteam_rank`.`pvp_rank_id`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE uc__user_to_ff_character.`character_id`=`ffxiv__pvpteam_character`.`character_id`) AS `user_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_rank`.`pvp_rank_id`=`ffxiv__pvpteam_character`.`rank_id` LEFT JOIN `ffxiv__character` ON `ffxiv__pvpteam_character`.`character_id`=`ffxiv__character`.`character_id` WHERE `ffxiv__pvpteam_character`.`pvp_id`=:id ORDER BY `ffxiv__pvpteam_character`.`rank_id` , `ffxiv__character`.`name` ", [':id' => $this->id], return: 'all');
         // Clean up the data from unnecessary (technical) clutter
         unset($data['data_center_id'], $data['server_id'], $data['server']);
 
@@ -139,6 +153,7 @@ final class PvPTeam extends AbstractEntity
         foreach ($from_db['members'] as $key => $member) {
             $from_db['members'][$key]['matches'] = (int) $member['matches'];
         }
+
         $members = Splitters::splitByKey($from_db['members'], 'current');
         $this->members = $members[1] ?? [];
         $this->past_members = $members[0] ?? [];
@@ -195,7 +210,7 @@ final class PvPTeam extends AbstractEntity
                 // Check if member from tracker is present in a Lodestone list
                 if (
                     !\array_key_exists('members', $this->lodestone)
-                    || !\array_key_exists($member, $this->lodestone['members'])
+                    || !\array_key_exists((string) $member, $this->lodestone['members'])
                 ) {
                     // Update status for the character
                     $queries[] = [
@@ -207,6 +222,7 @@ final class PvPTeam extends AbstractEntity
                     ];
                 }
             }
+
             // Process Lodestone members
             if (!empty($this->lodestone['members'])) {
                 foreach ($this->lodestone['members'] as $member => $details) {
@@ -222,6 +238,7 @@ final class PvPTeam extends AbstractEntity
                     ];
                 }
             }
+
             // Running the queries we've accumulated
             Query::query($queries);
             // Schedule a proper update of any newly added characters
@@ -242,7 +259,7 @@ final class PvPTeam extends AbstractEntity
      *
      * @return bool
      */
-    protected function delete(): bool
+    private function delete(): bool
     {
         try {
             $queries = [];

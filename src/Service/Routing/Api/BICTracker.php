@@ -12,11 +12,13 @@ use App\Controller\Api\BIC\Keying;
 final class BICTracker extends Api
 {
     // Supported edges
+    #[\Override]
     protected array $sub_routes = [
         'bics', 'keying', 'dbupdate',
     ];
 
     // Description of the nodes (need to be in same order)
+    #[\Override]
     protected array $routes_description = [
         'Node representing details of Russian organizations based on Bank Identification Code',
         'Node for checking Russian account keying against a Russian Bank Identification Code',
@@ -24,9 +26,11 @@ final class BICTracker extends Api
     ];
 
     // Flag to indicate, that this is a top level node (false by default)
+    #[\Override]
     protected bool $top_level = false;
 
     // Flag to indicate, that this is the lowest level
+    #[\Override]
     protected bool $final_node = false;
 
     protected function genData(array $path): array

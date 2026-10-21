@@ -97,6 +97,7 @@ abstract class Search
         if ($page < 1) {
             return 1;
         }
+
         // Count entities first
         $count = $this->countEntities($what);
         // Count pages
@@ -104,13 +105,14 @@ abstract class Search
         if ($pages < 1) {
             return ['count' => $count, 'pages' => $pages, 'entities' => []];
         }
+
         // Suggest redirect if the page is larger than the number of pages
         if ($page > $pages) {
             return $pages;
         }
 
         try {
-            return ['count' => $count, 'pages' => $pages, 'entities' => $this->selectEntities($what, $this->list_items, $this->list_items * ($page - 1), true)];
+            return ['count' => $count, 'pages' => $pages, 'entities' => $this->selectEntities($what, $this->list_items, $this->list_items * ($page - 1), list: true)];
         } catch (\Throwable $e) {
             Errors::error_log($e);
 
@@ -137,24 +139,27 @@ abstract class Search
                 $results = 0;
                 // Get exact comparison results
                 if (
-                    !empty($this->exact)
+                    $this->exact !== []
                     && !$like
                 ) {
                     $results = Query::query($exactly_like.$this->exact().')'.(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by), \array_merge($this->bindings, [':what' => [$what, 'string']]), return: 'count');
                 }
+
                 // If something was found - return results
                 if (!empty($results)) {
                     return $results;
                 }
+
                 if (empty($like)) {
-                    if (empty($this->fulltext)) {
+                    if ($this->fulltext === []) {
                         return 0;
                     }
 
                     // Get fulltext results
                     return Query::query($exactly_like.$this->relevancy().' > 0)'.(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by), \array_merge($this->bindings, [':what' => [$what, 'match']]), return: 'count');
                 }
-                if (empty($this->like)) {
+
+                if ($this->like === []) {
                     return 0;
                 }
 
@@ -187,29 +192,32 @@ abstract class Search
                 // Check if the search term has %
                 $like = \preg_match('/%/', $what) === 1;
                 // String for exact and LIKE searches. Just so that PHPStorm does not complain about duplicates
-                $exactly_like = 'SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->where_search) ? '' : $this->where_search.' OR ');
+                $exactly_like = 'SELECT '.$this->fields.", '".$this->entity_type."' as `type` FROM `".$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->where_search) ? '' : $this->where_search.' OR ');
                 // Prepare the results array
                 $results = [];
                 // Get exact comparison results
                 if (
-                    !empty($this->exact)
+                    $this->exact !== []
                     && !$like
                 ) {
                     $results = $this->postProcess(Query::query($exactly_like.$this->exact().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, \array_merge($this->bindings, [':what' => [$what, 'string']]), return: 'all'));
                 }
+
                 // If something was found - return results
-                if (!empty($results)) {
+                if ($results !== []) {
                     return $results;
                 }
+
                 if (empty($like)) {
-                    if (empty($this->fulltext)) {
+                    if ($this->fulltext === []) {
                         return [];
                     }
 
                     // Get fulltext results
-                    return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` , '.$this->relevancy().' as `relevance` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->where_search) ? '' : $this->where_search.' OR ').$this->relevancy().' > 0)'.(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by).' ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, \array_merge($this->bindings, [':what' => [$what, 'match']]), return: 'all'));
+                    return $this->postProcess(Query::query('SELECT '.$this->fields.", '".$this->entity_type."' as `type` , ".$this->relevancy().' as `relevance` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->where_search) ? '' : $this->where_search.' OR ').$this->relevancy().' > 0)'.(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by).' ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, \array_merge($this->bindings, [':what' => [$what, 'match']]), return: 'all'));
                 }
-                if (empty($this->like)) {
+
+                if ($this->like === []) {
                     return [];
                 }
 
@@ -217,7 +225,7 @@ abstract class Search
                 return $this->postProcess(Query::query($exactly_like.$this->like().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, \array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']]), return: 'all'));
             }
 
-            return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by).' ORDER BY '.($list ? $this->order_list : $this->order_default).' LIMIT '.$limit.' OFFSET '.$offset.';', $this->bindings, return: 'all'));
+            return $this->postProcess(Query::query('SELECT '.$this->fields.", '".$this->entity_type."' as `type` FROM `".$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by).' ORDER BY '.($list ? $this->order_list : $this->order_default).' LIMIT '.$limit.' OFFSET '.$offset.';', $this->bindings, return: 'all'));
         } catch (\Throwable $e) {
             Errors::error_log($e);
 
@@ -282,18 +290,22 @@ abstract class Search
                 throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
             }
         }
+
         if (empty($this->count_argument)) {
             $this->count_argument = '*';
         }
+
         // Override WHERE
         if ($where !== null) {
             $this->where = $where;
         }
+
         // Override ORDER BY
         if ($order !== null) {
             $this->order_list = $order;
             $this->order_default = $order;
         }
+
         // Override GROUP BY
         if ($group !== null) {
             $this->group_by = $group;

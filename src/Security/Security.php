@@ -47,6 +47,7 @@ final class Security
         if (empty($data)) {
             return '';
         }
+
         // Generate IV
         $iv = \random_bytes(\openssl_cipher_iv_length('AES-256-GCM'));
         // This is where OpenSSL will write the tag
@@ -72,6 +73,7 @@ final class Security
         if (empty($data)) {
             return '';
         }
+
         // Decode
         $data = Decode::base64url($data);
         // Get IV
@@ -142,12 +144,12 @@ final class Security
         } else {
             $extras = null;
         }
+
         // Get IP
         $ip = $_SESSION['ip'] ?? null;
         // Get username
-        if ($user_id === null) {
-            $user_id = (int) ($_SESSION['user_id'] ?? SystemUser::Unknown->value);
-        }
+        $user_id ??= (int) ($_SESSION['user_id'] ?? SystemUser::Unknown->value);
+
         // Get User Agent
         $ua = $_SESSION['useragent']['full'] ?? null;
 
@@ -197,21 +199,24 @@ final class Security
         if (!IRI::isValidIri($url, 'https')) {
             return '';
         }
+
         // Attempt to parse it
         $parsed_url = IRI::parseUri($url);
         // Ignore failed strings
         if (!\is_array($parsed_url)) {
             return '';
         }
+
         // Parse the query string into an associative array
         /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         \parse_str($parsed_url['query'] ?? '', $query_params);
         // Remove tracking parameters
         foreach ($query_params as $param => $value) {
-            if (\in_array($param, Config::$tracking_query_parameters, true)) {
+            if (\in_array($param, Config::$tracking_query_parameters, strict: true)) {
                 unset($query_params[$param]);
             }
         }
+
         // Rebuild the query string
         /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         $parsed_url['query'] = IRI::rawBuildQuery($query_params);
@@ -233,6 +238,7 @@ final class Security
             if (\session_status() === \PHP_SESSION_ACTIVE) {
                 \session_regenerate_id($delete_old_session);
             }
+
             $_SESSION['csrf'] = self::genToken();
             if (!\headers_sent()) {
                 \header('X-CSRF-Token: '.$_SESSION['csrf']);

@@ -7,35 +7,44 @@ namespace App\Service\Search;
 final class OpenBics extends Search
 {
     // Type of entity to return as static value in results (required for frontend routing)
+    #[\Override]
     protected string $entity_type = 'bic';
 
     // Name of the table to search use
+    #[\Override]
     protected string $table = 'bic__list';
 
     // List of fields
+    #[\Override]
     protected string $fields = '`BIC` as `id`, `NameP` as `name`, `DateOut`, `Updated` as `updated`';
 
     // Optional WHERE clause for every SELECT
+    #[\Override]
     protected string $where = '`DateOut` IS NULL';
 
     // Optional WHERE clause for SELECT where search term is defined
+    #[\Override]
     protected string $where_search = '`BIC` IN (SELECT `BIC` FROM `bic__swift` WHERE `SWBIC`=:what) OR `BIC` IN (SELECT `BIC` FROM `bic__accounts` WHERE `Account`=:what)';
 
     // Default order (for main page, for example)
+    #[\Override]
     protected string $order_default = '`Updated` DESC';
 
     // Order for list pages
+    #[\Override]
     protected string $order_list = '`NameP` ASC';
 
     // Next 3 values are lists of columns to use in search. The order is important, since the higher in the list a field is,
     // the more weight/relevancy condition with it will have (if true)
     // List of FULLTEXT columns
+    #[\Override]
     protected array $fulltext = [
         'NameP',
         'Adr',
     ];
 
     // List of optional columns for direct comparison
+    #[\Override]
     protected array $exact = [
         'BIC',
         'OLD_NEWNUM',
@@ -44,6 +53,7 @@ final class OpenBics extends Search
     ];
 
     // List of optional columns for LIKE %% comparison
+    #[\Override]
     protected array $like = [
         'NameP',
         'Adr',

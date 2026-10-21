@@ -48,12 +48,13 @@ final class Kernel extends BaseKernel
             $_SESSION['username'] = 'System user';
             $_SESSION['permissions'] = ['close_own_threads', 'close_others_threads'];
         }
+
         // Generate basic settings
         new Config($this->getContainer());
         // Set error handling
-        \set_error_handler('\App\Service\Errors::error_handler');
-        \set_exception_handler('\App\Service\Errors::error_log');
-        \register_shutdown_function('\App\Service\Errors::shutdown');
+        \set_error_handler(\App\Service\Errors::error_handler(...));
+        \set_exception_handler(\App\Service\Errors::error_log(...));
+        \register_shutdown_function(\App\Service\Errors::shutdown(...));
     }
 
     /**

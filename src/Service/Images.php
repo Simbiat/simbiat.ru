@@ -27,6 +27,7 @@ final class Images
         if ($temp === false) {
             return false;
         }
+
         /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         if (\is_file($temp['server_path'].'/'.$temp['server_name'])) {
             // Create directory if missing and create it recursively
@@ -37,6 +38,7 @@ final class Images
             ) {
                 return false;
             }
+
             // Move file
             /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             \rename($temp['server_path'].'/'.$temp['server_name'], $to);
@@ -85,8 +87,8 @@ final class Images
             // Create image object
             $gd = \imagecreatetruecolor($width, $height);
             // Set transparency
-            \imagealphablending($gd, true);
-            \imagesavealpha($gd, true);
+            \imagealphablending($gd, enable: true);
+            \imagesavealpha($gd, enable: true);
             \imagecolortransparent($gd, \imagecolorallocatealpha($gd, 255, 0, 0, 127));
             \imagefill($gd, 0, 0, \imagecolorallocatealpha($gd, 255, 0, 0, 127));
             // Copy each Lodestone image onto the image object
@@ -102,9 +104,10 @@ final class Images
 
             return null;
         }
+
         if ($output) {
             \ob_start();
-            \imagewebp($gd, null, \IMG_WEBP_LOSSLESS);
+            \imagewebp($gd, quality: \IMG_WEBP_LOSSLESS);
             $size = \ob_get_length();
             \header('Content-Type: image/webp');
             \header('Content-Length: '.$size);
@@ -128,12 +131,14 @@ final class Images
         if (!\is_file($image)) {
             return false;
         }
+
         // Get MIME type
         $mime = \mime_content_type($image);
-        if (!\in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'], true)) {
+        if (!\in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'], strict: true)) {
             // Presume that this is not something to convert in the first place, which may be normal
             return false;
         }
+
         // If we have a GIF, check if it's animated
         if (
             $mime === 'image/gif'
@@ -142,6 +147,7 @@ final class Images
             // Do not convert animated GIFs
             return false;
         }
+
         // If we have a PNG, check if it's animated
         if (
             $mime === 'image/png'
@@ -150,6 +156,7 @@ final class Images
             // Do not convert animated PNGs
             return false;
         }
+
         // Set new name
         $new_name = \str_replace('.'.\pathinfo($image, \PATHINFO_EXTENSION), '.webp', $image);
         // Create a GD object from a file
@@ -157,12 +164,13 @@ final class Images
         if ($gd === false) {
             return false;
         }
+
         // Ensure that True Color is used
         \imagepalettetotruecolor($gd);
         // Enable alpha blending
-        \imagealphablending($gd, true);
+        \imagealphablending($gd, enable: true);
         // Save the alpha data
-        \imagesavealpha($gd, true);
+        \imagesavealpha($gd, enable: true);
         // Save the file
         if (\imagewebp($gd, $new_name, \IMG_WEBP_LOSSLESS)) {
             // Remove source image if we did not just overwrite it
@@ -189,6 +197,7 @@ final class Images
         if (!($fh = @\fopen($gif, 'rb'))) {
             return false;
         }
+
         $count = 0;
         // an animated GIF contains multiple "frames", with each frame having a
         // header made up of:
@@ -208,6 +217,7 @@ final class Images
             $chunk = ($chunk ? \mb_substr($chunk, -20, encoding: 'UTF-8') : '').\fread($fh, 1024 * 100);
             $count += \preg_match_all('/\x00\x21\xF9\x04.{4}\x00[\x2C\x21]/s', $chunk);
         }
+
         \fclose($fh);
 
         return $count > 1;
@@ -228,11 +238,13 @@ final class Images
         if ($header !== "\x89PNG\r\n\x1A\n") {
             return false;
         }
+
         while (!$f->eof()) {
             $bytes = $f->fread(4);
             if (\strlen($bytes) < 4) {
                 return false;
             }
+
             $length = \unpack('N', $bytes);
             $length = $length
                 ? $length[1]
@@ -244,6 +256,7 @@ final class Images
                 case 'IDAT':
                     return false;
             }
+
             $f->fseek($length + 4, \SEEK_CUR);
         }
 
@@ -265,9 +278,10 @@ final class Images
         if (!\is_file($image)) {
             return false;
         }
+
         // Get MIME type
         $mime = \mime_content_type($image);
-        if (!\in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'], true)) {
+        if (!\in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'], strict: true)) {
             // Unsupported format provided
             return false;
         }
@@ -290,10 +304,10 @@ final class Images
     /**
      * Display an image for "no image" scenario.
      *
-     * @return void
+     * @return never
      */
     #[NoReturn]
-    public static function noImage(): void
+    public static function noImage(): never
     {
         $file = Config::$img_dir.'noimage.svg';
         \header('Content-Type: image/svg+xml');
@@ -305,10 +319,10 @@ final class Images
     /**
      * Display a red cross indicating an error.
      *
-     * @return void
+     * @return never
      */
     #[NoReturn]
-    public static function errorImage(): void
+    public static function errorImage(): never
     {
         $file = Config::$img_dir.'close.svg';
         \header('Content-Type: image/svg+xml');
@@ -320,10 +334,10 @@ final class Images
     /**
      * Display a green check mark indicating success.
      *
-     * @return void
+     * @return never
      */
     #[NoReturn]
-    public static function successImage(): void
+    public static function successImage(): never
     {
         $file = Config::$img_dir.'check.svg';
         \header('Content-Type: image/svg+xml');
@@ -355,18 +369,22 @@ final class Images
             if (empty($file)) {
                 return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
             }
+
             $file = $file[0];
         }
+
         // Using array_merge to suppress PHPStorm's complaints about array keys
         $info = \array_merge(\pathinfo($file));
         $info['mime'] = \mime_content_type($file);
-        if (!\in_array($info['mime'], ['image/png', 'image/jpeg', 'image/webp'], true)) {
+        if (!\in_array($info['mime'], ['image/png', 'image/jpeg', 'image/webp'], strict: true)) {
             return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }
+
         $sizes = \getimagesize($file);
         if ($sizes === false) {
             return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }
+
         $info['width'] = $sizes[0];
         $info['height'] = $sizes[1];
         if (
@@ -376,6 +394,7 @@ final class Images
         ) {
             return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }
+
         if ($is_path) {
             return ['og_image' => '/assets/images'.$file_id, 'og_image_width' => $info['width'], 'og_image_height' => $info['height']];
         }

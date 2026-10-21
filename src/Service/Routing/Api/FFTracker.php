@@ -16,11 +16,13 @@ use App\Controller\Api\FFXIV\PvPTeam;
 final class FFTracker extends Api
 {
     // Supported edges
+    #[\Override]
     protected array $sub_routes = [
         'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'achievements', 'merge_crest',
     ];
 
     // Description of the nodes (need to be in same order)
+    #[\Override]
     protected array $routes_description = [
         'Node representing Final Fantasy XIV character',
         'Node representing Final Fantasy XIV Free Company',
@@ -32,9 +34,11 @@ final class FFTracker extends Api
     ];
 
     // Flag to indicate, that this is a top level node (false by default)
+    #[\Override]
     protected bool $top_level = false;
 
     // Flag to indicate, that this is the lowest level
+    #[\Override]
     protected bool $final_node = false;
 
     protected function genData(array $path): array

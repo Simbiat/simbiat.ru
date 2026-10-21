@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use DeviceDetector\Cache\PSR6Bridge;
@@ -20,11 +22,12 @@ use Symfony\Component\Cache\Adapter\ApcuAdapter;
 /**
  * Minimized DeviceDetector logic to help parse.
  */
-final class UserAgentParser
+final readonly class UserAgentParser
 {
-
     private AbstractParser $bot_parser;
+
     private AbstractParser $os_parser;
+
     private array $client_parsers;
 
     /**
@@ -38,6 +41,7 @@ final class UserAgentParser
         if ($use_hints) {
             $client_hints = ClientHints::factory($_SERVER);
         }
+
         $this->bot_parser = $this->createParser(Bot::class, $client_hints);
         $this->os_parser = $this->createParser(OperatingSystem::class, $client_hints);
         // phpcs:ignore SlevomatCodingStandard.Arrays.AlphabeticallySortedByKeys -- needs to be in certain order due to how Detector works
@@ -64,9 +68,11 @@ final class UserAgentParser
         if (!\class_exists($class_name)) {
             throw new \InvalidArgumentException('Class `'.$class_name.'` does not exist.');
         }
+
         if (!\is_subclass_of($class_name, AbstractParser::class)) {
             throw new \InvalidArgumentException('Class `'.$class_name.'` is not an instance of `'.AbstractParser::class.'`.');
         }
+
         $parser = new $class_name(clientHints: $client_hints);
         $parser->setYamlParser(new Pecl());
         $parser->setCache(new PSR6Bridge(new ApcuAdapter('Matomo')));
@@ -111,9 +117,9 @@ final class UserAgentParser
      */
     public function getClient(string $user_agent): ?array
     {
-        foreach ($this->client_parsers as $parser) {
-            $parser->setUserAgent($user_agent);
-            $client = $parser->parse();
+        foreach ($this->client_parsers as $client_parser) {
+            $client_parser->setUserAgent($user_agent);
+            $client = $client_parser->parse();
             if (!empty($client)) {
                 return $client;
             }

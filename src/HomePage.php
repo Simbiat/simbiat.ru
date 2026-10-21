@@ -41,14 +41,17 @@ final class HomePage
 
     // User agent details from
     public private(set) static array $user_agent = [];
+
     public static array $links = [];
+
     public static string $canonical = '';
+
     public static ?DeviceDetector $device_detector = null;
 
     /**
      * Twig processing of the generated page.
      *
-     * @param array $twig_vars List of Twig variables
+     * @param array<string, mixed> $twig_vars List of Twig variables
      * @param bool  $cache     Indicates if this is a cache pass
      * @param bool  $api       Whether generation is for API
      *
@@ -59,6 +62,7 @@ final class HomePage
         if (self::$method === 'OPTIONS') {
             exit(0);
         }
+
         if (
             $cache
             && (
@@ -70,6 +74,7 @@ final class HomePage
         ) {
             return false;
         }
+
         // Update CSRF token
         if (
             !$api
@@ -80,22 +85,24 @@ final class HomePage
                 \header('X-CSRF-Token: '.$_SESSION['csrf']);
             }
         }
+
         $twig_vars = \array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
         if (
             \array_key_exists('http_error', $twig_vars)
             && \is_numeric($twig_vars['http_error'])
         ) {
-            Headers::clientReturn($twig_vars['http_error'], false);
+            Headers::clientReturn($twig_vars['http_error'], exit: false);
         }
+
         if ($cache) {
             try {
                 \ob_end_clean();
-                \ignore_user_abort(true);
+                \ignore_user_abort(enable: true);
                 \ob_start();
                 $output = Config::$twig->render($twig_vars['template_override'] ?? 'index.html.twig', $twig_vars);
                 // Output data
                 // TODO: when removing zEcho, need to ensure that eTag is attached, because Caddy does not do that
-                Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', false);
+                Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', exit: false);
                 /* @noinspection PhpUsageOfSilenceOperatorInspection */
                 @\ob_end_flush();
                 /* @noinspection PhpUsageOfSilenceOperatorInspection */
@@ -133,13 +140,14 @@ final class HomePage
                     $twig_vars[$variable] = null;
                 }
             }
+
             \ob_start();
 
             try {
                 $output = Config::$twig->render($twig_vars['template_override'] ?? 'index.html.twig', $twig_vars);
             } catch (\Throwable $exception) {
                 Errors::error_log($exception);
-                Headers::clientReturn(500, false);
+                Headers::clientReturn(500, exit: false);
 
                 try {
                     // TODO: Needs to be cleaned up during refactor of pages
@@ -176,10 +184,12 @@ final class HomePage
                     $output = 'Complete twig failure';
                 }
             }
+
             // Close session
             if (\session_status() === \PHP_SESSION_ACTIVE) {
                 \session_write_close();
             }
+
             // Cache page if cache age is set up, no errors, GET method is used, and we are on PROD
             if (
                 Config::$environment === 'prod'
@@ -190,14 +200,16 @@ final class HomePage
             ) {
                 self::$data_cache->write($twig_vars, age: (int) $twig_vars['cache_age']);
             }
+
             if (self::$stale_return) {
                 /* @noinspection PhpUsageOfSilenceOperatorInspection */
                 @\ob_end_clean();
             } else {
                 // Output data
                 // TODO: when removing zEcho, need to ensure that eTag is attached, because Caddy does not do that
-                Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', false);
+                Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', exit: false);
             }
+
             exit(0);
         }
     }
@@ -229,12 +241,14 @@ final class HomePage
         if (\preg_match('/^\/\.well-known\/security\.txt$/iu', $request) !== 1) {
             return;
         }
+
         if (
             self::$method !== 'HEAD'
             && self::$method !== 'OPTIONS'
         ) {
             $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => \date(DateTimeInterface::RFC3339_EXTENDED, \strtotime('last Monday of next month midnight'))]);
         }
+
         exit(0);
     }
 
@@ -250,6 +264,7 @@ final class HomePage
             // Something is fishy, so let's 418 this
             return ['unsupported' => true, 'browser' => false, 'bot' => null];
         }
+
         // Parse user agent
         $device_detector = new UserAgentParser();
         // Get bot name
@@ -260,14 +275,17 @@ final class HomePage
             /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             return ['bot' => \mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => null, 'client' => null, 'unsupported' => false, 'browser' => false, 'ai' => \strncasecmp($bot['category'] ?? '', 'ai', 2) === 0];
         }
+
         // Get OS
         $os = $device_detector->getOs($_SERVER['HTTP_USER_AGENT']);
-        // Concat OS and version
-        $os = \mb_trim(($os['name'] ?? '').' '.($os['version'] ?? ''), null, 'UTF-8');
         // Force OS to be NULL if it's empty
         if ($os === null || $os === []) {
             $os = null;
+        } else {
+            // Concat OS and version
+            $os = \mb_trim(($os['name'] ?? '').' '.($os['version'] ?? ''), encoding: 'UTF-8');
         }
+
         // Get client
         $client = $device_detector->getClient($_SERVER['HTTP_USER_AGENT']);
         // Check if a client is supported
@@ -282,9 +300,9 @@ final class HomePage
             );
         $browser = ($client['type'] ?? null) === 'browser';
         // Concat client and version
-        $client = \mb_trim(($client['name'] ?? '').' '.($client['version'] ?? ''), null, 'UTF-8');
+        $client = \mb_trim(($client['name'] ?? '').' '.($client['version'] ?? ''), encoding: 'UTF-8');
         // Force the client to be NULL if it's empty
-        if ($client === '' || $client === null || $client === []) {
+        if (\in_array($client, ['', null, []], strict: true)) {
             $client = null;
         }
 
@@ -297,7 +315,7 @@ final class HomePage
     public static function canonical(): void
     {
         // Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
-        self::$canonical = \mb_strtolower(\rawurldecode(\mb_trim(\mb_trim(\mb_trim(\preg_replace('/(.*)(\?.*$)/u', '$1', $_SERVER['REQUEST_URI'] ?? ''), null, 'UTF-8'), '/', 'UTF-8'), null, 'UTF-8')), 'UTF-8');
+        self::$canonical = \mb_strtolower(\rawurldecode(\mb_trim(\mb_trim(\mb_trim(\preg_replace('/(.*)(\?.*$)/u', '$1', $_SERVER['REQUEST_URI'] ?? ''), encoding: 'UTF-8'), '/', 'UTF-8'), encoding: 'UTF-8')), 'UTF-8');
         // Remove bad UTF
         self::$canonical = \mb_scrub(self::$canonical, 'UTF-8');
         // Remove the "friendly" portion of the links but exclude API
@@ -307,6 +325,7 @@ final class HomePage
         if (\preg_match('/\/\?/u', self::$canonical) !== 1) {
             self::$canonical = \preg_replace('/([^\/])$/u', '$1/', self::$canonical);
         }
+
         // Also return some of the GET parameters that we do support
         self::$canonical
             .= '?'
@@ -334,16 +353,13 @@ final class HomePage
     public static function nonApiLinks(): void
     {
         if (\preg_match('/^\/api(\/|$)/ui', $_SERVER['REQUEST_URI']) === 0) {
-            \array_push(
-                self::$links,
-                ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.\filemtime(Config::$css_dir.'app.css').'.css', 'as' => 'style'],
-                ['rel' => 'preload', 'href' => '/assets/app.'.\filemtime(Config::$js_dir.'app.js').'.js', 'as' => 'script'],
-                ['rel' => 'manifest', 'href' => '/manifest.webmanifest', 'type' => 'application/manifest+json'],
-                ['rel' => 'privacy-policy', 'href' => '/about/privacy'],
-                ['rel' => 'terms-of-service', 'href' => '/about/tos'],
-                ['rel' => 'help', 'href' => '/talks/sections/8', 'title' => 'Knowledgebase'],
-                ['rel' => 'help', 'href' => '/about/contacts', 'title' => 'Contacts'],
-            );
+            self::$links[] = ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.\filemtime(Config::$css_dir.'app.css').'.css', 'as' => 'style'];
+            self::$links[] = ['rel' => 'preload', 'href' => '/assets/app.'.\filemtime(Config::$js_dir.'app.js').'.js', 'as' => 'script'];
+            self::$links[] = ['rel' => 'manifest', 'href' => '/manifest.webmanifest', 'type' => 'application/manifest+json'];
+            self::$links[] = ['rel' => 'privacy-policy', 'href' => '/about/privacy'];
+            self::$links[] = ['rel' => 'terms-of-service', 'href' => '/about/tos'];
+            self::$links[] = ['rel' => 'help', 'href' => '/talks/sections/8', 'title' => 'Knowledgebase'];
+            self::$links[] = ['rel' => 'help', 'href' => '/about/contacts', 'title' => 'Contacts'];
         }
     }
 
@@ -378,6 +394,7 @@ final class HomePage
             if (empty($_SERVER['HTTP_HOST'])) {
                 Headers::clientReturn(403);
             }
+
             self::canonical();
             self::nonApiLinks();
             // Redirect if the page number is set and is less than 1
@@ -388,6 +405,7 @@ final class HomePage
                 // Remove page (since we ignore page=1 in canonical)
                 Headers::redirect(\preg_replace('/\\?page=-?\d+/ui', '', self::$canonical));
             }
+
             // Process requests to file or cache
             $this->filesRequests();
             // Exploding further processing
@@ -401,6 +419,7 @@ final class HomePage
             ) {
                 self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR'], 'reason' => $_SERVER['CADDY_HTTP_ERROR_MSG'] ?? ''];
             }
+
             // Suppress inspection, since we only need headers to be sent
             /* @noinspection UnusedFunctionResultInspection */
             Links::links(self::$links, force_cross_origin: true);
@@ -408,6 +427,7 @@ final class HomePage
             if ($uri[0] === 'api') {
                 Headers::notAccept(['application/json']);
             }
+
             if (\array_key_exists('http_error', self::$http_error)) {
                 $vars = self::$http_error;
             } else {
@@ -421,16 +441,19 @@ final class HomePage
                         // Show an error page if DB is down
                         self::$http_error = ['http_error' => 503, 'reason' => 'Failed to connect to database'];
                     }
+
                     // Get user agent details
                     self::$user_agent = self::getUA();
                     // Show that the client is unsupported
                     if (self::$user_agent['unsupported'] === true) {
                         self::$http_error = ['client' => self::$user_agent['client'] ?? 'Teapot', 'http_error' => 418, 'reason' => 'Teapot'];
                     }
+
                     // Clear POST data if bot was detected to prevent potential abuse
                     if (!empty(self::$user_agent['bot'])) {
                         $_POST = [];
                     }
+
                     // Block some bots, in case they somehow got through CrowdSec, but were detected by Matomo (unlikely to happen, this is precaution)
                     // Also block any bot known as AI one
                     if (
@@ -442,6 +465,7 @@ final class HomePage
                     ) {
                         self::$http_error = ['http_error' => 403, 'reason' => 'Bad bot'];
                     }
+
                     // Handle Sec-Fetch. Use strict mode if the request is not from a known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
                     Headers::secFetch(strict: (empty(self::$user_agent['bot']) && self::$user_agent['browser']));
                     // Try to start a session if it's not started yet and DB is up. Do not do it if the cache is being returned, if an error has been detected already or if a bot was detected
@@ -456,7 +480,7 @@ final class HomePage
                         && !self::$stale_return
                         && \session_status() === \PHP_SESSION_NONE
                     ) {
-                        \session_set_save_handler(new Session(), true);
+                        \session_set_save_handler(new Session(), register_shutdown: true);
                         if (!\session_start()) {
                             throw new \RuntimeException('Failed to start session');
                         }
@@ -465,6 +489,7 @@ final class HomePage
                         if (!empty($_SESSION['banned_ip'])) {
                             self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
                         }
+
                         if (
                             \array_key_exists('banned', $_SESSION)
                             && $_SESSION['banned'] === true
@@ -473,8 +498,9 @@ final class HomePage
                             self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
                         }
                     }
+
                     // Check if we have cached the results already
-                    self::$stale_return = $this->twigProc(self::$data_cache->read(), true, $uri[0] === 'api');
+                    self::$stale_return = $this->twigProc(self::$data_cache->read(), cache: true, api: $uri[0] === 'api');
                     // We go to router in any case, since error checks will happen in Page class
                     $vars = new MainRouter()->route($uri);
                 } catch (\Throwable $exception) {
@@ -482,20 +508,23 @@ final class HomePage
                     $vars = ['http_error' => 500];
                 }
             }
+
             if (
                 $uri[0] === 'api'
                 && empty($vars['template_override'])
             ) {
                 $vars['template_override'] = 'common/pages/api.html.twig';
             }
+
             if (
                 $uri[0] === 'api'
                 && empty($vars['json_ready'])
             ) {
                 $vars['json_ready'] = null;
             }
+
             // Generate page
-            $this->twigProc(\array_merge($vars, ['request_from_bot' => self::$user_agent['bot'] ?? null]), false, $uri[0] === 'api');
+            $this->twigProc(\array_merge($vars, ['request_from_bot' => self::$user_agent['bot'] ?? null]), cache: false, api: $uri[0] === 'api');
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
         }

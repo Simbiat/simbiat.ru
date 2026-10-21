@@ -22,13 +22,21 @@ final class Achievement extends AbstractEntity
     protected const string ENTITY_TYPE = 'achievement';
 
     public int $updated;
+
     public int $registered;
+
     public ?string $category = null;
+
     public ?string $subcategory = null;
+
     public ?string $icon = null;
+
     public ?string $how_to = null;
+
     public ?string $db_id = null;
+
     public array $rewards = [];
+
     public array $characters = [];
 
     /**
@@ -44,16 +52,18 @@ final class Achievement extends AbstractEntity
      */
     public function getFromLodestone(bool $allow_sleep = false): array|string
     {
-        $achievement = $this->getFromDB(true);
+        $achievement = $this->getFromDB(non_private: true);
         if (empty($achievement['name'])) {
             return ['404' => true, 'reason' => 'Achievement with ID `'.$this->id.'` is not found on Tracker'];
         }
+
         // Cache Lodestone
         $lodestone = new Lodestone();
         // If we do not have db_id already - try to get one
         if (empty($achievement['db_id'])) {
             $achievement['db_id'] = $this->getDBID($achievement['name']);
         }
+
         // Somewhat simpler and faster processing if we have db_id already
         if (!empty($achievement['db_id'])) {
             try {
@@ -67,14 +77,17 @@ final class Achievement extends AbstractEntity
 
                     return 'Request throttled by Lodestone';
                 }
+
                 if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) !== 1) {
                     Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
                 }
             }
+
             // Most likely temporary unavailability of the Lodestone page
             if (empty($data['database']['achievement'][$achievement['db_id']])) {
                 return ['404' => true];
             }
+
             $data = $data['database']['achievement'][$achievement['db_id']];
             unset($data['time']);
             $data['db_id'] = $achievement['db_id'];
@@ -82,9 +95,11 @@ final class Achievement extends AbstractEntity
 
             return $data;
         }
+
         if (empty($achievement['characters'])) {
             return ['404' => true];
         }
+
         // Iterrate list
         $achievement['characters'] = [['id' => 1]];
         foreach ($achievement['characters'] as $char) {
@@ -99,12 +114,14 @@ final class Achievement extends AbstractEntity
 
                     return 'Request throttled by Lodestone';
                 }
+
                 if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) !== 1) {
                     Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
                 }
 
                 return $exception->getMessage();
             }
+
             if (
                 \array_key_exists('private', $data['characters'][$char['id']]['achievements'])
                 && $data['characters'][$char['id']]['achievements']['private']
@@ -118,6 +135,7 @@ final class Achievement extends AbstractEntity
 
                 continue;
             }
+
             if (
                 !empty($data['characters'][$char['id']]['achievements'][$this->id])
                 && \is_array($data['characters'][$char['id']]['achievements'][$this->id])
@@ -151,6 +169,7 @@ final class Achievement extends AbstractEntity
         if ($data === []) {
             return [];
         }
+
         // Get last characters with this achievement
         $data['characters'] = Query::query(
             'SELECT
@@ -227,6 +246,7 @@ final class Achievement extends AbstractEntity
         if ($webp) {
             $bindings[':icon'] = \str_replace('.png', '.webp', $bindings[':icon']);
         }
+
         $bindings[':points'] = $this->lodestone['points'];
         $bindings[':category'] = $this->lodestone['category'];
         $bindings[':subcategory'] = $this->lodestone['subcategory'];
@@ -249,6 +269,7 @@ final class Achievement extends AbstractEntity
                 $bindings[':item_icon'] = \str_replace('.png', '.webp', $bindings[':item_icon']);
             }
         }
+
         $bindings[':item_id'] = empty($this->lodestone['item']['id'])
             ? [null, 'null']
             : $this->lodestone['item']['id'];
@@ -279,11 +300,13 @@ final class Achievement extends AbstractEntity
         } catch (\Throwable) {
             return null;
         }
+
         // Remove counts elements from achievement database
         unset($db_search_result['database']['achievement']['page_current'], $db_search_result['database']['achievement']['page_total'], $db_search_result['database']['achievement']['total']);
         if (\count($db_search_result) === 0) {
             return null;
         }
+
         // Flip the array of achievements (if any) to ease searching for the right element
         $db_search_result['database']['achievement'] = \array_flip(\array_combine(\array_keys($db_search_result['database']['achievement']), \array_column($db_search_result['database']['achievement'], 'name')));
         if (!empty($db_search_result['database']['achievement'][$search_for])) {

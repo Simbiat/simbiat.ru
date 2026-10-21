@@ -41,6 +41,7 @@ final class Healthcheck
         ) {
             throw new \RuntimeException(\sprintf('Directory "%s" was not created', $dir));
         }
+
         $no_db_flag = $dir.'/no_db.flag';
         $crash_flag = $dir.'/backup_crash.flag';
         // If maintenance flag found, it's normal
@@ -50,6 +51,7 @@ final class Healthcheck
 
             return Command::SUCCESS;
         }
+
         // Connect to DB
         Config::dbConnect();
         if (
@@ -62,10 +64,10 @@ final class Healthcheck
                 new DatabaseDown()->save(
                     SystemUser::Owner->value,
                     // TODO: Ideally get proper error text, but most likely need to change the way the check is done.
-                    ['errors' => \print_r('N/A', true)],
-                    true,
-                    false,
-                    Config::$admin_email,
+                    ['errors' => \print_r('N/A', return: true)],
+                    email: true,
+                    push: false,
+                    email_override: Config::$admin_email,
                 )->send();
                 // Generate flag
                 \file_put_contents($no_db_flag, 'Database is down');
@@ -73,6 +75,7 @@ final class Healthcheck
 
             return Command::SUCCESS;
         }
+
         if (\is_file($crash_flag)) {
             $error_text = \file_get_contents($crash_flag);
 
@@ -85,6 +88,7 @@ final class Healthcheck
             } catch (\Throwable) {
                 $result = false;
             }
+
             /* @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
             @\unlink($crash_flag);
             /* @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
@@ -93,13 +97,14 @@ final class Healthcheck
             new DatabaseUp()->save(
                 SystemUser::Owner->value,
                 ['maintenance' => true, 'restored' => $result, 'error_text' => $error_text],
-                true,
-                false,
-                Config::$admin_email,
+                email: true,
+                push: false,
+                email_override: Config::$admin_email,
             )->send();
 
             return Command::SUCCESS;
         }
+
         if (\is_file($no_db_flag)) {
             /* @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
             @\unlink($no_db_flag);
@@ -109,9 +114,9 @@ final class Healthcheck
             new DatabaseUp()->save(
                 SystemUser::Owner->value,
                 ['maintenance' => false],
-                true,
-                false,
-                Config::$admin_email,
+                email: true,
+                push: false,
+                email_override: Config::$admin_email,
             )->send();
         }
 

@@ -39,6 +39,7 @@ final class BICLibrary
     private array $queries = [];
 
     private readonly array $bic_restrictions;
+
     private readonly array $account_restrictions;
 
     public function __construct()
@@ -66,6 +67,7 @@ final class BICLibrary
 
                     continue;
                 }
+
                 if ($download === false) {
                     // If date is current one or somehow from the future, then assume that file is simply not available yet
                     if ($lib_date->format('Y-m-d') >= $current_date->format('Y-m-d')) {
@@ -77,16 +79,18 @@ final class BICLibrary
                     // Failed to download. Stop processing to avoid losing the sequence
                     throw new \RuntimeException('Не удалось скачать файл');
                 }
+
                 // Some files are known to have double XML definition. We need to fix this.
                 \file_get_contents($download)
-                    |> (static fn($x) => \preg_replace('/(<\?xml version="1\.0" encoding="WINDOWS-1251"\?>){2,}/i', '$1', $x))
-                    |> (static fn($x) => \file_put_contents($download, $x));
+                    |> (static fn($x): ?string => \preg_replace('/(<\?xml version="1\.0" encoding="WINDOWS-1251"\?>){2,}/i', '$1', $x))
+                    |> (static fn($x): int|false => \file_put_contents($download, $x));
                 // Load file
                 $library = new \DOMDocument();
                 if (!$library->load(\realpath($download), \LIBXML_PARSEHUGE | \LIBXML_COMPACT | \LIBXML_NOWARNING | \LIBXML_NOERROR | \LIBXML_NONET)) {
                     // Bad file detected
                     throw new \DOMException('Не удалось открыть файл `'.$download.'`');
                 }
+
                 // Some files are in packets or envelopes, thus we need to explicitly get an ED807 element and work with it.
                 $library = $library->getElementsByTagName('ED807')->item(0);
                 // Get the date from the root node. Earlier libraries did not have BusinessDay, but later it was added because it became possible for the library to be prepared before the day, when it needed applying.
@@ -97,10 +101,12 @@ final class BICLibrary
                     // Empty date. Stop processing to avoid losing the sequence
                     throw new \LengthException('Не удалось получить дату из файла `'.$download.'`');
                 }
+
                 if ($this->file_date !== $lib_date->format('Y-m-d')) {
                     // Date mismatch. Stop processing to avoid losing the sequence
                     throw new \UnexpectedValueException('Дата в файле не совпадает с ожидаемой `'.$download.'`');
                 }
+
                 // Get entries
                 $elements = $library->getElementsByTagName('BICDirectoryEntry');
                 // List of BICs to compare against the current database
@@ -124,7 +130,7 @@ final class BICLibrary
                     // Get accounts
                     $accounts = $element->getElementsByTagName('Accounts');
                     // Generate array, which can be compared to what we can get from DB
-                    $details = Converters::attributesToArray($details, true, ['BIC', 'DateIn', 'DateOut', 'NameP', 'EnglName', 'XchType', 'PtType', 'Srvcs', 'UID', 'PrntBIC', 'CntrCd', 'RegN', 'Ind', 'Rgn', 'Tnp', 'Nnp', 'Adr']);
+                    $details = Converters::attributesToArray($details, null: true, extra_attributes: ['BIC', 'DateIn', 'DateOut', 'NameP', 'EnglName', 'XchType', 'PtType', 'Srvcs', 'UID', 'PrntBIC', 'CntrCd', 'RegN', 'Ind', 'Rgn', 'Tnp', 'Nnp', 'Adr']);
                     $details['BIC'] = $bic;
                     // Ensure some old or unused fields are removed
                     unset($details['NPSParticipant'], $details['ParticipantStatus']);
@@ -137,6 +143,7 @@ final class BICLibrary
                             ($details[$key] === null ? 'null' : 'string'),
                         ];
                     }
+
                     // Get current details
                     $current_details = $this->getBIC($bic);
                     // Check for Parent BIC
@@ -146,6 +153,7 @@ final class BICLibrary
                     ) {
                         $delay = true;
                     }
+
                     // Check if BIC exists at all
                     if (\count($current_details) === 0) {
                         // We need to INSERT
@@ -160,33 +168,38 @@ final class BICLibrary
                             \array_merge($bindings, [':file_date' => $this->file_date]),
                         ];
                     }
+
                     // Process restrictions
                     if (\count($restrictions) > 0) {
                         // Convert to array
                         $library_rest = [];
                         foreach ($restrictions as $restriction) {
                             $library_rest[] = Converters::attributesToArray($restriction);
-                            \ksort($library_rest[\array_key_last($library_rest)]);
+                            \ksort(array_last($library_rest));
                         }
+
                         // Get current restrictions
                         $current_rest = $this->getRestrictions($bic);
                         // Check if any of the restrictions were removed
                         foreach ($current_rest as $restriction) {
-                            if (!\in_array($restriction, $library_rest, true)) {
+                            if (!\in_array($restriction, $library_rest, strict: true)) {
                                 // Update DateOut for restriction
                                 $this->queries[] = $this->endRestriction($bic, $restriction);
                             }
                         }
+
                         // Add new restrictions
                         foreach ($library_rest as $restriction) {
-                            if (!\in_array($restriction, $current_rest, true)) {
-                                if (!\in_array($restriction['Rstr'], $this->bic_restrictions, true)) {
+                            if (!\in_array($restriction, $current_rest, strict: true)) {
+                                if (!\in_array($restriction['Rstr'], $this->bic_restrictions, strict: true)) {
                                     throw new \UnexpectedValueException('Unknown organization restriction `'.$restriction['Rstr'].'`');
                                 }
+
                                 if ($restriction['Rstr'] === 'NORS') {
                                     // This means "no restriction", should not normally happen, this is just a precaution.
                                     continue;
                                 }
+
                                 // Insert restriction
                                 $this->queries[] = [
                                     'INSERT IGNORE INTO `bic__bic_rstr` (`BIC`, `Rstr`, `RstrDate`) VALUES (:BIC, :Rstr, :RstrDate);',
@@ -202,19 +215,21 @@ final class BICLibrary
                         // End all restrictions if any exist
                         $this->queries[] = $this->endRestriction($bic);
                     }
+
                     // Process swifts
                     if (\count($swifts) > 0) {
                         // Convert to array
                         $library_swift = [];
                         foreach ($swifts as $swift) {
                             $library_swift[] = Converters::attributesToArray($swift);
-                            \ksort($library_swift[\array_key_last($library_swift)]);
+                            \ksort(array_last($library_swift));
                         }
+
                         // Get current SWIFTs
                         $current_swift = $this->getSWIFTs($bic);
                         // Add all SWIFTs. Updating the default flag if already existing
                         foreach ($library_swift as $swift) {
-                            if (!\in_array($swift, $current_swift, true)) {
+                            if (!\in_array($swift, $current_swift, strict: true)) {
                                 // Insert restriction
                                 $this->queries[] = [
                                     'INSERT INTO `bic__swift` (`BIC`, `SWBIC`, `DefaultSWBIC`, `DateIn`) VALUES (:BIC, :SWBIC, :DefaultSWBIC, :file_date) ON DUPLICATE KEY UPDATE `DefaultSWBIC`=:DefaultSWBIC;',
@@ -227,9 +242,10 @@ final class BICLibrary
                                 ];
                             }
                         }
+
                         // Close SWIFTs that do not match what we already have. If the default flag has been updated on a previous step, there will be no update here, because it will no longer match the condition
                         foreach ($current_swift as $swift) {
-                            if (!\in_array($swift, $library_swift, true)) {
+                            if (!\in_array($swift, $library_swift, strict: true)) {
                                 // Close SWIFT
                                 $this->queries[] = $this->closeSwift($bic, $swift['SWBIC'], $swift['DefaultSWBIC']);
                             }
@@ -238,6 +254,7 @@ final class BICLibrary
                         // Close all SWIFTs
                         $this->queries[] = $this->closeSwift($bic);
                     }
+
                     // Process accounts
                     if (\count($accounts) > 0) {
                         // Convert to array
@@ -245,7 +262,7 @@ final class BICLibrary
                         $library_accounts_rest = [];
                         foreach ($accounts as $account) {
                             // Convert account
-                            $library_accounts[] = Converters::attributesToArray($account, true, ['CK']);
+                            $library_accounts[] = Converters::attributesToArray($account, null: true, extra_attributes: ['CK']);
                             // Set the last key
                             $last_key = \array_key_last($library_accounts);
                             unset($library_accounts[$last_key]['AccountStatus']);
@@ -256,64 +273,70 @@ final class BICLibrary
                             }
 
                             foreach ($account->getElementsByTagName('AccRstrList') as $restriction) {
-                                $library_accounts_rest[$library_accounts[$last_key]['Account']][] = Converters::attributesToArray($restriction, true, ['SuccessorBIC']);
+                                $library_accounts_rest[$library_accounts[$last_key]['Account']][] = Converters::attributesToArray($restriction, null: true, extra_attributes: ['SuccessorBIC']);
                                 \ksort($library_accounts_rest[$library_accounts[$last_key]['Account']]);
                             }
                         }
+
                         // "Remove" accounts
                         foreach ($this->getAccounts($bic) as $account) {
-                            if (!\in_array($account, $library_accounts, true)) {
+                            if (!\in_array($account, $library_accounts, strict: true)) {
                                 $this->closeAccount($bic, $account['Account']);
                             }
                         }
+
                         // Update accounts
-                        foreach ($library_accounts as $account) {
+                        foreach ($library_accounts as $library_account) {
                             if (
-                                !empty($account['AccountCBRBIC'])
-                                && \count($this->getBIC($account['AccountCBRBIC'])) === 0
+                                !empty($library_account['AccountCBRBIC'])
+                                && \count($this->getBIC($library_account['AccountCBRBIC'])) === 0
                             ) {
                                 $delay = true;
                             }
+
                             // Update account
                             $this->queries[] = [
                                 'INSERT INTO `bic__accounts` (`BIC`, `Account`, `AccountCBRBIC`, `RegulationAccountType`, `CK`, `DateIn`) VALUES (:BIC, :Account, :AccountCBRBIC, :RegulationAccountType, :CK, :DateIn) ON DUPLICATE KEY UPDATE `AccountCBRBIC`=:AccountCBRBIC, `RegulationAccountType`=:RegulationAccountType, `CK`=:CK, `DateIn`=:DateIn, `DateOut`=NULL;',
                                 [
-                                    ':Account' => $account['Account'],
+                                    ':Account' => $library_account['Account'],
                                     // There are known cases when BIC was set to '000000000' for some reason, thus we need to replace it with NULL. We also cover the possibility that it will not be present at all.
                                     ':AccountCBRBIC' => [
-                                        ((int) $account['AccountCBRBIC'] === 0 ? null : $account['AccountCBRBIC']),
-                                        ((int) $account['AccountCBRBIC'] === 0 ? 'null' : 'string'),
+                                        ((int) $library_account['AccountCBRBIC'] === 0 ? null : $library_account['AccountCBRBIC']),
+                                        ((int) $library_account['AccountCBRBIC'] === 0 ? 'null' : 'string'),
                                     ],
                                     ':BIC' => $bic,
-                                    ':CK' => $account['CK'],
-                                    ':DateIn' => $account['DateIn'],
-                                    ':RegulationAccountType' => $account['RegulationAccountType'],
+                                    ':CK' => $library_account['CK'],
+                                    ':DateIn' => $library_account['DateIn'],
+                                    ':RegulationAccountType' => $library_account['RegulationAccountType'],
                                 ],
                             ];
-                            if (!empty($library_accounts_rest[$account['Account']])) {
+                            if (!empty($library_accounts_rest[$library_account['Account']])) {
                                 // Get current restrictions
-                                $current_rest = $this->getAccountRestrictions($account['Account']);
+                                $current_rest = $this->getAccountRestrictions($library_account['Account']);
                                 // Add all new restrictions
-                                foreach ($library_accounts_rest[$account['Account']] as $restriction) {
-                                    if (!\in_array($restriction, $current_rest, true)) {
+                                foreach ($library_accounts_rest[$library_account['Account']] as $restriction) {
+                                    if (!\in_array($restriction, $current_rest, strict: true)) {
                                         if (
                                             !empty($restriction['SuccessorBIC'])
                                             && \count($this->getBIC($restriction['SuccessorBIC'])) === 0
                                         ) {
                                             $delay = true;
                                         }
-                                        if (!\in_array($restriction['AccRstr'], $this->account_restrictions, true)) {
+
+                                        if (!\in_array($restriction['AccRstr'], $this->account_restrictions, strict: true)) {
                                             throw new \UnexpectedValueException('Unknown account restriction `'.$restriction['AccRstr'].'`');
                                         }
+
                                         if ($restriction['AccRstr'] === 'NORS') {
                                             // This means "no restriction", should not normally happen, this is just a precaution.
                                             continue;
                                         }
+
                                         // Insert restriction
                                         $this->queries[] = [
                                             'INSERT INTO `bic__acc_rstr` (`Account`, `AccRstr`, `AccRstrDate`, `SuccessorBIC`) VALUES (:Account, :AccRstr, :AccRstrDate, :SuccessorBIC) ON DUPLICATE KEY UPDATE `SuccessorBIC`=:SuccessorBIC;',
                                             [
-                                                ':Account' => $account['Account'],
+                                                ':Account' => $library_account['Account'],
                                                 ':AccRstr' => $restriction['AccRstr'],
                                                 ':AccRstrDate' => $restriction['AccRstrDate'],
                                                 ':SuccessorBIC' => $restriction['SuccessorBIC'],
@@ -321,22 +344,24 @@ final class BICLibrary
                                         ];
                                     }
                                 }
+
                                 // Check if any of the restrictions were removed
                                 foreach ($current_rest as $restriction) {
-                                    if (!\in_array($restriction, $library_accounts_rest[$account['Account']], true)) {
+                                    if (!\in_array($restriction, $library_accounts_rest[$library_account['Account']], strict: true)) {
                                         // End restriction
-                                        $this->queries[] = $this->endAccountRestriction($account['Account'], true, ['AccRstr' => $restriction['AccRstr'], 'AccRstrDate' => $restriction['AccRstrDate']]);
+                                        $this->queries[] = $this->endAccountRestriction($library_account['Account'], account: true, restriction: ['AccRstr' => $restriction['AccRstr'], 'AccRstrDate' => $restriction['AccRstrDate']]);
                                     }
                                 }
                             } else {
                                 // End all restrictions for the account
-                                $this->queries[] = $this->endAccountRestriction($account['Account'], true);
+                                $this->queries[] = $this->endAccountRestriction($library_account['Account'], account: true);
                             }
                         }
                     } else {
                         // Close all accounts
                         $this->closeAccount($bic);
                     }
+
                     // If the flag is true, it means that there is a dependency on a BIC, which is not yet present; thus we need to run the queries after BIC is added, but since we can't predict when it will be added, we do this outside of the loop.
                     if ($delay) {
                         $delayed[] = $this->queries;
@@ -345,22 +370,24 @@ final class BICLibrary
                         throw new \RuntimeException('Failed to update `'.$bic.'` from `'.$download.'`');
                     }
                 }
+
                 // Replace list of queries with delayed queries
                 $this->queries = \array_merge(...$delayed);
                 // Check for removed BICs
                 foreach ($this->getBICs() as $bic) {
-                    if (!\in_array($bic, $bics, true)) {
+                    if (!\in_array($bic, $bics, strict: true)) {
                         // Close bic
                         $this->closeBIC($bic);
                     }
                 }
+
                 // Reset the default flag for SWIFTs with DateOut (the way data is presented by CB, it's possible for them to have an incorrect flag).
                 $this->queries[] = ['UPDATE `bic__swift` SET `DefaultSWBIC`=0 WHERE `DateOut` IS NOT NULL;'];
                 // Set `DateIn` for "bad" entries. We are assuming that affected entries were added at least at the time of BIC library creation. Another case of "bad" data.
-                $this->queries[] = ['UPDATE `bic__list` SET `DateIn`=\'1996-07-10\' WHERE `DateIn` IS NULL OR `DateIn`=\'1970-01-01\';'];
-                $this->queries[] = ['UPDATE `bic__accounts` SET `DateIn`=\'1996-07-10\' WHERE `DateIn`=\'1970-01-01\';'];
+                $this->queries[] = ["UPDATE `bic__list` SET `DateIn`='1996-07-10' WHERE `DateIn` IS NULL OR `DateIn`='1970-01-01';"];
+                $this->queries[] = ["UPDATE `bic__accounts` SET `DateIn`='1996-07-10' WHERE `DateIn`='1970-01-01';"];
                 $this->queries[] = [
-                    'UPDATE `bic__settings` SET `value`=:date WHERE `setting`=\'date\';',
+                    "UPDATE `bic__settings` SET `value`=:date WHERE `setting`='date';",
                     [':date' => $lib_date->format('d.m.Y')],
                 ];
                 // Run queries for BICs removals and library update
@@ -372,6 +399,7 @@ final class BICLibrary
                 ) {
                     return $lib_date->getTimestamp();
                 }
+
                 // Increase by 1 day
                 $lib_date = $lib_date->add(new \DateInterval('P1D'));
             } catch (\Throwable $exception) {
@@ -381,7 +409,7 @@ final class BICLibrary
                 return $error;
             } finally {
                 // Remove all library-related files if any were identified
-                \array_map('\unlink', \glob(\sys_get_temp_dir().'/*_ED807_full.*', \GLOB_NOSORT));
+                \array_map(\unlink(...), \glob(\sys_get_temp_dir().'/*_ED807_full.*', \GLOB_NOSORT));
             }
         }
 
@@ -396,7 +424,7 @@ final class BICLibrary
     public function bicDate(): \DateTimeImmutable
     {
         try {
-            $date = Query::query('SELECT `value` FROM `bic__settings` WHERE `setting`=\'date\';', return: 'value');
+            $date = Query::query("SELECT `value` FROM `bic__settings` WHERE `setting`='date';", return: 'value');
 
             return \DateTimeImmutable::createFromFormat('!d.m.Y', $date);
         } catch (\Throwable) {
@@ -535,6 +563,7 @@ final class BICLibrary
         if (Sanitize::whiteString($bic)) {
             return [];
         }
+
         // If no details, assume we are ending all restrictions
         if (
             $restriction === null
@@ -548,6 +577,7 @@ final class BICLibrary
                 ],
             ];
         }
+
         // Otherwise, use details to narrow down
         if (!isset($restriction['Rstr'], $restriction['RstrDate'])) {
             return [];
@@ -578,6 +608,7 @@ final class BICLibrary
         if (Sanitize::whiteString($bic)) {
             return [];
         }
+
         // If swift is empty, assume that we are removing all accounts
         if (
             $swift === null
@@ -630,7 +661,7 @@ final class BICLibrary
             ];
         } else {
             // End restrictions
-            $this->queries[] = $this->endAccountRestriction($account, true);
+            $this->queries[] = $this->endAccountRestriction($account, account: true);
             // Close account
             $this->queries[] = [
                 'UPDATE `bic__accounts` SET `DateOut`=:file_date WHERE `BIC`=:BIC AND `Account`=:Account AND `DateOut` IS NULL;',
@@ -657,6 +688,7 @@ final class BICLibrary
         if (Sanitize::whiteString($bic)) {
             return [];
         }
+
         // If the account flag is true, we know the account
         if ($account) {
             // If no details, end all restrictions
@@ -672,6 +704,7 @@ final class BICLibrary
                     ],
                 ];
             }
+
             // Otherwise, use details to narrow down
             if (!isset($restriction['AccRstr'], $restriction['AccRstrDate'])) {
                 return [];
@@ -725,8 +758,9 @@ final class BICLibrary
         if (!\is_string($data)) {
             return false;
         }
+
         // Load page as DOM Document
-        \libxml_use_internal_errors(true);
+        \libxml_use_internal_errors(use_errors: true);
         $page = new \DOMDocument();
         $page->loadHTML($data);
         // Iterate links to find the one we need
@@ -755,6 +789,7 @@ final class BICLibrary
                             $zip->extractTo(\sys_get_temp_dir());
                             $zip->close();
                         }
+
                         // Remove zip file
                         /* @noinspection PhpUsageOfSilenceOperatorInspection */
                         @\unlink($bic_file);

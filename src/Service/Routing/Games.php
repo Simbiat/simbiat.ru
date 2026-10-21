@@ -11,15 +11,29 @@ use App\Controller\Games\RadicalResonance;
 final class Games extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
+    #[\Override]
     protected array $sub_routes = ['jiangshi', 'dden', 'radicalresonance', 'anti'];
 
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/games/', 'name' => 'Games'],
     ];
+
+    #[\Override]
     protected string $title = 'Games';
+
+    #[\Override]
     protected string $h1 = 'Games';
+
+    #[\Override]
     protected string $og_desc = 'Games';
+
+    #[\Override]
     protected string $service_name = 'games';
 
     // This is the actual page generation based on further details of the $path

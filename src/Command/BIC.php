@@ -32,7 +32,7 @@ final class BIC
             // Connect to DB
             Config::dbConnect();
             if (Config::$dbup) {
-                $result = new BICLibrary()->update(true);
+                $result = new BICLibrary()->update(manual: true);
                 // Ignore failures to download the file. CBR started using DDoS-Guard, which seems to be blocking the server most of the time now
                 if (
                     \is_string($result)

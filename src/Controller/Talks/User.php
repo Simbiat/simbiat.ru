@@ -12,21 +12,30 @@ use Simbiat\http20\Headers;
 
 final class User extends Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/talks/users/', 'name' => 'Users'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'user';
 
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'User profile';
 
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'User profile';
 
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'User profile';
 
     // This is the actual page generation based on further details of the $path
@@ -35,13 +44,15 @@ final class User extends Page
         if (empty($path[0])) {
             Headers::redirect('https://'.(\preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config::$http_host) === 1 ? 'www.' : '').Config::$http_host.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/uc/profile/');
         }
+
         $user = new \App\Entity\User($path[0]);
         $output_array = [];
         $output_array['user_data'] = $user->getArray();
         if (empty($output_array['user_data']['id'])) {
             return ['http_error' => 404, 'reason' => 'User does not exist'];
         }
-        if (!\in_array((int) $user->id, SystemUser::getSystemUsers(), true)) {
+
+        if (!\in_array((int) $user->id, SystemUser::getSystemUsers(), strict: true)) {
             // Get FF characters
             $output_array['fftracker'] = $user->getFF();
             // Get last posts and threads
@@ -51,6 +62,7 @@ final class User extends Page
                 $output_array['posts'][$post_id]['text'] = Cut::cut($post['text'], 250, 3, '<a href="/talks/threads/'.$post['thread_id'].'">…</a>');
             }
         }
+
         // Update meta
         $this->title = $output_array['user_data']['username'];
         $this->h1 = $this->title;

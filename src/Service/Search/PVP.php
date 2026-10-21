@@ -9,34 +9,42 @@ use App\Entity\FFXIV\AbstractEntity;
 final class PVP extends Search
 {
     // Type of entity to return as static value in results (required for frontend routing)
+    #[\Override]
     protected string $entity_type = 'pvpteam';
 
     // Name of the table to search use
+    #[\Override]
     protected string $table = 'ffxiv__pvpteam';
 
     // List of fields
+    #[\Override]
     protected string $fields = '`pvp_id` as `id`, `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `updated`';
 
     // Default order (for the main page, for example)
+    #[\Override]
     protected string $order_default = '`Updated` DESC';
 
     // Order for list pages
+    #[\Override]
     protected string $order_list = '`name` ASC';
 
     // THe next 3 values are lists of columns to use in search. The order is important, since the higher in the list a field is,
     // the more weight/relevancy condition with it will have (if true)
     // List of FULLTEXT columns
+    #[\Override]
     protected array $fulltext = [
         'name',
     ];
 
     // List of optional columns for direct comparison
+    #[\Override]
     protected array $exact = [
         'pvp_id',
         'name',
     ];
 
     // List of optional columns for LIKE %% comparison
+    #[\Override]
     protected array $like = [
         'name',
     ];

@@ -9,19 +9,16 @@ use App\Controller\Api\Api;
 final class Upload extends Api
 {
     // Flag to indicate, that this is the lowest level
+    #[\Override]
     protected bool $final_node = true;
 
     // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    #[\Override]
     protected array $methods = ['POST' => ''];
 
     // Flag indicating that authentication is required
+    #[\Override]
     protected bool $authentication_needed = true;
-
-    // Flag to indicate need to validate CSRF
-    protected bool $csrf = false;
-
-    // Flag to indicate that session data change is possible on this page
-    protected bool $session_change = false;
 
     protected function genData(array $path): array
     {

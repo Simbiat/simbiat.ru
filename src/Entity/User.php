@@ -36,6 +36,7 @@ final class User extends Entity
      * Maximum number of unused avatars per user.
      */
     public const int AVATAR_LIMIT = 10;
+
     // Entity's properties
 
     public string $username;
@@ -128,8 +129,8 @@ final class User extends Entity
         try {
             $result['emails'] = Query::query('SELECT `email`, `subscribed`, `activation` FROM `uc__emails` WHERE `user_id`=:user_id ORDER BY `email`;', [':user_id' => [$this->id, 'int']], return: 'all');
             // Count how many emails are activated (to restrict removal of emails)
-            $result['count_activated'] = \count(\array_filter(\array_column($result['emails'], 'activation'), '\is_null'));
-            $result['count_subscribed'] = \count(\array_filter(\array_column($result['emails'], 'subscribed'), static fn($x) => $x !== null));
+            $result['count_activated'] = \count(\array_filter(\array_column($result['emails'], 'activation'), \is_null(...)));
+            $result['count_subscribed'] = \count(\array_filter(\array_column($result['emails'], 'subscribed'), static fn($x): bool => $x !== null));
             $this->emails = $result;
 
             return $result;
@@ -146,7 +147,7 @@ final class User extends Entity
     public function getAvatar(): string
     {
         try {
-            $avatar = Query::query('SELECT CONCAT(\'/assets/images/avatars/\', SUBSTRING(`sys__files`.`file_id`, 1, 2), \'/\', SUBSTRING(`sys__files`.`file_id`, 3, 2), \'/\', SUBSTRING(`sys__files`.`file_id`, 5, 2), \'/\', `sys__files`.`file_id`, \'.\', `sys__files`.`extension`) AS `url` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`file_id`=`sys__files`.`file_id` WHERE `uc__avatars`.`user_id`=:user_id AND `current`=1 LIMIT 1', ['user_id' => [$this->id, 'int']], return: 'value');
+            $avatar = Query::query("SELECT CONCAT('/assets/images/avatars/', SUBSTRING(`sys__files`.`file_id`, 1, 2), '/', SUBSTRING(`sys__files`.`file_id`, 3, 2), '/', SUBSTRING(`sys__files`.`file_id`, 5, 2), '/', `sys__files`.`file_id`, '.', `sys__files`.`extension`) AS `url` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`file_id`=`sys__files`.`file_id` WHERE `uc__avatars`.`user_id`=:user_id AND `current`=1 LIMIT 1", ['user_id' => [$this->id, 'int']], return: 'value');
             if (empty($avatar)) {
                 $avatar = '/assets/images/avatar.svg';
             }
@@ -165,7 +166,7 @@ final class User extends Entity
     public function getAvatars(): array
     {
         try {
-            $result = Query::query('SELECT CONCAT(\'/assets/images/avatars/\', SUBSTRING(`sys__files`.`file_id`, 1, 2), \'/\', SUBSTRING(`sys__files`.`file_id`, 3, 2), \'/\', SUBSTRING(`sys__files`.`file_id`, 5, 2), \'/\', `sys__files`.`file_id`, \'.\', `sys__files`.`extension`) AS `url`, `uc__avatars`.`file_id`, `current` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`file_id`=`sys__files`.`file_id` WHERE `uc__avatars`.`user_id`=:user_id ORDER BY `current` DESC;', [':user_id' => [$this->id, 'int']], return: 'all');
+            $result = Query::query("SELECT CONCAT('/assets/images/avatars/', SUBSTRING(`sys__files`.`file_id`, 1, 2), '/', SUBSTRING(`sys__files`.`file_id`, 3, 2), '/', SUBSTRING(`sys__files`.`file_id`, 5, 2), '/', `sys__files`.`file_id`, '.', `sys__files`.`extension`) AS `url`, `uc__avatars`.`file_id`, `current` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`file_id`=`sys__files`.`file_id` WHERE `uc__avatars`.`user_id`=:user_id ORDER BY `current` DESC;", [':user_id' => [$this->id, 'int']], return: 'all');
             $this->avatars = $result;
 
             return $result;
@@ -187,8 +188,9 @@ final class User extends Entity
     {
         try {
             if ($this->system) {
-                return ['http_error' => 403, 'reason' => 'Can\'t modify system user'];
+                return ['http_error' => 403, 'reason' => "Can't modify system user"];
             }
+
             // Get current avatars
             $avatars = $this->getAvatars();
             // Count values in `current` column
@@ -197,6 +199,7 @@ final class User extends Entity
             if (empty($counts[0])) {
                 $counts[0] = 0;
             }
+
             // Check if we are not trying to add an excessive avatar (compare the number of non-current avatars to the limit).
             // If we are setting one for a character - ignore this limitation, though, because it is possible that this character is being used as the current avatar, which we will need to update
             if (
@@ -205,10 +208,12 @@ final class User extends Entity
             ) {
                 return ['http_error' => 413, 'reason' => 'Maximum of '.self::AVATAR_LIMIT.' unused avatars reached'];
             }
-            $upload = new Curl()->upload($link, true);
+
+            $upload = new Curl()->upload($link, only_images: true);
             if (!empty($upload['http_error'])) {
                 return $upload;
             }
+
             // Log the change
             Security::log(LogType::Avatar->value, 'Added avatar', $upload['hash']);
             // Add to DB
@@ -226,6 +231,7 @@ final class User extends Entity
             if ($set_active) {
                 return $this->setAvatar($upload['hash']);
             }
+
             if (
                 $character !== null
                 && Query::query('SELECT `file_id` FROM `uc__avatars` WHERE `user_id`=:user_id AND `current`=1 AND `character_id`=:character;', [':user_id' => [$this->id, 'int'], ':character' => [$character, 'int']], return: 'check')
@@ -236,6 +242,7 @@ final class User extends Entity
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Failed to add avatar to library'];
         }
+
         if (empty($upload['location'])) {
             return ['http_error' => 500, 'reason' => 'No file path determined'];
         }
@@ -251,8 +258,9 @@ final class User extends Entity
     public function delAvatar(): array
     {
         if ($this->system) {
-            return ['http_error' => 403, 'reason' => 'Can\'t modify system user'];
+            return ['http_error' => 403, 'reason' => "Can't modify system user"];
         }
+
         $file_id = $_POST['avatar'] ?? '';
         // Log the change
         Security::log(LogType::Avatar->value, 'Deleted avatar', $file_id);
@@ -272,14 +280,16 @@ final class User extends Entity
     public function setAvatar(string $file_id = ''): array
     {
         if ($this->system) {
-            return ['http_error' => 403, 'reason' => 'Can\'t modify system user'];
+            return ['http_error' => 403, 'reason' => "Can't modify system user"];
         }
+
         if (
             !empty($_POST['avatar'])
             && \is_string($_POST['avatar'])
         ) {
             $file_id = $_POST['avatar'];
         }
+
         // Log the change
         Security::log(LogType::Avatar->value, 'Changed active avatar', $file_id);
         Query::query([
@@ -303,7 +313,7 @@ final class User extends Entity
         // Get token
         $output_array['token'] = Query::query('SELECT `ff_token` FROM `uc__users` WHERE `user_id`=:user_id;', [':user_id' => [$this->id, 'int']], return: 'value');
         // Get linked characters
-        $output_array['characters'] = Query::query('SELECT \'character\' AS `type`, `ffxiv__character`.`character_id` AS `id`, `name`, `avatar` AS `icon` FROM `ffxiv__character` WHERE `character_id` IN (SELECT `character_id` FROM `uc__user_to_ff_character` WHERE `user_id`=:user_id) ORDER BY `name`;', [':user_id' => [$this->id, 'int']], return: 'all');
+        $output_array['characters'] = Query::query("SELECT 'character' AS `type`, `ffxiv__character`.`character_id` AS `id`, `name`, `avatar` AS `icon` FROM `ffxiv__character` WHERE `character_id` IN (SELECT `character_id` FROM `uc__user_to_ff_character` WHERE `user_id`=:user_id) ORDER BY `name`;", [':user_id' => [$this->id, 'int']], return: 'all');
         // Get linked groups
         if (!empty($output_array['characters'])) {
             foreach ($output_array['characters'] as $character) {
@@ -336,9 +346,10 @@ final class User extends Entity
     public function changeUsername(string $new_name): array
     {
         if ($this->system) {
-            return ['http_error' => 403, 'reason' => 'Can\'t modify system user'];
+            return ['http_error' => 403, 'reason' => "Can't modify system user"];
         }
-        $new_name = Sanitization::removeNonPrintable($new_name, true);
+
+        $new_name = Sanitization::removeNonPrintable($new_name, full_list: true);
         // Check if the new name is valid
         if (
             empty($new_name)
@@ -347,10 +358,12 @@ final class User extends Entity
         ) {
             return ['http_error' => 403, 'reason' => 'Prohibited username provided'];
         }
+
         // Check if we have the current username and get it if we do not
         if (empty($this->username)) {
             $this->get();
         }
+
         if ($this->username === $new_name) {
             return ['response' => true];
         }
@@ -363,9 +376,11 @@ final class User extends Entity
             if ($result) {
                 $_SESSION['username'] = $new_name;
             }
+
             if (\session_status() === \PHP_SESSION_ACTIVE) {
-                Security::session_regenerate_id(true);
+                Security::session_regenerate_id(delete_old_session: true);
             }
+
             // Log the change
             Security::log(LogType::UserDetailsChanged->value, 'Changed name', ['name' => ['old' => $this->username, 'new' => $new_name]]);
 
@@ -383,11 +398,13 @@ final class User extends Entity
     public function updateProfile(): array
     {
         if ($this->system) {
-            return ['http_error' => 403, 'reason' => 'Can\'t modify system user'];
+            return ['http_error' => 403, 'reason' => "Can't modify system user"];
         }
+
         if (empty($_POST['details'])) {
             return ['http_error' => 400, 'reason' => 'No data provided'];
         }
+
         // Ensure we get current values (to not generate queries for fields with the same data
         $this->get();
         // Generate queries and data for log
@@ -395,7 +412,7 @@ final class User extends Entity
         $log = [];
         // Queries for names
         foreach (['first_name', 'last_name', 'middle_name', 'father_name', 'prefix', 'suffix'] as $field) {
-            $_POST['details']['name'][$field] = Sanitization::removeNonPrintable($_POST['details']['name'][$field] ?? '', true);
+            $_POST['details']['name'][$field] = Sanitization::removeNonPrintable($_POST['details']['name'][$field] ?? '', full_list: true);
             if ($this->name[$field] === $_POST['details']['name'][$field]) {
                 continue;
             }
@@ -412,6 +429,7 @@ final class User extends Entity
                 ],
             ];
         }
+
         // Query for a birthday
         if (
             isset($_POST['details']['dates']['birthday'])
@@ -429,11 +447,12 @@ final class User extends Entity
                 ],
             ];
         }
+
         // Query for time zone
-        $_POST['details']['timezone'] = Sanitization::removeNonPrintable($_POST['details']['timezone'] ?? 'UTC', true);
+        $_POST['details']['timezone'] = Sanitization::removeNonPrintable($_POST['details']['timezone'] ?? 'UTC', full_list: true);
         if (
             $this->timezone !== $_POST['details']['timezone']
-            && \in_array($_POST['details']['timezone'], \timezone_identifiers_list(), true)
+            && \in_array($_POST['details']['timezone'], \timezone_identifiers_list(), strict: true)
         ) {
             $log['timezone'] = ['old' => $this->timezone, 'new' => $_POST['details']['timezone']];
             $queries[] = [
@@ -447,6 +466,7 @@ final class User extends Entity
                 ],
             ];
         }
+
         // Query for sex
         if (isset($_POST['details']['sex'])) {
             if ($_POST['details']['sex'] === 'null') {
@@ -456,6 +476,7 @@ final class User extends Entity
             } elseif ($_POST['details']['sex'] <= 0) {
                 $_POST['details']['sex'] = 0;
             }
+
             if ($this->sex !== $_POST['details']['sex']) {
                 $log['sex'] = ['old' => $this->sex, 'new' => $_POST['details']['sex']];
                 $queries[] = [
@@ -470,6 +491,7 @@ final class User extends Entity
                 ];
             }
         }
+
         // Query for website
         if (isset($_POST['details']['website'])) {
             $_POST['details']['website'] = Security::sanitizeURL($_POST['details']['website']);
@@ -479,6 +501,7 @@ final class User extends Entity
             ) {
                 $_POST['details']['website'] = $this->website ?? null;
             }
+
             if ($this->website !== $_POST['details']['website']) {
                 $log['website'] = ['old' => $this->website, 'new' => $_POST['details']['website']];
                 $queries[] = [
@@ -493,9 +516,10 @@ final class User extends Entity
                 ];
             }
         }
+
         // Queries for other fields
         foreach (['country', 'city', 'about'] as $field) {
-            $_POST['details'][$field] = Sanitization::removeNonPrintable($_POST['details'][$field] ?? '', true);
+            $_POST['details'][$field] = Sanitization::removeNonPrintable($_POST['details'][$field] ?? '', full_list: true);
             if ($this->{$field} === $_POST['details'][$field]) {
                 continue;
             }
@@ -512,9 +536,11 @@ final class User extends Entity
                 ],
             ];
         }
+
         if (\count($queries) === 0) {
             return ['http_error' => 400, 'reason' => 'No changes detected'];
         }
+
         $result = Query::query($queries);
         // Log the change
         Security::log(LogType::UserDetailsChanged->value, 'Changed details', $log);
@@ -578,17 +604,20 @@ final class User extends Entity
 
             return ['response' => true];
         }
+
         // Validating data
         if (empty($_POST['signinup']['email'])) {
             Security::log(LogType::FailedLogin->value, 'No email provided');
 
             return ['http_error' => 400, 'reason' => 'No email provided'];
         }
+
         if (empty($_POST['signinup']['password'])) {
             Security::log(LogType::FailedLogin->value, 'No password provided');
 
             return ['http_error' => 400, 'reason' => 'No password provided'];
         }
+
         // Check if banned
         $is_email = \filter_var($_POST['signinup']['email'], \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE);
         if (
@@ -605,8 +634,9 @@ final class User extends Entity
 
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }
+
         // Check DB
-        if (Query::$dbh === null) {
+        if (!Query::$dbh instanceof \PDO) {
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
 
@@ -620,33 +650,38 @@ final class User extends Entity
         } catch (\Throwable) {
             $credentials = null;
         }
+
         // Check if a password is set (means that a user does exist)
         if (empty($credentials['password'])) {
             Security::log(LogType::FailedLogin->value, 'No user found');
 
             return ['http_error' => 403, 'reason' => 'Wrong login or password'];
         }
+
         /* @noinspection UnusedFunctionResultInspection Needed to just update current ID */
         $this->setId($credentials['user_id']);
         // Get permissions
         $_SESSION['permissions'] = $this->getPermissions();
-        if (!\in_array('can_login', $_SESSION['permissions'], true)) {
-            Security::log(LogType::FailedLogin->value, 'Attempt to login with account that can\'t login', user_id: (int) $this->id);
+        if (!\in_array('can_login', $_SESSION['permissions'], strict: true)) {
+            Security::log(LogType::FailedLogin->value, "Attempt to login with account that can't login", user_id: (int) $this->id);
 
             return ['http_error' => 403, 'reason' => 'No `can_login` permission'];
         }
+
         // Check for strikes
         if ($credentials['strikes'] >= 5) {
             Security::log(LogType::FailedLogin->value, 'Too many failed login attempts', user_id: (int) $this->id);
 
             return ['http_error' => 403, 'reason' => 'Too many failed login attempts. Try password reset.'];
         }
+
         // Check the password
         if (!$this->passValid($_POST['signinup']['password'], $credentials['password'])) {
             Security::log(LogType::FailedLogin->value, 'Bad password', user_id: (int) $this->id);
 
             return ['http_error' => 403, 'reason' => 'Wrong login or password'];
         }
+
         // Add username and user_id to the session
         $_SESSION['username'] = $credentials['username'];
         $_SESSION['user_id'] = $credentials['user_id'];
@@ -657,12 +692,15 @@ final class User extends Entity
         } else {
             Security::log(LogType::Login->value, 'Successful login', user_id: (int) $this->id);
         }
+
         if (\session_status() === \PHP_SESSION_ACTIVE) {
-            Security::session_regenerate_id(true);
+            Security::session_regenerate_id(delete_old_session: true);
         }
+
         if ($after_registration) {
             return ['status' => 201, 'response' => true];
         }
+
         new LoginSuccess()->save($this->id)->send();
 
         return ['response' => true];
@@ -680,8 +718,9 @@ final class User extends Entity
 
             return ['http_error' => 400, 'reason' => 'No email/name provided'];
         }
+
         // Check DB
-        if (Query::$dbh === null) {
+        if (!Query::$dbh instanceof \PDO) {
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
 
@@ -695,6 +734,7 @@ final class User extends Entity
         } catch (\Throwable) {
             $credentials = null;
         }
+
         // Process only if a user was found
         if (
             $credentials !== null
@@ -704,19 +744,20 @@ final class User extends Entity
             $this->setId($credentials['user_id']);
             // Get permissions
             $_SESSION['permissions'] = $this->getPermissions();
-            if (!\in_array('can_login', $_SESSION['permissions'], true)) {
-                Security::log(LogType::PasswordReset->value, 'Attempt to reset password for account that can\'t login', user_id: (int) $this->id);
+            if (!\in_array('can_login', $_SESSION['permissions'], strict: true)) {
+                Security::log(LogType::PasswordReset->value, "Attempt to reset password for account that can't login", user_id: (int) $this->id);
 
                 // Return fake "true" to minimize spoofing registered emails
                 return ['response' => true];
             }
+
             $token = Security::genToken();
 
             try {
                 // Write the reset token to DB
                 Query::query('UPDATE `uc__users` SET `password_reset`=:token WHERE `user_id`=:user_id', [':user_id' => $credentials['user_id'], ':token' => Security::passHash($token)]);
                 Security::log(LogType::PasswordReset->value, 'Attempt to reset password for account', user_id: (int) $this->id);
-                new PasswordReset()->save($this->id, ['token' => $token, 'user_id' => $credentials['user_id']], true, false, $credentials['email'])->send();
+                new PasswordReset()->save($this->id, ['token' => $token, 'user_id' => $credentials['user_id']], email: true, push: false, email_override: $credentials['email'])->send();
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Password reset failed'];
             }
@@ -738,22 +779,21 @@ final class User extends Entity
             if ($this->system) {
                 return;
             }
+
             // Generate cookie ID
             if ($cookie_id === '') {
                 $cookie_id = \bin2hex(\random_bytes(64));
             }
+
             // Generate cookie password
             $pass = \bin2hex(\random_bytes(128));
             $hashed_pass = Security::passHash($pass);
             // Write cookie data to DB
             if (
-                !(
-                    $this->id === null
-                    || $this->id === ''
-                )
+                $this->id !== null && $this->id !== ''
                 || (
                     !empty($_SESSION['user_id'])
-                    && !\in_array((int) $_SESSION['user_id'], SystemUser::getSystemUsers(), true)
+                    && !\in_array((int) $_SESSION['user_id'], SystemUser::getSystemUsers(), strict: true)
                 )
             ) {
                 // Check if a cookie exists and get its `validator`. This also helps with race conditions a bit
@@ -793,6 +833,7 @@ final class User extends Entity
                     ) {
                         $_SESSION['cookie_id'] = $cookie_id;
                     }
+
                     // Set cookie
                     $current_pass = Query::query(
                         'SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
@@ -844,7 +885,7 @@ final class User extends Entity
                 // Check if it needs rehashing
                 if (\password_needs_rehash($hash, \PASSWORD_ARGON2ID, Config::$argon_settings)) {
                     // Rehash password and reset strikes (if any)
-                    $this->passChange($password, true);
+                    $this->passChange($password, refresh: true);
                 } else {
                     // Reset strikes (if any)
                     $this->resetStrikes();
@@ -852,6 +893,7 @@ final class User extends Entity
 
                 return true;
             }
+
             // Increase strike count
             ++$this->strikes;
             Query::query(
@@ -887,9 +929,11 @@ final class User extends Entity
         ) {
             return false;
         }
+
         if ($this->system) {
             return false;
         }
+
         $result = Query::query(
             'UPDATE `uc__users` SET `password`=:password, `strikes`=0, `password_reset`=NULL WHERE `user_id`=:user_id;',
             [
@@ -898,8 +942,9 @@ final class User extends Entity
             ],
         );
         if (\session_status() === \PHP_SESSION_ACTIVE) {
-            Security::session_regenerate_id(true);
+            Security::session_regenerate_id(delete_old_session: true);
         }
+
         Security::log(LogType::PasswordChange->value, 'Attempted to change password', $result);
         if (!$refresh) {
             new PasswordChange()->save($this->id)->send();
@@ -921,6 +966,7 @@ final class User extends Entity
         ) {
             return false;
         }
+
         if ($this->system) {
             return false;
         }
@@ -928,7 +974,7 @@ final class User extends Entity
         return Query::query(
             'UPDATE `uc__users` SET `strikes`=0, `password_reset`=NULL WHERE `user_id`=:user_id;',
             [
-                ':user_id' => [(string) $this->id, 'string'],
+                ':user_id' => [$this->id, 'string'],
             ],
         );
     }
@@ -949,9 +995,11 @@ final class User extends Entity
         ) {
             return false;
         }
+
         if ($this->system) {
             return false;
         }
+
         $result = Query::query(
             'DELETE FROM `uc__cookies` WHERE `user_id`=:user_id AND `cookie_id`=:cookie;',
             [
@@ -981,14 +1029,16 @@ final class User extends Entity
         ) {
             return false;
         }
+
         if ($this->system) {
             return false;
         }
+
         $result = Query::query(
             'DELETE FROM `uc__sessions` WHERE `user_id`=:user_id AND `session_id`=:session;',
             [
                 ':session' => $_POST['session'],
-                ':user_id' => [(string) $this->id, 'string'],
+                ':user_id' => [$this->id, 'string'],
             ],
             return: 'affected',
         );
@@ -1008,13 +1058,15 @@ final class User extends Entity
     {
         $where = '`talks__threads`.`author`=:user_id';
         $bindings = [':user_id' => [$this->id, 'int']];
-        if (!\in_array('view_scheduled', $_SESSION['permissions'], true)) {
+        if (!\in_array('view_scheduled', $_SESSION['permissions'], strict: true)) {
             $where .= ' AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6)';
         }
-        if (!\in_array('view_private', $_SESSION['permissions'], true)) {
+
+        if (!\in_array('view_private', $_SESSION['permissions'], strict: true)) {
             $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:author)';
             $bindings[':author'] = [$_SESSION['user_id'], 'int'];
         }
+
         $threads = new Threads($bindings, $where, '`talks__threads`.`published` DESC')->listEntities();
         // Clean any threads with empty `first_post` (means the thread is either empty or is in progress of creation)
         /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
@@ -1049,16 +1101,18 @@ final class User extends Entity
         $bindings = [':author' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']];
         if (
             !$this->id !== $_SESSION['user_id']
-            && !\in_array('view_scheduled', $_SESSION['permissions'], true)
+            && !\in_array('view_scheduled', $_SESSION['permissions'], strict: true)
         ) {
             $where .= ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)';
         }
+
         if (
             !$this->id !== $_SESSION['user_id']
-            && !\in_array('view_private', $_SESSION['permissions'], true)
+            && !\in_array('view_private', $_SESSION['permissions'], strict: true)
         ) {
             $where .= ' AND `talks__threads`.`private`=0';
         }
+
         $posts = new Posts($bindings, $where, '`talks__posts`.`published` DESC')->listEntities();
         /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         if (
@@ -1102,10 +1156,12 @@ final class User extends Entity
                     }
                 }
             }
+
             if (\count($threads) === 0) {
                 return [];
             }
         }
+
         // Convert regular 0, 1, ... n IDs to real thread IDs for later use
         $threads = Editors::digitToKey($threads, 'id');
         // Get the posts' IDs
@@ -1113,13 +1169,15 @@ final class User extends Entity
         // Get posts
         $where = '';
         $bindings = [':user_id' => [$_SESSION['user_id'], 'int']];
-        if (!\in_array('view_scheduled', $_SESSION['permissions'], true)) {
+        if (!\in_array('view_scheduled', $_SESSION['permissions'], strict: true)) {
             $where .= ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)';
         }
-        if (!\in_array('view_private', $_SESSION['permissions'], true)) {
+
+        if (!\in_array('view_private', $_SESSION['permissions'], strict: true)) {
             $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:author)';
             $bindings[':author'] = [$_SESSION['user_id'], 'int'];
         }
+
         $bindings[':postIDs'] = [$ids, 'in', 'int'];
         $posts = new Posts($bindings, '`talks__posts`.`post_id` IN (:postIDs)'.$where, '`talks__posts`.`published` DESC')->listEntities();
         /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
@@ -1161,8 +1219,9 @@ final class User extends Entity
         // From DB
         if (!empty($_SESSION['cookie_id'])) {
             $_POST['cookie'] = $_SESSION['cookie_id'];
-            $this->deleteCookie(true);
+            $this->deleteCookie(logout: true);
         }
+
         // Clean session (affects $_SESSION only)
         \session_unset();
         // Destroy session (destroys it storage)
@@ -1185,21 +1244,26 @@ final class User extends Entity
         if (empty($_POST['signinup']['username'])) {
             return ['http_error' => 400, 'reason' => 'No username provided'];
         }
+
         if (empty($_POST['signinup']['email'])) {
             return ['http_error' => 400, 'reason' => 'No email provided'];
         }
+
         $email = new Email($_POST['signinup']['email']);
         if (empty($_POST['signinup']['password'])) {
             return ['http_error' => 400, 'reason' => 'No password provided'];
         }
+
         if (\mb_strlen($_POST['signinup']['password'], 'UTF-8') < 8) {
             return ['http_error' => 400, 'reason' => 'Password is shorter than 8 symbols'];
         }
+
         // Get time zone
         $timezone = $_POST['signinup']['timezone'] ?? 'UTC';
-        if (!\in_array($timezone, \timezone_identifiers_list(), true)) {
+        if (!\in_array($timezone, \timezone_identifiers_list(), strict: true)) {
             $timezone = 'UTC';
         }
+
         // Check if banned or in use
         if (
             $email->isBad()
@@ -1209,14 +1273,17 @@ final class User extends Entity
             // Do not provide details on why exactly it failed to minimize email spoofing
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }
+
         // Check DB
-        if (Query::$dbh === null) {
+        if (!Query::$dbh instanceof \PDO) {
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
+
         // Check if registration is enabled
-        if (!Query::query('SELECT `value` FROM `sys__settings` WHERE `setting`=\'registration\'', return: 'value')) {
+        if (!Query::query("SELECT `value` FROM `sys__settings` WHERE `setting`='registration'", return: 'value')) {
             return ['http_error' => 503, 'reason' => 'Registration is currently disabled'];
         }
+
         // Generate password and activation strings
         $password = Security::passHash($_POST['signinup']['password']);
         $ff_token = Security::genToken();
@@ -1227,6 +1294,7 @@ final class User extends Entity
         } catch (\Throwable) {
             // Do nothing, not critical
         }
+
         $email_status = $email->add();
         if (
             !\array_key_exists('status', $email_status)
@@ -1271,7 +1339,7 @@ final class User extends Entity
             $email->subscribe();
             $email->confirm();
 
-            return $this->login(true);
+            return $this->login(after_registration: true);
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Registration failed'];
         }
@@ -1370,6 +1438,7 @@ final class User extends Entity
                     ],
                 ];
             }
+
             // We also remove all cookies and sessions
             $queries[] = [
                 'DELETE FROM `uc__cookies` WHERE `user_id`=:user_id;',
@@ -1390,6 +1459,7 @@ final class User extends Entity
             Errors::error_log($exception);
             $result = false;
         }
+
         // Log
         Security::log(LogType::UserRemoval->value, 'Removal', ['user_id' => $this->id, 'hard' => $hard, 'result' => $result], ($hard ? SystemUser::Deleted->value : $this->id));
 
@@ -1408,19 +1478,22 @@ final class User extends Entity
         if (empty($db_data)) {
             return [];
         }
+
         // Get user's groups
         $db_data['groups'] = Query::query('SELECT `group_id` FROM `uc__user_to_group` WHERE `user_id`=:user_id', ['user_id' => [$this->id, 'int']], return: 'column');
-        if (\in_array(5, $db_data['groups'], true)) {
+        if (\in_array(5, $db_data['groups'], strict: true)) {
             $this->banned = true;
         }
+
         // Get permissions
         $db_data['permissions'] = $this->getPermissions();
         if ($this->system) {
             // System users need to be treated as not activated
             $db_data['activated'] = false;
         } else {
-            $db_data['activated'] = !\in_array(Config::$group_ids['Unverified'], $db_data['groups'], true);
+            $db_data['activated'] = !\in_array(Config::$group_ids['Unverified'], $db_data['groups'], strict: true);
         }
+
         $db_data['current_avatar'] = $this->getAvatar();
 
         return $db_data;

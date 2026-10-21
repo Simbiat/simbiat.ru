@@ -37,17 +37,20 @@ abstract class AbstractEntity extends Entity
     final public function scheduleUpdate(): ?int
     {
         // Schedule only on GET requests
-        if (\in_array(HomePage::$method, ['HEAD', 'OPTIONS'], true)) {
+        if (\in_array(HomePage::$method, ['HEAD', 'OPTIONS'], strict: true)) {
             return null;
         }
+
         // Ignore bots
         if (!empty(HomePage::$user_agent['bot'])) {
             return null;
         }
+
         // If the date is empty, most likely an object was not properly prepared
         if (empty($this->dates['updated'])) {
             return null;
         }
+
         if ($this::ENTITY_TYPE === 'achievement') {
             /* @noinspection PhpPossiblePolymorphicInvocationInspection These attributes are specific for achievements */
             if (
@@ -76,6 +79,7 @@ abstract class AbstractEntity extends Entity
 
             return null;
         }
+
         if (\time() - $this->dates['updated'] >= 86400) {
             try {
                 // Check if already scheduled
@@ -85,8 +89,9 @@ abstract class AbstractEntity extends Entity
                 if ($scheduled) {
                     return \strtotime($scheduled);
                 }
+
                 // Check if there were not too many items scheduled earlier
-                $jobs = Query::query('SELECT COUNT(*) AS `count` FROM `cron__schedule` WHERE `task`=\'ff_update_entity\' AND `registered` >= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 MINUTE)', return: 'count');
+                $jobs = Query::query("SELECT COUNT(*) AS `count` FROM `cron__schedule` WHERE `task`='ff_update_entity' AND `registered` >= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 MINUTE)", return: 'count');
                 if ($jobs < 50) {
                     /* @noinspection PhpPossiblePolymorphicInvocationInspection */
                     $cron_task->settingsFromArray(['priority' => 1, 'message' => 'Updating '.$this::ENTITY_TYPE.' with ID '.$this->id])->add();
@@ -118,6 +123,7 @@ abstract class AbstractEntity extends Entity
         if ($this->id === null) {
             return false;
         }
+
         $id_column = match ($this::ENTITY_TYPE) {
             'character' => 'character_id',
             'achievement' => 'achievement_id',
@@ -134,6 +140,7 @@ abstract class AbstractEntity extends Entity
 
             return $exception->getMessage()."\n".$exception->getTraceAsString();
         }
+
         // Check if it has not been updated recently (10 minutes, to protect from potential abuse)
         if (
             $updated !== null
@@ -143,6 +150,7 @@ abstract class AbstractEntity extends Entity
 
             return true;
         }
+
         // Try to get data from Lodestone, if not already taken
         if (!\is_array($this->lodestone)) {
             try {
@@ -152,11 +160,14 @@ abstract class AbstractEntity extends Entity
 
                 return $exception->getMessage()."\r\n".$exception->getTraceAsString();
             }
+
             if (!\is_array($temp_lodestone)) {
                 return $temp_lodestone;
             }
+
             $this->lodestone = $temp_lodestone;
         }
+
         // If we got 404, return true. If an entity is to be removed, it's done during getFromLodestone()
         if (
             isset($this->lodestone['404'])
@@ -166,6 +177,7 @@ abstract class AbstractEntity extends Entity
 
             return true;
         }
+
         // Characters can mark their profiles as private on Lodestone since Dawntrail
         if (
             $this::ENTITY_TYPE === 'character'
@@ -176,10 +188,12 @@ abstract class AbstractEntity extends Entity
 
             return true;
         }
+
         unset($this->lodestone['404']);
         if (empty($this->lodestone['name'])) {
             return 'No name found for '.$this::ENTITY_TYPE.' ID `'.$this->id.'`';
         }
+
         $result = $this->updateDB();
         $this->removeFromCron();
 
@@ -201,6 +215,7 @@ abstract class AbstractEntity extends Entity
             Errors::error_log($exception, debug: $this->debug);
             $result = ['http_error' => 503, 'reason' => 'Failed to update: '.$exception->getMessage()];
         }
+
         if ($result !== true) {
             try {
                 /** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -252,6 +267,7 @@ abstract class AbstractEntity extends Entity
         if ($this->id === null) {
             return 400;
         }
+
         $id_column = match ($this::ENTITY_TYPE) {
             'character' => 'character_id',
             'achievement' => 'achievement_id',
@@ -267,6 +283,7 @@ abstract class AbstractEntity extends Entity
 
             return 503;
         }
+
         if ($check) {
             // Entity already registered
             return 409;
@@ -280,9 +297,11 @@ abstract class AbstractEntity extends Entity
 
             return false;
         }
+
         if (!\is_array($temp_lodestone)) {
             return 503;
         }
+
         $this->lodestone = $temp_lodestone;
         if (
             isset($this->lodestone['404'])
@@ -290,6 +309,7 @@ abstract class AbstractEntity extends Entity
         ) {
             return 404;
         }
+
         // Characters can mark their profiles as private on Lodestone since Dawntrail
         if (
             $this::ENTITY_TYPE === 'character'
@@ -298,15 +318,17 @@ abstract class AbstractEntity extends Entity
         ) {
             return 403;
         }
+
         // At some point, empty linkshells became possible on lodestone, those that have a page, but no members at all, and are not searchable by name. Possibly private linkshells or something like that
         // Since they lack some basic information, it's not possible to register them, so treat them as private
         if (
             isset($this->lodestone['empty'])
             && $this->lodestone['empty'] === true
-            && \in_array($this::ENTITY_TYPE, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'], true)
+            && \in_array($this::ENTITY_TYPE, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'], strict: true)
         ) {
             return 403;
         }
+
         unset($this->lodestone['404']);
 
         return $this->updateDB();
@@ -352,12 +374,14 @@ abstract class AbstractEntity extends Entity
                 } else {
                     $sub_dir = '';
                 }
+
                 $cached_image = self::crestToLocal($image);
                 if (!empty($cached_image)) {
                     // Try downloading the component if it's not present locally
                     if (!\is_file($cached_image)) {
-                        Images::download($url_to_download, $cached_image, false);
+                        Images::download($url_to_download, $cached_image, convert: false);
                     }
+
                     // If it's an emblem, check that other emblem variants are downloaded as well
                     if ($key === 2) {
                         $emblem_index = (int) \preg_replace('/(.+_)(\d{2})(_.+\.png)/', '$2', \basename($image));
@@ -371,7 +395,7 @@ abstract class AbstractEntity extends Entity
                                     $url_to_download = \preg_replace(['/(.+_)(\d{2})(_.+\.png)/', '/S7f_4f44211af230eac35370ef3e9fe15e51_07_128x128.png/'], ['${1}0'.$iteration.'$3', 'S7f_4f44211af230eac35370ef3e9fe15e51_08_128x128.png'], $image);
 
                                     try {
-                                        Images::download($url_to_download, $emblem_file, false);
+                                        Images::download($url_to_download, $emblem_file, convert: false);
                                     } catch (\Throwable) {
                                         // Do nothing, not critical
                                     }
@@ -402,28 +426,24 @@ abstract class AbstractEntity extends Entity
     /**
      * Function to turn a group crest into a favicon.
      *
-     * @param array $images
+     * @param array<int, mixed> $images
      *
-     * @return null|string
+     * @return string
      */
-    final public static function crestToFavicon(array $images): ?string
+    final public static function crestToFavicon(array $images): string
     {
         $images = self::sortComponents($images);
         $merged_filenames = (empty($images[0]) ? '' : \basename($images[0])).(empty($images[1]) ? '' : \basename($images[1])).(empty($images[2]) ? '' : \basename($images[2]));
         // Get hash of the merged images based on their names
         $crest_hash = \hash('sha3-512', $merged_filenames);
-        if (!empty($crest_hash)) {
-            // Get a full path
-            $full_path = \mb_substr($crest_hash, 0, 2, 'UTF-8').'/'.\mb_substr($crest_hash, 2, 2, 'UTF-8').'/'.$crest_hash.'.webp';
-            // Generate an image file, if missing
-            if (!\is_file(Config::$merged_crests_cache.$full_path)) {
-                self::crestMerge($images, Config::$merged_crests_cache.$full_path);
-            }
-
-            return '/assets/images/fftracker/merged-crests/'.$full_path;
+        // Get a full path
+        $full_path = \mb_substr($crest_hash, 0, 2, 'UTF-8').'/'.\mb_substr($crest_hash, 2, 2, 'UTF-8').'/'.$crest_hash.'.webp';
+        // Generate an image file, if missing
+        if (!\is_file(Config::$merged_crests_cache.$full_path)) {
+            self::crestMerge($images, Config::$merged_crests_cache.$full_path);
         }
 
-        return '/assets/images/fftracker/merged-crests/not_found.webp';
+        return '/assets/images/fftracker/merged-crests/'.$full_path;
     }
 
     /**
@@ -445,13 +465,14 @@ abstract class AbstractEntity extends Entity
                 if (
                     isset($result['gc_id'])
                     && \str_contains($results[$key]['icon'], 'not_found')
-                    && \in_array($result['gc_id'], [1, 2, 3], true)
+                    && \in_array($result['gc_id'], [1, 2, 3], strict: true)
                 ) {
                     $results[$key]['icon'] = $result['gc_id'];
                 }
             } else {
                 $results[$key]['icon'] = '/assets/images/fftracker/merged-crests/not_found.webp';
             }
+
             unset($results[$key]['crest_part_1'], $results[$key]['crest_part_2'], $results[$key]['crest_part_3'], $results[$key]['gc_id']);
         }
 
@@ -525,14 +546,17 @@ abstract class AbstractEntity extends Entity
         ) {
             return Config::$crests_components.'backgrounds/'.\mb_substr($filename, 0, 3, 'UTF-8').'/'.$filename;
         }
+
         // Frames
         if (\str_starts_with($filename, 'F')) {
             return Config::$crests_components.'frames/'.$filename;
         }
+
         // Emblems
         if (\str_starts_with($filename, 'S')) {
             return Config::$crests_components.'emblems/'.\mb_substr($filename, 0, 3, 'UTF-8').'/'.$filename;
         }
+
         Errors::error_log(new \UnexpectedValueException('Unexpected crest component URL `'.$image.'`'));
 
         return null;
@@ -562,6 +586,7 @@ abstract class AbstractEntity extends Entity
                 }
             }
         }
+
         \ksort($images_to_merge);
 
         return $images_to_merge;
@@ -580,9 +605,10 @@ abstract class AbstractEntity extends Entity
     {
         try {
             // Don't do anything if an empty array
-            if (empty($images)) {
+            if ($images === []) {
                 return false;
             }
+
             // Check if the path exists and create it recursively, if not
             /* @noinspection PhpUsageOfSilenceOperatorInspection */
             if (
@@ -592,10 +618,11 @@ abstract class AbstractEntity extends Entity
             ) {
                 throw new \RuntimeException(\sprintf('Directory "%s" was not created', $final_path));
             }
+
             $gd = Images::merge($images);
 
             // Save the file
-            return $gd !== null && \imagewebp($gd, $final_path, \IMG_WEBP_LOSSLESS);
+            return $gd instanceof \GdImage && \imagewebp($gd, $final_path, \IMG_WEBP_LOSSLESS);
         } catch (\Throwable $exception) {
             if ($debug) {
                 Errors::error_log($exception, debug: $debug);

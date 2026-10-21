@@ -21,20 +21,35 @@ final class FreeCompany extends AbstractEntity
     protected const string ENTITY_TYPE = 'freecompany';
 
     public array $dates = [];
+
     public ?string $tag = null;
+
     public array $crest = [];
+
     public int $rank = 0;
+
     public ?string $slogan = null;
+
     public bool $recruiting = false;
+
     public ?string $community = null;
+
     public ?string $grand_company = null;
+
     public ?string $active = null;
+
     public array $location = [];
+
     public array $focus = [];
+
     public array $seeking = [];
+
     public array $old_names = [];
+
     public array $ranking = [];
+
     public array $members = [];
+
     public array $past_members = [];
 
     /**
@@ -61,12 +76,14 @@ final class FreeCompany extends AbstractEntity
 
                 return 'Request throttled by Lodestone';
             }
+
             if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) !== 1) {
                 Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
             }
 
             return 'Failed to get all necessary data for Free Company '.$this->id;
         }
+
         if (
             empty($data['freecompanies'][$this->id]['server'])
             || (
@@ -86,10 +103,12 @@ final class FreeCompany extends AbstractEntity
 
                 return ['404' => true];
             }
+
             Errors::error_log(new \RuntimeException('Failed to get all necessary data for Free Company '.$this->id), ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
 
             return 'Failed to get all necessary data for Free Company '.$this->id;
         }
+
         if (
             empty($data['freecompanies'][$this->id]['crest'][2])
             && !empty($data['freecompanies'][$this->id]['crest'][1])
@@ -97,6 +116,7 @@ final class FreeCompany extends AbstractEntity
             $data['freecompanies'][$this->id]['crest'][2] = $data['freecompanies'][$this->id]['crest'][1];
             $data['freecompanies'][$this->id]['crest'][1] = null;
         }
+
         $data = $data['freecompanies'][$this->id];
         $data['id'] = $this->id;
         $data['404'] = false;
@@ -117,10 +137,11 @@ final class FreeCompany extends AbstractEntity
         if ($data === []) {
             return [];
         }
+
         // Get old names
         $data['old_names'] = Query::query('SELECT `name` FROM `ffxiv__freecompany_names` WHERE `fc_id`=:id AND `name`!=:name', [':id' => $this->id, ':name' => $data['name']], return: 'column');
         // Get members
-        $data['members'] = Query::query('SELECT \'character\' AS `type`, `ffxiv__freecompany_character`.`character_id` AS `id`, `ffxiv__freecompany_rank`.`rank_id`, `rankname` AS `rank`, `name`, `current`, `ffxiv__character`.`avatar` AS `icon`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE uc__user_to_ff_character.`character_id`=`ffxiv__freecompany_character`.`character_id`) AS `user_id` FROM `ffxiv__freecompany_character`LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`rank_id`=`ffxiv__freecompany_character`.`rank_id` AND `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany_character`.`fc_id` LEFT JOIN `ffxiv__character` ON `ffxiv__character`.`character_id`=`ffxiv__freecompany_character`.`character_id` LEFT JOIN (SELECT `rank_id`, COUNT(*) AS `total` FROM `ffxiv__freecompany_character` WHERE `ffxiv__freecompany_character`.`fc_id`=:id GROUP BY `rank_id`) `ranklist` ON `ranklist`.`rank_id` = `ffxiv__freecompany_character`.`rank_id` WHERE `ffxiv__freecompany_character`.`fc_id`=:id ORDER BY `ranklist`.`total`, `ranklist`.`rank_id` , `ffxiv__character`.`name`;', [':id' => $this->id], return: 'all');
+        $data['members'] = Query::query("SELECT 'character' AS `type`, `ffxiv__freecompany_character`.`character_id` AS `id`, `ffxiv__freecompany_rank`.`rank_id`, `rankname` AS `rank`, `name`, `current`, `ffxiv__character`.`avatar` AS `icon`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE uc__user_to_ff_character.`character_id`=`ffxiv__freecompany_character`.`character_id`) AS `user_id` FROM `ffxiv__freecompany_character`LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`rank_id`=`ffxiv__freecompany_character`.`rank_id` AND `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany_character`.`fc_id` LEFT JOIN `ffxiv__character` ON `ffxiv__character`.`character_id`=`ffxiv__freecompany_character`.`character_id` LEFT JOIN (SELECT `rank_id`, COUNT(*) AS `total` FROM `ffxiv__freecompany_character` WHERE `ffxiv__freecompany_character`.`fc_id`=:id GROUP BY `rank_id`) `ranklist` ON `ranklist`.`rank_id` = `ffxiv__freecompany_character`.`rank_id` WHERE `ffxiv__freecompany_character`.`fc_id`=:id ORDER BY `ranklist`.`total`, `ranklist`.`rank_id` , `ffxiv__character`.`name`;", [':id' => $this->id], return: 'all');
         // History of ranks. Ensuring that we get only the freshest 100 entries sorted from latest to newest
         $data['ranks_history'] = Query::query('SELECT `date`, `weekly`, `monthly`, `members` FROM `ffxiv__freecompany_ranking` WHERE `fc_id`=:id ORDER BY `date` DESC LIMIT 100;', [':id' => $this->id], return: 'all');
         // Clean up the data from unnecessary (technical) clutter
@@ -198,6 +219,7 @@ final class FreeCompany extends AbstractEntity
             $this->ranking[$key]['monthly'] = (int) $rank['monthly'];
             $this->ranking[$key]['members'] = (int) $rank['members'];
         }
+
         $members = Splitters::splitByKey($from_db['members'], 'current');
         $this->members = $members[1] ?? [];
         $this->past_members = $members[0] ?? [];
@@ -216,6 +238,7 @@ final class FreeCompany extends AbstractEntity
             if ($this->lodestone['active'] === 'Not specified') {
                 $this->lodestone['active'] = null;
             }
+
             // Main query to insert or update a Free Company
             $queries[] = [
                 'INSERT INTO `ffxiv__freecompany` (
@@ -231,12 +254,12 @@ final class FreeCompany extends AbstractEntity
                         (empty($this->lodestone['active']) ? null : $this->lodestone['active']),
                         (empty($this->lodestone['active']) ? 'null' : 'string'),
                     ],
-                    ':casual' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Casual', \array_column($this->lodestone['focus'], 'name'), true)]['enabled']),
+                    ':casual' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Casual', \array_column($this->lodestone['focus'], 'name'), strict: true)]['enabled']),
                     ':community_id' => [
                         (empty($this->lodestone['community_id']) ? null : $this->lodestone['community_id']),
                         (empty($this->lodestone['community_id']) ? 'null' : 'string'),
                     ],
-                    ':crafter' => (empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][\array_search('Crafter', \array_column($this->lodestone['seeking'], 'name'), true)]['enabled']),
+                    ':crafter' => (empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][\array_search('Crafter', \array_column($this->lodestone['seeking'], 'name'), strict: true)]['enabled']),
                     ':crest_part_1' => [
                         (empty($this->lodestone['crest'][0]) ? null : $this->lodestone['crest'][0]),
                         (empty($this->lodestone['crest'][0]) ? 'null' : 'string'),
@@ -249,8 +272,8 @@ final class FreeCompany extends AbstractEntity
                         (empty($this->lodestone['crest'][2]) ? null : $this->lodestone['crest'][2]),
                         (empty($this->lodestone['crest'][2]) ? 'null' : 'string'),
                     ],
-                    ':dps' => (empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][\array_search('DPS', \array_column($this->lodestone['seeking'], 'name'), true)]['enabled']),
-                    ':dungeons' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Dungeons', \array_column($this->lodestone['focus'], 'name'), true)]['enabled']),
+                    ':dps' => (empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][\array_search('DPS', \array_column($this->lodestone['seeking'], 'name'), strict: true)]['enabled']),
+                    ':dungeons' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Dungeons', \array_column($this->lodestone['focus'], 'name'), strict: true)]['enabled']),
                     ':estate_address' => [
                         (empty($this->lodestone['estate']['address']) ? null : $this->lodestone['estate']['address']),
                         (empty($this->lodestone['estate']['address']) ? 'null' : 'string'),
@@ -265,26 +288,26 @@ final class FreeCompany extends AbstractEntity
                     ],
                     ':fc_id' => $this->id,
                     ':formed' => [$this->lodestone['formed'], 'datetime'],
-                    ':gatherer' => (empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][\array_search('Gatherer', \array_column($this->lodestone['seeking'], 'name'), true)]['enabled']),
+                    ':gatherer' => (empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][\array_search('Gatherer', \array_column($this->lodestone['seeking'], 'name'), strict: true)]['enabled']),
                     ':grand_company' => $this->lodestone['grand_company'],
-                    ':guildhests' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Guildhests', \array_column($this->lodestone['focus'], 'name'), true)]['enabled']),
-                    ':hardcore' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Hardcore', \array_column($this->lodestone['focus'], 'name'), true)]['enabled']),
-                    ':healer' => (empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][\array_search('Healer', \array_column($this->lodestone['seeking'], 'name'), true)]['enabled']),
-                    ':leveling' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Leveling', \array_column($this->lodestone['focus'], 'name'), true)]['enabled']),
+                    ':guildhests' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Guildhests', \array_column($this->lodestone['focus'], 'name'), strict: true)]['enabled']),
+                    ':hardcore' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Hardcore', \array_column($this->lodestone['focus'], 'name'), strict: true)]['enabled']),
+                    ':healer' => (empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][\array_search('Healer', \array_column($this->lodestone['seeking'], 'name'), strict: true)]['enabled']),
+                    ':leveling' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Leveling', \array_column($this->lodestone['focus'], 'name'), strict: true)]['enabled']),
                     ':name' => $this->lodestone['name'],
-                    ':pvp' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('PvP', \array_column($this->lodestone['focus'], 'name'), true)]['enabled']),
-                    ':raids' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Raids', \array_column($this->lodestone['focus'], 'name'), true)]['enabled']),
+                    ':pvp' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('PvP', \array_column($this->lodestone['focus'], 'name'), strict: true)]['enabled']),
+                    ':raids' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Raids', \array_column($this->lodestone['focus'], 'name'), strict: true)]['enabled']),
                     ':rank' => $this->lodestone['rank'],
                     ':recruitment' => (\strcasecmp($this->lodestone['recruitment'], 'Open') === 0 ? 1 : 0),
-                    ':role_playing' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Role-playing', \array_column($this->lodestone['focus'], 'name'), true)]['enabled']),
+                    ':role_playing' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Role-playing', \array_column($this->lodestone['focus'], 'name'), strict: true)]['enabled']),
                     ':server' => $this->lodestone['server'],
                     ':slogan' => [
                         (empty($this->lodestone['slogan']) ? null : Sanitization::sanitizeHTML($this->lodestone['slogan'])),
                         (empty($this->lodestone['slogan']) ? 'null' : 'string'),
                     ],
                     ':tag' => $this->lodestone['tag'],
-                    ':tank' => (empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][\array_search('Tank', \array_column($this->lodestone['seeking'], 'name'), true)]['enabled']),
-                    ':trials' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Trials', \array_column($this->lodestone['focus'], 'name'), true)]['enabled']),
+                    ':tank' => (empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][\array_search('Tank', \array_column($this->lodestone['seeking'], 'name'), strict: true)]['enabled']),
+                    ':trials' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Trials', \array_column($this->lodestone['focus'], 'name'), strict: true)]['enabled']),
                 ],
             ];
             // Register the Free Company name if it's not registered already
@@ -311,6 +334,7 @@ final class FreeCompany extends AbstractEntity
                     ],
                 ];
             }
+
             // Get members as registered on the tracker
             $track_members = Query::query('SELECT `character_id` FROM `ffxiv__freecompany_character` WHERE `fc_id`=:fc_id AND `current`=1;', [':fc_id' => $this->id], return: 'column');
             // Process members that left the company
@@ -318,7 +342,7 @@ final class FreeCompany extends AbstractEntity
                 // Check if member from tracker is present in a Lodestone list
                 if (
                     !\array_key_exists('members', $this->lodestone)
-                    || !\array_key_exists($member, $this->lodestone['members'])
+                    || !\array_key_exists((string) $member, $this->lodestone['members'])
                 ) {
                     // Update status for the character
                     $queries[] = [
@@ -330,6 +354,7 @@ final class FreeCompany extends AbstractEntity
                     ];
                 }
             }
+
             // Process Lodestone members
             if (!empty($this->lodestone['members'])) {
                 foreach ($this->lodestone['members'] as $member => $details) {
@@ -354,6 +379,7 @@ final class FreeCompany extends AbstractEntity
                     ];
                 }
             }
+
             // Running the queries we've accumulated
             Query::query($queries);
             // Schedule the proper update of any newly added characters
@@ -373,7 +399,7 @@ final class FreeCompany extends AbstractEntity
      *
      * @return bool
      */
-    protected function delete(): bool
+    private function delete(): bool
     {
         try {
             $queries = [];

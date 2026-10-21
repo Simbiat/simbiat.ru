@@ -17,7 +17,7 @@ enum SystemUser: int
     /**
      * Get system users' IDs.
      *
-     * @return array
+     * @return array<int, int>
      */
     public static function getSystemUsers(): array
     {

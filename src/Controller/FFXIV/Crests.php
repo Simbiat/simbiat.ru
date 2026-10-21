@@ -8,27 +8,38 @@ use App\Controller\Abstracts\FileListing;
 
 final class Crests extends FileListing
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/fftracker/crests', 'name' => 'Crests'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'crests';
 
     // Page title. Practically needed only for main pages of a segment since will be overridden otherwise
+    #[\Override]
     protected string $title = 'Crests';
 
     // Page's H1 tag. Practically needed only for main pages of a segment since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'Crests';
 
     // Page's description. Practically needed only for main pages of a segment since will be overridden otherwise
-    protected string $og_desc = 'List of all Final Fantasy XIV crests\' components and crests themselves, presented as single images.';
+    #[\Override]
+    protected string $og_desc = "List of all Final Fantasy XIV crests' components and crests themselves, presented as single images.";
 
     // Flag whether to go recursive or not
+    #[\Override]
     protected bool $recursive = true;
 
     // Directories relative to working dir
+    #[\Override]
     protected array $dirs = [
         'background' => ['path' => '/public/assets/images/fftracker/crests-components/backgrounds', 'name' => 'Backgrounds', 'depth' => 1],
         'emblem' => ['path' => '/public/assets/images/fftracker/crests-components/emblems', 'name' => 'Emblems', 'depth' => 1],
@@ -37,9 +48,11 @@ final class Crests extends FileListing
     ];
 
     // List of prohibited extensions, files with which should be excluded
+    #[\Override]
     protected array $exclude = ['LICENSE', 'README.md', '.git'];
 
     // List of permissions, from which at least 1 is required to have access to the page
+    #[\Override]
     protected array $required_permission = ['view_ff'];
 
     protected function extra(array &$file_details): void

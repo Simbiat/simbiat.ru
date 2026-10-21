@@ -40,6 +40,7 @@ final class Clean
 
                     return Command::FAILURE;
                 }
+
                 $output->writeln(Errors::logfmt($result.' session(s) removed'));
             }
         } catch (\Throwable $throwable) {
@@ -77,6 +78,7 @@ final class Clean
                 } catch (\Throwable) {
                     $items = [];
                 }
+
                 foreach ($items as $item) {
                     // Try to delete cookie
                     /** @var int $affected */
@@ -227,18 +229,19 @@ final class Clean
                     /* @noinspection PhpUsageOfSilenceOperatorInspection */
                     @\unlink($full_path);
                 }
+
                 // Get all files from the drive
-                $all_files = new \AppendIterator();
-                $all_files->append(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(Config::$uploaded, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST));
-                $all_files->append(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(Config::$uploaded_img, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST));
+                $files = new \AppendIterator();
+                $files->append(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(Config::$uploaded, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST));
+                $files->append(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(Config::$uploaded_img, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST));
                 // Now get only the file IDs from DB. We need to do it a 2nd time in the function and AFTER directory iterators, to minimize the chances of removing a file that is in the process of being uploaded
                 $db_files = Query::query('SELECT `file_id` FROM `sys__files`;', return: 'column');
-                foreach ($all_files as $file) {
+                foreach ($files as $file) {
                     // Ignore directories and .gitignore and check if the file's ID is present in a database
                     if (
                         !\is_dir($file)
                         && \preg_match('/\.gitignore$/ui', $file) !== 1
-                        && !\in_array(\pathinfo($file, \PATHINFO_FILENAME), $db_files, true)
+                        && !\in_array(\pathinfo($file, \PATHINFO_FILENAME), $db_files, strict: true)
                     ) {
                         // Get a directory tree for the file
                         $dirs = [\dirname($file), \dirname($file, 2), \dirname($file, 3)];
@@ -312,17 +315,19 @@ final class Clean
             } else {
                 $output->writeln(Errors::logfmt('opcache.enable_cli is off, skipping...'));
             }
+
             $output->writeln(Errors::logfmt('Resetting web OPCache...'));
             $ch = \curl_init('http://localhost:2027');
-            \curl_setopt($ch, \CURLOPT_RETURNTRANSFER, true);
-            \curl_setopt($ch, \CURLOPT_NOBODY, true);
-            \curl_setopt($ch, \CURLOPT_FAILONERROR, false);
+            \curl_setopt($ch, \CURLOPT_RETURNTRANSFER, value: true);
+            \curl_setopt($ch, \CURLOPT_NOBODY, value: true);
+            \curl_setopt($ch, \CURLOPT_FAILONERROR, value: false);
             $response = \curl_exec($ch);
             if ($response === false) {
                 $output->writeln(Errors::logfmt('Connection failed: '.\curl_error($ch), 'error'));
 
                 return Command::FAILURE;
             }
+
             $http_code = \curl_getinfo($ch, \CURLINFO_RESPONSE_CODE);
             if ($http_code !== 200) {
                 $output->writeln(Errors::logfmt('Unexpected HTTP code: '.$http_code, 'error'));

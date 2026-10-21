@@ -36,12 +36,12 @@ final class FFXIV
     public function updateEntity(int|string $id, #[ExpectedValues(['character', 'freecompany', 'pvpteam', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'achievement'])] string $type): bool|string
     {
         return match ($type) {
-            'character' => new Character($id)->update(true),
-            'freecompany' => new FreeCompany($id)->update(true),
-            'pvpteam' => new PvPTeam($id)->update(true),
-            'linkshell' => new Linkshell($id)->update(true),
-            'crossworldlinkshell', 'crossworld_linkshell' => new CrossworldLinkshell($id)->update(true),
-            'achievement' => new Achievement($id)->update(true),
+            'character' => new Character($id)->update(allow_sleep: true),
+            'freecompany' => new FreeCompany($id)->update(allow_sleep: true),
+            'pvpteam' => new PvPTeam($id)->update(allow_sleep: true),
+            'linkshell' => new Linkshell($id)->update(allow_sleep: true),
+            'crossworldlinkshell', 'crossworld_linkshell' => new CrossworldLinkshell($id)->update(allow_sleep: true),
+            'achievement' => new Achievement($id)->update(allow_sleep: true),
             default => false,
         };
     }
@@ -89,7 +89,7 @@ final class FFXIV
                 $extra_for_error = $entity['type'].' ID '.$entity['id'];
                 $cron_agent->log('Updating '.$extra_for_error.'...', EventTypes::CustomInformation);
                 $result = $this->updateEntity($entity['id'], $entity['type']);
-                if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement', false, true], true)) {
+                if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement', false, true], strict: true)) {
                     // If we were throttled, sleep an extra minute, and then do an early return to reduce throttling chance on other jobs. Do not treat this as failure, though
                     if (\preg_match('/Request throttled by Lodestone/', $result) === 1) {
                         $cron_agent->log('Throttled on '.$extra_for_error.'. Sleeping...', EventTypes::CustomNotice);
@@ -100,6 +100,7 @@ final class FFXIV
 
                     return $result;
                 }
+
                 // Remove the cron task if it's present
                 new TaskInstance('ff_update_entity', [(string) $entity['id'], $entity['type']])->delete();
             }
@@ -165,12 +166,14 @@ final class FFXIV
                                         return true;
                                     }
                                 }
+
                                 // Get data
                                 $data = $lodestone->getResult();
                                 $page_total = (int) ($data['linkshells']['page_total'] ?? 0);
                                 if ($page_total === 0) {
                                     continue 2;
                                 }
+
                                 // Reset Lodestone
                                 $lodestone->resetResult();
                                 if (!empty($data['linkshells'])) {
@@ -186,14 +189,17 @@ final class FFXIV
                                             $cron->settingsFromArray(['task' => 'ff_update_entity', 'arguments' => [(string) $linkshell, $world['entity']], 'message' => 'Updating '.$world['entity'].' with ID '.$linkshell])->add();
                                         }
                                     }
+
                                     // Attempt to update cache
                                     $json[$world['entity']][$world['world']][$order][$count][$page] = ['date' => \time(), 'count' => \count($data)];
                                     \file_put_contents($cache_path, \json_encode($json, \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR | \JSON_PRESERVE_ZERO_FRACTION | \JSON_PRETTY_PRINT));
                                 }
+
                                 if ($pages_parsed === 500) {
                                     // Do not parse more than 500 pages at a time
                                     return true;
                                 }
+
                                 if ($page === $page_total) {
                                     continue 2;
                                 }

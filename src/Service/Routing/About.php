@@ -14,15 +14,29 @@ use App\Controller\About\ToS;
 final class About extends Router
 {
     // List supported "paths". Basic ones only, some extra validation may be required further
+    #[\Override]
     protected array $sub_routes = ['tech', 'tos', 'privacy', 'security', 'website', 'me', 'resume', 'contacts'];
 
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/about/', 'name' => 'About'],
     ];
+
+    #[\Override]
     protected string $title = 'About Simbiat Software';
+
+    #[\Override]
     protected string $h1 = 'About Simbiat Software';
+
+    #[\Override]
     protected string $og_desc = 'About Simbiat Software';
+
+    #[\Override]
     protected string $service_name = 'about';
 
     /**

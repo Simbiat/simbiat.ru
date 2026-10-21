@@ -6,7 +6,7 @@ ARG PGID=1000
 
 RUN apk add --no-cache docker-cli curl bash
 #TODO: Update version when Supercronic has a new release
-ADD https://github.com/aptible/supercronic/releases/download/v0.2.50/supercronic-linux-amd64 /usr/local/bin/supercronic
+ADD https://github.com/aptible/supercronic/releases/download/v0.2.51/supercronic-linux-amd64 /usr/local/bin/supercronic
 RUN chmod +x /usr/local/bin/supercronic
 
 # Create custom user with UID and GID matching host (note, that this uses BusyBox commands, unlike other containers)

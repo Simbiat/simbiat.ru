@@ -8,24 +8,34 @@ use App\Controller\Abstracts\Page;
 
 final class Character extends Page
 {
-    // Current breadcrumb for navigation
+    /**
+     * Current breadcrumb for navigation
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
     protected array $breadcrumb = [
         ['href' => '/fftracker/characters', 'name' => 'Characters'],
     ];
 
     // Sub service name
+    #[\Override]
     protected string $subservice_name = 'character';
 
     // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $title = 'Character';
 
     // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $h1 = 'Character';
 
     // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    #[\Override]
     protected string $og_desc = 'Character';
 
     // List of permissions, from which at least 1 is required to have access to the page
+    #[\Override]
     protected array $required_permission = ['view_ff'];
 
     // This is the actual page generation based on further details of the $path
@@ -40,12 +50,14 @@ final class Character extends Page
         if (empty($output_array['character']['id'])) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
+
         if (!empty($output_array['character']['dates']['hidden'])) {
             // Do not cache hidden characters on our side
             $this->cache_age = 0;
             // Try to not cache hidden characters in browsers/proxies
             $this->cache_strategy = 'none';
         }
+
         // Try to exit early based on the modification date
         $this->lastModified($output_array['character']['dates']['updated']);
         $output_array['character']['dates']['scheduled'] = $entity->scheduleUpdate();
@@ -56,9 +68,7 @@ final class Character extends Page
                     || !empty($output_array['character']['owned']['user_id'])
                 )
             )
-            || \in_array('refresh_all_ff', $_SESSION['permissions'], true)
-            ? true
-            : false;
+            || \in_array('refresh_all_ff', $_SESSION['permissions'], strict: true);
         // Continue breadcrumbs
         $this->breadcrumb[] = ['href' => '/fftracker/characters/'.$id, 'name' => $output_array['character']['name']];
         // Update meta
@@ -86,6 +96,7 @@ final class Character extends Page
         } else {
             $output_array['character']['lodestone_url'] = null;
         }
+
         // Set favicon to avatar
         if (
             empty($output_array['character']['dates']['hidden'])

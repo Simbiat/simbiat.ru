@@ -55,9 +55,11 @@ final readonly class Database
                 if ($create === null) {
                     throw new \UnexpectedValueException('Failed to get CREATE statement for table `'.$table['table'].'`;');
                 }
+
                 // Add item to the file with dump order
                 $dump_order .= $table['table'].' ';
             }
+
             \file_put_contents(Config::$work_dir.'/data/backups/recommended_table_order.txt', $dump_order);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable, cli: true);
@@ -85,6 +87,7 @@ final readonly class Database
             if (Config::$environment !== 'dev') {
                 return Command::SUCCESS;
             }
+
             /** @var \PDO $pdo IDE complains due to more generic object */
             $pdo = $this->connection->getNativeConnection();
             if (
@@ -94,9 +97,10 @@ final readonly class Database
             ) {
                 throw new \RuntimeException('Failed to create DDL directory');
             }
+
             // Clean up SQL files but do not touch manually maintained files with prefixes `000` and `999`
             \array_map(
-                '\unlink',
+                \unlink(...),
                 \preg_grep('/\/(000|999)[^\/]*\.sql$/u', \glob(Config::$ddl_dir.'*.sql'), \PREG_GREP_INVERT),
             );
             // Get tables in order
@@ -107,9 +111,10 @@ final readonly class Database
                 if ($create === null) {
                     throw new \UnexpectedValueException('Failed to get CREATE statement for table `'.$table['table'].'`;');
                 }
+
                 // Get DDL statement
                 if (\preg_match('/^(cron|maintainer)__/ui', $table['table']) !== 1) {
-                    \file_put_contents(Config::$ddl_dir.\mb_str_pad((string) ($order + 1), 3, '0', \STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', \mb_trim($create, null, 'UTF-8'));
+                    \file_put_contents(Config::$ddl_dir.\mb_str_pad((string) ($order + 1), 3, '0', \STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', \mb_trim($create, encoding: 'UTF-8'));
                 }
             }
         } catch (\Throwable $throwable) {
@@ -141,16 +146,16 @@ final readonly class Database
             // Ensure we have all tables, even though we end up doing this twice
             $analyzer->updateTables(Config::$database_name);
             // Ensure settings are set to what we want
-            $settings->setTableFineTune(Config::$database_name, [], 'analyze_histogram', true)
-                     ->setTableFineTune(Config::$database_name, [], 'analyze_histogram_auto', true)
+            $settings->setTableFineTune(Config::$database_name, [], 'analyze_histogram', flag: true)
+                     ->setTableFineTune(Config::$database_name, [], 'analyze_histogram_auto', flag: true)
                      ->setThresholdFragmentation(Config::$database_name, [], 5.0)
-                     ->setRun(Config::$database_name, [], 'check', true)
-                     ->setRun(Config::$database_name, [], 'fulltext_rebuild', true)
-                     ->setGlobalFineTune('prefer_compressed', true)
-                     ->setGlobalFineTune('prefer_extended', true)
-                     ->setGlobalFineTune('compress_auto_run', true)
-                     ->setGlobalFineTune('use_flush', true);
-            $analyzer->writeCommandsToFiles(Config::$work_dir.'/data/backups/optimization', Config::$database_name, [], true);
+                     ->setRun(Config::$database_name, [], 'check', flag: true)
+                     ->setRun(Config::$database_name, [], 'fulltext_rebuild', flag: true)
+                     ->setGlobalFineTune('prefer_compressed', flag: true)
+                     ->setGlobalFineTune('prefer_extended', flag: true)
+                     ->setGlobalFineTune('compress_auto_run', flag: true)
+                     ->setGlobalFineTune('use_flush', flag: true);
+            $analyzer->writeCommandsToFiles(Config::$work_dir.'/data/backups/optimization', Config::$database_name, [], integrate: true);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable, cli: true);
 

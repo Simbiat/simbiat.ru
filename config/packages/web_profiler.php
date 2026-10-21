@@ -13,6 +13,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             'profiler' => true,
         ]);
     }
+
     if ($containerConfigurator->env() === 'test') {
         $containerConfigurator->extension('framework', [
             'profiler' => [
