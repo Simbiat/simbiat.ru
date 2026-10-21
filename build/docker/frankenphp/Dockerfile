@@ -1,5 +1,5 @@
 # Based on https://frankenphp.dev/docs/docker/
-FROM dunglas/frankenphp:1.13.1-builder-php8.5.11-trixie AS builder
+FROM dunglas/frankenphp:1.13.2-builder-php8.5.12-trixie AS builder
 
 # Copy xcaddy in the builder image
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
@@ -26,7 +26,7 @@ RUN CGO_ENABLED=1 \
     --with github.com/hslatman/caddy-crowdsec-bouncer/layer4@main \
     --with github.com/hslatman/caddy-crowdsec-bouncer/appsec@main
 
-FROM dunglas/frankenphp:1.13.1-php8.5.11-trixie AS base
+FROM dunglas/frankenphp:1.13.2-php8.5.12-trixie AS base
 
 # Replace the official binary by the one containing custom modules
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
