@@ -12,49 +12,75 @@ use Simbiat\Database\Query;
  */
 abstract class Search
 {
-    // Items to display per page for lists
+    /**
+     * @var int Items to display per page for lists
+     */
     public int $list_items = 100;
 
     // Settings required for subclasses
-    // Type of entity to return as static value in results (required for frontend routing)
+    /**
+     * @var string Type of entity to return as static value in results (required for frontend routing)
+     */
     protected string $entity_type = '';
 
-    // Name of the table to search use
+    /**
+     * @var string Name of the table to search use
+     */
     protected string $table = '';
 
-    // List of fields
+    /**
+     * @var string List of fields
+     */
     protected string $fields = '';
 
-    // Optional JOIN string, in case it is required
+    /**
+     * @var string Optional JOIN string, in case it is required
+     */
     protected string $join = '';
 
-    // Optional WHERE clause for every SELECT
+    /**
+     * @var string Optional WHERE clause for every SELECT
+     */
     protected string $where = '';
 
-    // Optional WHERE clause for SELECT where the search term is defined
+    /**
+     * @var string Optional WHERE clause for SELECT where the search term is defined
+     */
     protected string $where_search = '';
 
-    // Optional GROUP BY
+    /**
+     * @var string Optional GROUP BY
+     */
     protected string $group_by = '';
 
-    // Count argument. In some cases you may want to count a certain column instead of using * (default).
+    /**
+     * @var string Count argument. In some cases you may want to count a certain column instead of using * (default).
+     */
     protected string $count_argument = '*';
 
-    // Default order (for the main page, for example)
+    /**
+     * @var string Default order (for the main page, for example)
+     */
     protected string $order_default = '';
 
-    // Order for list pages
+    /**
+     * @var string Order for list pages
+     */
     protected string $order_list = '';
 
-    // The next 3 values are lists of columns to use in search. The order is important, since the higher in the list a field is,
-    // the more weight/relevancy condition with it will have (if true)
-    // List of FULLTEXT columns
+    /**
+     * @var array<int, string> List of FULLTEXT columns. The higher in the list a field is the more weight/relevancy condition with it will have
+     */
     protected array $fulltext = [];
 
-    // List of optional columns for exact comparison
+    /**
+     * @var array<int, string> List of optional columns for direct comparison. The higher in the list a field is the more weight/relevancy condition with it will have
+     */
     protected array $exact = [];
 
-    // List of optional columns for LIKE %% comparison
+    /**
+     * @var array<int, string> List of optional columns for LIKE %% comparison. The higher in the list a field is the more weight/relevancy condition with it will have
+     */
     protected array $like = [];
 
     /**

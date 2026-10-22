@@ -20,25 +20,39 @@ use Simbiat\StringHelpers\Sanitize;
  */
 final class Email extends Entity
 {
-    // Whether mail is registered
+    /**
+     * @var bool Whether mail is registered
+     */
     public private(set) bool $registered = false;
 
-    // User id that the email is linked to
+    /**
+     * @var int|null User id that the email is linked to
+     */
     public private(set) ?int $user_id = null;
 
-    // Username linked to the email
+    /**
+     * @var string|null Username linked to the email
+     */
     public private(set) ?string $username = null;
 
-    // Whether this is anonymous user
+    /**
+     * @var bool Whether this is anonymous user
+     */
     public private(set) bool $anonymous = true;
 
-    // Whether mail is banned
+    /**
+     * @var bool Whether mail is banned
+     */
     public private(set) bool $banned = false;
 
-    // Whether email is subscribed to notifications (when not null)
+    /**
+     * @var string|null Whether email is subscribed to notifications (when not null)
+     */
     private ?string $subscribed = null;
 
-    // Whether email is activated (when null)
+    /**
+     * @var string|null Whether email is activated (when null)
+     */
     private ?string $activation = 'not yet activated';
 
     /**

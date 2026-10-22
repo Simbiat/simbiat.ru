@@ -19,31 +19,49 @@ final class Emails extends Page
         ['href' => '/uc/emails', 'name' => 'Emails'],
     ];
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'emails';
 
-    // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    /**
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $title = 'Emails';
 
-    // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'List of linked emails';
 
-    // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = 'List of linked emails';
 
-    // Cache strategy: aggressive, private, live, month, week, day, hour
+    /**
+     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
+     */
     #[\Override]
     protected string $cache_strategy = 'private';
 
-    // Flag indicating that authentication is required
+    /**
+     * @var bool Flag indicating that authentication is required
+     */
     #[\Override]
     protected bool $authentication_needed = true;
 
-    // This is the actual page generation based on further details of the $path
+    /**
+     * This is actual page generation based on further details of the $path
+     *
+     * @param array<int, string> $path
+     *
+     * @return array<string, mixed>
+     */
     protected function generate(array $path): array
     {
         return new User($_SESSION['user_id'])->getEmails();

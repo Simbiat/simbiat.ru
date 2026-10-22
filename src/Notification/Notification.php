@@ -27,7 +27,6 @@ use Symfony\Component\Mime\Address;
  */
 abstract class Notification extends Entity
 {
-    // Format for IDs
     /**
      * Maximum attempts for sending notifications over email.
      */
@@ -63,34 +62,55 @@ abstract class Notification extends Entity
      */
     protected const bool ALWAYS_SEND = false;
 
+    /**
+     * @var string|null Whether notification is supposed to be sent via email (if a valid email)
+     */
     public protected(set) ?string $email = null;
 
-    // Whether notification is supposed to be sent via push
+    /**
+     * @var bool Whether notification is supposed to be sent via push
+     */
     public protected(set) bool $push = true;
 
-    // When the notification was created
+    /**
+     * @var int|null When the notification was created
+     */
     public protected(set) ?int $created = null;
 
-    // When notification was sent
+    /**
+     * @var int|null When notification was sent
+     */
     public protected(set) ?int $sent = null;
 
-    // When notification was read
+    /**
+     * @var int|null When notification was read
+     */
     public protected(set) ?int $is_read = null;
 
-    // Number of attempts so far
+    /**
+     * @var int Number of attempts so far
+     */
     public protected(set) int $attempts = 0;
 
-    // WHen was the last attempt
+    /**
+     * @var int|null When was the last attempt
+     */
     public protected(set) ?int $last_attempt = null;
 
-    // Notification text
+    /**
+     * @var string|null Notification text
+     */
     public protected(set) ?string $text = null;
 
+    /**
+     * @var string Format for IDs
+     */
     #[\Override]
     protected string $id_format = '/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/mui';
 
-    // ID of the user the notification belongs to
-    // Whether notification is supposed to be sent via email (if a valid email)
+    /**
+     * @var int|null ID of the user the notification belongs to
+     */
     protected ?int $user = null;
 
     /**

@@ -22,13 +22,17 @@ use App\Controller\Api\UserControl\Username;
 
 final class UserControl extends Api
 {
-    // Supported edges
+    /**
+     * @var array<int, string> Supported edges
+     */
     #[\Override]
     protected array $sub_routes = [
         'register', 'login', 'remind', 'logout', 'emails', 'notifications', 'password', 'username', 'profile', 'fflink', 'avatars', 'cookies', 'sessions', 'remove',
     ];
 
-    // Description of the nodes (need to be in same order)
+    /**
+     * @var array<int, string> Description of the nodes (need to be in the same order)
+     */
     #[\Override]
     protected array $routes_description = [
         'Register on the website',
@@ -46,10 +50,6 @@ final class UserControl extends Api
         'Delete sessions',
         'Remove the user',
     ];
-
-    // Flag to indicate, that this is a top level node (false by default)
-    #[\Override]
-    protected bool $top_level = false;
 
     protected function genData(array $path): array
     {

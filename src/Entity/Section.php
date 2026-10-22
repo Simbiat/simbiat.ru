@@ -49,21 +49,34 @@ final class Section extends Entity
 
     public string $description = '';
 
-    // Flag indicating that section is owned by the current user
+    /**
+     * @var bool Flag indicating that section is owned by the current user
+     */
     public bool $owned = false;
 
-    // List of parents for the section
+    /**
+     * @var array List of parents for the section
+     */
     public array $parents = [];
 
-    // ID of direct parent
+    /**
+     * @var int ID of direct parent
+     */
     public int $parent_id = 0;
 
-    // List of direct children
+    /**
+     * @var array List of direct children
+     */
     public array $children = [];
 
-    // List of threads
+    /**
+     * @var array List of threads
+     */
     public array $threads = [];
 
+    /**
+     * @var array List of subscribers
+     */
     public array $subscribers = [];
 
     public int $sequence = 0;
@@ -71,8 +84,9 @@ final class Section extends Entity
     #[\Override]
     protected string $id_format = '/^top|\d+$/mi';
 
-    // Flag indicating if we are getting data for a thread and can skip some details
-    // List of subscribers
+    /**
+     * @var bool Flag indicating if we are getting data for a thread and can skip some details
+     */
     private bool $for_thread = false;
 
     /**

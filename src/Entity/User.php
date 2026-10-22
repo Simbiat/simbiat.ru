@@ -37,14 +37,19 @@ final class User extends Entity
      */
     public const int AVATAR_LIMIT = 10;
 
-    // Entity's properties
-
+    /**
+     * @var string Entity's properties
+     */
     public string $username;
 
-    // System flag, if true, user can't be deleted
+    /**
+     * @var bool System flag, if true, user can't be deleted
+     */
     public bool $system = false;
 
-    // Real name
+    /**
+     * @var array<string, null|string> Real name
+     */
     public array $name = [
         'father_name' => null,
         'first_name' => null,
@@ -54,69 +59,105 @@ final class User extends Entity
         'suffix' => null,
     ];
 
-    // Dates
+    /**
+     * @var array<string, mixed> Dates
+     */
     public array $dates = [
         'birthday' => null,
         'registered' => null,
         'updated' => null,
     ];
 
-    // Parent details
+    /**
+     * @var array<string, mixed> Parent details
+     */
     public array $parent = [
         'id' => null,
         'name' => null,
     ];
 
-    // Personal sections
+    /**
+     * @var array<string, null|int> Personal sections
+     */
     public array $sections = [
         'blog' => null,
         'changelog' => null,
         'knowledgebase' => null,
     ];
 
-    // FF Token
+    /**
+     * @var string|null FF Token
+     */
     public ?string $ff_token = null;
 
-    // Sex
+    /**
+     * @var int|null Sex
+     */
     public ?int $sex = null;
 
-    // About
+    /**
+     * @var string|null About
+     */
     public ?string $about = null;
 
-    // Time zone
+    /**
+     * @var string|null Time zone
+     */
     public ?string $timezone = null;
 
-    // Country
+    /**
+     * @var string|null Country
+     */
     public ?string $country = null;
 
-    // City
+    /**
+     * @var string|null City
+     */
     public ?string $city = null;
 
-    // Website
+    /**
+     * @var string|null Website
+     */
     public ?string $website = null;
 
-    // Groups
+    /**
+     * @var array Groups
+     */
     public array $groups = [];
 
-    // Permissions
+    /**
+     * @var array<int, string> Permissions
+     */
     public array $permissions = ['view_posts', 'view_bic', 'view_ff'];
 
-    // Whether the account is activated
+    /**
+     * @var bool Whether the account is activated
+     */
     public bool $activated = false;
 
-    // Whether the account is banned
+    /**
+     * @var bool Whether the account is banned
+     */
     public bool $banned = false;
 
-    // Emails
+    /**
+     * @var array Emails
+     */
     public array $emails = [];
 
-    // Avatars
+    /**
+     * @var array Avatars
+     */
     public array $avatars = [];
 
-    // Current avatar
+    /**
+     * @var string|null Current avatar
+     */
     public ?string $current_avatar = null;
 
-    // Number of strikes
+    /**
+     * @var int Number of strikes
+     */
     public int $strikes = 0;
 
     /**
@@ -1210,7 +1251,7 @@ final class User extends Entity
         Security::log(LogType::Logout->value, 'Logout');
         // Remove rememberme cookie
         // From browser
-        /* @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
+        /* @noinspection SecureCookiesTransferInspection -- Necessary parameters are provided through the array */
         \setcookie(
             'rememberme_'.Config::$http_host,
             '',

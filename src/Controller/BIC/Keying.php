@@ -19,35 +19,55 @@ final class Keying extends Page
         ['href' => '/bictracker/keying', 'name' => 'Ключевание'],
     ];
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'keying';
 
-    // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $title = 'Ключевание счёта';
 
-    // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'Ключевание счёта';
 
-    // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = 'Проверка корректности контрольного символа в номере счёта против номера банковского идентификационного кода';
 
-    // Language override, to be sent in header (if present)
+    /**
+     * @var string Language override, to be sent in header (if present)
+     */
     #[\Override]
     protected string $language = 'ru-RU';
 
-    // Flag to indicate this is a static page
+    /**
+     * @var bool Flag to indicate this is a static page
+     */
     #[\Override]
     protected bool $static = true;
 
-    // List of permissions, from which at least 1 is required to have access to the page
+    /**
+     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
+     */
     #[\Override]
     protected array $required_permission = ['view_bic'];
 
-    // This is actual page generation based on further details of the $path
+    /**
+     * This is actual page generation based on further details of the $path
+     *
+     * @param array<int, string> $path
+     *
+     * @return array<string, mixed>
+     */
     protected function generate(array $path): array
     {
         $output_array['check_result'] = null;

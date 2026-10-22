@@ -9,13 +9,23 @@ use Simbiat\http20\Headers;
 
 abstract class Listing extends Search
 {
-    // How pages are called (at the moment required only for bictracker for translation)
+    /**
+     * @var string How pages are called (at the moment required only for bictracker for translation)
+     */
     protected string $page_word = 'page';
 
-    // Service name for breadcrumbs
+    /**
+     * @var string Service name for breadcrumbs
+     */
     protected string $service_name = 'listing';
 
-    // Get date from results
+    /**
+     * Get date from results
+     *
+     * @param array $results
+     *
+     * @return int|string
+     */
     final protected function getDate(array $results): int|string
     {
         // Prepare the array of dates
@@ -28,7 +38,13 @@ abstract class Listing extends Search
         return \max($dates);
     }
 
-    // Generation of the page data
+    /**
+     * Generation of the page data.
+     *
+     * @param array $path
+     *
+     * @return array
+     */
     protected function generate(array $path): array
     {
         // Check if types are set

@@ -29,7 +29,9 @@ use App\Controller\SupOps\Solution;
 
 final class SupOps extends Router
 {
-    // List supported "paths". Basic ones only, some extra validation may be required further
+    /**
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
     #[\Override]
     protected array $sub_routes = [
         'pitch', 'glossary', 'problem', 'solution', 'flow', 'metrics', 'resolution', 'interoperability', 'scale', 'comparison', 'needs',

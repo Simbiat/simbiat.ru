@@ -16,7 +16,9 @@ use App\Controller\UserControl\Unsubscribe;
 
 final class UserControl extends Router
 {
-    // List supported "paths". Basic ones only, some extra validation may be required further
+    /**
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
     #[\Override]
     protected array $sub_routes = ['activate', 'register', 'emails', 'unsubscribe', 'profile', 'password', 'removal', 'sessions', 'fftracker', 'avatars'];
 
@@ -45,7 +47,13 @@ final class UserControl extends Router
     #[\Override]
     protected string $redirect_main = '/uc/profile/';
 
-    // This is actual page generation based on further details of the $path
+    /**
+     * This is the actual page generation based on further details of the $path
+     *
+     * @param array $path
+     *
+     * @return array
+     */
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {

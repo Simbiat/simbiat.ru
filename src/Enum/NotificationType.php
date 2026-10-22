@@ -9,7 +9,6 @@ namespace App\Enum;
  */
 enum NotificationType: int
 {
-    // Maintenance-related notifications
     case Test = 0;
 
     #[\Deprecated(message: 'No longer sent from PHP')]
@@ -26,7 +25,6 @@ enum NotificationType: int
     #[\Deprecated(message: 'No longer sent from PHP')]
     case EnoughSpace = 6;
 
-    // User management notifications
     case UserActivation = 7;
     case PasswordReset = 8;
     case PasswordChange = 9;
@@ -34,7 +32,6 @@ enum NotificationType: int
     case LoginFailed = 11;
     case LoginSuccess = 12;
 
-    // Subscriptions
     case NewThread = 13;
     case NewPost = 14;
     case TicketCreation = 15;

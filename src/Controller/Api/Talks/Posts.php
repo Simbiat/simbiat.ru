@@ -10,23 +10,33 @@ use App\HomePage;
 
 final class Posts extends Api
 {
-    // Flag to indicate, that this is the lowest level
+    /**
+     * @var bool Flag to indicate, that this is the lowest level
+     */
     #[\Override]
     protected bool $final_node = true;
 
-    // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    /**
+     * @var array<string, string> Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+     */
     #[\Override]
     protected array $methods = ['POST' => ['add'], 'DELETE' => 'delete', 'PATCH' => ['edit', 'like', 'dislike', 'move']];
 
-    // Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+    /**
+     * @var array<string, string> Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+     */
     #[\Override]
     protected array $verbs = ['add' => 'Add post', 'delete' => 'Delete post', 'edit' => 'Edit post', 'like' => 'Like a post', 'dislike' => 'Dislike a post', 'move' => 'Move post to different thread'];
 
-    // Flag indicating that authentication is required
+    /**
+     * @var bool Flag indicating that authentication is required
+     */
     #[\Override]
     protected bool $authentication_needed = true;
 
-    // Flag indicating, that lack of authentication can be bypassed by an access_token
+    /**
+     * @var bool Flag indicating, that lack of authentication can be bypassed by an access_token
+     */
     #[\Override]
     protected bool $access_token_possible = true;
 

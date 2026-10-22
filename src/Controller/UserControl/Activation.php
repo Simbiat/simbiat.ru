@@ -24,23 +24,33 @@ final class Activation extends Page
         ['href' => '/uc/activation', 'name' => 'Activation'],
     ];
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'activation';
 
-    // Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    /**
+     * @var string Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $title = 'User/email activation';
 
-    // Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'User/email activation';
 
-    // Page's description. Practically needed only for the main pages of a segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for the main pages of a segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = 'Page used for user or email activation';
 
-    // Cache strategy: aggressive, private, live, month, week, day, hour
+    /**
+     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
+     */
     #[\Override]
     protected string $cache_strategy = 'private';
 

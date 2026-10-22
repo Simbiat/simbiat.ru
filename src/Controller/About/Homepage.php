@@ -24,19 +24,27 @@ final class Homepage extends Page
         ['href' => '/', 'name' => 'Home'],
     ];
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'homepage';
 
-    // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'Home';
 
-    // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = 'Homepage of Simbiat Software';
 
-    // List of images to H2 push
+    /**
+     * @var array<int, string> List of images to H2 push
+     */
     #[\Override]
     protected array $h2_push_extra = [
         '/assets/images/ogimages/jiangshi.webp',

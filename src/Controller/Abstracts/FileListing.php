@@ -14,28 +14,42 @@ use Simbiat\StringHelpers\Convert;
  */
 abstract class FileListing extends StaticPage
 {
-    // Cache age set to for a day
     public int $list_items = 100;
 
+    /**
+     * @var int Cache age set to for a day
+     */
     #[\Override]
     protected int $cache_age = 1440;
 
-    // Directories relative to working dir
-    // Expected format: ['URL_path_name' => ['path' => 'path', 'name' => 'name to use in UI', 'depth' => 0]]
-    // Depth, when set and more than 0 will mean that, until folders up to this depth, will be scanned only for other folders and as such allow folder traversal
-    // Items to display per page for lists
+    /**
+     * Directories relative to working dir
+     * Expected format: ['URL_path_name' => ['path' => 'path', 'name' => 'name to use in UI', 'depth' => 0]]
+     * Depth, when set and more than 0 will mean that, until folders up to this depth, will be scanned only for other folders and as such allow folder traversal
+     * Items to display per page for lists
+     *
+     * @var array<string, array<string, int|string>>
+     */
     protected array $dirs = [];
 
-    // Flag whether to go recursive or not
+    /**
+     * @var bool Flag whether to go recursive or not
+     */
     protected bool $recursive = false;
 
-    // List of files that should be excluded
+    /**
+     * @var array<int, string> List of files that should be excluded
+     */
     protected array $exclude = [];
 
-    // String to search for in file names
+    /**
+     * @var string String to search for in file names
+     */
     protected string $search_for = '';
 
-    // Page number
+    /**
+     * @var int Page number
+     */
     protected int $page = 1;
 
     /**

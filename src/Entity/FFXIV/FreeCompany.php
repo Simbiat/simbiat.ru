@@ -17,7 +17,6 @@ use Simbiat\FFXIV\Lodestone;
  */
 final class FreeCompany extends AbstractEntity
 {
-    // Custom properties
     protected const string ENTITY_TYPE = 'freecompany';
 
     public array $dates = [];

@@ -18,7 +18,6 @@ use Simbiat\FFXIV\Lodestone;
  */
 final class Achievement extends AbstractEntity
 {
-    // Custom properties
     protected const string ENTITY_TYPE = 'achievement';
 
     public int $updated;

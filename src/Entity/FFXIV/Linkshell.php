@@ -16,7 +16,6 @@ use Simbiat\FFXIV\Lodestone;
  */
 final class Linkshell extends AbstractEntity
 {
-    // Custom properties
     protected const string ENTITY_TYPE = 'linkshell';
 
     public array $dates = [];

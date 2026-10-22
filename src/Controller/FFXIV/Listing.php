@@ -25,27 +25,39 @@ final class Listing extends \App\Controller\Abstracts\Listing
         ['href' => '/fftracker/search', 'name' => 'Search'],
     ];
 
-    // Service name for breadcrumbs
+    /**
+     * @var string Service name for breadcrumbs
+     */
     #[\Override]
     protected string $service_name = 'fftracker';
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'search';
 
-    // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $title = 'FFXIV Tracker Search';
 
-    // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'FFXIV Tracker Search';
 
-    // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = 'FFXIV Tracker Search';
 
-    // Linking types to classes
+    /**
+     * @var array<string, array<string, string>> Linking types to classes
+     */
     #[\Override]
     protected array $types = [
         'achievements' => ['name' => 'Achievements', 'class' => Achievements::class],
@@ -58,11 +70,15 @@ final class Listing extends \App\Controller\Abstracts\Listing
         'pvpteams' => ['name' => 'PvP Teams', 'class' => PVP::class],
     ];
 
-    // Full title to be used for description metatags when having a search value
+    /**
+     * @var string Full title to be used for description metatags when having a search value
+     */
     #[\Override]
     protected string $full_title = 'Search for `%s` on Final Fantasy XIV Tracker';
 
-    // List of permissions, from which at least 1 is required to have access to the page
+    /**
+     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
+     */
     #[\Override]
     protected array $required_permission = ['view_ff'];
 }

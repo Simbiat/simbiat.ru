@@ -9,19 +9,27 @@ use Simbiat\BIC\AccountKeying;
 
 final class Keying extends Api
 {
-    // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    /**
+     * @var array<string, string> Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+     */
     #[\Override]
     protected array $methods = ['POST' => ''];
 
-    // Flag to indicate, that this is the lowest level
+    /**
+     * @var bool Flag to indicate, that this is the lowest level
+     */
     #[\Override]
     protected bool $final_node = true;
 
-    // Flag to indicate, that no database is required for this node
+    /**
+     * @var bool Flag to indicate, that no database is required for this node
+     */
     #[\Override]
     protected bool $static = true;
 
-    // Description of the node
+    /**
+     * @var array Description of the node
+     */
     #[\Override]
     protected array $description = [
         'ACC_regexp' => '/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/',

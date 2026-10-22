@@ -18,11 +18,15 @@ final class FFTracker extends Sitemap
         ['href' => '/sitemap/xml/fftracker.xml', 'name' => 'Index'],
     ];
 
-    // Flag indicating the main index file (index.xml)
+    /**
+     * @var bool Flag indicating the main index file (index.xml)
+     */
     #[\Override]
     protected bool $main_index = false;
 
-    // Query for countables
+    /**
+     * @var string Query for countables
+     */
     #[\Override]
     protected string $query = '
                     SELECT \'ffxiv_characters\' AS `link`, \'FFXIV Characters\' AS `name`, COUNT(*) AS `count` FROM `ffxiv__character` WHERE `hidden` IS NULL

@@ -18,27 +18,43 @@ final class Character extends Page
         ['href' => '/fftracker/characters', 'name' => 'Characters'],
     ];
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'character';
 
-    // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    /**
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $title = 'Character';
 
-    // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'Character';
 
-    // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = 'Character';
 
-    // List of permissions, from which at least 1 is required to have access to the page
+    /**
+     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
+     */
     #[\Override]
     protected array $required_permission = ['view_ff'];
 
-    // This is the actual page generation based on further details of the $path
+    /**
+     * This is actual page generation based on further details of the $path
+     *
+     * @param array<int, string> $path
+     *
+     * @return array<string, mixed>
+     */
     protected function generate(array $path): array
     {
         // Sanitize ID

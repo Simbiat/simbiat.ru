@@ -79,8 +79,7 @@ final class Caching
             $key = $this->key($key);
             // Generate subdirectory name
             $sub_dir = \mb_substr($key, 0, 2, 'UTF-8').'/'.\mb_substr($key, 2, 2, 'UTF-8').'/'.\mb_substr($key, 4, 2, 'UTF-8').'/';
-            // Create the folder if missing. Silencing operator because of potential concurrency
-            /* @noinspection PhpUsageOfSilenceOperatorInspection */
+            /* @noinspection PhpUsageOfSilenceOperatorInspection -- Create the folder if missing. Silencing operator because of potential concurrency */
             if (
                 !\is_dir($this->cache_dir.$sub_dir)
                 && !@\mkdir($this->cache_dir.$sub_dir, recursive: true)

@@ -17,13 +17,16 @@ use Simbiat\http20\Sharing;
  */
 final class Curl
 {
-    // Allowed MIME types
+    /**
+     * Allowed MIME types. For now only images.
+     */
     public const array ALLOWED_MIME = [
-        // For now only images
         'image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp', 'image/svg+xml',
     ];
 
-    // cURL Handle is static to allow reuse of a single instance, if possible and needed
+    /**
+     * @var \CurlHandle|false|null cURL Handle is static to allow reuse of a single instance, if possible and needed
+     */
     public private(set) static null|\CurlHandle|false $curl_handle = null;
 
     /**

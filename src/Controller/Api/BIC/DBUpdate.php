@@ -14,15 +14,21 @@ use App\Service\Errors;
  */
 final class DBUpdate extends Api
 {
-    // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    /**
+     * @var array<string, string> Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+     */
     #[\Override]
     protected array $methods = ['PUT' => ''];
 
-    // Flag to indicate, that this is the lowest level
+    /**
+     * @var bool Flag to indicate, that this is the lowest level
+     */
     #[\Override]
     protected bool $final_node = true;
 
-    // Description of the node
+    /**
+     * @var array<string, string> Description of the node
+     */
     #[\Override]
     protected array $description = [
         'description' => 'Node to force BIC database update',

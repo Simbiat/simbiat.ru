@@ -21,27 +21,39 @@ final class Bic extends Page
         ['href' => '/bictracker/search', 'name' => 'Поиск'],
     ];
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'bic';
 
-    // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $title = 'Детали организации из БИК трекера';
 
-    // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'Детали организации из БИК трекера';
 
-    // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = 'Детали организации из БИК трекера';
 
-    // Language override, to be sent in header (if present)
+    /**
+     * @var string Language override, to be sent in header (if present)
+     */
     #[\Override]
     protected string $language = 'ru-RU';
 
-    // List of permissions, from which at least 1 is required to have access to the page
+    /**
+     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
+     */
     #[\Override]
     protected array $required_permission = ['view_bic'];
 

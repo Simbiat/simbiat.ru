@@ -16,7 +16,6 @@ use Simbiat\FFXIV\Lodestone;
  */
 final class PvPTeam extends AbstractEntity
 {
-    // Custom properties
     protected const string ENTITY_TYPE = 'pvpteam';
 
     public array $dates = [];

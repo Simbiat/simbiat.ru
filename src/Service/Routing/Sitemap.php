@@ -12,7 +12,9 @@ use Simbiat\http20\Headers;
 
 final class Sitemap extends Router
 {
-    // List supported "paths". Basic ones only, some extra validation may be required further
+    /**
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
     #[\Override]
     protected array $sub_routes = [
         'index', 'fftracker',
@@ -42,11 +44,19 @@ final class Sitemap extends Router
     #[\Override]
     protected string $service_name = 'sitemap';
 
-    // If no path[0] is provided, but we want to show specific page, instead of a stub - redirect to page with this address
+    /**
+     * @var string If no path[0] is provided, but we want to show specific page, instead of a stub - redirect to page with this address
+     */
     #[\Override]
     protected string $redirect_main = '/sitemap/index';
 
-    // This is the actual page generation based on further details of the $path
+    /**
+     * This is the actual page generation based on further details of the $path
+     *
+     * @param array $path
+     *
+     * @return array
+     */
     protected function pageGen(array $path): array
     {
         // Send 406 if format is not acceptable

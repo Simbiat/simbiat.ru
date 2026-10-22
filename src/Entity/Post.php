@@ -59,22 +59,30 @@ final class Post extends Entity
 
     public string $avatar = '/assets/images/avatar.svg';
 
-    // List of parents for the section
+    /**
+     * @var array List of parents for the section
+     */
     public array $parents = [];
 
-    // Likes of the post
+    /**
+     * @var int Likes of the post
+     */
     public int $likes = 0;
 
     public int $dislikes = 0;
 
     public ?int $is_liked = null;
 
-    // Number of the page to which the post belongs (at the time of access)
+    /**
+     * @var int Number of the page to which the post belongs (at the time of access)
+     */
     public int $page = 1;
 
     public array $attachments = [];
 
-    // Access token for support tickets from contact form
+    /**
+     * @var string|null Access token for support tickets from contact form
+     */
     public ?string $access_token = null;
 
     /**

@@ -18,19 +18,27 @@ final class General extends StaticPage
         ['href' => '/sitemap/general.xml', 'name' => 'Static pages'],
     ];
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'sitemap';
 
-    // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $title = 'Static pages';
 
-    // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'Static pages';
 
-    // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = 'Static pages';
 

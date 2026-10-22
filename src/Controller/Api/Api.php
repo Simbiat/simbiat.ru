@@ -18,46 +18,74 @@ use Simbiat\http20\Headers;
  */
 abstract class Api
 {
-    // Supported edges
+    /**
+     * @var array Supported edges
+     */
     protected array $sub_routes = [];
 
-    // Description of the nodes (need to be in the same order)
+    /**
+     * @var array Description of the nodes (need to be in the same order)
+     */
     protected array $routes_description = [];
 
-    // Flag to indicate that this is a top level node (false by default)
+    /**
+     * @var bool Flag to indicate that this is a top level node (false by default)
+     */
     protected bool $top_level = false;
 
-    // Flag to indicate that this is the lowest level
+    /**
+     * @var bool Flag to indicate that this is the lowest level
+     */
     protected bool $final_node = false;
 
-    // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    /**
+     * @var array<string, string> Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+     */
     protected array $methods = ['GET' => ''];
 
-    // Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+    /**
+     * @var array Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+     */
     protected array $verbs = [];
 
-    // Flag to indicate, that no database is required for this node
+    /**
+     * @var bool Flag to indicate, that no database is required for this node
+     */
     protected bool $static = false;
 
-    // Cache age, in case we prefer the generated page to be cached
+    /**
+     * @var int Cache age, in case we prefer the generated page to be cached
+     */
     protected int $cache_age = 0;
 
-    // Description of the node
+    /**
+     * @var array Description of the node
+     */
     protected array $description = [];
 
-    // Flag indicating, that authentication is required
+    /**
+     * @var bool Flag indicating, that authentication is required
+     */
     protected bool $authentication_needed = false;
 
-    // Flag indicating, that lack of authentication can be bypassed by an access_token
+    /**
+     * @var bool Flag indicating, that lack of authentication can be bypassed by an access_token
+     */
     protected bool $access_token_possible = false;
 
-    // List of permissions, from which at least 1 is required to have access the node
+    /**
+     * @var array List of permissions, from which at least 1 is required to have access the node
+     */
     protected array $required_permission = [];
 
-    // Flag to indicate need to validate CSRF
+    /**
+     * @var bool Flag to indicate need to validate CSRF
+     */
     protected bool $csrf = false;
 
-    // List of allowed origins, if we want to limit them
+    /**
+     * @var array List of allowed origins, if we want to limit them
+     */
     protected array $allowed_origins = [];
 
     /**
@@ -162,8 +190,7 @@ abstract class Api
                 $result['json_ready']['data'] = $data['response'] ?? null;
                 // Filter out results if data is an array
                 if (\is_array($result['json_ready']['data'])) {
-                    // Suppressed due to https://youtrack.jetbrains.com/issue/WI-65237/Wrong-array-element-type-is-inferred-on-assignment
-                    /* @noinspection PhpParamsInspection */
+                    /* @noinspection PhpParamsInspection -- https://youtrack.jetbrains.com/issue/WI-65237 */
                     $this->fieldFilter($result['json_ready']['data']);
                 }
 
@@ -268,9 +295,9 @@ abstract class Api
             \header('Allow: '.\implode(', ', $allowed_methods));
         }
 
-        // Check if allowed method is used. EA incorrectly suggests use of `array_key_exists`, which does not fit here, due to how $allowed_methods is used in the whole method
+        // Check if allowed method is used.
 
-        /* @noinspection InArrayMissUseInspection */
+        /* @noinspection InArrayMissUseInspection -- EA incorrectly suggests use of `array_key_exists`, which does not fit here, due to how $allowed_methods is used in the whole method*/
         return \in_array(HomePage::$method, $allowed_methods, strict: true);
     }
 

@@ -21,19 +21,27 @@ final class Me extends StaticPage
         ['href' => '/about/me', 'name' => 'me'],
     ];
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'me';
 
-    // Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'About me';
 
-    // Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = 'About owner of Simbiat Software';
 
-    // List of images to H2 push
+    /**
+     * @var array<int, string> List of images to H2 push
+     */
     #[\Override]
     protected array $h2_push_extra = [
         '/assets/images/ogimages/jiangshi.webp',

@@ -14,7 +14,6 @@ use App\Service\Routing\MainRouter;
 use App\Service\Sanitization;
 use App\Service\UserAgentParser;
 use DateTimeInterface;
-use DeviceDetector\DeviceDetector;
 use Simbiat\http20\Common;
 use Simbiat\http20\Headers;
 use Simbiat\http20\Links;
@@ -24,29 +23,39 @@ use Simbiat\http20\Links;
  */
 final class HomePage
 {
-    // Cache object
+    /**
+     * @var \App\Service\Caching|null Cache object
+     */
     public private(set) static ?Caching $data_cache = null;
 
-    // HTTP headers object
+    /**
+     * @var \Simbiat\http20\Headers|null HTTP headers object
+     */
     public private(set) static ?Headers $headers = null;
 
-    // Flag indicating that cached view has been served already
+    /**
+     * @var bool Flag indicating that cached view has been served already
+     */
     public private(set) static bool $stale_return = false;
 
-    // HTTP method being used
+    /**
+     * @var string|mixed|null HTTP method being used
+     */
     public static ?string $method = null;
 
-    // Array that can contain variables indicating common HTTP errors
+    /**
+     * @var array|null Array that can contain variables indicating common HTTP errors
+     */
     public static ?array $http_error = [];
 
-    // User agent details from
+    /**
+     * @var array User agent details from
+     */
     public private(set) static array $user_agent = [];
 
     public static array $links = [];
 
     public static string $canonical = '';
-
-    public static ?DeviceDetector $device_detector = null;
 
     /**
      * Twig processing of the generated page.
@@ -271,8 +280,6 @@ final class HomePage
         $bot = $device_detector->getBot($_SERVER['HTTP_USER_AGENT']);
         if (\is_array($bot)) {
             // Do not waste resources on bots
-
-            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             return ['bot' => \mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => null, 'client' => null, 'unsupported' => false, 'browser' => false, 'ai' => \strncasecmp($bot['category'] ?? '', 'ai', 2) === 0];
         }
 
@@ -420,9 +427,7 @@ final class HomePage
                 self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR'], 'reason' => $_SERVER['CADDY_HTTP_ERROR_MSG'] ?? ''];
             }
 
-            // Suppress inspection, since we only need headers to be sent
-            /* @noinspection UnusedFunctionResultInspection */
-            Links::links(self::$links, force_cross_origin: true);
+            (void) Links::links(self::$links, force_cross_origin: true);
             // Send standard headers
             if ($uri[0] === 'api') {
                 Headers::notAccept(['application/json']);
@@ -480,7 +485,8 @@ final class HomePage
                         && !self::$stale_return
                         && \session_status() === \PHP_SESSION_NONE
                     ) {
-                        \session_set_save_handler(new Session(), register_shutdown: true);
+                        // DO NOT APPLY AddNameToBooleanArgumentRector https://github.com/rectorphp/rector/issues/9936
+                        \session_set_save_handler(new Session(), true);
                         if (!\session_start()) {
                             throw new \RuntimeException('Failed to start session');
                         }

@@ -13,26 +13,40 @@ use Simbiat\http20\Headers;
  */
 abstract class Search extends Page
 {
-    // Cache age, in case we prefer the generated page to be cached
+    /**
+     * @var int Cache age, in case we prefer the generated page to be cached
+     */
     #[\Override]
     protected int $cache_age = 1440;
 
-    // Linking types to classes
+    /**
+     * @var array Linking types to classes
+     */
     protected array $types = [];
 
-    // Items to display per page for search results per type
+    /**
+     * @var int Items to display per page for search results per type
+     */
     protected int $search_items = 15;
 
-    // Regex to sanitize search value (remove disallowed characters)
+    /**
+     * @var string Regex to sanitize search value (remove disallowed characters)
+     */
     protected string $regex_search = '/[^\p{L}\p{N} _\'\-,!%]/iu';
 
-    // Short title to be used for <title> and <h1> when having a search value
+    /**
+     * @var string Short title to be used for <title> and <h1> when having a search value
+     */
     protected string $short_title = 'Search for `%s`';
 
-    // Full title to be used for description metatags when having a search value
+    /**
+     * @var string Full title to be used for description metatags when having a search value
+     */
     protected string $full_title = 'Search for `%s`';
 
-    // Search value
+    /**
+     * @var string Search value
+     */
     protected string $search_for = '';
 
     /**

@@ -10,11 +10,15 @@ use Simbiat\http20\Headers;
 
 final class Bic extends Api
 {
-    // Flag to indicate, that this is the lowest level
+    /**
+     * @var bool Flag to indicate, that this is the lowest level
+     */
     #[\Override]
     protected bool $final_node = true;
 
-    // Description of the node
+    /**
+     * @var array<string, string> Description of the node
+     */
     #[\Override]
     protected array $description = [
         'description' => 'JSON representation of a Russian organization based on Bank Identification Code',

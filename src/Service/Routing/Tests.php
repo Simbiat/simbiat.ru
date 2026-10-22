@@ -11,7 +11,9 @@ use App\Service\Errors;
 
 final class Tests extends Router
 {
-    // List supported "paths". Basic ones only, some extra validation may be required further
+    /**
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
     #[\Override]
     protected array $sub_routes = ['mail', 'styling'];
 

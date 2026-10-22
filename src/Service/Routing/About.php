@@ -13,7 +13,9 @@ use App\Controller\About\ToS;
 
 final class About extends Router
 {
-    // List supported "paths". Basic ones only, some extra validation may be required further
+    /**
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
     #[\Override]
     protected array $sub_routes = ['tech', 'tos', 'privacy', 'security', 'website', 'me', 'resume', 'contacts'];
 

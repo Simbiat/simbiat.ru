@@ -12,7 +12,9 @@ use Simbiat\Database\Query;
  */
 final class Countables extends Page
 {
-    // Cache age, in case we prefer the generated page to be cached
+    /**
+     * @var int Cache age, in case we prefer the generated page to be cached
+     */
     #[\Override]
     protected int $cache_age = 1440;
 
@@ -26,23 +28,33 @@ final class Countables extends Page
         ['href' => '/sitemap/', 'name' => 'Sitemap: '],
     ];
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'sitemap';
 
-    // Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    /**
+     * @var string Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $title = 'Sitemap: ';
 
-    // Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'Sitemap: ';
 
-    // Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = 'Sitemap: ';
 
-    // Max elements per sitemap page
+    /**
+     * @var int Max elements per sitemap page
+     */
     private int $max_elements = 50000;
 
     /**

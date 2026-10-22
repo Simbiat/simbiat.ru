@@ -12,7 +12,9 @@ use App\Service\Feeds;
  */
 final class MainRouter extends Router
 {
-    // Supported
+    /**
+     * @var array<int, string> Supported edges
+     */
     #[\Override]
     protected array $sub_routes = [
         // Empty string implies homepage

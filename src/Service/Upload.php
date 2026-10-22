@@ -8,15 +8,21 @@ use App\Controller\Api\Api;
 
 final class Upload extends Api
 {
-    // Flag to indicate, that this is the lowest level
+    /**
+     * @var bool Flag to indicate, that this is the lowest level
+     */
     #[\Override]
     protected bool $final_node = true;
 
-    // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    /**
+     * @var array<string, string> Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+     */
     #[\Override]
     protected array $methods = ['POST' => ''];
 
-    // Flag indicating that authentication is required
+    /**
+     * @var bool Flag indicating that authentication is required
+     */
     #[\Override]
     protected bool $authentication_needed = true;
 

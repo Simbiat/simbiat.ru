@@ -18,23 +18,33 @@ final class Automation extends StaticPage
         ['href' => '/supops/automation', 'name' => 'Automation'],
     ];
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'automation';
 
-    // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $title = 'SupOps: Automation';
 
-    // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'SupOps: Automation';
 
-    // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = 'SupOps: Automate the routine, amplify the human';
 
-    // List of images to H2 push
+    /**
+     * @var array<int, string> List of images to H2 push
+     */
     #[\Override]
     protected array $h2_push_extra = [
         '/assets/images/supops/facts/automation.svg',

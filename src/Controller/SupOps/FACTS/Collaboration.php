@@ -18,23 +18,33 @@ final class Collaboration extends StaticPage
         ['href' => '/supops/collaboration', 'name' => 'Collaboration'],
     ];
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'collaboration';
 
-    // Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $title = 'SupOps: Collaboration';
 
-    // Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'SupOps: Collaboration';
 
-    // Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = 'SupOps: Solutions are co‑created';
 
-    // List of images to H2 push
+    /**
+     * @var array<int, string> List of images to H2 push
+     */
     #[\Override]
     protected array $h2_push_extra = [
         '/assets/images/supops/facts/collaboration.svg',

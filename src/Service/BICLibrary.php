@@ -175,7 +175,8 @@ final class BICLibrary
                         $library_rest = [];
                         foreach ($restrictions as $restriction) {
                             $library_rest[] = Converters::attributesToArray($restriction);
-                            \ksort(array_last($library_rest));
+                            $library_last = \array_last($library_rest);
+                            \ksort($library_last);
                         }
 
                         // Get current restrictions
@@ -222,7 +223,8 @@ final class BICLibrary
                         $library_swift = [];
                         foreach ($swifts as $swift) {
                             $library_swift[] = Converters::attributesToArray($swift);
-                            \ksort(array_last($library_swift));
+                            $library_last = \array_last($library_swift);
+                            \ksort($library_last);
                         }
 
                         // Get current SWIFTs

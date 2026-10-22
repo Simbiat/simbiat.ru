@@ -20,7 +20,6 @@ use Simbiat\Database\Query;
  */
 abstract class AbstractEntity extends Entity
 {
-    // Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of the same object for different sets of data
     protected const string ENTITY_TYPE = 'character';
 
     public string $name = '';

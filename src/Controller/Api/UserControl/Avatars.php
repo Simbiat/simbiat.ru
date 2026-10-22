@@ -10,23 +10,33 @@ use App\HomePage;
 
 final class Avatars extends Api
 {
-    // Flag to indicate that this is the lowest level
+    /**
+     * @var bool Flag to indicate, that this is the lowest level
+     */
     #[\Override]
     protected bool $final_node = true;
 
-    // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    /**
+     * @var array<string, string> Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+     */
     #[\Override]
     protected array $methods = ['POST' => 'add', 'DELETE' => 'delete', 'PATCH' => 'setactive'];
 
-    // Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+    /**
+     * @var array<string, string> Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+     */
     #[\Override]
     protected array $verbs = ['add' => 'Add avatar', 'delete' => 'Delete avatar', 'setactive' => 'Set active avatar'];
 
-    // Flag indicating that authentication is required
+    /**
+     * @var bool Flag indicating that authentication is required
+     */
     #[\Override]
     protected bool $authentication_needed = true;
 
-    // Flag to indicate need to validate CSRF
+    /**
+     * @var bool Flag to indicate need to validate CSRF
+     */
     #[\Override]
     protected bool $csrf = true;
 

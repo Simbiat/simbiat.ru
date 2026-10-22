@@ -13,7 +13,9 @@ use Simbiat\http20\Headers;
  */
 abstract class Router
 {
-    // List supported "paths". Basic ones only, some extra validation may be required further
+    /**
+     * @var array List supported "paths". Basic ones only, some extra validation may be required further
+     */
     protected array $sub_routes = [];
 
     /**
@@ -23,22 +25,34 @@ abstract class Router
      */
     protected array $breadcrumb = [];
 
-    // Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+    /**
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
     protected string $title = '';
 
-    // Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
     protected string $h1 = '';
 
-    // Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
     protected string $og_desc = '';
 
-    // Banner for all pages under the router. Defaults to website's banner. Needs to be inside /assets/images directory and start with /
+    /**
+     * @var string Banner for all pages under the router. Defaults to website's banner. Needs to be inside /assets/images directory and start with /
+     */
     protected string $og_image = '';
 
-    // Service name
+    /**
+     * @var string Service name
+     */
     protected string $service_name = '';
 
-    // If no path[0] is provided, but we want to show a specific page, instead of a stub - redirect to page with this address
+    /**
+     * @var string If no path[0] is provided, but we want to show a specific page, instead of a stub - redirect to page with this address
+     */
     protected string $redirect_main = '';
 
     /**

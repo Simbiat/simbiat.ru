@@ -14,7 +14,9 @@ use App\Controller\FFXIV\Statistics\Timelines;
 
 final class FFStatistics extends Router
 {
-    // List supported "paths". Basic ones only, some extra validation may be required further
+    /**
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
     #[\Override]
     protected array $sub_routes = ['raw', 'achievements', 'bugs', 'characters', 'groups', 'other', 'timelines'];
 
@@ -46,7 +48,13 @@ final class FFStatistics extends Router
     #[\Override]
     protected string $redirect_main = '/fftracker/statistics/characters';
 
-    // This is the actual page generation based on further details of the $path
+    /**
+     * This is the actual page generation based on further details of the $path
+     *
+     * @param array $path
+     *
+     * @return array
+     */
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {

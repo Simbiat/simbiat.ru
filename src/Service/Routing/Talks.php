@@ -11,7 +11,9 @@ use App\Controller\Talks\User;
 
 final class Talks extends Router
 {
-    // List supported "paths". Basic ones only, some extra validation may be required further
+    /**
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
     #[\Override]
     protected array $sub_routes = ['sections', 'threads', 'posts', 'users', 'edit'];
 
@@ -40,7 +42,13 @@ final class Talks extends Router
     #[\Override]
     protected string $redirect_main = '/talks/sections/';
 
-    // This is actual page generation based on further details of the $path
+    /**
+     * This is the actual page generation based on further details of the $path
+     *
+     * @param array $path
+     *
+     * @return array
+     */
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {

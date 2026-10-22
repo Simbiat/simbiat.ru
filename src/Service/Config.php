@@ -13,7 +13,6 @@ use Twig\Environment;
  */
 final class Config
 {
-    // Handled in Symfony YAML settings
     public private(set) static string $work_dir = '';
 
     public private(set) static string $environment = 'dev';
@@ -74,10 +73,14 @@ final class Config
 
     public private(set) static Environment $twig;
 
-    // Track if the DB connection is up
+    /**
+     * @var bool Track if the DB connection is up
+     */
     public private(set) static bool $dbup = false;
 
-    // Maintenance flag
+    /**
+     * @var bool DB maintenance flag
+     */
     public private(set) static bool $db_update = false;
 
     private static ContainerInterface $container;

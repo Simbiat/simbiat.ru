@@ -13,7 +13,6 @@ use Simbiat\FFXIV\Lodestone;
 
 final class CrossworldLinkshell extends AbstractEntity
 {
-    // Custom properties
     protected const string ENTITY_TYPE = 'crossworldlinkshell';
 
     public array $dates = [];

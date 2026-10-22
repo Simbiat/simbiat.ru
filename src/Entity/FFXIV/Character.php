@@ -22,7 +22,6 @@ use Simbiat\FFXIV\Lodestone;
  */
 final class Character extends AbstractEntity
 {
-    // Custom properties
     public ?string $avatar_id = '';
 
     public array $dates = [];

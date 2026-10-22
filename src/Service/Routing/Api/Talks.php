@@ -11,7 +11,9 @@ use App\Controller\Api\Talks\Threads;
 
 final class Talks extends Api
 {
-    // Supported edges
+    /**
+     * @var array<int, string> Supported edges
+     */
     #[\Override]
     protected array $sub_routes = [
         'sections',
@@ -19,17 +21,15 @@ final class Talks extends Api
         'posts',
     ];
 
-    // Description of the nodes (need to be in same order)
+    /**
+     * @var array<int, string> Description of the nodes (need to be in the same order)
+     */
     #[\Override]
     protected array $routes_description = [
         'Endpoint to manage sections',
         'Endpoint to manage threads',
         'Endpoint to manage posts',
     ];
-
-    // Flag to indicate, that this is a top level node (false by default)
-    #[\Override]
-    protected bool $top_level = false;
 
     protected function genData(array $path): array
     {

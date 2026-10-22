@@ -26,27 +26,39 @@ final class Sessions extends Page
         ['href' => '/uc/sessions', 'name' => 'Sessions'],
     ];
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'sessions';
 
-    // Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    /**
+     * @var string Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $title = 'Sessions';
 
-    // Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'Active sessions';
 
-    // Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = 'Page to manage active sessions';
 
-    // Cache strategy: aggressive, private, live, month, week, day, hour
+    /**
+     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
+     */
     #[\Override]
     protected string $cache_strategy = 'private';
 
-    // Flag indicating that authentication is required
+    /**
+     * @var bool Flag indicating that authentication is required
+     */
     #[\Override]
     protected bool $authentication_needed = true;
 

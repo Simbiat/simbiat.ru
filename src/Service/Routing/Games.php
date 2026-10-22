@@ -10,7 +10,9 @@ use App\Controller\Games\RadicalResonance;
 
 final class Games extends Router
 {
-    // List supported "paths". Basic ones only, some extra validation may be required further
+    /**
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
     #[\Override]
     protected array $sub_routes = ['jiangshi', 'dden', 'radicalresonance', 'anti'];
 
@@ -36,7 +38,13 @@ final class Games extends Router
     #[\Override]
     protected string $service_name = 'games';
 
-    // This is the actual page generation based on further details of the $path
+    /**
+     * This is the actual page generation based on further details of the $path
+     *
+     * @param array $path
+     *
+     * @return array
+     */
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {

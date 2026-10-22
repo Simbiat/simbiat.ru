@@ -22,7 +22,13 @@ final class Tests
     // $data = $lodestone->getWorldStatus(true)->getResult();
     // $data = $lodestone->getDeepDungeon(2, '', '', '')->getResult();
 
-    // Function to test file upload using PUT
+    /**
+     *Function to test file upload using PUT
+     *
+     * @param string $filepath
+     *
+     * @return never
+     */
     #[NoReturn]
     public function uploadPut(#[FileReference] string $filepath): never
     {
@@ -38,7 +44,14 @@ final class Tests
         exit(0);
     }
 
-    // Function to test file upload using POST
+    /**
+     * Function to test file upload using POST
+     *
+     * @param string $upload_path
+     * @param int    $max_file_size
+     *
+     * @return void
+     */
     public function uploadPost(#[FileReference] string $upload_path, int $max_file_size = 300000000): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -64,7 +77,14 @@ final class Tests
         exit(0);
     }
 
-    // Function to test download
+    /**
+     * Function to test download
+     *
+     * @param string $filepath
+     * @param string $bytes
+     *
+     * @return void
+     */
     #[NoReturn]
     public function downloadTest(#[FileReference] string $filepath, string $bytes = ''): void
     {

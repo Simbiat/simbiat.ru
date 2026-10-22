@@ -8,7 +8,9 @@ use App\Controller\DeviceDetector;
 
 final class SimplePages extends Router
 {
-    // List supported "paths". Basic ones only, some extra validation may be required further
+    /**
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
     #[\Override]
     protected array $sub_routes = ['devicedetector'];
 
@@ -34,7 +36,13 @@ final class SimplePages extends Router
     #[\Override]
     protected string $service_name = 'simplepages';
 
-    // This is actual page generation based on further details of the $path
+    /**
+     * This is the actual page generation based on further details of the $path
+     *
+     * @param array $path
+     *
+     * @return array
+     */
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {

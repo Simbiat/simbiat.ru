@@ -17,7 +17,9 @@ use App\Controller\FFXIV\Track;
 
 final class FFTracker extends Router
 {
-    // List supported "paths". Basic ones only, some extra validation may be required further
+    /**
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
     #[\Override]
     protected array $sub_routes = [
         'search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'crossworldlinkshells', 'achievements', 'statistics', 'crests', 'track', 'points', 'red_flags',
@@ -50,7 +52,13 @@ final class FFTracker extends Router
     #[\Override]
     protected string $service_name = 'fftracker';
 
-    // This is the actual page generation based on further details of the $path
+    /**
+     * This is the actual page generation based on further details of the $path
+     *
+     * @param array $path
+     *
+     * @return array
+     */
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {

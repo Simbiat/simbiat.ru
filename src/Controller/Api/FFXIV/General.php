@@ -11,25 +11,37 @@ use Simbiat\http20\Headers;
 
 abstract class General extends Api
 {
-    // Flag to indicate that this is the lowest level
+    /**
+     * @var bool Flag to indicate that this is the lowest level
+     */
     #[\Override]
     protected bool $final_node = true;
 
-    // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    /**
+     * @var array<string, string> Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+     */
     #[\Override]
     protected array $methods = ['GET' => '', 'PATCH' => 'update', 'POST' => 'register'];
 
-    // Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+    /**
+     * @var array<string, string> Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+     */
     #[\Override]
     protected array $verbs = ['update' => 'Attempt updating entity', 'register' => 'Attempt to register entity to tracker', 'lodestone' => 'Show data grabbed directly from Lodestone'];
 
-    // Entity class name
+    /**
+     * @var string Entity class name
+     */
     protected string $entity_class = '';
 
-    // Name to show in errors
+    /**
+     * @var string Name to show in errors
+     */
     protected string $name_for_errors = '';
 
-    // Name for links
+    /**
+     * @var string Name for links
+     */
     protected string $name_for_links = '';
 
     protected function genData(array $path): array

@@ -11,13 +11,19 @@ use App\Service\Errors;
  */
 abstract class Entity
 {
-    // Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of same object for different sets of data
+    /**
+     * @var string|null Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of same object for different sets of data
+     */
     public ?string $id = null;
 
-    // If ID was retrieved, this needs to not be null
+    /**
+     * @var bool If ID was retrieved, this needs to not be null
+     */
     protected bool $attempted = false;
 
-    // Format for IDs
+    /**
+     * @var string Format for IDs
+     */
     protected string $id_format = '/^\d+$/m';
 
     /**

@@ -9,25 +9,37 @@ namespace App\Controller\Abstracts;
  */
 abstract class Game extends Page
 {
-    // Flag to indicate this is a static page
+    /**
+     * @var bool Flag to indicate this is a static page
+     */
     #[\Override]
     protected bool $static = true;
 
-    // Cache age set to 0 by default, because there is normally no need to cache static pages
+    /**
+     * @var int Cache age set to 0 by default, because there is normally no need to cache static pages
+     */
     #[\Override]
     protected int $cache_age = 0;
 
-    // Cache strategy: aggressive, private, live, month, week, day, hour
+    /**
+     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
+     */
     #[\Override]
     protected string $cache_strategy = 'week';
 
-    // Path to game's JS file
+    /**
+     * @var string Path to game's JS file
+     */
     protected string $gamemaker_js = '';
 
-    // Flag to indicate the game has sound
+    /**
+     * @var bool Flag to indicate the game has sound
+     */
     protected bool $has_sound = false;
 
-    // Flag to indicate the game has music
+    /**
+     * @var bool Flag to indicate the game has music
+     */
     protected bool $has_music = false;
 
     /**

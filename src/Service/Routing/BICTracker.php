@@ -11,7 +11,9 @@ use App\Controller\BIC\Search;
 
 final class BICTracker extends Router
 {
-    // List supported "paths". Basic ones only, some extra validation may be required further
+    /**
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
     #[\Override]
     protected array $sub_routes = ['keying', 'search', 'bics', 'openbics', 'closedbics', 'bic'];
 
@@ -40,7 +42,13 @@ final class BICTracker extends Router
     #[\Override]
     protected string $service_name = 'bictracker';
 
-    // This is the actual page generation based on further details of the $path
+    /**
+     * This is the actual page generation based on further details of the $path
+     *
+     * @param array $path
+     *
+     * @return array
+     */
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {

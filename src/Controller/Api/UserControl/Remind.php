@@ -12,15 +12,21 @@ use App\Entity\User;
  */
 final class Remind extends Api
 {
-    // Flag to indicate that this is the lowest level
+    /**
+     * @var bool Flag to indicate, that this is the lowest level
+     */
     #[\Override]
     protected bool $final_node = true;
 
-    // Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+    /**
+     * @var array<string, string> Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+     */
     #[\Override]
     protected array $methods = ['POST' => ''];
 
-    // Flag to indicate need to validate CSRF
+    /**
+     * @var bool Flag to indicate need to validate CSRF
+     */
     #[\Override]
     protected bool $csrf = true;
 

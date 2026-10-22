@@ -18,88 +18,192 @@ use Simbiat\Database\Query;
  */
 final class BIC extends Entity
 {
-    // Bank code of the entity
+    /**
+     * @var string Bank code of the entity
+     */
     public string $BIC;
 
-    // Name of the entity
+    /**
+     * @var string Name of the entity
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public string $NameP;
 
-    // Bank code of parent entity
+    /**
+     * @var array|string|null Bank code of parent entity
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public null|array|string $PrntBIC = null;
 
-    // English name of the entity
+    /**
+     * @var string|null English name of the entity
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $EnglName = null;
 
-    // Whether the entity is active or not
+    /**
+     * @var bool|int|string Whether the entity is active or not
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public bool|int|string $XchType = false;
 
-    // Old BIC, in case it was used by several organizations
+    /**
+     * @var string|null Old BIC, in case it was used by several organizations
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $OLD_NEWNUM = null;
 
-    // UID for electronic messages used by the organization
+    /**
+     * @var string|null UID for electronic messages used by the organization
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $UID = null;
 
-    // Country code
+    /**
+     * @var string|null Country code
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $CntrCd = null;
 
-    // Address
+    /**
+     * @var string|null Address
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $Adr = null;
 
-    // Date added
+    /**
+     * @var string|null Date added
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $DateIn = null;
 
-    // Date removed from the official library
+    /**
+     * @var string|null Date removed from the official library
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $DateOut = null;
 
-    // Date of the latest update
+    /**
+     * @var string|null Date of the latest update
+     */
     public ?string $Updated = null;
 
-    // Postal index
+    /**
+     * @var string|null Postal index
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $Ind = null;
 
-    // Types of services provided
+    /**
+     * @var string|null Types of services provided
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $Srvcs = null;
 
-    // Name of the location
+    /**
+     * @var string|null Name of the location
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $Nnp = null;
 
-    // Type of location
+    /**
+     * @var string|null Type of location
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $Tnp = null;
 
-    // Type of entity
+    /**
+     * @var string|null Type of entity
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $PtType = null;
 
-    // Registration number
+    /**
+     * @var string|null Registration number
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $RegN = null;
 
-    // Location region
+    /**
+     * @var string|null Location region
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $Rgn = null;
 
-    // Processing center
+    /**
+     * @var string|null Processing center
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public ?string $CENTER = null;
 
-    // List of branches if any
+    /**
+     * @var array List of branches if any
+     */
     public array $branches = [];
 
-    // List of SWIFT codes if any
+    /**
+     * @var array List of SWIFT codes if any
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public array $SWIFTs = [];
 
-    // Restrictions on the whole organization
+    /**
+     * @var array Restrictions on the whole organization
+     */
     public array $restrictions = [];
 
-    // List of accounts
+    /**
+     * @var array List of accounts
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public array $accounts = [];
 
-    // List of organizations with the same BIC used in the past
+    /**
+     * @var array List of organizations with the same BIC used in the past
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public array $same_bic = [];
 
-    // List of organizations using the same address
+    /**
+     * @var array List of organizations using the same address
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public array $same_address = [];
 
-    // Number of entities serviced by entity
+    /**
+     * @var int Number of entities serviced by entity
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public int $service_for = 0;
 
-    // Old data from DBF files
+    /**
+     * @var array Old data from DBF files
+     *
+     * @noinspection PhpUnused -- Accessed dynamically
+     */
     public array $DBF = [];
 
     /**

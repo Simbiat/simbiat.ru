@@ -62,22 +62,34 @@ final class Thread extends Entity
 
     public string $language = 'en';
 
-    // List of parents for the thread
+    /**
+     * @var array List of parents for the thread
+     */
     public array $parents = [];
 
-    // Direct parent
+    /**
+     * @var array Direct parent
+     */
     public array $parent = [];
 
-    // ID of direct parent
+    /**
+     * @var int ID of direct parent
+     */
     public int $parent_id = 0;
 
-    // List of posts
+    /**
+     * @var array List of posts
+     */
     public array $posts = [];
 
-    // List of tags
+    /**
+     * @var array List of tags
+     */
     public array $tags = [];
 
-    // List of external links
+    /**
+     * @var array List of external links
+     */
     public array $external_links = [];
 
     /**
@@ -90,7 +102,9 @@ final class Thread extends Entity
      */
     public ?string $email = null;
 
-    // List of subscribers
+    /**
+     * @var array List of subscribers
+     */
     public array $subscribers = [];
 
     /**

@@ -18,27 +18,39 @@ final class Crests extends FileListing
         ['href' => '/fftracker/crests', 'name' => 'Crests'],
     ];
 
-    // Sub service name
+    /**
+     * @var string Sub service name
+     */
     #[\Override]
     protected string $subservice_name = 'crests';
 
-    // Page title. Practically needed only for main pages of a segment since will be overridden otherwise
+    /**
+     * @var string Page title. Practically needed only for main pages of a segment since will be overridden otherwise
+     */
     #[\Override]
     protected string $title = 'Crests';
 
-    // Page's H1 tag. Practically needed only for main pages of a segment since will be overridden otherwise
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of a segment since will be overridden otherwise
+     */
     #[\Override]
     protected string $h1 = 'Crests';
 
-    // Page's description. Practically needed only for main pages of a segment since will be overridden otherwise
+    /**
+     * @var string Page's description. Practically needed only for main pages of a segment since will be overridden otherwise
+     */
     #[\Override]
     protected string $og_desc = "List of all Final Fantasy XIV crests' components and crests themselves, presented as single images.";
 
-    // Flag whether to go recursive or not
+    /**
+     * @var bool Flag whether to go recursive or not
+     */
     #[\Override]
     protected bool $recursive = true;
 
-    // Directories relative to working dir
+    /**
+     * @var array<string, array<string, int|string>> Directories relative to working dir
+     */
     #[\Override]
     protected array $dirs = [
         'background' => ['path' => '/public/assets/images/fftracker/crests-components/backgrounds', 'name' => 'Backgrounds', 'depth' => 1],
@@ -47,11 +59,15 @@ final class Crests extends FileListing
         'merged' => ['path' => '/var/mergedcrests', 'name' => 'Merged crests (cached)', 'depth' => 1],
     ];
 
-    // List of prohibited extensions, files with which should be excluded
+    /**
+     * @var array<int, string> List of prohibited extensions, files with which should be excluded
+     */
     #[\Override]
     protected array $exclude = ['LICENSE', 'README.md', '.git'];
 
-    // List of permissions, from which at least 1 is required to have access to the page
+    /**
+     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
+     */
     #[\Override]
     protected array $required_permission = ['view_ff'];
 
