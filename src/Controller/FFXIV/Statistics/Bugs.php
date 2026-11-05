@@ -7,7 +7,7 @@ namespace App\Controller\FFXIV\Statistics;
 final class Bugs extends General
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -17,16 +17,16 @@ final class Bugs extends General
     ];
 
     /**
-     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Bugs';
-
-    /**
      * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
      */
     #[\Override]
     protected string $h1 = 'Bugs';
+
+    /**
+     * @var string List of JSON files, that we need to try to ingest
+     */
+    #[\Override]
+    protected string $json_to_ingest = 'bugs';
 
     /**
      * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
@@ -35,8 +35,8 @@ final class Bugs extends General
     protected string $og_desc = 'FFXIV Statistics: Bugs Category';
 
     /**
-     * @var string List of JSON files, that we need to try to ingest
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
      */
     #[\Override]
-    protected string $json_to_ingest = 'bugs';
+    protected string $title = 'Bugs';
 }

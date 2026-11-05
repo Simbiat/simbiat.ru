@@ -17,6 +17,5 @@ rotate_log() {
 
 rotate_log /var/log/cron.log
 rotate_log /var/log/mariadb.log
-rotate_log /var/log/crowdsec.log
 rotate_log /var/log/mail.log
 exit

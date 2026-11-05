@@ -13,13 +13,7 @@ use Simbiat\Database\Query;
 final class Countables extends Page
 {
     /**
-     * @var int Cache age, in case we prefer the generated page to be cached
-     */
-    #[\Override]
-    protected int $cache_age = 1440;
-
-    /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -29,16 +23,10 @@ final class Countables extends Page
     ];
 
     /**
-     * @var string Sub service name
+     * @var int Cache age, in case we prefer the generated page to be cached
      */
     #[\Override]
-    protected string $subservice_name = 'sitemap';
-
-    /**
-     * @var string Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Sitemap: ';
+    protected int $cache_age = 1440;
 
     /**
      * @var string Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
@@ -53,6 +41,18 @@ final class Countables extends Page
     protected string $og_desc = 'Sitemap: ';
 
     /**
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'sitemap';
+
+    /**
+     * @var string Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'Sitemap: ';
+
+    /**
      * @var int Max elements per sitemap page
      */
     private int $max_elements = 50000;
@@ -64,6 +64,7 @@ final class Countables extends Page
      *
      * @return array
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         if (
@@ -90,6 +91,7 @@ final class Countables extends Page
         $this->breadcrumb[0]['href'] .= $path[0].'/';
         // Set the starting position for the query
         $start = ($path[1] - 1) * $this->max_elements;
+
         // Set values based on the route
         switch ($path[0]) {
             case 'bics':
@@ -97,36 +99,43 @@ final class Countables extends Page
                 $query = "SELECT CONCAT('bictracker/bics/', `BIC`) AS `loc`, `Updated` AS `lastmod`, NULL as `changefreq`, `NameP` AS `name` FROM `bic__list` LIMIT :limit_start, :limit_max;";
 
                 break;
+
             case 'ffxiv_characters':
                 $this->breadcrumb[0]['name'] = 'FFXIV Characters';
                 $query = "SELECT CONCAT('fftracker/characters/', `character_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `name` FROM `ffxiv__character` WHERE `hidden` IS NULL LIMIT :limit_start, :limit_max;";
 
                 break;
+
             case 'ffxiv_freecompanies':
                 $this->breadcrumb[0]['name'] = 'FFXIV Free Companies';
                 $query = "SELECT CONCAT('fftracker/freecompanies/', `fc_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `name` FROM `ffxiv__freecompany` LIMIT :limit_start, :limit_max;";
 
                 break;
+
             case 'ffxiv_linkshells':
                 $this->breadcrumb[0]['name'] = 'FFXIV Linkshells';
                 $query = "SELECT CONCAT('fftracker/', IF(`crossworld`=1, 'crossworld_', ''), 'linkshells/', `ls_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `name` FROM `ffxiv__linkshell` LIMIT :limit_start, :limit_max;";
 
                 break;
+
             case 'ffxiv_pvpteams':
                 $this->breadcrumb[0]['name'] = 'FFXIV PvP Teams';
                 $query = "SELECT CONCAT('fftracker/pvpteams/', `pvp_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `name` FROM `ffxiv__pvpteam` LIMIT :limit_start, :limit_max;";
 
                 break;
+
             case 'ffxiv_achievements':
                 $this->breadcrumb[0]['name'] = 'FFXIV Achievements';
                 $query = "SELECT CONCAT('fftracker/achievements/', `achievement_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `name` FROM `ffxiv__achievement` LIMIT :limit_start, :limit_max;";
 
                 break;
+
             case 'threads':
                 $this->breadcrumb[0]['name'] = 'Forums Threads';
                 $query = "SELECT CONCAT('talks/threads/', `thread_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `name` FROM `talks__threads` WHERE `private`=0 AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6) ORDER BY `name` LIMIT :limit_start, :limit_max;";
 
                 break;
+
             case 'users':
                 $this->breadcrumb[0]['name'] = 'Users';
                 $query = "SELECT CONCAT('talks/users/', `user_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `username` as `name` FROM `uc__users` WHERE `user_id` NOT IN (SELECT `user_id` FROM `uc__users` WHERE `system`=1) ORDER BY `name` LIMIT :limit_start, :limit_max;";

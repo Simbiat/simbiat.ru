@@ -9,10 +9,10 @@ namespace App\Enum;
  */
 enum TalkType: int
 {
-    case Category = 1;
     case Blog = 2;
-    case Forum = 3;
+    case Category = 1;
     case Changelog = 4;
-    case Support = 5;
+    case Forum = 3;
     case Knowledgebase = 6;
+    case Support = 5;
 }

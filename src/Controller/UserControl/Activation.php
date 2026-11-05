@@ -15,7 +15,7 @@ use Simbiat\Database\Query;
 final class Activation extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -25,16 +25,10 @@ final class Activation extends Page
     ];
 
     /**
-     * @var string Sub service name
+     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
      */
     #[\Override]
-    protected string $subservice_name = 'activation';
-
-    /**
-     * @var string Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'User/email activation';
+    protected string $cache_strategy = 'private';
 
     /**
      * @var string Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
@@ -49,10 +43,16 @@ final class Activation extends Page
     protected string $og_desc = 'Page used for user or email activation';
 
     /**
-     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
+     * @var string Sub service name
      */
     #[\Override]
-    protected string $cache_strategy = 'private';
+    protected string $subservice_name = 'activation';
+
+    /**
+     * @var string Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'User/email activation';
 
     /**
      * Generation of the page data.
@@ -60,7 +60,10 @@ final class Activation extends Page
      * @param array $path
      *
      * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         // Get user ID

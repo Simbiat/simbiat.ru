@@ -20,31 +20,15 @@ abstract class Listing extends Search
     protected string $service_name = 'listing';
 
     /**
-     * Get date from results
-     *
-     * @param array $results
-     *
-     * @return int|string
-     */
-    final protected function getDate(array $results): int|string
-    {
-        // Prepare the array of dates
-        $dates = \array_column($results['entities'], 'updated');
-        // Return max value if the dates' array is not empty or 0 otherwise
-        if (\count($dates) === 0) {
-            return 0;
-        }
-
-        return \max($dates);
-    }
-
-    /**
      * Generation of the page data.
      *
      * @param array $path
      *
      * @return array
+     *
+     * @throws \RuntimeException
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         // Check if types are set
@@ -113,5 +97,25 @@ abstract class Listing extends Search
 
         // Merge with extra fields and return the result
         return \array_merge($output_array, $this->extras());
+    }
+
+    /**
+     * Get date from results.
+     *
+     * @param array $results
+     *
+     * @return int|string
+     */
+    #[\Override]
+    final protected function getDate(array $results): int|string
+    {
+        // Prepare the array of dates
+        $dates = \array_column($results['entities'], 'updated');
+        // Return max value if the dates' array is not empty or 0 otherwise
+        if (\count($dates) === 0) {
+            return 0;
+        }
+
+        return \max($dates);
     }
 }

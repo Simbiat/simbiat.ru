@@ -10,6 +10,7 @@ use App\Service\UserAgentParser;
 use GeoIp2\Database\Reader;
 use Simbiat\Database\Query;
 use Simbiat\DDCIcons;
+use Symfony\Component\Cache\Exception\CacheException;
 
 /**
  * Page to manage user sessions.
@@ -17,7 +18,13 @@ use Simbiat\DDCIcons;
 final class Sessions extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * @var bool Flag indicating that authentication is required
+     */
+    #[\Override]
+    protected bool $authentication_needed = true;
+
+    /**
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -27,16 +34,10 @@ final class Sessions extends Page
     ];
 
     /**
-     * @var string Sub service name
+     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
      */
     #[\Override]
-    protected string $subservice_name = 'sessions';
-
-    /**
-     * @var string Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Sessions';
+    protected string $cache_strategy = 'private';
 
     /**
      * @var string Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
@@ -51,16 +52,16 @@ final class Sessions extends Page
     protected string $og_desc = 'Page to manage active sessions';
 
     /**
-     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
+     * @var string Sub service name
      */
     #[\Override]
-    protected string $cache_strategy = 'private';
+    protected string $subservice_name = 'sessions';
 
     /**
-     * @var bool Flag indicating that authentication is required
+     * @var string Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
      */
     #[\Override]
-    protected bool $authentication_needed = true;
+    protected string $title = 'Sessions';
 
     /**
      * Generation of the page data.
@@ -68,7 +69,11 @@ final class Sessions extends Page
      * @param array $path
      *
      * @return array
+     *
+     * @throws CacheException
+     * @throws \InvalidArgumentException|\RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         $output_array = [];

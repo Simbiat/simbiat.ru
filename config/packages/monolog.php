@@ -13,22 +13,22 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     if ($containerConfigurator->env() === 'dev') {
         $containerConfigurator->extension('monolog', [
             'handlers' => [
-                'main' => [
-                    'type' => 'stream',
-                    'path' => '%kernel.logs_dir%/%kernel.environment%.log',
-                    'level' => 'debug',
-                    'channels' => [
-                        '!event',
-                    ],
-                ],
                 'console' => [
-                    'type' => 'console',
-                    'process_psr_3_messages' => false,
                     'channels' => [
                         '!event',
                         '!doctrine',
                         '!console',
                     ],
+                    'process_psr_3_messages' => false,
+                    'type' => 'console',
+                ],
+                'main' => [
+                    'channels' => [
+                        '!event',
+                    ],
+                    'level' => 'debug',
+                    'path' => '%kernel.logs_dir%/%kernel.environment%.log',
+                    'type' => 'stream',
                 ],
             ],
         ]);
@@ -38,21 +38,21 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         $containerConfigurator->extension('monolog', [
             'handlers' => [
                 'main' => [
-                    'type' => 'fingers_crossed',
                     'action_level' => 'error',
-                    'handler' => 'nested',
+                    'channels' => [
+                        '!event',
+                    ],
                     'excluded_http_codes' => [
                         404,
                         405,
                     ],
-                    'channels' => [
-                        '!event',
-                    ],
+                    'handler' => 'nested',
+                    'type' => 'fingers_crossed',
                 ],
                 'nested' => [
-                    'type' => 'stream',
-                    'path' => '%kernel.logs_dir%/%kernel.environment%.log',
                     'level' => 'debug',
+                    'path' => '%kernel.logs_dir%/%kernel.environment%.log',
+                    'type' => 'stream',
                 ],
             ],
         ]);
@@ -61,40 +61,40 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     if ($containerConfigurator->env() === 'prod') {
         $containerConfigurator->extension('monolog', [
             'handlers' => [
-                'main' => [
-                    'type' => 'fingers_crossed',
-                    'action_level' => 'error',
-                    'handler' => 'nested',
-                    'excluded_http_codes' => [
-                        404,
-                        405,
-                    ],
-                    'channels' => [
-                        '!deprecation',
-                    ],
-                    'buffer_size' => 50,
-                ],
-                'nested' => [
-                    'type' => 'stream',
-                    'path' => 'php://stderr',
-                    'level' => 'debug',
-                    'formatter' => 'monolog.formatter.json',
-                ],
                 'console' => [
-                    'type' => 'console',
-                    'process_psr_3_messages' => false,
                     'channels' => [
                         '!event',
                         '!doctrine',
                     ],
+                    'process_psr_3_messages' => false,
+                    'type' => 'console',
                 ],
                 'deprecation' => [
-                    'type' => 'stream',
                     'channels' => [
                         'deprecation',
                     ],
-                    'path' => 'php://stderr',
                     'formatter' => 'monolog.formatter.json',
+                    'path' => 'php://stderr',
+                    'type' => 'stream',
+                ],
+                'main' => [
+                    'action_level' => 'error',
+                    'buffer_size' => 50,
+                    'channels' => [
+                        '!deprecation',
+                    ],
+                    'excluded_http_codes' => [
+                        404,
+                        405,
+                    ],
+                    'handler' => 'nested',
+                    'type' => 'fingers_crossed',
+                ],
+                'nested' => [
+                    'formatter' => 'monolog.formatter.json',
+                    'level' => 'debug',
+                    'path' => 'php://stderr',
+                    'type' => 'stream',
                 ],
             ],
         ]);

@@ -10,6 +10,18 @@ use App\Entity\FFXIV\Character;
 final class FFLink extends Api
 {
     /**
+     * @var bool Flag indicating that authentication is required
+     */
+    #[\Override]
+    protected bool $authentication_needed = true;
+
+    /**
+     * @var bool Flag to indicate need to validate CSRF
+     */
+    #[\Override]
+    protected bool $csrf = true;
+
+    /**
      * @var bool Flag to indicate, that this is the lowest level
      */
     #[\Override]
@@ -28,17 +40,15 @@ final class FFLink extends Api
     protected array $verbs = [];
 
     /**
-     * @var bool Flag indicating that authentication is required
+     * This is an actual API response generation based on further details of the $path.
+     *
+     * @param array $path
+     *
+     * @return array<string>
+     *
+     * @throws \UnexpectedValueException
      */
     #[\Override]
-    protected bool $authentication_needed = true;
-
-    /**
-     * @var bool Flag to indicate need to validate CSRF
-     */
-    #[\Override]
-    protected bool $csrf = true;
-
     protected function genData(array $path): array
     {
         return new Character($_POST['character_id'] ?? '')->linkUser();

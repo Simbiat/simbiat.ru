@@ -11,6 +11,18 @@ use App\HomePage;
 final class Avatars extends Api
 {
     /**
+     * @var bool Flag indicating that authentication is required
+     */
+    #[\Override]
+    protected bool $authentication_needed = true;
+
+    /**
+     * @var bool Flag to indicate need to validate CSRF
+     */
+    #[\Override]
+    protected bool $csrf = true;
+
+    /**
      * @var bool Flag to indicate, that this is the lowest level
      */
     #[\Override]
@@ -28,18 +40,7 @@ final class Avatars extends Api
     #[\Override]
     protected array $verbs = ['add' => 'Add avatar', 'delete' => 'Delete avatar', 'setactive' => 'Set active avatar'];
 
-    /**
-     * @var bool Flag indicating that authentication is required
-     */
     #[\Override]
-    protected bool $authentication_needed = true;
-
-    /**
-     * @var bool Flag to indicate need to validate CSRF
-     */
-    #[\Override]
-    protected bool $csrf = true;
-
     protected function genData(array $path): array
     {
         // We do not really care for verbs here, only methods

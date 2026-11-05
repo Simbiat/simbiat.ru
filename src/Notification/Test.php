@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace App\Notification;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
+
 /**
  * Test notification.
+ *
+ * @internal
  */
+#[CoversNothing]
 final class Test extends Notification
 {
     /**
-     * Subject for email.
+     * Whether to send to all emails registered for the user.
      */
-    protected const string SUBJECT = 'Test email';
+    protected const bool ALL_EMAILS = true;
 
     /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high.
@@ -20,9 +25,9 @@ final class Test extends Notification
     protected const int PRIORITY = 0;
 
     /**
-     * Whether to send to all emails registered for the user.
+     * Subject for email.
      */
-    protected const bool ALL_EMAILS = true;
+    protected const string SUBJECT = 'Test email';
 
     /**
      * Generate text for message.
@@ -31,6 +36,7 @@ final class Test extends Notification
      *
      * @return self
      */
+    #[\Override]
     protected function setText(array $twig_vars = []): self
     {
         $this->text = '<p>Test message</p>';

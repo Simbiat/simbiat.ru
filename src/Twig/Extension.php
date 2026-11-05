@@ -20,7 +20,7 @@ final class Extension extends AbstractExtension implements GlobalsInterface
     /**
      * Returns a list of functions to add to the existing list.
      *
-     * @return array<\Twig\TwigFunction>
+     * @return array<TwigFunction>
      */
     #[\Override]
     public function getFunctions(): array
@@ -52,6 +52,7 @@ final class Extension extends AbstractExtension implements GlobalsInterface
     /**
      * @return array<string, mixed>
      */
+    #[\Override]
     public function getGlobals(): array
     {
         $defaults = [

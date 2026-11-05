@@ -10,16 +10,16 @@ namespace App\Controller\Abstracts;
 abstract class StaticPage extends Page
 {
     /**
-     * @var bool Flag to indicate this is a static page
-     */
-    #[\Override]
-    protected bool $static = true;
-
-    /**
      * @var string Cache strategy: aggressive, private, live, month, week, day, hour
      */
     #[\Override]
     protected string $cache_strategy = 'week';
+
+    /**
+     * @var bool Flag to indicate this is a static page
+     */
+    #[\Override]
+    protected bool $static = true;
 
     /**
      * Static pages have all the data in Twig templates, thus we usually return an empty array.
@@ -28,6 +28,7 @@ abstract class StaticPage extends Page
      *
      * @return array
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         return [];

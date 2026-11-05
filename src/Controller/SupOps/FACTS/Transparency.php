@@ -9,7 +9,7 @@ use App\Controller\Abstracts\StaticPage;
 final class Transparency extends StaticPage
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -17,6 +17,27 @@ final class Transparency extends StaticPage
     protected array $breadcrumb = [
         ['href' => '/supops/transparency', 'name' => 'Transparency'],
     ];
+
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $h1 = 'SupOps: Transparency';
+
+    /**
+     * @var array<int, string> List of images to H2 push
+     */
+    #[\Override]
+    protected array $h2_push_extra = [
+        '/assets/images/supops/facts/transparency.svg',
+        '/assets/images/supops/navigation/sustainability.svg',
+    ];
+
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $og_desc = 'SupOps: Openness builds trust faster than any SLA';
 
     /**
      * @var string Sub service name
@@ -29,25 +50,4 @@ final class Transparency extends StaticPage
      */
     #[\Override]
     protected string $title = 'SupOps: Transparency';
-
-    /**
-     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $h1 = 'SupOps: Transparency';
-
-    /**
-     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $og_desc = 'SupOps: Openness builds trust faster than any SLA';
-
-    /**
-     * @var array<int, string> List of images to H2 push
-     */
-    #[\Override]
-    protected array $h2_push_extra = [
-        '/assets/images/supops/facts/transparency.svg',
-        '/assets/images/supops/navigation/sustainability.svg',
-    ];
 }

@@ -13,6 +13,12 @@ use App\Entity\User;
 final class Remind extends Api
 {
     /**
+     * @var bool Flag to indicate need to validate CSRF
+     */
+    #[\Override]
+    protected bool $csrf = true;
+
+    /**
      * @var bool Flag to indicate, that this is the lowest level
      */
     #[\Override]
@@ -25,18 +31,15 @@ final class Remind extends Api
     protected array $methods = ['POST' => ''];
 
     /**
-     * @var bool Flag to indicate need to validate CSRF
-     */
-    #[\Override]
-    protected bool $csrf = true;
-
-    /**
      * This is the actual API response generation based on further details of the $path.
      *
      * @param array $path
      *
      * @return array
+     *
+     * @throws \UnexpectedValueException
      */
+    #[\Override]
     protected function genData(array $path): array
     {
         return new User()->remind();

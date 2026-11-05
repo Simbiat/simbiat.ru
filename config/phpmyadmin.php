@@ -2,7 +2,10 @@
 
 /**
  * Custom PHPMyAdmin settings that differ from defaults. Explanations at https://docs.phpmyadmin.net/.
+ *
+ * @phpcs:disable SlevomatCodingStandard.Arrays.DisallowImplicitArrayCreation
  */
+
 declare(strict_types=1);
 
 /*
@@ -17,8 +20,8 @@ declare(strict_types=1);
 $cfg['ProtectBinary'] = 'all';
 
 $cfg['DefaultConnectionCollation'] = 'utf8mb4_0900_as_cs';
-$cfg['MaxNavigationItems'] = 1000;
-$cfg['ExecTimeLimit'] = 60000000;
+$cfg['MaxNavigationItems'] = 1_000;
+$cfg['ExecTimeLimit'] = 60_000_000;
 $cfg['LoginCookieValidityDisableWarning'] = true;
 $cfg['RetainQueryBox'] = true;
 $cfg['ShowDbStructureCreation'] = true;

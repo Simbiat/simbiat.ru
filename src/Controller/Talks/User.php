@@ -13,7 +13,7 @@ use Simbiat\http20\Headers;
 final class User extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -21,18 +21,6 @@ final class User extends Page
     protected array $breadcrumb = [
         ['href' => '/talks/users/', 'name' => 'Users'],
     ];
-
-    /**
-     * @var string Sub service name
-     */
-    #[\Override]
-    protected string $subservice_name = 'user';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'User profile';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
@@ -47,12 +35,27 @@ final class User extends Page
     protected string $og_desc = 'User profile';
 
     /**
-     * This is actual page generation based on further details of the $path
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'user';
+
+    /**
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'User profile';
+
+    /**
+     * This is actual page generation based on further details of the $path.
      *
      * @param array<int, string> $path
      *
      * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         if (empty($path[0])) {
@@ -87,7 +90,7 @@ final class User extends Page
             = '<meta property="profile:username" content="'.\htmlspecialchars($output_array['user_data']['username'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />'
             .($output_array['user_data']['name']['first_name'] === null ? '' : '<meta property="profile:first_name" content="'.\htmlspecialchars($output_array['user_data']['name']['first_name'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />')
             .($output_array['user_data']['name']['last_name'] === null ? '' : '<meta property="profile:last_name" content="'.\htmlspecialchars($output_array['user_data']['name']['last_name'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />')
-            .($output_array['user_data']['sex'] === null ? '' : '<meta property="profile:gender" content="'.\htmlspecialchars(($output_array['user_data']['sex'] === 1 ? 'male' : 'female'), \ENT_QUOTES | \ENT_SUBSTITUTE).'" />');
+            .($output_array['user_data']['sex'] === null ? '' : '<meta property="profile:gender" content="'.\htmlspecialchars($output_array['user_data']['sex'] === 1 ? 'male' : 'female', \ENT_QUOTES | \ENT_SUBSTITUTE).'" />');
 
         return $output_array;
     }

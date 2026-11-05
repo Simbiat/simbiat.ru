@@ -13,10 +13,13 @@ final class CrossworldLinkshells extends Search
     protected string $entity_type = 'linkshell';
 
     /**
-     * @var string Name of the table to search use
+     * @var array<int, string> List of optional columns for direct comparison. The higher in the list a field is the more weight/relevancy condition with it will have
      */
     #[\Override]
-    protected string $table = 'ffxiv__linkshell';
+    protected array $exact = [
+        'ls_id',
+        'name',
+    ];
 
     /**
      * @var string List of fields
@@ -25,10 +28,20 @@ final class CrossworldLinkshells extends Search
     protected string $fields = '`ls_id` as `id`, `name`, `crossworld`, `updated`';
 
     /**
-     * @var string Optional WHERE clause for every SELECT
+     * @var array<int, string> List of FULLTEXT columns. The higher in the list a field is the more weight/relevancy condition with it will have
      */
     #[\Override]
-    protected string $where = '`crossworld`=1';
+    protected array $fulltext = [
+        'name',
+    ];
+
+    /**
+     * @var array<int, string> List of optional columns for LIKE %% comparison. The higher in the list a field is the more weight/relevancy condition with it will have
+     */
+    #[\Override]
+    protected array $like = [
+        'name',
+    ];
 
     /**
      * @var string Default order (for the main page, for example)
@@ -43,27 +56,14 @@ final class CrossworldLinkshells extends Search
     protected string $order_list = '`name` ASC';
 
     /**
-     * @var array<int, string> List of FULLTEXT columns. The higher in the list a field is the more weight/relevancy condition with it will have
+     * @var string Name of the table to search use
      */
     #[\Override]
-    protected array $fulltext = [
-        'name',
-    ];
+    protected string $table = 'ffxiv__linkshell';
 
     /**
-     * @var array<int, string> List of optional columns for direct comparison. The higher in the list a field is the more weight/relevancy condition with it will have
+     * @var string Optional WHERE clause for every SELECT
      */
     #[\Override]
-    protected array $exact = [
-        'ls_id',
-        'name',
-    ];
-
-    /**
-     * @var array<int, string> List of optional columns for LIKE %% comparison. The higher in the list a field is the more weight/relevancy condition with it will have
-     */
-    #[\Override]
-    protected array $like = [
-        'name',
-    ];
+    protected string $where = '`crossworld`=1';
 }

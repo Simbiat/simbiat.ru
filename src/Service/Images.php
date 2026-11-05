@@ -56,132 +56,19 @@ final class Images
     }
 
     /**
-     * Function to merge images.
+     * Display a red cross indicating an error.
      *
-     * @param array $images Array of images to merge
-     * @param int   $width  Width of the resulting image
-     * @param int   $height Height of the resulting image
-     * @param bool  $output Whether to output directly to browser
-     *
-     * @return null|\GdImage
+     * @return never
      */
-    public static function merge(array $images, int $width = 128, int $height = 128, bool $output = false): ?\GdImage
+    #[NoReturn]
+    public static function errorImage(): never
     {
-        // Preparing a set of layers, since Lodestone stores crests as 3 (or less) separate images
-        $layers = [];
-        foreach ($images as $key => $image) {
-            $layers[$key] = self::open($image);
-            if ($layers[$key] !== false) {
-                continue;
-            }
+        $file = Config::$img_dir.'close.svg';
+        \header('Content-Type: image/svg+xml');
+        \header('Content-Length: '.\filesize($file));
+        \readfile($file);
 
-            if ($output) {
-                self::noImage();
-            }
-
-            // This means that we failed to get the image thus a final object will either fail or be corrupt, thus exiting early
-            throw new \RuntimeException('Failed to open `'.$image.'`');
-        }
-
-        try {
-            // Create image object
-            $gd = \imagecreatetruecolor($width, $height);
-            // Set transparency
-            \imagealphablending($gd, enable: true);
-            \imagesavealpha($gd, enable: true);
-            \imagecolortransparent($gd, \imagecolorallocatealpha($gd, 255, 0, 0, 127));
-            \imagefill($gd, 0, 0, \imagecolorallocatealpha($gd, 255, 0, 0, 127));
-            // Copy each Lodestone image onto the image object
-            foreach ($layers as $layer) {
-                if (!empty($layer)) {
-                    \imagecopy($gd, $layer, 0, 0, 0, 0, $width, $height);
-                }
-            }
-        } catch (\Throwable) {
-            if ($output) {
-                self::noImage();
-            }
-
-            return null;
-        }
-
-        if ($output) {
-            \ob_start();
-            \imagewebp($gd, quality: \IMG_WEBP_LOSSLESS);
-            $size = \ob_get_length();
-            \header('Content-Type: image/webp');
-            \header('Content-Length: '.$size);
-            \ob_end_flush();
-            exit(0);
-        }
-
-        return $gd;
-    }
-
-    /**
-     * Convert image to webp format.
-     *
-     * @param string $image
-     *
-     * @return false|string
-     */
-    public static function toWebP(string $image): false|string
-    {
-        // Check if a file exists
-        if (!\is_file($image)) {
-            return false;
-        }
-
-        // Get MIME type
-        $mime = \mime_content_type($image);
-        if (!\in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'], strict: true)) {
-            // Presume that this is not something to convert in the first place, which may be normal
-            return false;
-        }
-
-        // If we have a GIF, check if it's animated
-        if (
-            $mime === 'image/gif'
-            && self::isGIFAnimated($image)
-        ) {
-            // Do not convert animated GIFs
-            return false;
-        }
-
-        // If we have a PNG, check if it's animated
-        if (
-            $mime === 'image/png'
-            && self::isPNGAnimated($image)
-        ) {
-            // Do not convert animated PNGs
-            return false;
-        }
-
-        // Set new name
-        $new_name = \str_replace('.'.\pathinfo($image, \PATHINFO_EXTENSION), '.webp', $image);
-        // Create a GD object from a file
-        $gd = self::open($image);
-        if ($gd === false) {
-            return false;
-        }
-
-        // Ensure that True Color is used
-        \imagepalettetotruecolor($gd);
-        // Enable alpha blending
-        \imagealphablending($gd, enable: true);
-        // Save the alpha data
-        \imagesavealpha($gd, enable: true);
-        // Save the file
-        if (\imagewebp($gd, $new_name, \IMG_WEBP_LOSSLESS)) {
-            // Remove source image if we did not just overwrite it
-            if ($image !== $new_name) {
-                @\unlink($image);
-            }
-
-            return $new_name;
-        }
-
-        return false;
+        exit(0);
     }
 
     /**
@@ -250,9 +137,11 @@ final class Images
                 ? $length[1]
                 : 0;
             $chunk_name = $f->fread(4);
+
             switch ($chunk_name) {
                 case 'acTL':
                     return true;
+
                 case 'IDAT':
                     return false;
             }
@@ -261,6 +150,146 @@ final class Images
         }
 
         return false;
+    }
+
+    /**
+     * Function to merge images.
+     *
+     * @param array $images Array of images to merge
+     * @param int   $width  Width of the resulting image
+     * @param int   $height Height of the resulting image
+     * @param bool  $output Whether to output directly to browser
+     *
+     * @return \GdImage|null
+     */
+    public static function merge(array $images, int $width = 128, int $height = 128, bool $output = false): ?\GdImage
+    {
+        // Preparing a set of layers, since Lodestone stores crests as 3 (or less) separate images
+        $layers = [];
+        foreach ($images as $key => $image) {
+            $layers[$key] = self::open($image);
+            if ($layers[$key] !== false) {
+                continue;
+            }
+
+            if ($output) {
+                self::noImage();
+            }
+
+            // This means that we failed to get the image thus a final object will either fail or be corrupt, thus exiting early
+            throw new \RuntimeException('Failed to open `'.$image.'`');
+        }
+
+        try {
+            // Create image object
+            $gd = \imagecreatetruecolor($width, $height);
+            // Set transparency
+            \imagealphablending($gd, enable: true);
+            \imagesavealpha($gd, enable: true);
+            \imagecolortransparent($gd, \imagecolorallocatealpha($gd, 255, 0, 0, 127));
+            \imagefill($gd, 0, 0, \imagecolorallocatealpha($gd, 255, 0, 0, 127));
+            // Copy each Lodestone image onto the image object
+            foreach ($layers as $layer) {
+                if (!empty($layer)) {
+                    \imagecopy($gd, $layer, 0, 0, 0, 0, $width, $height);
+                }
+            }
+        } catch (\Throwable) {
+            if ($output) {
+                self::noImage();
+            }
+
+            return null;
+        }
+
+        if ($output) {
+            \ob_start();
+            \imagewebp($gd, quality: \IMG_WEBP_LOSSLESS);
+            $size = \ob_get_length();
+            \header('Content-Type: image/webp');
+            \header('Content-Length: '.$size);
+            \ob_end_flush();
+
+            exit(0);
+        }
+
+        return $gd instanceof \GdImage
+            ? $gd
+            : null;
+    }
+
+    /**
+     * Display an image for "no image" scenario.
+     *
+     * @return never
+     */
+    #[NoReturn]
+    public static function noImage(): never
+    {
+        $file = Config::$img_dir.'noimage.svg';
+        \header('Content-Type: image/svg+xml');
+        \header('Content-Length: '.\filesize($file));
+        \readfile($file);
+
+        exit(0);
+    }
+
+    /**
+     * Function to generate data for og:image using provided file ID.
+     *
+     * @param string $file_id File ID to use
+     * @param bool   $is_path If `true` ID is actually a path
+     *
+     * @return array{og_image: ?string, og_image_width: ?int, og_image_height: ?int}
+     */
+    public static function ogImage(string $file_id, bool $is_path = false): array
+    {
+        $hash_tree = $is_path
+            ? ''
+            : Sanitization::hashTree($file_id);
+        if ($is_path) {
+            $file = Config::$img_dir.$file_id;
+            if (!\is_file($file)) {
+                return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
+            }
+        } else {
+            // Use glob to get a real file path. We could simplify this by taking the extension from DB and using is_file,
+            // but want to avoid reliance on DB here, especially since it won't provide that much of a speed boost, if any.
+            $file = \glob(Config::$uploaded_img.$hash_tree.'/'.$file_id.'.*');
+            if (empty($file)) {
+                return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
+            }
+
+            $file = $file[0];
+        }
+
+        // Using array_merge to suppress PHPStorm's complaints about array keys
+        $info = \array_merge(\pathinfo($file));
+        $info['mime'] = \mime_content_type($file);
+        if (!\in_array($info['mime'], ['image/png', 'image/jpeg', 'image/webp'], strict: true)) {
+            return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
+        }
+
+        $sizes = \getimagesize($file);
+        if ($sizes === false) {
+            return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
+        }
+
+        $info['width'] = $sizes[0];
+        $info['height'] = $sizes[1];
+        if (
+            $info['width'] < 1200
+            || $info['height'] < 630
+            || \round($info['width'] / $info['height'], 1) !== 1.9
+        ) {
+            return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
+        }
+
+        if ($is_path) {
+            return ['og_image' => '/assets/images'.$file_id, 'og_image_width' => $info['width'], 'og_image_height' => $info['height']];
+        }
+
+        return ['og_image' => '/assets/images/uploaded/'.$hash_tree.'/'.$info['basename'], 'og_image_width' => $info['width'], 'og_image_height' => $info['height']];
     }
 
     /**
@@ -302,36 +331,6 @@ final class Images
     }
 
     /**
-     * Display an image for "no image" scenario.
-     *
-     * @return never
-     */
-    #[NoReturn]
-    public static function noImage(): never
-    {
-        $file = Config::$img_dir.'noimage.svg';
-        \header('Content-Type: image/svg+xml');
-        \header('Content-Length: '.\filesize($file));
-        \readfile($file);
-        exit(0);
-    }
-
-    /**
-     * Display a red cross indicating an error.
-     *
-     * @return never
-     */
-    #[NoReturn]
-    public static function errorImage(): never
-    {
-        $file = Config::$img_dir.'close.svg';
-        \header('Content-Type: image/svg+xml');
-        \header('Content-Length: '.\filesize($file));
-        \readfile($file);
-        exit(0);
-    }
-
-    /**
      * Display a green check mark indicating success.
      *
      * @return never
@@ -343,62 +342,73 @@ final class Images
         \header('Content-Type: image/svg+xml');
         \header('Content-Length: '.\filesize($file));
         \readfile($file);
+
         exit(0);
     }
 
     /**
-     * Function to generate data for og:image using provided file ID.
+     * Convert image to webp format.
      *
-     * @param string $file_id File ID to use
-     * @param bool   $is_path If `true` ID is actually a path
+     * @param string $image
      *
-     * @return array<string, null|int|string>
+     * @return false|string
      */
-    public static function ogImage(string $file_id, bool $is_path = false): array
+    public static function toWebP(string $image): false|string
     {
-        if ($is_path) {
-            $file = Config::$img_dir.$file_id;
-            if (!\is_file($file)) {
-                return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
-            }
-        } else {
-            $hash_tree = Sanitization::hashTree($file_id);
-            // Use glob to get a real file path. We could simplify this by taking the extension from DB and using is_file,
-            // but want to avoid reliance on DB here, especially since it won't provide that much of a speed boost, if any.
-            $file = \glob(Config::$uploaded_img.$hash_tree.'/'.$file_id.'.*');
-            if (empty($file)) {
-                return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
-            }
-
-            $file = $file[0];
+        // Check if a file exists
+        if (!\is_file($image)) {
+            return false;
         }
 
-        // Using array_merge to suppress PHPStorm's complaints about array keys
-        $info = \array_merge(\pathinfo($file));
-        $info['mime'] = \mime_content_type($file);
-        if (!\in_array($info['mime'], ['image/png', 'image/jpeg', 'image/webp'], strict: true)) {
-            return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
+        // Get MIME type
+        $mime = \mime_content_type($image);
+        if (!\in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'], strict: true)) {
+            // Presume that this is not something to convert in the first place, which may be normal
+            return false;
         }
 
-        $sizes = \getimagesize($file);
-        if ($sizes === false) {
-            return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
-        }
-
-        $info['width'] = $sizes[0];
-        $info['height'] = $sizes[1];
+        // If we have a GIF, check if it's animated
         if (
-            $info['width'] < 1200
-            || $info['height'] < 630
-            || \round($info['width'] / $info['height'], 1) !== 1.9
+            $mime === 'image/gif'
+            && self::isGIFAnimated($image)
         ) {
-            return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
+            // Do not convert animated GIFs
+            return false;
         }
 
-        if ($is_path) {
-            return ['og_image' => '/assets/images'.$file_id, 'og_image_width' => $info['width'], 'og_image_height' => $info['height']];
+        // If we have a PNG, check if it's animated
+        if (
+            $mime === 'image/png'
+            && self::isPNGAnimated($image)
+        ) {
+            // Do not convert animated PNGs
+            return false;
         }
 
-        return ['og_image' => '/assets/images/uploaded/'.$hash_tree.'/'.$info['basename'], 'og_image_width' => $info['width'], 'og_image_height' => $info['height']];
+        // Set new name
+        $new_name = \str_replace('.'.\pathinfo($image, \PATHINFO_EXTENSION), '.webp', $image);
+        // Create a GD object from a file
+        $gd = self::open($image);
+        if ($gd === false) {
+            return false;
+        }
+
+        // Ensure that True Color is used
+        \imagepalettetotruecolor($gd);
+        // Enable alpha blending
+        \imagealphablending($gd, enable: true);
+        // Save the alpha data
+        \imagesavealpha($gd, enable: true);
+        // Save the file
+        if (\imagewebp($gd, $new_name, \IMG_WEBP_LOSSLESS)) {
+            // Remove source image if we did not just overwrite it
+            if ($image !== $new_name) {
+                @\unlink($image);
+            }
+
+            return $new_name;
+        }
+
+        return false;
     }
 }

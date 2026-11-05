@@ -83,7 +83,7 @@ sync_retry "Syncing /var/log/" \
     rsync "${RSYNC_FLAGS[@]}" --remove-source-files \
     --exclude=/php.log --exclude=/caddy.log --exclude='/caddy*.log.gz' \
     --exclude=/bouncer.log --exclude='/bouncer*.log.gz' --exclude='/*.flag' \
-    --exclude='/crowdsec*.gz' --exclude=/mariadb.log --exclude=/cron.log \
+    --include='/crowdsec*.gz' --exclude=/mariadb.log --exclude=/cron.log \
     --exclude='/access*.*' --exclude=/crowdsec.log --exclude=/crowdsec_api.log \
     --exclude=/.crowdsec.log.swp --exclude=/mail.log --exclude=/cron/ \
     "${RSYNC_REMOTE}/var/log/" "${MIRROR_DIR}/var/log/"
@@ -147,6 +147,7 @@ cleanup_older_than "$DB_BCK_DIR/logical" "*-weekly.7z"   42
 cleanup_older_than "$DB_BCK_DIR/logical" "*-daily.7z"    14
 cleanup_older_than "$DB_BCK_DIR/physical" "*-physical.7z"  7
 cleanup_older_than "${MIRROR_DIR}/var/log" "*.log" 14
+cleanup_older_than "${MIRROR_DIR}/var/log" "*.gz" 14
 
 if [ "$OVERALL_FAILED" -eq 1 ]; then
     log "=== Completed WITH FAILURES ==="

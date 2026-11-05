@@ -9,13 +9,7 @@ use App\Controller\DeviceDetector;
 final class SimplePages extends Router
 {
     /**
-     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
-     */
-    #[\Override]
-    protected array $sub_routes = ['devicedetector'];
-
-    /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -23,9 +17,6 @@ final class SimplePages extends Router
     protected array $breadcrumb = [
         ['href' => '/simplepages/', 'name' => 'Simple Pages'],
     ];
-
-    #[\Override]
-    protected string $title = 'Simple Pages';
 
     #[\Override]
     protected string $h1 = 'Simple Pages';
@@ -37,12 +28,22 @@ final class SimplePages extends Router
     protected string $service_name = 'simplepages';
 
     /**
-     * This is the actual page generation based on further details of the $path
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
+    #[\Override]
+    protected array $sub_routes = ['devicedetector'];
+
+    #[\Override]
+    protected string $title = 'Simple Pages';
+
+    /**
+     * This is the actual page generation based on further details of the $path.
      *
      * @param array $path
      *
      * @return array
      */
+    #[\Override]
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {

@@ -13,12 +13,12 @@ use Simbiat\FFXIV\Lodestone;
 
 /**
  * Class representing a FFXIV PvP Team.
+ *
+ * @api TODO: most likely will need to remove once entities migrate to Doctrine. For now this is mostly to silence Psalm.
  */
 final class PvPTeam extends AbstractEntity
 {
     protected const string ENTITY_TYPE = 'pvpteam';
-
-    public array $dates = [];
 
     public ?string $community = null;
 
@@ -26,9 +26,11 @@ final class PvPTeam extends AbstractEntity
 
     public string $data_center;
 
-    public array $old_names = [];
+    public array $dates = [];
 
     public array $members = [];
+
+    public array $old_names = [];
 
     public array $past_members = [];
 
@@ -44,6 +46,7 @@ final class PvPTeam extends AbstractEntity
      *
      * @return array|string
      */
+    #[\Override]
     public function getFromLodestone(bool $allow_sleep = false): array|string
     {
         $lodestone = new Lodestone();
@@ -104,8 +107,11 @@ final class PvPTeam extends AbstractEntity
     /**
      * Function to get initial data from DB.
      *
-     * @throws \Exception
+     * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function getFromDB(): array
     {
         // Get general information
@@ -131,7 +137,10 @@ final class PvPTeam extends AbstractEntity
      * @param array $from_db
      *
      * @return void
+     *
+     * @throws \InvalidArgumentException
      */
+    #[\Override]
     protected function process(array $from_db): void
     {
         $this->name = $from_db['name'];
@@ -163,8 +172,11 @@ final class PvPTeam extends AbstractEntity
      *
      * @return bool
      */
+    #[\Override]
     protected function updateDB(): bool
     {
+        $queries = [];
+
         try {
             // Download crest components
             $this->downloadCrestComponents($this->lodestone['crest']);
@@ -173,20 +185,20 @@ final class PvPTeam extends AbstractEntity
                 'INSERT INTO `ffxiv__pvpteam` (`pvp_id`, `name`, `formed`, `registered`, `updated`, `deleted`, `data_center_id`, `community_id`, `crest_part_1`, `crest_part_2`, `crest_part_3`) VALUES (:pvp_id, :name, :formed, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), NULL, (SELECT `server_id` FROM `ffxiv__server` WHERE `data_center`=:data_center ORDER BY `server_id` LIMIT 1), :community_id, :crest_part_1, :crest_part_2, :crest_part_3) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(6), `deleted`=NULL, `data_center_id`=(SELECT `server_id` FROM `ffxiv__server` WHERE `data_center`=:data_center ORDER BY `server_id` LIMIT 1), `community_id`=:community_id, `crest_part_1`=:crest_part_1, `crest_part_2`=:crest_part_2, `crest_part_3`=:crest_part_3;',
                 [
                     ':community_id' => [
-                        (empty($this->lodestone['community_id']) ? null : $this->lodestone['community_id']),
-                        (empty($this->lodestone['community_id']) ? 'null' : 'string'),
+                        empty($this->lodestone['community_id']) ? null : $this->lodestone['community_id'],
+                        empty($this->lodestone['community_id']) ? 'null' : 'string',
                     ],
                     ':crest_part_1' => [
-                        (empty($this->lodestone['crest'][0]) ? null : $this->lodestone['crest'][0]),
-                        (empty($this->lodestone['crest'][0]) ? 'null' : 'string'),
+                        empty($this->lodestone['crest'][0]) ? null : $this->lodestone['crest'][0],
+                        empty($this->lodestone['crest'][0]) ? 'null' : 'string',
                     ],
                     ':crest_part_2' => [
-                        (empty($this->lodestone['crest'][1]) ? null : $this->lodestone['crest'][1]),
-                        (empty($this->lodestone['crest'][1]) ? 'null' : 'string'),
+                        empty($this->lodestone['crest'][1]) ? null : $this->lodestone['crest'][1],
+                        empty($this->lodestone['crest'][1]) ? 'null' : 'string',
                     ],
                     ':crest_part_3' => [
-                        (empty($this->lodestone['crest'][2]) ? null : $this->lodestone['crest'][2]),
-                        (empty($this->lodestone['crest'][2]) ? 'null' : 'string'),
+                        empty($this->lodestone['crest'][2]) ? null : $this->lodestone['crest'][2],
+                        empty($this->lodestone['crest'][2]) ? 'null' : 'string',
                     ],
                     ':data_center' => $this->lodestone['data_center'],
                     ':formed' => [$this->lodestone['formed'], 'datetime'],

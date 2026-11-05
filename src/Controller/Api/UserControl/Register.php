@@ -30,7 +30,10 @@ final class Register extends Api
      * @param array $path
      *
      * @return array<string>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function genData(array $path): array
     {
         return new User()->register();

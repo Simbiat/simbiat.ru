@@ -13,25 +13,39 @@ use App\Service\Errors;
 use App\Service\Routing\MainRouter;
 use App\Service\Sanitization;
 use App\Service\UserAgentParser;
-use DateTimeInterface;
 use Simbiat\http20\Common;
 use Simbiat\http20\Headers;
 use Simbiat\http20\Links;
+use Symfony\Component\Cache\Exception\CacheException;
 
 /**
  * Class to generate pages. "HomePage" is a legacy name.
  */
 final class HomePage
 {
+    public static string $canonical = '';
+
     /**
-     * @var \App\Service\Caching|null Cache object
+     * @var Caching|null Cache object
      */
     public private(set) static ?Caching $data_cache = null;
 
     /**
-     * @var \Simbiat\http20\Headers|null HTTP headers object
+     * @var Headers|null HTTP headers object
      */
     public private(set) static ?Headers $headers = null;
+
+    /**
+     * @var array{http_error: int, reason: string, client: string}|null Array that can contain variables indicating common HTTP errors
+     */
+    public static ?array $http_error = [];
+
+    public static array $links = [];
+
+    /**
+     * @var mixed|string|null HTTP method being used
+     */
+    public static ?string $method = null;
 
     /**
      * @var bool Flag indicating that cached view has been served already
@@ -39,34 +53,182 @@ final class HomePage
     public private(set) static bool $stale_return = false;
 
     /**
-     * @var string|mixed|null HTTP method being used
-     */
-    public static ?string $method = null;
-
-    /**
-     * @var array|null Array that can contain variables indicating common HTTP errors
-     */
-    public static ?array $http_error = [];
-
-    /**
      * @var array User agent details from
+     *
+     * @throws \RuntimeException
      */
     public private(set) static array $user_agent = [];
 
-    public static array $links = [];
+    /**
+     * @throws \RuntimeException
+     */
+    public function __construct()
+    {
+        // Cache headers object
+        self::$headers = new Headers();
+        self::$data_cache ??= new Caching();
+        // Set method
+        self::$method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] ?? $_SERVER['REQUEST_METHOD'] ?? null;
+        // Get all POST and GET keys to the lower case
+        $_POST = \array_change_key_case($_POST);
+        Sanitization::carefulArraySanitization($_POST);
+        $_GET = \array_change_key_case($_GET);
+        Sanitization::carefulArraySanitization($_GET);
+        $this->init();
+    }
 
-    public static string $canonical = '';
+    /**
+     * Generate a canonical link.
+     */
+    public static function canonical(): void
+    {
+        // Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
+        self::$canonical = \mb_strtolower(\rawurldecode(\mb_trim(\mb_trim(\mb_trim(\preg_replace('/(.*)(\?.*$)/u', '$1', $_SERVER['REQUEST_URI'] ?? ''), encoding: 'UTF-8'), '/', 'UTF-8'), encoding: 'UTF-8')), 'UTF-8');
+        // Remove bad UTF
+        self::$canonical = \mb_scrub(self::$canonical, 'UTF-8');
+        // Remove the "friendly" portion of the links but exclude API
+        self::$canonical = \preg_replace('/(^(?!api).*)(\/(bic|characters|freecompanies|pvpteams|linkshells|crossworldlinkshells|crossworld_linkshells|achievements|sections|threads|users)\/)([a-zA-Z\d]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
+        // Update REQUEST_URI to ensure the data returned will be consistent
+        // For canonical, though, we need to ensure that it does have a trailing slash
+        if (\preg_match('/\/\?/u', self::$canonical) !== 1) {
+            self::$canonical = \preg_replace('/([^\/])$/u', '$1/', self::$canonical);
+        }
+
+        // Also return some of the GET parameters that we do support
+        self::$canonical
+            .= '?'
+            .\http_build_query(
+                [
+                    // Do not add the 1st page as a query (since it is excessive)
+                    'page' => empty($_GET['page']) || $_GET['page'] === '1' ? null : $_GET['page'],
+                    'search' => $_GET['search'] ?? null,
+                ],
+                encoding_type: \PHP_QUERY_RFC3986,
+            );
+        // Trim the excessive question mark, in case no query was attached
+        self::$canonical = \mb_rtrim(self::$canonical, '?', 'UTF-8');
+        // Trim trailing slashes if any
+        self::$canonical = \mb_rtrim(self::$canonical, '/', 'UTF-8');
+        // Set a canonical link that may be used in the future
+        self::$canonical = 'https://'.(\preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config::$http_host) === 1 ? 'www.' : '').Config::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
+        // Update the list with dynamic values
+        self::$links[] = ['rel' => 'canonical', 'href' => self::$canonical];
+    }
+
+    /**
+     * Function to process some special files.
+     *
+     * @return void
+     *
+     * @throws \RuntimeException
+     */
+    public function filesRequests(): void
+    {
+        // Remove query string, if present (that is everything after ?)
+        $request = \preg_replace('/^(.*)(\?.*)?$/u', '$1', $_SERVER['REQUEST_URI']);
+        if (\preg_match('/^\/\.well-known\/security\.txt$/iu', $request) !== 1) {
+            return;
+        }
+
+        if (
+            self::$method !== 'HEAD'
+            && self::$method !== 'OPTIONS'
+        ) {
+            $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => \date(\DateTimeInterface::RFC3339_EXTENDED, \strtotime('last Monday of next month midnight'))]);
+        }
+
+        exit(0);
+    }
+
+    /**
+     * Get Bot name, OS and Browser for user agent.
+     *
+     * @return array
+     *
+     * @throws CacheException
+     * @throws \InvalidArgumentException
+     */
+    public static function getUA(): array
+    {
+        // Check if User Agent is present
+        if (empty($_SERVER['HTTP_USER_AGENT'])) {
+            // Something is fishy, so let's 418 this
+            return ['unsupported' => true, 'browser' => false, 'bot' => null];
+        }
+
+        // Parse user agent
+        $device_detector = new UserAgentParser();
+        // Get bot name
+        $bot = $device_detector->getBot($_SERVER['HTTP_USER_AGENT']);
+        if (\is_array($bot)) {
+            // Do not waste resources on bots
+            return ['bot' => \mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => null, 'client' => null, 'unsupported' => false, 'browser' => false, 'ai' => \strncasecmp($bot['category'] ?? '', 'ai', 2) === 0];
+        }
+
+        // Get OS
+        $os = $device_detector->getOs($_SERVER['HTTP_USER_AGENT']);
+        // Force OS to be NULL if it's empty
+        if (
+            $os === null
+            || $os === []
+        ) {
+            $os = null;
+        } else {
+            // Concat OS and version
+            $os = \mb_trim(($os['name'] ?? '').' '.($os['version'] ?? ''), encoding: 'UTF-8');
+        }
+
+        // Get client
+        $client = $device_detector->getClient($_SERVER['HTTP_USER_AGENT']);
+        // Check if a client is supported
+        $unsupported
+            = \preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser)/ui', $client['name'] ?? '') === 1
+            || (
+                \array_key_exists($client['name'] ?? '', Config::$teapot_browsers)
+                && (
+                    empty($client['version'])
+                    || \version_compare($client['version'], Config::$teapot_browsers[$client['name']], 'lt')
+                )
+            );
+        $browser = ($client['type'] ?? null) === 'browser';
+        // Concat client and version
+        $client = \mb_trim(($client['name'] ?? '').' '.($client['version'] ?? ''), encoding: 'UTF-8');
+        // Force the client to be NULL if it's empty
+        if (\in_array($client, ['', null, []], strict: true)) {
+            $client = null;
+        }
+
+        return ['bot' => null, 'os' => ($os !== null ? \mb_substr($os, 0, 100, 'UTF-8') : null), 'client' => ($client !== null ? \mb_substr($client, 0, 100, 'UTF-8') : null), 'full' => $_SERVER['HTTP_USER_AGENT'], 'unsupported' => $unsupported, 'browser' => $browser];
+    }
+
+    /**
+     * Add CSS and JS preload links, if not using API.
+     */
+    public static function nonApiLinks(): void
+    {
+        if (\preg_match('/^\/api(\/|$)/ui', $_SERVER['REQUEST_URI']) === 0) {
+            self::$links[] = ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.\filemtime(Config::$css_dir.'app.css').'.css', 'as' => 'style'];
+            self::$links[] = ['rel' => 'preload', 'href' => '/assets/app.'.\filemtime(Config::$js_dir.'app.js').'.js', 'as' => 'script'];
+            self::$links[] = ['rel' => 'manifest', 'href' => '/manifest.webmanifest', 'type' => 'application/manifest+json'];
+            self::$links[] = ['rel' => 'privacy-policy', 'href' => '/about/privacy'];
+            self::$links[] = ['rel' => 'terms-of-service', 'href' => '/about/tos'];
+            self::$links[] = ['rel' => 'help', 'href' => '/talks/sections/8', 'title' => 'Knowledgebase'];
+            self::$links[] = ['rel' => 'help', 'href' => '/about/contacts', 'title' => 'Contacts'];
+        }
+    }
 
     /**
      * Twig processing of the generated page.
      *
      * @param array<string, mixed> $twig_vars List of Twig variables
-     * @param bool  $cache     Indicates if this is a cache pass
-     * @param bool  $api       Whether generation is for API
+     * @param bool                 $cache     Indicates if this is a cache pass
+     * @param bool                 $api       Whether generation is for API
      *
      * @return bool
+     *
+     * @throws \RuntimeException
      */
-    final public function twigProc(array $twig_vars = [], bool $cache = false, bool $api = false): bool
+    public function twigProc(array $twig_vars = [], bool $cache = false, bool $api = false): bool
     {
         if (self::$method === 'OPTIONS') {
             exit(0);
@@ -223,157 +385,12 @@ final class HomePage
         }
     }
 
-    public function __construct()
-    {
-        // Cache headers object
-        self::$headers = new Headers();
-        self::$data_cache ??= new Caching();
-        // Set method
-        self::$method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] ?? $_SERVER['REQUEST_METHOD'] ?? null;
-        // Get all POST and GET keys to the lower case
-        $_POST = \array_change_key_case($_POST);
-        Sanitization::carefulArraySanitization($_POST);
-        $_GET = \array_change_key_case($_GET);
-        Sanitization::carefulArraySanitization($_GET);
-        $this->init();
-    }
-
-    /**
-     * Function to process some special files.
-     *
-     * @return void
-     */
-    public function filesRequests(): void
-    {
-        // Remove query string, if present (that is everything after ?)
-        $request = \preg_replace('/^(.*)(\?.*)?$/u', '$1', $_SERVER['REQUEST_URI']);
-        if (\preg_match('/^\/\.well-known\/security\.txt$/iu', $request) !== 1) {
-            return;
-        }
-
-        if (
-            self::$method !== 'HEAD'
-            && self::$method !== 'OPTIONS'
-        ) {
-            $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => \date(DateTimeInterface::RFC3339_EXTENDED, \strtotime('last Monday of next month midnight'))]);
-        }
-
-        exit(0);
-    }
-
-    /**
-     * Get Bot name, OS and Browser for user agent.
-     *
-     * @return array
-     */
-    public static function getUA(): array
-    {
-        // Check if User Agent is present
-        if (empty($_SERVER['HTTP_USER_AGENT'])) {
-            // Something is fishy, so let's 418 this
-            return ['unsupported' => true, 'browser' => false, 'bot' => null];
-        }
-
-        // Parse user agent
-        $device_detector = new UserAgentParser();
-        // Get bot name
-        $bot = $device_detector->getBot($_SERVER['HTTP_USER_AGENT']);
-        if (\is_array($bot)) {
-            // Do not waste resources on bots
-            return ['bot' => \mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => null, 'client' => null, 'unsupported' => false, 'browser' => false, 'ai' => \strncasecmp($bot['category'] ?? '', 'ai', 2) === 0];
-        }
-
-        // Get OS
-        $os = $device_detector->getOs($_SERVER['HTTP_USER_AGENT']);
-        // Force OS to be NULL if it's empty
-        if ($os === null || $os === []) {
-            $os = null;
-        } else {
-            // Concat OS and version
-            $os = \mb_trim(($os['name'] ?? '').' '.($os['version'] ?? ''), encoding: 'UTF-8');
-        }
-
-        // Get client
-        $client = $device_detector->getClient($_SERVER['HTTP_USER_AGENT']);
-        // Check if a client is supported
-        $unsupported
-            = \preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser)/ui', $client['name'] ?? '') === 1
-            || (
-                \array_key_exists($client['name'] ?? '', Config::$teapot_browsers)
-                && (
-                    empty($client['version'])
-                    || \version_compare($client['version'], Config::$teapot_browsers[$client['name']], 'lt')
-                )
-            );
-        $browser = ($client['type'] ?? null) === 'browser';
-        // Concat client and version
-        $client = \mb_trim(($client['name'] ?? '').' '.($client['version'] ?? ''), encoding: 'UTF-8');
-        // Force the client to be NULL if it's empty
-        if (\in_array($client, ['', null, []], strict: true)) {
-            $client = null;
-        }
-
-        return ['bot' => null, 'os' => ($os !== null ? \mb_substr($os, 0, 100, 'UTF-8') : null), 'client' => ($client !== null ? \mb_substr($client, 0, 100, 'UTF-8') : null), 'full' => $_SERVER['HTTP_USER_AGENT'], 'unsupported' => $unsupported, 'browser' => $browser];
-    }
-
-    /**
-     * Generate a canonical link.
-     */
-    public static function canonical(): void
-    {
-        // Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
-        self::$canonical = \mb_strtolower(\rawurldecode(\mb_trim(\mb_trim(\mb_trim(\preg_replace('/(.*)(\?.*$)/u', '$1', $_SERVER['REQUEST_URI'] ?? ''), encoding: 'UTF-8'), '/', 'UTF-8'), encoding: 'UTF-8')), 'UTF-8');
-        // Remove bad UTF
-        self::$canonical = \mb_scrub(self::$canonical, 'UTF-8');
-        // Remove the "friendly" portion of the links but exclude API
-        self::$canonical = \preg_replace('/(^(?!api).*)(\/(bic|characters|freecompanies|pvpteams|linkshells|crossworldlinkshells|crossworld_linkshells|achievements|sections|threads|users)\/)([a-zA-Z\d]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
-        // Update REQUEST_URI to ensure the data returned will be consistent
-        // For canonical, though, we need to ensure that it does have a trailing slash
-        if (\preg_match('/\/\?/u', self::$canonical) !== 1) {
-            self::$canonical = \preg_replace('/([^\/])$/u', '$1/', self::$canonical);
-        }
-
-        // Also return some of the GET parameters that we do support
-        self::$canonical
-            .= '?'
-            .\http_build_query(
-                [
-                    // Do not add the 1st page as a query (since it is excessive)
-                    'page' => empty($_GET['page']) || $_GET['page'] === '1' ? null : $_GET['page'],
-                    'search' => $_GET['search'] ?? null,
-                ],
-                encoding_type: \PHP_QUERY_RFC3986,
-            );
-        // Trim the excessive question mark, in case no query was attached
-        self::$canonical = \mb_rtrim(self::$canonical, '?', 'UTF-8');
-        // Trim trailing slashes if any
-        self::$canonical = \mb_rtrim(self::$canonical, '/', 'UTF-8');
-        // Set a canonical link that may be used in the future
-        self::$canonical = 'https://'.(\preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config::$http_host) === 1 ? 'www.' : '').Config::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
-        // Update the list with dynamic values
-        self::$links[] = ['rel' => 'canonical', 'href' => self::$canonical];
-    }
-
-    /**
-     * Add CSS and JS preload links, if not using API.
-     */
-    public static function nonApiLinks(): void
-    {
-        if (\preg_match('/^\/api(\/|$)/ui', $_SERVER['REQUEST_URI']) === 0) {
-            self::$links[] = ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.\filemtime(Config::$css_dir.'app.css').'.css', 'as' => 'style'];
-            self::$links[] = ['rel' => 'preload', 'href' => '/assets/app.'.\filemtime(Config::$js_dir.'app.js').'.js', 'as' => 'script'];
-            self::$links[] = ['rel' => 'manifest', 'href' => '/manifest.webmanifest', 'type' => 'application/manifest+json'];
-            self::$links[] = ['rel' => 'privacy-policy', 'href' => '/about/privacy'];
-            self::$links[] = ['rel' => 'terms-of-service', 'href' => '/about/tos'];
-            self::$links[] = ['rel' => 'help', 'href' => '/talks/sections/8', 'title' => 'Knowledgebase'];
-            self::$links[] = ['rel' => 'help', 'href' => '/about/contacts', 'title' => 'Contacts'];
-        }
-    }
-
     /**
      * Initial routing logic.
      *
      * @return void
+     *
+     * @throws \RuntimeException
      */
     private function init(): void
     {
@@ -415,6 +432,7 @@ final class HomePage
 
             // Process requests to file or cache
             $this->filesRequests();
+
             // Exploding further processing
             /** @noinspection NotOptimalRegularExpressionsInspection False positive, since does not know what can be in the string */
             $uri = \explode('/', \preg_replace('/^(\/)([^?]*)(\?'.\preg_quote($_SERVER['QUERY_STRING'] ?? '', '/').')?/ui', '$2', $_SERVER['REQUEST_URI']));
@@ -430,7 +448,7 @@ final class HomePage
             (void) Links::links(self::$links, force_cross_origin: true);
             // Send standard headers
             if ($uri[0] === 'api') {
-                Headers::notAccept(['application/json']);
+                (void) Headers::notAccept(['application/json']);
             }
 
             if (\array_key_exists('http_error', self::$http_error)) {

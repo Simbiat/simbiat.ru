@@ -16,14 +16,6 @@ use App\Controller\Api\FFXIV\PvPTeam;
 final class FFTracker extends Api
 {
     /**
-     * @var array<int, string> Supported edges
-     */
-    #[\Override]
-    protected array $sub_routes = [
-        'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'achievements', 'merge_crest',
-    ];
-
-    /**
      * @var array<int, string> Description of the nodes (need to be in the same order)
      */
     #[\Override]
@@ -37,6 +29,15 @@ final class FFTracker extends Api
         'Node to merge crest components into a single image file',
     ];
 
+    /**
+     * @var array<int, string> Supported edges
+     */
+    #[\Override]
+    protected array $sub_routes = [
+        'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'achievements', 'merge_crest',
+    ];
+
+    #[\Override]
     protected function genData(array $path): array
     {
         return match ($path[0]) {

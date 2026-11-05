@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-// Class for cUrl related functions. Needed more for settings' uniformity
+// Class for curl related functions. Needed more for settings' uniformity
 use App\Enum\LogType;
 use App\Enum\SystemUser;
 use App\Security\Security;
@@ -14,6 +14,8 @@ use Simbiat\http20\Sharing;
 
 /**
  * Common Curl-related functions.
+ *
+ * @api TODO: most likely will need to remove during migration to Symfony. For now this is mostly to silence Psalm.
  */
 final class Curl
 {
@@ -27,37 +29,7 @@ final class Curl
     /**
      * @var \CurlHandle|false|null cURL Handle is static to allow reuse of a single instance, if possible and needed
      */
-    public private(set) static null|\CurlHandle|false $curl_handle = null;
-
-    /**
-     * cURL options
-     *
-     * @var array<int, mixed>
-     */
-    private array $curl_options = [
-        \CURLOPT_CONNECTTIMEOUT => 10,
-        \CURLOPT_DEFAULT_PROTOCOL => 'https',
-        \CURLOPT_ENCODING => '',
-        \CURLOPT_FOLLOWLOCATION => true,
-        \CURLOPT_FORBID_REUSE => false,
-        // Allow caching and reuse of already open connections
-        \CURLOPT_FRESH_CONNECT => false,
-        \CURLOPT_HEADER => true,
-        \CURLOPT_HTTPHEADER => [],
-        // Let cURL determine appropriate HTTP version
-        \CURLOPT_HTTP_VERSION => \CURL_HTTP_VERSION_NONE,
-        \CURLOPT_MAXREDIRS => 3,
-        \CURLOPT_POST => false,
-        \CURLOPT_PROTOCOLS => \CURLPROTO_HTTPS,
-        \CURLOPT_RETURNTRANSFER => true,
-        \CURLOPT_SSLVERSION => \CURL_SSLVERSION_TLSv1_2 | \CURL_SSLVERSION_MAX_TLSv1_3,
-        \CURLOPT_SSL_VERIFYPEER => true,
-        \CURLOPT_TIMEOUT => 30,
-        \CURLOPT_USERAGENT => 'Simbiat Software',
-        // These options are supposed to improve speed, but do not seem to work for websites that I parse at the moment
-        // CURLOPT_SSL_FALSESTART => true,
-        // CURLOPT_TCP_FASTOPEN => true,
-    ];
+    public private(set) static \CurlHandle|false|null $curl_handle = null;
 
     /**
      * @var array<string, string>
@@ -83,12 +55,36 @@ final class Curl
         } else {
             // Create or retrieve a persistent cURL share handle to share data to help speed up connections
             $share = \curl_share_init_persistent([\CURL_LOCK_DATA_DNS, \CURL_LOCK_DATA_SSL_SESSION, \CURL_LOCK_DATA_CONNECT, \CURL_LOCK_DATA_PSL]);
-            $this->curl_options[\CURLOPT_SHARE] = $share;
+            $curl_options = [
+                \CURLOPT_CONNECTTIMEOUT => 10,
+                \CURLOPT_DEFAULT_PROTOCOL => 'https',
+                \CURLOPT_ENCODING => '',
+                \CURLOPT_FOLLOWLOCATION => true,
+                \CURLOPT_FORBID_REUSE => false,
+                // Allow caching and reuse of already open connections
+                \CURLOPT_FRESH_CONNECT => false,
+                \CURLOPT_HEADER => true,
+                \CURLOPT_HTTPHEADER => [],
+                // Let cURL determine appropriate HTTP version
+                \CURLOPT_HTTP_VERSION => \CURL_HTTP_VERSION_NONE,
+                \CURLOPT_MAXREDIRS => 3,
+                \CURLOPT_POST => false,
+                \CURLOPT_PROTOCOLS => \CURLPROTO_HTTPS,
+                \CURLOPT_RETURNTRANSFER => true,
+                \CURLOPT_SHARE => $share,
+                \CURLOPT_SSLVERSION => \CURL_SSLVERSION_TLSv1_2 | \CURL_SSLVERSION_MAX_TLSv1_3,
+                \CURLOPT_SSL_VERIFYPEER => true,
+                \CURLOPT_TIMEOUT => 30,
+                \CURLOPT_USERAGENT => 'Simbiat Software',
+                // These options are supposed to improve speed, but do not seem to work for websites that I parse at the moment
+                // CURLOPT_SSL_FALSESTART => true,
+                // CURLOPT_TCP_FASTOPEN => true,
+            ];
             self::$curl_handle = \curl_init();
             if (
                 self::$curl_handle !== false
                 && (
-                    !\curl_setopt_array(self::$curl_handle, $this->curl_options)
+                    !\curl_setopt_array(self::$curl_handle, $curl_options)
                     || !\curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers)
                     || !\curl_setopt(self::$curl_handle, \CURLOPT_USERAGENT, $user_agent)
                 )
@@ -100,37 +96,37 @@ final class Curl
     }
 
     /**
-     * Get page content.
+     * Add header to CURL.
      *
-     * @param string $link
+     * @param string $header
      *
-     * @return false|int|string
+     * @return $this
      */
-    public function getPage(string $link): false|int|string
+    public function addHeader(string $header): self
     {
-        if (!self::$curl_handle instanceof \CurlHandle) {
-            return false;
+        // Check if the header is already present
+        if (!\in_array(\mb_strtolower($header, 'UTF-8'), \array_map(\strtolower(...), self::$headers), strict: true)) {
+            // Add it, if not
+            self::$headers[] = $header;
+            \curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers);
         }
 
-        // Get page contents
-        \curl_setopt(self::$curl_handle, \CURLOPT_HEADER, value: true);
-        // Directing output to a temporary file, instead of STDOUT, because I've witnessed edge cases, where due to an error (or even a notice) the output is sent to the browser directly even with CURLOPT_RETURNTRANSFER set to true
-        \curl_setopt(self::$curl_handle, \CURLOPT_FILE, \tmpfile());
-        // For some reason, if we set the CURLOPT_FILE, CURLOPT_RETURNTRANSFER gets reset to false
-        \curl_setopt(self::$curl_handle, \CURLOPT_RETURNTRANSFER, value: true);
-        \curl_setopt(self::$curl_handle, \CURLOPT_URL, $link);
-        // Get a response
-        $response = \curl_exec(self::$curl_handle);
-        $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
-        if ($response === false) {
-            return false;
-        }
+        return $this;
+    }
 
-        if ($http_code !== 200) {
-            return $http_code;
-        }
+    /**
+     * Change CURL settings.
+     *
+     * @param int   $option Setting to change
+     * @param mixed $value  Value to set
+     *
+     * @return $this
+     */
+    public function changeSetting(int $option, mixed $value): self
+    {
+        \curl_setopt(self::$curl_handle, $option, $value);
 
-        return \mb_substr($response, \curl_getinfo(self::$curl_handle, \CURLINFO_HEADER_SIZE), encoding: 'UTF-8');
+        return $this;
     }
 
     /**
@@ -186,6 +182,63 @@ final class Curl
     }
 
     /**
+     * Get page content.
+     *
+     * @param string $link
+     *
+     * @return false|int|string
+     */
+    public function getPage(string $link): false|int|string
+    {
+        if (!self::$curl_handle instanceof \CurlHandle) {
+            return false;
+        }
+
+        // Get page contents
+        \curl_setopt(self::$curl_handle, \CURLOPT_HEADER, value: true);
+        // Directing output to a temporary file, instead of STDOUT, because I've witnessed edge cases, where due to an error (or even a notice) the output is sent to the browser directly even with CURLOPT_RETURNTRANSFER set to true
+        \curl_setopt(self::$curl_handle, \CURLOPT_FILE, \tmpfile());
+        // For some reason, if we set the CURLOPT_FILE, CURLOPT_RETURNTRANSFER gets reset to false
+        \curl_setopt(self::$curl_handle, \CURLOPT_RETURNTRANSFER, value: true);
+        \curl_setopt(self::$curl_handle, \CURLOPT_URL, $link);
+        // Get a response
+        $response = \curl_exec(self::$curl_handle);
+        $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
+        if ($response === false) {
+            return false;
+        }
+
+        if ($http_code !== 200) {
+            return $http_code;
+        }
+
+        return \mb_substr($response, \curl_getinfo(self::$curl_handle, \CURLINFO_HEADER_SIZE), encoding: 'UTF-8');
+    }
+
+    /**
+     * Check if a remote file exists.
+     *
+     * @param string $remote_file
+     *
+     * @return bool
+     */
+    public function ifExists(string $remote_file): bool
+    {
+        if (!self::$curl_handle instanceof \CurlHandle) {
+            return false;
+        }
+
+        // Initialize cUrl
+        \curl_setopt(self::$curl_handle, \CURLOPT_NOBODY, value: true);
+        \curl_setopt(self::$curl_handle, \CURLOPT_URL, $remote_file);
+        (void) \curl_exec(self::$curl_handle);
+        $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
+
+        // Check code
+        return $http_code === 200;
+    }
+
+    /**
      * POST something.
      *
      * @param string $link
@@ -232,25 +285,6 @@ final class Curl
     }
 
     /**
-     * Add header to CURL.
-     *
-     * @param string $header
-     *
-     * @return $this
-     */
-    public function addHeader(string $header): self
-    {
-        // Check if the header is already present
-        if (!\in_array(\mb_strtolower($header, 'UTF-8'), \array_map(\strtolower(...), self::$headers), strict: true)) {
-            // Add it, if not
-            self::$headers[] = $header;
-            \curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers);
-        }
-
-        return $this;
-    }
-
-    /**
      * Remove header from CURL.
      *
      * @param string $header
@@ -271,51 +305,13 @@ final class Curl
     }
 
     /**
-     * Change CURL settings.
-     *
-     * @param int   $option Setting to change
-     * @param mixed $value  Value to set
-     *
-     * @return $this
-     */
-    public function changeSetting(int $option, mixed $value): self
-    {
-        \curl_setopt(self::$curl_handle, $option, $value);
-
-        return $this;
-    }
-
-    /**
-     * Check if a remote file exists.
-     *
-     * @param $remote_file
-     *
-     * @return bool
-     */
-    public function ifExists($remote_file): bool
-    {
-        if (!self::$curl_handle instanceof \CurlHandle) {
-            return false;
-        }
-
-        // Initialize cUrl
-        \curl_setopt(self::$curl_handle, \CURLOPT_NOBODY, value: true);
-        \curl_setopt(self::$curl_handle, \CURLOPT_URL, $remote_file);
-        (void) \curl_exec(self::$curl_handle);
-        $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
-
-        // Check code
-        return $http_code === 200;
-    }
-
-    /**
      * Function to process file uploads either through POST/PUT or by using a provided link.
      *
      * @param string $link        URL to process if we are to download a remote file
      * @param bool   $only_images Flag to indicate that only images are allowed
      * @param bool   $to_webp     Whether to convert images to WEBP (if possible)
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function upload(string $link = '', bool $only_images = false, bool $to_webp = true): array
     {

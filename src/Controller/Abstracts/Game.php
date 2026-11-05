@@ -10,12 +10,6 @@ namespace App\Controller\Abstracts;
 abstract class Game extends Page
 {
     /**
-     * @var bool Flag to indicate this is a static page
-     */
-    #[\Override]
-    protected bool $static = true;
-
-    /**
      * @var int Cache age set to 0 by default, because there is normally no need to cache static pages
      */
     #[\Override]
@@ -33,14 +27,20 @@ abstract class Game extends Page
     protected string $gamemaker_js = '';
 
     /**
+     * @var bool Flag to indicate the game has music
+     */
+    protected bool $has_music = false;
+
+    /**
      * @var bool Flag to indicate the game has sound
      */
     protected bool $has_sound = false;
 
     /**
-     * @var bool Flag to indicate the game has music
+     * @var bool Flag to indicate this is a static page
      */
-    protected bool $has_music = false;
+    #[\Override]
+    protected bool $static = true;
 
     /**
      * Generation of the page data.
@@ -49,6 +49,7 @@ abstract class Game extends Page
      *
      * @return array
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         if (empty($this->gamemaker_js)) {

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectTasksOptions">
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="compose -f ./compose.yaml exec bun bun run generate:css" />
+      <option name="arguments" value="compose -f ./compose.yaml -f ./compose.override.yaml exec bun bun run generate:css" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
@@ -22,7 +22,7 @@
       <envs />
     </TaskOptions>
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="compose -f ./compose.yaml exec bun bun run prepare" />
+      <option name="arguments" value="compose -f ./compose.yaml -f ./compose.override.yaml exec bun bun run prepare" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
@@ -42,7 +42,7 @@
       <envs />
     </TaskOptions>
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="compose -f ./compose.yaml exec bun bun run generate:caddy" />
+      <option name="arguments" value="compose -f ./compose.yaml -f ./compose.override.yaml exec bun bun run generate:caddy" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
@@ -62,7 +62,7 @@
       <envs />
     </TaskOptions>
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="compose -f ./compose.yaml exec frankenphp qa-runner check /app/$/FileRelativePath$" />
+      <option name="arguments" value="compose -f ./compose.yaml exec frankenphp qa-runner check --tool-type=twig /app/$/FileRelativePath$" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="NEVER" />
@@ -88,7 +88,7 @@
       <envs />
     </TaskOptions>
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="compose -f ./compose.yaml exec frankenphp qa-runner check /app/$/FileRelativePath$" />
+      <option name="arguments" value="compose -f ./compose.yaml exec frankenphp qa-runner check --tool-type=php /app/$/FileRelativePath$" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="NEVER" />

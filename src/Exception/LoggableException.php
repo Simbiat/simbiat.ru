@@ -9,9 +9,12 @@ namespace App\Exception;
  */
 final class LoggableException extends \Exception
 {
-    public function __construct($message, $code = 0, ?\Throwable $previous = null, bool $log = true, mixed $context = null)
+    public function __construct(string $message, int|string $code = 0, ?\Throwable $previous = null, bool $log = true, mixed $context = null)
     {
-        if ($log && $context) {
+        if (
+            $log
+            && $context
+        ) {
             // Do something
         }
 

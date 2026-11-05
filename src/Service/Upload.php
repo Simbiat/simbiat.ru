@@ -9,6 +9,12 @@ use App\Controller\Api\Api;
 final class Upload extends Api
 {
     /**
+     * @var bool Flag indicating that authentication is required
+     */
+    #[\Override]
+    protected bool $authentication_needed = true;
+
+    /**
      * @var bool Flag to indicate, that this is the lowest level
      */
     #[\Override]
@@ -21,11 +27,13 @@ final class Upload extends Api
     protected array $methods = ['POST' => ''];
 
     /**
-     * @var bool Flag indicating that authentication is required
+     * This is an actual API response generation based on further details of the $path.
+     *
+     * @param array $path
+     *
+     * @return array<string, mixed>
      */
     #[\Override]
-    protected bool $authentication_needed = true;
-
     protected function genData(array $path): array
     {
         try {

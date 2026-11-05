@@ -9,7 +9,7 @@ use App\Controller\Abstracts\StaticPage;
 final class Needs extends StaticPage
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -17,6 +17,29 @@ final class Needs extends StaticPage
     protected array $breadcrumb = [
         ['href' => '/supops/needs', 'name' => 'The Needs'],
     ];
+
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $h1 = 'SupOps: The Needs';
+
+    /**
+     * @var array<int, string> List of images to H2 push
+     */
+    #[\Override]
+    protected array $h2_push_extra = [
+        '/assets/images/supops/logo/rectangle_color.svg',
+        '/assets/images/supops/logo/rectangle_mono.svg',
+        '/assets/images/supops/logo/square_color.svg',
+        '/assets/images/supops/logo/square_mono.svg',
+    ];
+
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $og_desc = 'SupOps: Spreading the word';
 
     /**
      * @var string Sub service name
@@ -29,27 +52,4 @@ final class Needs extends StaticPage
      */
     #[\Override]
     protected string $title = 'SupOps: The Needs';
-
-    /**
-     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $h1 = 'SupOps: The Needs';
-
-    /**
-     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $og_desc = 'SupOps: Spreading the word';
-
-    /**
-     * @var array<int, string> List of images to H2 push
-     */
-    #[\Override]
-    protected array $h2_push_extra = [
-        '/assets/images/supops/logo/rectangle_color.svg',
-        '/assets/images/supops/logo/rectangle_mono.svg',
-        '/assets/images/supops/logo/square_color.svg',
-        '/assets/images/supops/logo/square_mono.svg',
-    ];
 }

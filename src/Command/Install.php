@@ -25,7 +25,7 @@ final readonly class Install
     /**
      * Inject dependencies.
      *
-     * @param \Doctrine\DBAL\Connection $connection
+     * @param Connection $connection
      */
     public function __construct(
         /**
@@ -37,7 +37,7 @@ final readonly class Install
     /**
      * Run once to install the necessary stuff for the service to work correctly.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */

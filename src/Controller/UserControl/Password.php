@@ -9,7 +9,13 @@ use App\Controller\Abstracts\Page;
 final class Password extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * @var bool Flag indicating that authentication is required
+     */
+    #[\Override]
+    protected bool $authentication_needed = false;
+
+    /**
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -19,16 +25,10 @@ final class Password extends Page
     ];
 
     /**
-     * @var string Sub service name
+     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
      */
     #[\Override]
-    protected string $subservice_name = 'password';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Password';
+    protected string $cache_strategy = 'private';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
@@ -43,24 +43,25 @@ final class Password extends Page
     protected string $og_desc = 'Page to change password';
 
     /**
-     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
+     * @var string Sub service name
      */
     #[\Override]
-    protected string $cache_strategy = 'private';
+    protected string $subservice_name = 'password';
 
     /**
-     * @var bool Flag indicating that authentication is required
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
      */
     #[\Override]
-    protected bool $authentication_needed = false;
+    protected string $title = 'Password';
 
     /**
-     * This is actual page generation based on further details of the $path
+     * This is actual page generation based on further details of the $path.
      *
      * @param array<int, string> $path
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         $output_array = ['user_id' => null, 'token' => null];

@@ -7,6 +7,7 @@ namespace App\Security;
 use App\Enum\SystemUser;
 use App\Service\Config;
 use App\Service\Errors;
+use Random\RandomException;
 use Simbiat\Database\Query;
 use Simbiat\http20\IRI;
 use Simbiat\StringHelpers\Decode;
@@ -14,21 +15,45 @@ use Simbiat\StringHelpers\Encode;
 
 /**
  * Various security stuff.
+ *
+ * @api TODO: most likely will need to remove during migration to Symfony. For now this is mostly to silence Psalm.
  */
 final class Security
 {
     public const string EMAIL_REGEX = '/^[a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/u';
 
     /**
-     * Function to hash password. Used mostly as a wrapper in case of future changes.
+     * Function to decrypt stuff.
      *
-     * @param string $password
+     * @param string $data
      *
      * @return string
+     *
+     * @noinspection NoMBMultibyteAlternative
+     *
+     * @throws \RuntimeException
      */
-    public static function passHash(#[\SensitiveParameter] string $password): string
+    public static function decrypt(string $data): string
     {
-        return \password_hash($password, \PASSWORD_ARGON2ID, Config::$argon_settings);
+        if (empty($data)) {
+            return '';
+        }
+
+        // Decode
+        $data = Decode::base64url($data);
+        // Get IV
+        $iv = \substr($data, 0, 12);
+        // Get tag
+        $tag = \substr($data, 12, 16);
+        // Strip them from data
+        $data = \substr($data, 28);
+
+        $result = \openssl_decrypt($data, 'AES-256-GCM', \hex2bin(Config::$encryption_passphrase), \OPENSSL_RAW_DATA, $iv, $tag);
+        if ($result === false) {
+            throw new \RuntimeException('Failed to decrypt string with error: '.\openssl_error_string());
+        }
+
+        return $result;
     }
 
     /**
@@ -40,7 +65,7 @@ final class Security
      *
      * @return string
      *
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     public static function encrypt(#[\SensitiveParameter] string $data): string
     {
@@ -60,30 +85,17 @@ final class Security
     }
 
     /**
-     * Function to decrypt stuff.
-     *
-     * @param string $data
+     * Function to generate passphrase for encrypt and decrypt functions.
      *
      * @return string
      *
-     * @noinspection NoMBMultibyteAlternative
+     * @throws RandomException
      */
-    public static function decrypt(string $data): string
+    public static function genCrypto(): string
     {
-        if (empty($data)) {
-            return '';
-        }
+        $pass = \random_bytes(\openssl_cipher_iv_length('AES-256-GCM'));
 
-        // Decode
-        $data = Decode::base64url($data);
-        // Get IV
-        $iv = \substr($data, 0, 12);
-        // Get tag
-        $tag = \substr($data, 12, 16);
-        // Strip them from data
-        $data = \substr($data, 28);
-
-        return \openssl_decrypt($data, 'AES-256-GCM', \hex2bin(Config::$encryption_passphrase), \OPENSSL_RAW_DATA, $iv, $tag);
+        return \bin2hex($pass);
     }
 
     /**
@@ -105,26 +117,12 @@ final class Security
     }
 
     /**
-     * Function to generate passphrase for encrypt and decrypt functions.
-     *
-     * @return string
-     *
-     * @throws \Random\RandomException
-     */
-    public static function genCrypto(): string
-    {
-        $pass = \random_bytes(\openssl_cipher_iv_length('AES-256-GCM'));
-
-        return \bin2hex($pass);
-    }
-
-    /**
      * Function to log actions.
      *
      * @param int        $type    Action type
      * @param string     $action  Message of the action
-     * @param null|mixed $extras  Extra data related to the action
-     * @param null|int   $user_id User ID of the user that triggered the action
+     * @param mixed|null $extras  Extra data related to the action
+     * @param int|null   $user_id User ID of the user that triggered the action
      *
      * @return bool
      */
@@ -159,17 +157,17 @@ final class Security
                 [
                     ':action' => $action,
                     ':extras' => [
-                        ($extras ?? null),
-                        ($extras === null ? 'null' : 'string'),
+                        $extras ?? null,
+                        $extras === null ? 'null' : 'string',
                     ],
                     ':ip' => [
-                        ($ip ?? null),
-                        ($ip === null ? 'null' : 'string'),
+                        $ip ?? null,
+                        $ip === null ? 'null' : 'string',
                     ],
                     ':type' => [$type, 'int'],
                     ':ua' => [
-                        ($ua ?? null),
-                        ($ua === null ? 'null' : 'string'),
+                        $ua ?? null,
+                        $ua === null ? 'null' : 'string',
                     ],
                     ':user_id' => [$user_id, 'int'],
                 ],
@@ -182,6 +180,18 @@ final class Security
 
             return false;
         }
+    }
+
+    /**
+     * Function to hash password. Used mostly as a wrapper in case of future changes.
+     *
+     * @param string $password
+     *
+     * @return string
+     */
+    public static function passHash(#[\SensitiveParameter] string $password): string
+    {
+        return \password_hash($password, \PASSWORD_ARGON2ID, Config::$argon_settings);
     }
 
     /**
@@ -222,7 +232,7 @@ final class Security
         $parsed_url['query'] = IRI::rawBuildQuery($query_params);
 
         // Reconstruct the full URL
-        return IRI::restoreUri($parsed_url);
+        return IRI::restoreUri($parsed_url) ?? '';
     }
 
     /**

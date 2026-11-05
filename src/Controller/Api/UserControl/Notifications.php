@@ -38,7 +38,10 @@ final class Notifications extends Api
      * @param array $path
      *
      * @return array
+     *
+     * @throws \UnexpectedValueException
      */
+    #[\Override]
     protected function genData(array $path): array
     {
         if (empty($path[0])) {

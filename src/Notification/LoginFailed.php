@@ -13,9 +13,9 @@ use App\Service\Errors;
 final class LoginFailed extends Notification
 {
     /**
-     * Subject for email.
+     * Whether to send to all emails registered for the user.
      */
-    protected const string SUBJECT = 'Failed login';
+    protected const bool ALL_EMAILS = true;
 
     /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high.
@@ -23,14 +23,14 @@ final class LoginFailed extends Notification
     protected const int PRIORITY = 2;
 
     /**
-     * Whether to send to all emails registered for the user.
-     */
-    protected const bool ALL_EMAILS = true;
-
-    /**
      * Whether this is a security alert, and we need to collect session details and pass them to Twig.
      */
     protected const bool SECURITY_ALERT = true;
+
+    /**
+     * Subject for email.
+     */
+    protected const string SUBJECT = 'Failed login';
 
     /**
      * Generate text for message.
@@ -39,6 +39,7 @@ final class LoginFailed extends Notification
      *
      * @return self
      */
+    #[\Override]
     protected function setText(array $twig_vars = []): self
     {
         try {

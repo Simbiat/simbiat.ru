@@ -23,14 +23,6 @@ use App\Controller\Api\UserControl\Username;
 final class UserControl extends Api
 {
     /**
-     * @var array<int, string> Supported edges
-     */
-    #[\Override]
-    protected array $sub_routes = [
-        'register', 'login', 'remind', 'logout', 'emails', 'notifications', 'password', 'username', 'profile', 'fflink', 'avatars', 'cookies', 'sessions', 'remove',
-    ];
-
-    /**
      * @var array<int, string> Description of the nodes (need to be in the same order)
      */
     #[\Override]
@@ -51,6 +43,15 @@ final class UserControl extends Api
         'Remove the user',
     ];
 
+    /**
+     * @var array<int, string> Supported edges
+     */
+    #[\Override]
+    protected array $sub_routes = [
+        'register', 'login', 'remind', 'logout', 'emails', 'notifications', 'password', 'username', 'profile', 'fflink', 'avatars', 'cookies', 'sessions', 'remove',
+    ];
+
+    #[\Override]
     protected function genData(array $path): array
     {
         return match ($path[0]) {

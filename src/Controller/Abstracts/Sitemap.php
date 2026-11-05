@@ -12,13 +12,7 @@ use Simbiat\Database\Query;
 abstract class Sitemap extends Page
 {
     /**
-     * @var int Cache age, in case we prefer the generated page to be cached
-     */
-    #[\Override]
-    protected int $cache_age = 1440;
-
-    /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -26,6 +20,45 @@ abstract class Sitemap extends Page
     protected array $breadcrumb = [
         ['href' => '/sitemap/index.xml', 'name' => 'Index'],
     ];
+
+    /**
+     * @var int Cache age, in case we prefer the generated page to be cached
+     */
+    #[\Override]
+    protected int $cache_age = 1440;
+
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $h1 = 'Sitemap Index';
+
+    /**
+     * @var bool Flag indicating the main index file (index.xml)
+     */
+    protected bool $main_index = true;
+
+    /**
+     * @var int Max elements per sitemap page
+     */
+    protected int $max_elements = 50000;
+
+    /**
+     * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $og_desc = 'Sitemap Index';
+
+    /**
+     * @var string Query for countables
+     */
+    protected string $query = '
+                    SELECT \'threads\' AS `link`, \'Forum Threads\' AS `name`, COUNT(*) AS `count` FROM `talks__threads` WHERE `private`=0 AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6)
+                    UNION ALL
+                    SELECT \'users\' AS `link`, \'Users\' AS `name`, COUNT(*) AS `count` FROM `uc__users` WHERE `system`!=1
+                    UNION ALL
+                    SELECT \'bics\' AS `link`, \'Russian Bank Codes\' AS `name`, COUNT(*) AS `count` FROM `bic__list`
+                ';
 
     /**
      * @var string Sub service name
@@ -40,45 +73,13 @@ abstract class Sitemap extends Page
     protected string $title = 'Sitemap Index';
 
     /**
-     * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $h1 = 'Sitemap Index';
-
-    /**
-     * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $og_desc = 'Sitemap Index';
-
-    /**
-     * @var int Max elements per sitemap page
-     */
-    protected int $max_elements = 50000;
-
-    /**
-     * @var bool Flag indicating the main index file (index.xml)
-     */
-    protected bool $main_index = true;
-
-    /**
-     * @var string Query for countables
-     */
-    protected string $query = '
-                    SELECT \'threads\' AS `link`, \'Forum Threads\' AS `name`, COUNT(*) AS `count` FROM `talks__threads` WHERE `private`=0 AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6)
-                    UNION ALL
-                    SELECT \'users\' AS `link`, \'Users\' AS `name`, COUNT(*) AS `count` FROM `uc__users` WHERE `system`!=1
-                    UNION ALL
-                    SELECT \'bics\' AS `link`, \'Russian Bank Codes\' AS `name`, COUNT(*) AS `count` FROM `bic__list`
-                ';
-
-    /**
      * Generation of the page data.
      *
      * @param array $path
      *
      * @return array
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         if (

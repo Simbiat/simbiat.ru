@@ -27,9 +27,29 @@ abstract class Entity
     protected string $id_format = '/^\d+$/m';
 
     /**
+     * @param int|string|null $id    ID of an entity
+     * @param bool            $debug Flag to enable debug mode
+     *
+     * @throws \UnexpectedValueException
+     */
+    final public function __construct(
+        int|string|null $id = null,
+        protected bool $debug = false,
+    ) {
+        // If ID was provided - set it as well
+        if (!empty($id)) {
+            $this->setId($id);
+        } elseif ($id !== null) {
+            throw new \UnexpectedValueException("ID can't be empty.");
+        }
+    }
+
+    /**
      * Get entity properties.
      *
      * @return $this
+     *
+     * @throws \UnexpectedValueException
      */
     final public function get(): self
     {
@@ -90,9 +110,28 @@ abstract class Entity
     }
 
     /**
+     * Set entity ID.
+     *
+     * @param int|string $id
+     *
+     * @return $this
+     *
+     * @throws \UnexpectedValueException
+     */
+    final public function setId(int|string $id): self
+    {
+        // Convert to string for consistency
+        $id = (string) $id;
+        $this->validateId($id);
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
      * Function to get initial data from DB.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     abstract protected function getFromDB(): array;
 
@@ -106,45 +145,13 @@ abstract class Entity
     abstract protected function process(array $from_db): void;
 
     /**
-     * @param null|int|string $id    ID of an entity
-     * @param bool            $debug Flag to enable debug mode
-     */
-    final public function __construct(
-        null|int|string $id = null,
-        protected bool $debug = false
-    )
-    {
-        // If ID was provided - set it as well
-        if (!empty($id)) {
-            $this->setId($id);
-        } elseif ($id !== null) {
-            throw new \UnexpectedValueException("ID can't be empty.");
-        }
-    }
-
-    /**
-     * Set entity ID.
-     *
-     * @param int|string $id
-     *
-     * @return $this
-     */
-    final public function setId(int|string $id): self
-    {
-        // Convert to string for consistency
-        $id = (string) $id;
-        $this->validateId($id);
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * Validate the ID
+     * Validate the ID.
      *
      * @param int|string $id
      *
      * @return void
+     *
+     * @throws \UnexpectedValueException
      */
     protected function validateId(int|string $id): void
     {

@@ -10,7 +10,13 @@ use App\Entity\User;
 final class FFTracker extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * @var bool Flag indicating that authentication is required
+     */
+    #[\Override]
+    protected bool $authentication_needed = true;
+
+    /**
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -20,16 +26,10 @@ final class FFTracker extends Page
     ];
 
     /**
-     * @var string Sub service name
+     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
      */
     #[\Override]
-    protected string $subservice_name = 'fftracker';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'FFXIV Linkage';
+    protected string $cache_strategy = 'private';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
@@ -44,30 +44,33 @@ final class FFTracker extends Page
     protected string $og_desc = 'Page to link FFXIV characters';
 
     /**
-     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
-     */
-    #[\Override]
-    protected string $cache_strategy = 'private';
-
-    /**
-     * @var bool Flag indicating that authentication is required
-     */
-    #[\Override]
-    protected bool $authentication_needed = true;
-
-    /**
      * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
      */
     #[\Override]
     protected array $required_permission = ['link_ff'];
 
     /**
-     * This is actual page generation based on further details of the $path
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'fftracker';
+
+    /**
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'FFXIV Linkage';
+
+    /**
+     * This is actual page generation based on further details of the $path.
      *
      * @param array<int, string> $path
      *
      * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         return new User($_SESSION['user_id'])->getFF();

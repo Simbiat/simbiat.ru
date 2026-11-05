@@ -14,14 +14,6 @@ use App\Service\Upload;
 final class Api extends \App\Controller\Api\Api
 {
     /**
-     * @var array<int, string> Supported edges
-     */
-    #[\Override]
-    protected array $sub_routes = [
-        'fftracker', 'bictracker', 'uc', 'upload', 'talks', 'contact',
-    ];
-
-    /**
      * @var array<int, string> Description of the nodes (need to be in the same order)
      */
     #[\Override]
@@ -32,6 +24,14 @@ final class Api extends \App\Controller\Api\Api
         'Endpoint for file upload',
         'Endpoint for managing forums',
         'Endpoint to submit support requests',
+    ];
+
+    /**
+     * @var array<int, string> Supported edges
+     */
+    #[\Override]
+    protected array $sub_routes = [
+        'fftracker', 'bictracker', 'uc', 'upload', 'talks', 'contact',
     ];
 
     /**
@@ -47,6 +47,7 @@ final class Api extends \App\Controller\Api\Api
      *
      * @return array
      */
+    #[\Override]
     protected function genData(array $path): array
     {
         return match ($path[0]) {

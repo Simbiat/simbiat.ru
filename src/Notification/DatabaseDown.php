@@ -13,21 +13,6 @@ use App\Service\Errors;
 final class DatabaseDown extends Notification
 {
     /**
-     * Subject for email.
-     */
-    protected const string SUBJECT = '[Alert]: Database is down';
-
-    /**
-     * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high.
-     */
-    protected const int PRIORITY = 2;
-
-    /**
-     * Whether a non-empty array of Twig variables is required.
-     */
-    protected const bool TWIG_REQUIRED = true;
-
-    /**
      * Whether to send to all emails registered for the user.
      */
     protected const bool ALL_EMAILS = true;
@@ -38,12 +23,28 @@ final class DatabaseDown extends Notification
     protected const bool ALWAYS_SEND = true;
 
     /**
+     * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high.
+     */
+    protected const int PRIORITY = 2;
+
+    /**
+     * Subject for email.
+     */
+    protected const string SUBJECT = '[Alert]: Database is down';
+
+    /**
+     * Whether a non-empty array of Twig variables is required.
+     */
+    protected const bool TWIG_REQUIRED = true;
+
+    /**
      * Generate text for message.
      *
      * @param array $twig_vars Array of variables for Twig
      *
      * @return self
      */
+    #[\Override]
     protected function setText(array $twig_vars = []): self
     {
         // If Twig variables are required, but not provided - do not do anything. This will result in failure on save and send.

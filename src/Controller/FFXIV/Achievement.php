@@ -10,7 +10,7 @@ use App\Service\Config;
 final class Achievement extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -18,18 +18,6 @@ final class Achievement extends Page
     protected array $breadcrumb = [
         ['href' => '/fftracker/achievements', 'name' => 'Achievements'],
     ];
-
-    /**
-     * @var string Sub service name
-     */
-    #[\Override]
-    protected string $subservice_name = 'achievement';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Achievement';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
@@ -50,19 +38,34 @@ final class Achievement extends Page
     protected array $required_permission = ['view_ff'];
 
     /**
-     * This is actual page generation based on further details of the $path
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'achievement';
+
+    /**
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'Achievement';
+
+    /**
+     * This is actual page generation based on further details of the $path.
      *
      * @param array<int, string> $path
      *
      * @return array<string, mixed>
+     *
+     * @throws \UnexpectedValueException
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         // Sanitize ID
         $id = $path[0] ?? '';
         // Try to get details
         $entity = new \App\Entity\FFXIV\Achievement($id);
-        $output_array['achievement'] = $entity->getArray();
+        $output_array = ['achievement' => $entity->getArray()];
         // Check if ID was found
         if (empty($output_array['achievement']['id'])) {
             return ['http_error' => 404];

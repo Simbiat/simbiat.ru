@@ -13,7 +13,7 @@ use App\Entity\Email;
 final class Unsubscribe extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -23,16 +23,10 @@ final class Unsubscribe extends Page
     ];
 
     /**
-     * @var string Sub service name
+     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
      */
     #[\Override]
-    protected string $subservice_name = 'unsubscribe';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Unsubscribing';
+    protected string $cache_strategy = 'private';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
@@ -47,10 +41,16 @@ final class Unsubscribe extends Page
     protected string $og_desc = 'Page used unsubscribing an email from notifications';
 
     /**
-     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
+     * @var string Sub service name
      */
     #[\Override]
-    protected string $cache_strategy = 'private';
+    protected string $subservice_name = 'unsubscribe';
+
+    /**
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'Unsubscribing';
 
     /**
      * Actual page generation based on further details of the $path.
@@ -58,7 +58,10 @@ final class Unsubscribe extends Page
      * @param array $path URL path
      *
      * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         return new Email()->unsubscribe($_GET['unsubscribe_all'] ?? '');

@@ -15,11 +15,13 @@ final class Caching
 {
     /**
      * @param string $cache_dir Directory to use for cache files
+     *
+     * @throws \RuntimeException
      */
     public function __construct(
-        #[FileReference] private string $cache_dir = ''
-    )
-    {
+        #[FileReference]
+        private string $cache_dir = '',
+    ) {
         if (Sanitize::whiteString($this->cache_dir)) {
             $this->cache_dir = Config::$html_cache;
         }
@@ -39,6 +41,102 @@ final class Caching
     }
 
     /**
+     * Gets JSON decoded array from a file.
+     *
+     * @param string $cache_path
+     *
+     * @return array
+     */
+    public function getArrayFromFile(#[FileReference] string $cache_path): array
+    {
+        // Check if the cache file exists
+        if (!\is_file($cache_path)) {
+            return [];
+        }
+
+        // Read the cache
+        $json = \file_get_contents($cache_path);
+        if (
+            $json === false
+            || $json === ''
+        ) {
+            return [];
+        }
+
+        try {
+            $json = \json_decode($json, associative: true, depth: 512, flags: \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR);
+        } catch (\Throwable) {
+            $json = [];
+        }
+
+        if ($json === null) {
+            return [];
+        }
+
+        if (!\is_array($json)) {
+            return [];
+        }
+
+        return $json;
+    }
+
+    /**
+     * Generate key.
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    public function key(string $key): string
+    {
+        if ($key === '') {
+            return \hash('sha3-512', (empty(HomePage::$user_agent['bot']) ? '' : 'bot_').HomePage::$canonical);
+        }
+
+        return \hash('sha3-512', $key);
+    }
+
+    /**
+     * Read from cache.
+     *
+     * @param string $key
+     *
+     * @return array
+     */
+    public function read(string $key = ''): array
+    {
+        // Generate key
+        $key = $this->key($key);
+        // Generate file name
+        $file = $this->cache_dir.\mb_substr($key, 0, 2, 'UTF-8').'/'.\mb_substr($key, 2, 2, 'UTF-8').'/'.\mb_substr($key, 4, 2, 'UTF-8').'/'.$key.'.json';
+        $data = $this->getArrayFromFile($file);
+        if (\count($data) === 0) {
+            if (\headers_sent()) {
+                \header('X-Server-Cached: false');
+                \header('X-Server-Cache-Hit: false');
+            }
+        } else {
+            // Enforce cached page flag
+            $data['cached_page'] = true;
+            if (!empty($data['http_headers'])) {
+                // Send headers
+                \array_map(\header(...), $data['http_headers']);
+            }
+
+            // Send header indicating that cached response was sent
+            if (\headers_sent()) {
+                \header('X-Server-Cached: true');
+                \header('X-Server-Cache-Hit: true');
+            }
+        }
+
+        // Ensure we use fresh CSRF
+        unset($data['X-CSRF-Token']);
+
+        return $data;
+    }
+
+    /**
      * Write cache to file.
      *
      * @param array|string $data Data to write
@@ -46,6 +144,8 @@ final class Caching
      * @param int          $age  How long to store in seconds
      *
      * @return bool
+     *
+     * @throws \RuntimeException
      */
     public function write(array|string $data, string $key = '', int $age = 0): bool
     {
@@ -106,101 +206,5 @@ final class Caching
         }
 
         return true;
-    }
-
-    /**
-     * Read from cache.
-     *
-     * @param string $key
-     *
-     * @return array
-     */
-    public function read(string $key = ''): array
-    {
-        // Generate key
-        $key = $this->key($key);
-        // Generate file name
-        $file = $this->cache_dir.\mb_substr($key, 0, 2, 'UTF-8').'/'.\mb_substr($key, 2, 2, 'UTF-8').'/'.\mb_substr($key, 4, 2, 'UTF-8').'/'.$key.'.json';
-        $data = $this->getArrayFromFile($file);
-        if (\count($data) === 0) {
-            if (\headers_sent()) {
-                \header('X-Server-Cached: false');
-                \header('X-Server-Cache-Hit: false');
-            }
-        } else {
-            // Enforce cached page flag
-            $data['cached_page'] = true;
-            if (!empty($data['http_headers'])) {
-                // Send headers
-                \array_map(\header(...), $data['http_headers']);
-            }
-
-            // Send header indicating that cached response was sent
-            if (\headers_sent()) {
-                \header('X-Server-Cached: true');
-                \header('X-Server-Cache-Hit: true');
-            }
-        }
-
-        // Ensure we use fresh CSRF
-        unset($data['X-CSRF-Token']);
-
-        return $data;
-    }
-
-    /**
-     * Generate key.
-     *
-     * @param string $key
-     *
-     * @return string
-     */
-    public function key(string $key): string
-    {
-        if ($key === '') {
-            return \hash('sha3-512', (empty(HomePage::$user_agent['bot']) ? '' : 'bot_').HomePage::$canonical);
-        }
-
-        return \hash('sha3-512', $key);
-    }
-
-    /**
-     * Gets JSON decoded array from a file.
-     *
-     * @param string $cache_path
-     *
-     * @return array
-     */
-    public function getArrayFromFile(#[FileReference] string $cache_path): array
-    {
-        // Check if the cache file exists
-        if (!\is_file($cache_path)) {
-            return [];
-        }
-
-        // Read the cache
-        $json = \file_get_contents($cache_path);
-        if (
-            $json === false
-            || $json === ''
-        ) {
-            return [];
-        }
-
-        try {
-            $json = \json_decode($json, associative: true, depth: 512, flags: \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR);
-        } catch (\Throwable) {
-            $json = [];
-        }
-
-        if ($json === null) {
-            return [];
-        }
-
-        if (!\is_array($json)) {
-            return [];
-        }
-
-        return $json;
     }
 }

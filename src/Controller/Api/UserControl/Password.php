@@ -16,6 +16,12 @@ use Simbiat\Database\Query;
 final class Password extends Api
 {
     /**
+     * @var bool Flag to indicate need to validate CSRF
+     */
+    #[\Override]
+    protected bool $csrf = true;
+
+    /**
      * @var bool Flag to indicate, that this is the lowest level
      */
     #[\Override]
@@ -28,16 +34,17 @@ final class Password extends Api
     protected array $methods = ['PATCH' => ''];
 
     /**
-     * @var bool Flag to indicate need to validate CSRF
-     */
-    #[\Override]
-    protected bool $csrf = true;
-
-    /**
+     * This is an actual API response generation based on further details of the $path.
+     *
      * @param array $path
      *
-     * @return array<string>
+     * @psalm-suppress MixedReturnTypeCoercion TODO: needs to be removed during migration to Symfony. Need to use objects instead of ararys.
+     *
+     * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function genData(array $path): array
     {
         if (

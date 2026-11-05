@@ -9,7 +9,7 @@ use App\Controller\Abstracts\StaticPage;
 final class Contacts extends StaticPage
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -17,12 +17,6 @@ final class Contacts extends StaticPage
     protected array $breadcrumb = [
         ['href' => '/about/contacts', 'name' => 'Contacts'],
     ];
-
-    /**
-     * @var string Sub service name
-     */
-    #[\Override]
-    protected string $subservice_name = 'contacts';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
@@ -35,4 +29,10 @@ final class Contacts extends StaticPage
      */
     #[\Override]
     protected string $og_desc = 'How co contact Simbiat Software';
+
+    /**
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'contacts';
 }

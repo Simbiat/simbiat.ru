@@ -10,6 +10,18 @@ use App\Entity\Email;
 final class Emails extends Api
 {
     /**
+     * @var bool Flag indicating that authentication is required
+     */
+    #[\Override]
+    protected bool $authentication_needed = true;
+
+    /**
+     * @var bool Flag to indicate need to validate CSRF
+     */
+    #[\Override]
+    protected bool $csrf = true;
+
+    /**
      * @var bool Flag to indicate, that this is the lowest level
      */
     #[\Override]
@@ -32,18 +44,7 @@ final class Emails extends Api
         'subscribe' => 'Subscribe to email notifications',
     ];
 
-    /**
-     * @var bool Flag indicating that authentication is required
-     */
     #[\Override]
-    protected bool $authentication_needed = true;
-
-    /**
-     * @var bool Flag to indicate need to validate CSRF
-     */
-    #[\Override]
-    protected bool $csrf = true;
-
     protected function genData(array $path): array
     {
         if (empty($path[0])) {
@@ -59,12 +60,16 @@ final class Emails extends Api
                 new Email($_POST['email'])->confirm();
 
                 return ['response' => true];
+
             case 'add':
                 return new Email($_POST['email'])->add(confirm: true);
+
             case 'delete':
                 return ['response' => new Email($_POST['email'])->delete()];
+
             case 'subscribe':
                 return ['response' => new Email($_POST['email'])->subscribe()];
+
             default:
                 return ['http_error' => 400, 'reason' => 'Unsupported verb'];
         }

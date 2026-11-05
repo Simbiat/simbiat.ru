@@ -18,6 +18,7 @@ use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use DeviceDetector\Parser\OperatingSystem;
 use DeviceDetector\Yaml\Pecl;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
+use Symfony\Component\Cache\Exception\CacheException;
 
 /**
  * Minimized DeviceDetector logic to help parse.
@@ -26,12 +27,14 @@ final readonly class UserAgentParser
 {
     private AbstractParser $bot_parser;
 
-    private AbstractParser $os_parser;
-
     private array $client_parsers;
+
+    private AbstractParser $os_parser;
 
     /**
      * @param bool $use_hints Whether to use Client Hints. Needed when parsing a live session only.
+     *
+     * @throws CacheException|\InvalidArgumentException
      */
     public function __construct(bool $use_hints = false)
     {
@@ -42,28 +45,78 @@ final readonly class UserAgentParser
             $client_hints = ClientHints::factory($_SERVER);
         }
 
-        $this->bot_parser = $this->createParser(Bot::class, $client_hints);
-        $this->os_parser = $this->createParser(OperatingSystem::class, $client_hints);
+        $this->bot_parser = self::createParser(Bot::class, $client_hints);
+        $this->os_parser = self::createParser(OperatingSystem::class, $client_hints);
         // phpcs:ignore SlevomatCodingStandard.Arrays.AlphabeticallySortedByKeys -- needs to be in certain order due to how Detector works
         $this->client_parsers = [
-            'feed' => $this->createParser(FeedReader::class, $client_hints),
-            'app' => $this->createParser(MobileApp::class, $client_hints),
-            'player' => $this->createParser(MediaPlayer::class, $client_hints),
-            'pim' => $this->createParser(PIM::class, $client_hints),
-            'browser' => $this->createParser(Browser::class, $client_hints),
-            'library' => $this->createParser(Library::class, $client_hints),
+            'feed' => self::createParser(FeedReader::class, $client_hints),
+            'app' => self::createParser(MobileApp::class, $client_hints),
+            'player' => self::createParser(MediaPlayer::class, $client_hints),
+            'pim' => self::createParser(PIM::class, $client_hints),
+            'browser' => self::createParser(Browser::class, $client_hints),
+            'library' => self::createParser(Library::class, $client_hints),
         ];
+    }
+
+    /**
+     * Get bot from User Agent.
+     *
+     * @param string $user_agent User Agent to parse
+     *
+     * @return array|null
+     */
+    public function getBot(string $user_agent): ?array
+    {
+        $this->bot_parser->setUserAgent($user_agent);
+
+        return $this->bot_parser->parse();
+    }
+
+    /**
+     * Get bot from User Agent.
+     *
+     * @param string $user_agent User Agent to parse
+     *
+     * @return array|null
+     */
+    public function getClient(string $user_agent): ?array
+    {
+        foreach ($this->client_parsers as $client_parser) {
+            $client_parser->setUserAgent($user_agent);
+            $client = $client_parser->parse();
+            if (!empty($client)) {
+                return $client;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get Operating System from User Agent.
+     *
+     * @param string $user_agent User Agent to parse
+     *
+     * @return array|null
+     */
+    public function getOs(string $user_agent): ?array
+    {
+        $this->os_parser->setUserAgent($user_agent);
+
+        return $this->os_parser->parse();
     }
 
     /**
      * Helper to create parser objects.
      *
-     * @param string                           $class_name   Fully qualified class name for the object to create
-     * @param null|\DeviceDetector\ClientHints $client_hints Optional client hints object
+     * @param string           $class_name   Fully qualified class name for the object to create
+     * @param ClientHints|null $client_hints Optional client hints object
      *
-     * @return \DeviceDetector\Parser\AbstractParser
+     * @return AbstractParser
+     *
+     * @throws CacheException|\InvalidArgumentException
      */
-    private function createParser(string $class_name, ?ClientHints $client_hints): AbstractParser
+    private static function createParser(string $class_name, ?ClientHints $client_hints): AbstractParser
     {
         if (!\class_exists($class_name)) {
             throw new \InvalidArgumentException('Class `'.$class_name.'` does not exist.');
@@ -78,53 +131,5 @@ final readonly class UserAgentParser
         $parser->setCache(new PSR6Bridge(new ApcuAdapter('Matomo')));
 
         return $parser;
-    }
-
-    /**
-     * Get Operating System from User Agent.
-     *
-     * @param string $user_agent User Agent to parse
-     *
-     * @return null|array
-     */
-    public function getOs(string $user_agent): ?array
-    {
-        $this->os_parser->setUserAgent($user_agent);
-
-        return $this->os_parser->parse();
-    }
-
-    /**
-     * Get bot from User Agent.
-     *
-     * @param string $user_agent User Agent to parse
-     *
-     * @return null|array
-     */
-    public function getBot(string $user_agent): ?array
-    {
-        $this->bot_parser->setUserAgent($user_agent);
-
-        return $this->bot_parser->parse();
-    }
-
-    /**
-     * Get bot from User Agent.
-     *
-     * @param string $user_agent User Agent to parse
-     *
-     * @return null|array
-     */
-    public function getClient(string $user_agent): ?array
-    {
-        foreach ($this->client_parsers as $client_parser) {
-            $client_parser->setUserAgent($user_agent);
-            $client = $client_parser->parse();
-            if (!empty($client)) {
-                return $client;
-            }
-        }
-
-        return null;
     }
 }

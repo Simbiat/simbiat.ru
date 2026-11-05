@@ -13,9 +13,9 @@ use App\Service\Errors;
 final class UserActivation extends Notification
 {
     /**
-     * Subject for email.
+     * Whether to send to email even if some details fail to be retrieved.
      */
-    protected const string SUBJECT = 'Account Activation';
+    protected const bool ALWAYS_SEND = true;
 
     /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high.
@@ -23,14 +23,14 @@ final class UserActivation extends Notification
     protected const int PRIORITY = 1;
 
     /**
+     * Subject for email.
+     */
+    protected const string SUBJECT = 'Account Activation';
+
+    /**
      * Whether a non-empty array of Twig variables is required.
      */
     protected const bool TWIG_REQUIRED = true;
-
-    /**
-     * Whether to send to email even if some details fail to be retrieved.
-     */
-    protected const bool ALWAYS_SEND = true;
 
     /**
      * Generate text for message.
@@ -39,6 +39,7 @@ final class UserActivation extends Notification
      *
      * @return self
      */
+    #[\Override]
     protected function setText(array $twig_vars = []): self
     {
         // If Twig variables are required, but not provided - do not do anything. This will result in failure on save and send.

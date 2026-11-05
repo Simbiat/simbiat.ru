@@ -15,18 +15,6 @@ use App\Service\Errors;
 final class DBUpdate extends Api
 {
     /**
-     * @var array<string, string> Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
-     */
-    #[\Override]
-    protected array $methods = ['PUT' => ''];
-
-    /**
-     * @var bool Flag to indicate, that this is the lowest level
-     */
-    #[\Override]
-    protected bool $final_node = true;
-
-    /**
      * @var array<string, string> Description of the node
      */
     #[\Override]
@@ -35,12 +23,25 @@ final class DBUpdate extends Api
     ];
 
     /**
+     * @var bool Flag to indicate, that this is the lowest level
+     */
+    #[\Override]
+    protected bool $final_node = true;
+
+    /**
+     * @var array<string, string> Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+     */
+    #[\Override]
+    protected array $methods = ['PUT' => ''];
+
+    /**
      * This is actual API response generation based on further details of the $path.
      *
      * @param array $path
      *
      * @return array
      */
+    #[\Override]
     protected function genData(array $path): array
     {
         if (!\array_key_exists((string) HomePage::$method, $this->methods)) {

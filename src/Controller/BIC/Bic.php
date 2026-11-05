@@ -12,7 +12,7 @@ use App\Controller\Abstracts\Page;
 final class Bic extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -20,6 +20,30 @@ final class Bic extends Page
     protected array $breadcrumb = [
         ['href' => '/bictracker/search', 'name' => 'Поиск'],
     ];
+
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $h1 = 'Детали организации из БИК трекера';
+
+    /**
+     * @var string Language override, to be sent in header (if present)
+     */
+    #[\Override]
+    protected string $language = 'ru-RU';
+
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $og_desc = 'Детали организации из БИК трекера';
+
+    /**
+     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
+     */
+    #[\Override]
+    protected array $required_permission = ['view_bic'];
 
     /**
      * @var string Sub service name
@@ -34,42 +58,21 @@ final class Bic extends Page
     protected string $title = 'Детали организации из БИК трекера';
 
     /**
-     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $h1 = 'Детали организации из БИК трекера';
-
-    /**
-     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $og_desc = 'Детали организации из БИК трекера';
-
-    /**
-     * @var string Language override, to be sent in header (if present)
-     */
-    #[\Override]
-    protected string $language = 'ru-RU';
-
-    /**
-     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
-     */
-    #[\Override]
-    protected array $required_permission = ['view_bic'];
-
-    /**
      * Generation of the page data.
      *
      * @param array $path
      *
      * @return array
+     *
+     * @throws \UnexpectedValueException
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         // Sanitize BIC
         $bic = $path[0] ?? '';
         // Try to get details
-        $output_array['bicdetails'] = new \App\Entity\BIC($bic)->getArray();
+        $output_array = ['bicdetails' => new \App\Entity\BIC($bic)->getArray()];
         // Check if ID was found
         if ($output_array['bicdetails']['id'] === null) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];

@@ -19,40 +19,42 @@ use Simbiat\FFXIV\Lodestone;
 
 /**
  * Class representing a FFXIV character.
+ *
+ * @api TODO: most likely will need to remove once entities migrate to Doctrine. For now this is mostly to silence Psalm.
  */
 final class Character extends AbstractEntity
 {
+    public int $achievement_points = 0;
+
+    public array $achievements = [];
+
     public ?string $avatar_id = '';
-
-    public array $dates = [];
-
-    public array $biology = [];
-
-    public array $location = [];
 
     public ?string $biography = null;
 
-    public array $title = [];
+    public array $biology = [];
+
+    public array $dates = [];
+
+    public array $following = [];
+
+    public array $friends = [];
 
     public array $grand_company = [];
-
-    public int $pvp = 0;
 
     public array $groups = [];
 
     public array $jobs = [];
 
-    public array $achievements = [];
-
-    public array $friends = [];
-
-    public array $following = [];
-
-    public int $achievement_points = 0;
+    public array $location = [];
 
     public array $owned = [];
 
+    public int $pvp = 0;
+
     public array $red_flags = [];
+
+    public array $title = [];
 
     /**
      * Get character data from Lodestone.
@@ -63,6 +65,7 @@ final class Character extends AbstractEntity
      *
      * @internal
      */
+    #[\Override]
     public function getFromLodestone(bool $allow_sleep = false): array|string
     {
         $lodestone = new Lodestone();
@@ -213,8 +216,11 @@ final class Character extends AbstractEntity
     /**
      * Function to get initial data from DB.
      *
-     * @throws \Exception
+     * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function getFromDB(): array
     {
         // Get general information. Using *, but add name, because otherwise Achievement name overrides Character name, and we do not want that
@@ -283,6 +289,7 @@ final class Character extends AbstractEntity
      *
      * @return void
      */
+    #[\Override]
     protected function process(array $from_db): void
     {
         $this->name = $from_db['name'];
@@ -377,8 +384,11 @@ final class Character extends AbstractEntity
      *
      * @return bool
      */
+    #[\Override]
     protected function updateDB(): bool
     {
+        $queries = [];
+
         try {
             // Get time of the last update for the character if it exists on the tracker
             $updated = Query::query('SELECT `updated` FROM `ffxiv__character` WHERE `character_id`=:character_id', [':character_id' => $this->id], return: 'value');
@@ -428,7 +438,7 @@ final class Character extends AbstractEntity
 
             // Reduce the number of <br>s in biography
             $this->lodestone['bio'] = Sanitization::sanitizeHTML($this->lodestone['bio'] ?? '');
-            if (($this->lodestone['bio'] === '-')) {
+            if ($this->lodestone['bio'] === '-') {
                 $this->lodestone['bio'] = null;
             }
 
@@ -497,8 +507,8 @@ final class Character extends AbstractEntity
                     ':achievement_points' => [$achievement_points, 'int'],
                     ':avatar' => \str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg', 'c0.jpg'], '', $this->lodestone['avatar']),
                     ':biography' => [
-                        (empty($this->lodestone['bio']) ? null : $this->lodestone['bio']),
-                        (empty($this->lodestone['bio']) ? 'null' : 'string'),
+                        empty($this->lodestone['bio']) ? null : $this->lodestone['bio'],
+                        empty($this->lodestone['bio']) ? 'null' : 'string',
                     ],
                     ':character_id' => $this->id,
                     ':city' => $this->lodestone['city']['name'],
@@ -555,7 +565,7 @@ final class Character extends AbstractEntity
                     ':character_id' => $this->id,
                     ':fc_id' => [
                         $this->lodestone['free_company']['id'],
-                        (empty($this->lodestone['free_company']['id']) ? 'null' : 'string'),
+                        empty($this->lodestone['free_company']['id']) ? 'null' : 'string',
                     ],
                 ],
             ];
@@ -566,7 +576,7 @@ final class Character extends AbstractEntity
                     ':character_id' => $this->id,
                     ':pvp_id' => [
                         $this->lodestone['pvp']['id'],
-                        (empty($this->lodestone['pvp']['id']) ? 'null' : 'string'),
+                        empty($this->lodestone['pvp']['id']) ? 'null' : 'string',
                     ],
                 ],
             ];
@@ -742,46 +752,6 @@ final class Character extends AbstractEntity
     }
 
     /**
-     * Function to mark character as private.
-     *
-     * @return bool
-     */
-    private function markPrivate(): bool
-    {
-        try {
-            // In some cases, we may have a server, name and avatar
-            if (
-                !empty($this->lodestone['server'])
-                && !empty($this->lodestone['name'])
-                && !empty($this->lodestone['avatar'])
-            ) {
-                $queries = [];
-                $queries[] = [
-                    'UPDATE `ffxiv__character` SET `hidden` = COALESCE(`hidden`, CURRENT_TIMESTAMP(6)), `updated`=CURRENT_TIMESTAMP(6) WHERE `character_id` = :character_id',
-                    [
-                        ':avatar' => \str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg', 'c0.jpg'], '', $this->lodestone['avatar']),
-                        ':character_id' => $this->id,
-                        ':name' => $this->lodestone['name'],
-                        ':server' => $this->lodestone['server'],
-                    ],
-                ];
-                $this->insertServerAndName($queries);
-
-                return Query::query($queries);
-            }
-
-            return Query::query(
-                'UPDATE `ffxiv__character` SET `hidden` = COALESCE(`hidden`, CURRENT_TIMESTAMP(6)), `updated`=CURRENT_TIMESTAMP(6) WHERE `character_id` = :character_id',
-                [':character_id' => $this->id],
-            );
-        } catch (\Throwable $exception) {
-            Errors::error_log($exception, debug: $this->debug);
-
-            return false;
-        }
-    }
-
-    /**
      * Function to update the entity.
      *
      * @param bool $hard Whether to do hard removal
@@ -858,6 +828,8 @@ final class Character extends AbstractEntity
      * @param array $queries
      *
      * @return void
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     private function insertServerAndName(array &$queries): void
     {
@@ -883,22 +855,73 @@ final class Character extends AbstractEntity
     }
 
     /**
+     * Function to mark character as private.
+     *
+     * @return bool
+     */
+    private function markPrivate(): bool
+    {
+        try {
+            // In some cases, we may have a server, name and avatar
+            if (
+                !empty($this->lodestone['server'])
+                && !empty($this->lodestone['name'])
+                && !empty($this->lodestone['avatar'])
+            ) {
+                $queries = [];
+                $queries[] = [
+                    'UPDATE `ffxiv__character` SET `hidden` = COALESCE(`hidden`, CURRENT_TIMESTAMP(6)), `updated`=CURRENT_TIMESTAMP(6) WHERE `character_id` = :character_id',
+                    [
+                        ':avatar' => \str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg', 'c0.jpg'], '', $this->lodestone['avatar']),
+                        ':character_id' => $this->id,
+                        ':name' => $this->lodestone['name'],
+                        ':server' => $this->lodestone['server'],
+                    ],
+                ];
+                $this->insertServerAndName($queries);
+
+                return Query::query($queries);
+            }
+
+            return Query::query(
+                'UPDATE `ffxiv__character` SET `hidden` = COALESCE(`hidden`, CURRENT_TIMESTAMP(6)), `updated`=CURRENT_TIMESTAMP(6) WHERE `character_id` = :character_id',
+                [':character_id' => $this->id],
+            );
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception, debug: $this->debug);
+
+            return false;
+        }
+    }
+
+    /**
      * Check if character is a potential stalker.
      *
      * @param array<int, array<int, mixed>|string> $queries
      *
      * @return void
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     private function redFlags(array &$queries): void
     {
         // Exit early if empty bio
-        if ($this->lodestone['bio'] === null || $this->lodestone['bio'] === '') {
+        if (
+            $this->lodestone['bio'] === null
+            || $this->lodestone['bio'] === ''
+        ) {
             return;
         }
 
-        $echo_takedown_value = \preg_match('/(echo-takedown-[a-z0-9]{8})/uir', $this->lodestone['bio'], $matches) ? $matches[1] : null;
-        $echo_claim_value = \preg_match('/(echo-claim-[a-z0-9]{8})/uir', $this->lodestone['bio'], $matches) ? $matches[1] : null;
-        $echo_verify_value = \preg_match('/(echo-(?!takedown)[a-z0-9]{8})/uir', $this->lodestone['bio'], $matches) ? $matches[1] : null;
+        $echo_takedown_value = \preg_match('/(echo-takedown-[a-z0-9]{8})/uir', $this->lodestone['bio'], $matches)
+            ? $matches[1]
+            : null;
+        $echo_claim_value = \preg_match('/(echo-claim-[a-z0-9]{8})/uir', $this->lodestone['bio'], $matches)
+            ? $matches[1]
+            : null;
+        $echo_verify_value = \preg_match('/(echo-(?!takedown)[a-z0-9]{8})/uir', $this->lodestone['bio'], $matches)
+            ? $matches[1]
+            : null;
         // Check for potential 10-character codes. Exclude ECU12345VC and ECU123456V, since they are from Eorzea Collection
         \preg_match_all('/(?:^|<br(?:\s*\/)?>)((?!ECU\d{5}VC|ECU\d{6}V)[a-z0-9]{10})(?:<br(?:\s*\/)?>|$)/uir', $this->lodestone['bio'], $echo_10_matches, \PREG_SET_ORDER);
         $echo_10_value = null;
@@ -908,15 +931,19 @@ final class Character extends AbstractEntity
             $in_whitelist = Query::query(
                 'SELECT `term` FROM `ffxiv__echo_10_whitelist` WHERE `term` IN (:terms)',
                 [':terms' => [$echo_10_matches, 'in', 'string']],
-                return: 'column'
+                return: 'column',
             );
             // Get the first value that is not in whitelist
             $echo_10_value = \array_first(\array_diff($echo_10_matches, $in_whitelist));
-
         }
 
         // If bio has no signs of EchoVault - exit early
-        if ($echo_takedown_value === null && $echo_claim_value === null && $echo_verify_value === null && $echo_10_value === null) {
+        if (
+            $echo_takedown_value === null
+            && $echo_claim_value === null
+            && $echo_verify_value === null
+            && $echo_10_value === null
+        ) {
             return;
         }
 
@@ -940,18 +967,18 @@ final class Character extends AbstractEntity
                     `echo_10_bio`=COALESCE(`echo_10_bio`, :echo_10_bio);',
             [
                 ':character_id' => $this->id,
-                ':takedown' => [$echo_takedown_value !== null ? \microtime(as_float: true) : null, $echo_takedown_value !== null ? 'datetime' : 'null'],
-                ':takedown_value' => [$echo_takedown_value, $echo_takedown_value !== null ? 'string' : 'null'],
-                ':takedown_bio' => [$echo_takedown_value !== null ? $this->lodestone['bio'] : null, $echo_takedown_value !== null ? 'string' : 'null'],
                 ':claim' => [$echo_claim_value !== null ? \microtime(as_float: true) : null, $echo_claim_value !== null ? 'datetime' : 'null'],
-                ':claim_value' => [$echo_claim_value, $echo_claim_value !== null ? 'string' : 'null'],
                 ':claim_bio' => [$echo_claim_value !== null ? $this->lodestone['bio'] : null, $echo_claim_value !== null ? 'string' : 'null'],
-                ':verify' => [$echo_verify_value !== null ? \microtime(as_float: true) : null, $echo_verify_value !== null ? 'datetime' : 'null'],
-                ':verify_value' => [$echo_verify_value, $echo_verify_value !== null ? 'string' : 'null'],
-                ':verify_bio' => [$echo_verify_value !== null ? $this->lodestone['bio'] : null, $echo_verify_value !== null ? 'string' : 'null'],
+                ':claim_value' => [$echo_claim_value, $echo_claim_value !== null ? 'string' : 'null'],
                 ':echo_10' => [$echo_10_value !== null ? \microtime(as_float: true) : null, $echo_10_value !== null ? 'datetime' : 'null'],
-                ':echo_10_value' => [$echo_10_value, $echo_10_value !== null ? 'string' : 'null'],
                 ':echo_10_bio' => [$echo_10_value !== null ? $this->lodestone['bio'] : null, $echo_10_value !== null ? 'string' : 'null'],
+                ':echo_10_value' => [$echo_10_value, $echo_10_value !== null ? 'string' : 'null'],
+                ':takedown' => [$echo_takedown_value !== null ? \microtime(as_float: true) : null, $echo_takedown_value !== null ? 'datetime' : 'null'],
+                ':takedown_bio' => [$echo_takedown_value !== null ? $this->lodestone['bio'] : null, $echo_takedown_value !== null ? 'string' : 'null'],
+                ':takedown_value' => [$echo_takedown_value, $echo_takedown_value !== null ? 'string' : 'null'],
+                ':verify' => [$echo_verify_value !== null ? \microtime(as_float: true) : null, $echo_verify_value !== null ? 'datetime' : 'null'],
+                ':verify_bio' => [$echo_verify_value !== null ? $this->lodestone['bio'] : null, $echo_verify_value !== null ? 'string' : 'null'],
+                ':verify_value' => [$echo_verify_value, $echo_verify_value !== null ? 'string' : 'null'],
             ],
         ];
     }

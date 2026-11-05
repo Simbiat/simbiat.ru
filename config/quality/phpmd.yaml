@@ -21,11 +21,27 @@ rules:
         exclude:
             # Conflicts with some sniffs that for FQN global calls without the `use`
             - MissingImport
+            # These seem too opinionated
             - StaticAccess
+            - BooleanArgumentFlag
+            - ElseExpression
     -   ref: rulesets/codesize.xml
+        exclude:
+            - CyclomaticComplexity
+            - ExcessiveMethodLength
+            - NPathComplexity
+            - ExcessiveClassComplexity
     -   ref: rulesets/controversial.xml
         exclude:
             - CamelCaseVariableName
+            - CamelCaseParameterName
+            - CamelCasePropertyName
+            # Duplicates SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable
+            - Superglobals
     -   ref: rulesets/design.xml
     -   ref: rulesets/naming.xml
+        exclude:
+            # These are handled by IDE, and are also not critical
+            - ShortVariable
+            - LongVariable
     -   ref: rulesets/unusedcode.xml

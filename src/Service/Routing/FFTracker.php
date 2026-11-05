@@ -18,17 +18,7 @@ use App\Controller\FFXIV\Track;
 final class FFTracker extends Router
 {
     /**
-     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
-     */
-    #[\Override]
-    protected array $sub_routes = [
-        'search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'crossworldlinkshells', 'achievements', 'statistics', 'crests', 'track', 'points', 'red_flags',
-        // legacy singular nodes
-        'character', 'freecompany', 'pvpteam', 'linkshell', 'crossworld_linkshell', 'crossworldlinkshell', 'achievement',
-    ];
-
-    /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -36,9 +26,6 @@ final class FFTracker extends Router
     protected array $breadcrumb = [
         ['href' => '/fftracker/', 'name' => 'FFXIV Tracker'],
     ];
-
-    #[\Override]
-    protected string $title = 'Final Fantasy XIV Tracker';
 
     #[\Override]
     protected string $h1 = 'Final Fantasy XIV Tracker';
@@ -53,12 +40,26 @@ final class FFTracker extends Router
     protected string $service_name = 'fftracker';
 
     /**
-     * This is the actual page generation based on further details of the $path
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
+    #[\Override]
+    protected array $sub_routes = [
+        'search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'crossworldlinkshells', 'achievements', 'statistics', 'crests', 'track', 'points', 'red_flags',
+        // legacy singular nodes
+        'character', 'freecompany', 'pvpteam', 'linkshell', 'crossworld_linkshell', 'crossworldlinkshell', 'achievement',
+    ];
+
+    #[\Override]
+    protected string $title = 'Final Fantasy XIV Tracker';
+
+    /**
+     * This is the actual page generation based on further details of the $path.
      *
      * @param array $path
      *
      * @return array
      */
+    #[\Override]
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {

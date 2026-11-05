@@ -16,8 +16,9 @@ final class Feeds
     /**
      * Function to parse URI and generate appropriate feed.
      *
-     * @throws \Exception
      * @param array<int, mixed> $uri
+     *
+     * @throws \Exception
      */
     public function uriParse(array $uri): array
     {
@@ -26,8 +27,8 @@ final class Feeds
         }
 
         return match ($uri[0]) {
-            'atom' => $this->feed(\array_slice($uri, 1)),
-            'rss' => $this->feed(\array_slice($uri, 1), 'rss'),
+            'atom' => self::feed(\array_slice($uri, 1)),
+            'rss' => self::feed(\array_slice($uri, 1), 'rss'),
             default => ['http_error' => 404],
         };
     }
@@ -35,14 +36,15 @@ final class Feeds
     /**
      * Generate Atom/RSS.
      *
-     * @param array<int, mixed> $uri List of URIs
-     * @param string $format What format should be used
+     * @param array<int, mixed> $uri    List of URIs
+     * @param string            $format What format should be used
      *
      * @return array<string, int>
      *
      * @throws \DOMException
+     * @throws \RuntimeException|\UnexpectedValueException
      */
-    private function feed(array $uri, string $format = 'atom'): array
+    private static function feed(array $uri, string $format = 'atom'): array
     {
         // Check if empty
         if (!empty($uri[0])) {
@@ -107,8 +109,8 @@ final class Feeds
                 // Set a query for the feed
                 if ($format === 'atom') {
                     $query = match ($uri[0]) {
-                        'bicchanged' => 'SELECT CONCAT(:base_url, `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
-                        'bicdeleted' => 'SELECT CONCAT(:base_url, `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25',
+                        'bicchanged' => "SELECT CONCAT(:base_url, `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, 'Центральный Банк Российской Федерации' AS `author_name`, 'https://cbr.ru/' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, 'Центральный Банк Российской Федерации' AS `source_title`, 'https://cbr.ru/' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25",
+                        'bicdeleted' => "SELECT CONCAT(:base_url, `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, 'Центральный Банк Российской Федерации' AS `author_name`, 'https://cbr.ru/' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, 'Центральный Банк Российской Федерации' AS `source_title`, 'https://cbr.ru/' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25",
                     };
                 } elseif ($format === 'rss') {
                     $query = match ($uri[0]) {

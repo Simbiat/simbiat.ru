@@ -23,12 +23,13 @@ use App\Service\Sanitization;
 use App\Service\Search\Posts;
 use App\Service\Search\Threads;
 use GeoIp2\Database\Reader;
-use Simbiat\ArrayHelpers\Converters;
 use Simbiat\ArrayHelpers\Editors;
 use Simbiat\Database\Query;
 
 /**
  * Main user class.
+ *
+ * @api TODO: most likely will need to remove once entities migrate to Doctrine. For now this is mostly to silence Psalm.
  */
 final class User extends Entity
 {
@@ -38,26 +39,39 @@ final class User extends Entity
     public const int AVATAR_LIMIT = 10;
 
     /**
-     * @var string Entity's properties
+     * @var string|null About
      */
-    public string $username;
+    public ?string $about = null;
 
     /**
-     * @var bool System flag, if true, user can't be deleted
+     * @var bool Whether the account is activated
      */
-    public bool $system = false;
+    public bool $activated = false;
 
     /**
-     * @var array<string, null|string> Real name
+     * @var array Avatars
      */
-    public array $name = [
-        'father_name' => null,
-        'first_name' => null,
-        'last_name' => null,
-        'middle_name' => null,
-        'prefix' => null,
-        'suffix' => null,
-    ];
+    public array $avatars = [];
+
+    /**
+     * @var bool Whether the account is banned
+     */
+    public bool $banned = false;
+
+    /**
+     * @var string|null City
+     */
+    public ?string $city = null;
+
+    /**
+     * @var string|null Country
+     */
+    public ?string $country = null;
+
+    /**
+     * @var string|null Current avatar
+     */
+    public ?string $current_avatar = null;
 
     /**
      * @var array<string, mixed> Dates
@@ -69,6 +83,33 @@ final class User extends Entity
     ];
 
     /**
+     * @var array Emails
+     */
+    public array $emails = [];
+
+    /**
+     * @var string|null FF Token
+     */
+    public ?string $ff_token = null;
+
+    /**
+     * @var array Groups
+     */
+    public array $groups = [];
+
+    /**
+     * @var array<string, string|null> Real name
+     */
+    public array $name = [
+        'father_name' => null,
+        'first_name' => null,
+        'last_name' => null,
+        'middle_name' => null,
+        'prefix' => null,
+        'suffix' => null,
+    ];
+
+    /**
      * @var array<string, mixed> Parent details
      */
     public array $parent = [
@@ -77,7 +118,12 @@ final class User extends Entity
     ];
 
     /**
-     * @var array<string, null|int> Personal sections
+     * @var array<int, string> Permissions
+     */
+    public array $permissions = ['view_posts', 'view_bic', 'view_ff'];
+
+    /**
+     * @var array<string, int|null> Personal sections
      */
     public array $sections = [
         'blog' => null,
@@ -86,74 +132,9 @@ final class User extends Entity
     ];
 
     /**
-     * @var string|null FF Token
-     */
-    public ?string $ff_token = null;
-
-    /**
      * @var int|null Sex
      */
     public ?int $sex = null;
-
-    /**
-     * @var string|null About
-     */
-    public ?string $about = null;
-
-    /**
-     * @var string|null Time zone
-     */
-    public ?string $timezone = null;
-
-    /**
-     * @var string|null Country
-     */
-    public ?string $country = null;
-
-    /**
-     * @var string|null City
-     */
-    public ?string $city = null;
-
-    /**
-     * @var string|null Website
-     */
-    public ?string $website = null;
-
-    /**
-     * @var array Groups
-     */
-    public array $groups = [];
-
-    /**
-     * @var array<int, string> Permissions
-     */
-    public array $permissions = ['view_posts', 'view_bic', 'view_ff'];
-
-    /**
-     * @var bool Whether the account is activated
-     */
-    public bool $activated = false;
-
-    /**
-     * @var bool Whether the account is banned
-     */
-    public bool $banned = false;
-
-    /**
-     * @var array Emails
-     */
-    public array $emails = [];
-
-    /**
-     * @var array Avatars
-     */
-    public array $avatars = [];
-
-    /**
-     * @var string|null Current avatar
-     */
-    public ?string $current_avatar = null;
 
     /**
      * @var int Number of strikes
@@ -161,67 +142,31 @@ final class User extends Entity
     public int $strikes = 0;
 
     /**
-     * Get user email addresses.
-     *
-     * @return array
+     * @var bool System flag, if true, user can't be deleted
      */
-    public function getEmails(): array
-    {
-        try {
-            $result['emails'] = Query::query('SELECT `email`, `subscribed`, `activation` FROM `uc__emails` WHERE `user_id`=:user_id ORDER BY `email`;', [':user_id' => [$this->id, 'int']], return: 'all');
-            // Count how many emails are activated (to restrict removal of emails)
-            $result['count_activated'] = \count(\array_filter(\array_column($result['emails'], 'activation'), \is_null(...)));
-            $result['count_subscribed'] = \count(\array_filter(\array_column($result['emails'], 'subscribed'), static fn($x): bool => $x !== null));
-            $this->emails = $result;
-
-            return $result;
-        } catch (\Throwable) {
-            return [];
-        }
-    }
+    public bool $system = false;
 
     /**
-     * Get current avatar.
-     *
-     * @return string
+     * @var string|null Time zone
      */
-    public function getAvatar(): string
-    {
-        try {
-            $avatar = Query::query("SELECT CONCAT('/assets/images/avatars/', SUBSTRING(`sys__files`.`file_id`, 1, 2), '/', SUBSTRING(`sys__files`.`file_id`, 3, 2), '/', SUBSTRING(`sys__files`.`file_id`, 5, 2), '/', `sys__files`.`file_id`, '.', `sys__files`.`extension`) AS `url` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`file_id`=`sys__files`.`file_id` WHERE `uc__avatars`.`user_id`=:user_id AND `current`=1 LIMIT 1", ['user_id' => [$this->id, 'int']], return: 'value');
-            if (empty($avatar)) {
-                $avatar = '/assets/images/avatar.svg';
-            }
-        } catch (\Throwable) {
-            $avatar = '/assets/images/avatar.svg';
-        }
-
-        return $avatar;
-    }
+    public ?string $timezone = null;
 
     /**
-     * Get all avatars.
-     *
-     * @return array
+     * @var string Entity's properties
      */
-    public function getAvatars(): array
-    {
-        try {
-            $result = Query::query("SELECT CONCAT('/assets/images/avatars/', SUBSTRING(`sys__files`.`file_id`, 1, 2), '/', SUBSTRING(`sys__files`.`file_id`, 3, 2), '/', SUBSTRING(`sys__files`.`file_id`, 5, 2), '/', `sys__files`.`file_id`, '.', `sys__files`.`extension`) AS `url`, `uc__avatars`.`file_id`, `current` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`file_id`=`sys__files`.`file_id` WHERE `uc__avatars`.`user_id`=:user_id ORDER BY `current` DESC;", [':user_id' => [$this->id, 'int']], return: 'all');
-            $this->avatars = $result;
+    public string $username;
 
-            return $result;
-        } catch (\Throwable) {
-            return [];
-        }
-    }
+    /**
+     * @var string|null Website
+     */
+    public ?string $website = null;
 
     /**
      * Add avatar.
      *
      * @param bool     $set_active Make avatar active right away
      * @param string   $link       Link to avatar
-     * @param null|int $character  FFXIV character, if avatar is from one
+     * @param int|null $character  FFXIV character, if avatar is from one
      *
      * @return array
      */
@@ -263,7 +208,7 @@ final class User extends Entity
                 [
                     ':character' => [
                         $character,
-                        ($character === null ? 'null' : 'int'),
+                        $character === null ? 'null' : 'int',
                     ],
                     ':file_id' => $upload['hash'],
                     ':user_id' => [$this->id, 'int'],
@@ -292,89 +237,25 @@ final class User extends Entity
     }
 
     /**
-     * Remove avatar.
+     * Function to check whether a name is banned.
      *
-     * @return array
+     * @param string $name
+     *
+     * @return bool
      */
-    public function delAvatar(): array
+    public function bannedName(string $name): bool
     {
-        if ($this->system) {
-            return ['http_error' => 403, 'reason' => "Can't modify system user"];
+        // Check the format
+        if (\preg_match('/^[\p{L}\d.!$%&\'*+\/=?_`{|}~\- ^]{1,64}$/ui', $name) !== 1) {
+            return true;
         }
 
-        $file_id = $_POST['avatar'] ?? '';
-        // Log the change
-        Security::log(LogType::Avatar->value, 'Deleted avatar', $file_id);
-        // Delete the avatar (only allow deletion of those that are not current)
-        Query::query('DELETE FROM `uc__avatars` WHERE `user_id`=:user_id AND `file_id`=:file_id AND `current`=0;', [':user_id' => [$this->id, 'int'], ':file_id' => $file_id]);
-
-        return ['location' => $this->getAvatar(), 'response' => true];
-    }
-
-    /**
-     * Set current avatar.
-     *
-     * @param string $file_id
-     *
-     * @return array
-     */
-    public function setAvatar(string $file_id = ''): array
-    {
-        if ($this->system) {
-            return ['http_error' => 403, 'reason' => "Can't modify system user"];
+        // Check against DB table
+        try {
+            return Query::query('SELECT `name` FROM `uc__bad_names` WHERE `name`=:name', [':name' => $name], return: 'check');
+        } catch (\Throwable) {
+            return false;
         }
-
-        if (
-            !empty($_POST['avatar'])
-            && \is_string($_POST['avatar'])
-        ) {
-            $file_id = $_POST['avatar'];
-        }
-
-        // Log the change
-        Security::log(LogType::Avatar->value, 'Changed active avatar', $file_id);
-        Query::query([
-            // Set the chosen avatar as current
-            ['UPDATE `uc__avatars` SET `current`=1 WHERE `user_id`=:user_id AND `file_id`=:file_id;', [':user_id' => [$this->id, 'int'], ':file_id' => $file_id]],
-            // Set the rest as non-current
-            ['UPDATE `uc__avatars` SET `current`=0 WHERE `user_id`=:user_id AND `file_id`<>:file_id;', [':user_id' => [$this->id, 'int'], ':file_id' => $file_id]],
-        ]);
-
-        return ['location' => $this->getAvatar(), 'response' => true];
-    }
-
-    /**
-     * Get owned FFXIV entities.
-     *
-     * @return array
-     */
-    public function getFF(): array
-    {
-        $output_array = [];
-        // Get token
-        $output_array['token'] = Query::query('SELECT `ff_token` FROM `uc__users` WHERE `user_id`=:user_id;', [':user_id' => [$this->id, 'int']], return: 'value');
-        // Get linked characters
-        $output_array['characters'] = Query::query("SELECT 'character' AS `type`, `ffxiv__character`.`character_id` AS `id`, `name`, `avatar` AS `icon` FROM `ffxiv__character` WHERE `character_id` IN (SELECT `character_id` FROM `uc__user_to_ff_character` WHERE `user_id`=:user_id) ORDER BY `name`;", [':user_id' => [$this->id, 'int']], return: 'all');
-        // Get linked groups
-        if (!empty($output_array['characters'])) {
-            foreach ($output_array['characters'] as $character) {
-                $output_array['groups'][$character['id']] = AbstractEntity::cleanCrestResults(
-                    Query::query(
-                        /* @lang SQL */
-                        '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rank_id`=0)
-                UNION ALL
-                (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`ls_id` AS `id`, `ffxiv__linkshell`.`name` AS `name`, NULL AS `crest_part_1`, NULL AS `crest_part_2`, NULL AS `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rank_id`=`ffxiv__linkshell_rank`.`ls_rank_id` WHERE `character_id`=:id AND `ffxiv__linkshell_character`.`current`=1 AND `ffxiv__linkshell_character`.`rank_id`=1)
-                UNION ALL
-                (SELECT \'pvpteam\' AS `type`, 1 AS `crossworld`, `ffxiv__pvpteam_character`.`pvp_id` AS `id`, `ffxiv__pvpteam`.`name` AS `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam` ON `ffxiv__pvpteam_character`.`pvp_id`=`ffxiv__pvpteam`.`pvp_id` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_character`.`rank_id`=`ffxiv__pvpteam_rank`.`pvp_rank_id` WHERE `character_id`=:id AND `ffxiv__pvpteam_character`.`current`=1 AND `ffxiv__pvpteam_character`.`rank_id`=1)
-                ORDER BY `name`;',
-                        [':id' => [$character['id'], 'int']],
-                        return: 'all',
-                    ),
-                );
-            }
-        }
-
-        return $output_array;
     }
 
     /**
@@ -383,6 +264,8 @@ final class User extends Entity
      * @param string $new_name
      *
      * @return array<string, bool|int|string>
+     *
+     * @throws \UnexpectedValueException
      */
     public function changeUsername(string $new_name): array
     {
@@ -432,200 +315,344 @@ final class User extends Entity
     }
 
     /**
-     * Update user profile data.
+     * Remove avatar.
      *
      * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
-    public function updateProfile(): array
+    public function delAvatar(): array
     {
         if ($this->system) {
             return ['http_error' => 403, 'reason' => "Can't modify system user"];
         }
 
-        if (empty($_POST['details'])) {
-            return ['http_error' => 400, 'reason' => 'No data provided'];
-        }
-
-        // Ensure we get current values (to not generate queries for fields with the same data
-        $this->get();
-        // Generate queries and data for log
-        $queries = [];
-        $log = [];
-        // Queries for names
-        foreach (['first_name', 'last_name', 'middle_name', 'father_name', 'prefix', 'suffix'] as $field) {
-            $_POST['details']['name'][$field] = Sanitization::removeNonPrintable($_POST['details']['name'][$field] ?? '', full_list: true);
-            if ($this->name[$field] === $_POST['details']['name'][$field]) {
-                continue;
-            }
-
-            $log[$field] = ['old' => $this->name[$field], 'new' => $_POST['details']['name'][$field]];
-            $queries[] = [
-                'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `user_id`=:user_id;',
-                [
-                    ':'.$field => [
-                        (empty($_POST['details']['name'][$field]) ? null : $_POST['details']['name'][$field]),
-                        (empty($_POST['details']['name'][$field]) ? 'null' : 'string'),
-                    ],
-                    ':user_id' => [$this->id, 'int'],
-                ],
-            ];
-        }
-
-        // Query for a birthday
-        if (
-            isset($_POST['details']['dates']['birthday'])
-            && $this->dates['birthday'] !== $_POST['details']['dates']['birthday']
-        ) {
-            $log['birthday'] = ['old' => $this->name['birthday'], 'new' => $_POST['details']['dates']['birthday']];
-            $queries[] = [
-                'UPDATE `uc__users` SET `birthday`=:birthday WHERE `user_id`=:user_id;',
-                [
-                    ':birthday' => [
-                        (empty($_POST['details']['dates']['birthday']) ? null : $_POST['details']['dates']['birthday']),
-                        (empty($_POST['details']['dates']['birthday']) ? 'null' : 'date'),
-                    ],
-                    ':user_id' => [$this->id, 'int'],
-                ],
-            ];
-        }
-
-        // Query for time zone
-        $_POST['details']['timezone'] = Sanitization::removeNonPrintable($_POST['details']['timezone'] ?? 'UTC', full_list: true);
-        if (
-            $this->timezone !== $_POST['details']['timezone']
-            && \in_array($_POST['details']['timezone'], \timezone_identifiers_list(), strict: true)
-        ) {
-            $log['timezone'] = ['old' => $this->timezone, 'new' => $_POST['details']['timezone']];
-            $queries[] = [
-                'UPDATE `uc__users` SET `timezone`=:timezone WHERE `user_id`=:user_id;',
-                [
-                    ':timezone' => [
-                        (empty($_POST['details']['timezone']) ? null : $_POST['details']['timezone']),
-                        (empty($_POST['details']['timezone']) ? 'null' : 'string'),
-                    ],
-                    ':user_id' => [$this->id, 'int'],
-                ],
-            ];
-        }
-
-        // Query for sex
-        if (isset($_POST['details']['sex'])) {
-            if ($_POST['details']['sex'] === 'null') {
-                $_POST['details']['sex'] = null;
-            } elseif ($_POST['details']['sex'] > 1) {
-                $_POST['details']['sex'] = 1;
-            } elseif ($_POST['details']['sex'] <= 0) {
-                $_POST['details']['sex'] = 0;
-            }
-
-            if ($this->sex !== $_POST['details']['sex']) {
-                $log['sex'] = ['old' => $this->sex, 'new' => $_POST['details']['sex']];
-                $queries[] = [
-                    'UPDATE `uc__users` SET `sex`=:sex WHERE `user_id`=:user_id;',
-                    [
-                        ':sex' => [
-                            $_POST['details']['sex'],
-                            ($_POST['details']['sex'] === null ? 'null' : 'int'),
-                        ],
-                        ':user_id' => [$this->id, 'int'],
-                    ],
-                ];
-            }
-        }
-
-        // Query for website
-        if (isset($_POST['details']['website'])) {
-            $_POST['details']['website'] = Security::sanitizeURL($_POST['details']['website']);
-            if (
-                !empty($_POST['details']['website'])
-                || \mb_strlen($_POST['details']['website'], 'UTF-8') > 255
-            ) {
-                $_POST['details']['website'] = $this->website ?? null;
-            }
-
-            if ($this->website !== $_POST['details']['website']) {
-                $log['website'] = ['old' => $this->website, 'new' => $_POST['details']['website']];
-                $queries[] = [
-                    'UPDATE `uc__users` SET `timezone`=:timezone WHERE `user_id`=:user_id;',
-                    [
-                        ':timezone' => [
-                            (empty($_POST['details']['timezone']) ? null : $_POST['details']['timezone']),
-                            (empty($_POST['details']['timezone']) ? 'null' : 'string'),
-                        ],
-                        ':user_id' => [$this->id, 'int'],
-                    ],
-                ];
-            }
-        }
-
-        // Queries for other fields
-        foreach (['country', 'city', 'about'] as $field) {
-            $_POST['details'][$field] = Sanitization::removeNonPrintable($_POST['details'][$field] ?? '', full_list: true);
-            if ($this->{$field} === $_POST['details'][$field]) {
-                continue;
-            }
-
-            $log[$field] = ['old' => $this->{$field}, 'new' => $_POST['details'][$field]];
-            $queries[] = [
-                'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `user_id`=:user_id;',
-                [
-                    ':'.$field => [
-                        (empty($_POST['details'][$field]) ? null : $_POST['details'][$field]),
-                        (empty($_POST['details'][$field]) ? 'null' : 'string'),
-                    ],
-                    ':user_id' => [$this->id, 'int'],
-                ],
-            ];
-        }
-
-        if (\count($queries) === 0) {
-            return ['http_error' => 400, 'reason' => 'No changes detected'];
-        }
-
-        $result = Query::query($queries);
+        $file_id = $_POST['avatar'] ?? '';
         // Log the change
-        Security::log(LogType::UserDetailsChanged->value, 'Changed details', $log);
+        Security::log(LogType::Avatar->value, 'Deleted avatar', $file_id);
+        // Delete the avatar (only allow deletion of those that are not current)
+        Query::query('DELETE FROM `uc__avatars` WHERE `user_id`=:user_id AND `file_id`=:file_id AND `current`=0;', [':user_id' => [$this->id, 'int'], ':file_id' => $file_id]);
 
-        return ['response' => $result];
+        return ['location' => $this->getAvatar(), 'response' => true];
     }
 
     /**
-     * Function to check if a name is already used.
+     * Delete cookie.
      *
-     * @param string $name
+     * @param bool $logout Flag indicating whether a cookie is being deleted during normal logout
      *
      * @return bool
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
-    public function usedName(string $name): bool
+    public function deleteCookie(bool $logout = false): bool
     {
-        // Check against DB table
-        try {
-            return Query::query('SELECT `username` FROM `uc__users` WHERE `username`=:name', [':name' => $name], return: 'check');
-        } catch (\Throwable) {
+        if (
+            $this->id === null
+            || $this->id === ''
+            || empty($_POST['cookie'])
+        ) {
             return false;
+        }
+
+        if ($this->system) {
+            return false;
+        }
+
+        $result = Query::query(
+            'DELETE FROM `uc__cookies` WHERE `user_id`=:user_id AND `cookie_id`=:cookie;',
+            [
+                ':cookie' => $_POST['cookie'],
+                ':user_id' => [$this->id, 'int'],
+            ],
+            return: 'affected',
+        );
+        if ($result > 0) {
+            Security::log(LogType::Logout->value, $logout ? 'Cookie deleted during logout' : 'Manually deleted a cookie', 'Cookie ID deleted is '.$_POST['cookie']);
+        }
+
+        return true;
+    }
+
+    /**
+     * Delete session.
+     *
+     * @return bool
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    public function deleteSession(): bool
+    {
+        if (
+            $this->id === null
+            || $this->id === ''
+            || empty($_POST['session'])
+        ) {
+            return false;
+        }
+
+        if ($this->system) {
+            return false;
+        }
+
+        $result = Query::query(
+            'DELETE FROM `uc__sessions` WHERE `user_id`=:user_id AND `session_id`=:session;',
+            [
+                ':session' => $_POST['session'],
+                ':user_id' => [$this->id, 'string'],
+            ],
+            return: 'affected',
+        );
+        if ($result > 0) {
+            Security::log(LogType::Logout->value, 'Manually deleted a session', 'Session ID deleted is '.$_POST['session']);
+        }
+
+        return true;
+    }
+
+    /**
+     * Get current avatar.
+     *
+     * @return string
+     */
+    public function getAvatar(): string
+    {
+        try {
+            $avatar = Query::query("SELECT CONCAT('/assets/images/avatars/', SUBSTRING(`sys__files`.`file_id`, 1, 2), '/', SUBSTRING(`sys__files`.`file_id`, 3, 2), '/', SUBSTRING(`sys__files`.`file_id`, 5, 2), '/', `sys__files`.`file_id`, '.', `sys__files`.`extension`) AS `url` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`file_id`=`sys__files`.`file_id` WHERE `uc__avatars`.`user_id`=:user_id AND `current`=1 LIMIT 1", ['user_id' => [$this->id, 'int']], return: 'value');
+            if (empty($avatar)) {
+                $avatar = '/assets/images/avatar.svg';
+            }
+        } catch (\Throwable) {
+            $avatar = '/assets/images/avatar.svg';
+        }
+
+        return $avatar;
+    }
+
+    /**
+     * Get all avatars.
+     *
+     * @return array<int, array{url: string, file_id: string, current: int}>
+     */
+    public function getAvatars(): array
+    {
+        try {
+            $result = Query::query("SELECT CONCAT('/assets/images/avatars/', SUBSTRING(`sys__files`.`file_id`, 1, 2), '/', SUBSTRING(`sys__files`.`file_id`, 3, 2), '/', SUBSTRING(`sys__files`.`file_id`, 5, 2), '/', `sys__files`.`file_id`, '.', `sys__files`.`extension`) AS `url`, `uc__avatars`.`file_id`, `current` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`file_id`=`sys__files`.`file_id` WHERE `uc__avatars`.`user_id`=:user_id ORDER BY `current` DESC;", [':user_id' => [$this->id, 'int']], return: 'all');
+            $this->avatars = $result;
+
+            return $result;
+        } catch (\Throwable) {
+            return [];
         }
     }
 
     /**
-     * Function to check whether a name is banned.
+     * Get user email addresses.
      *
-     * @param string $name
-     *
-     * @return bool
+     * @return array
      */
-    public function bannedName(string $name): bool
+    public function getEmails(): array
     {
-        // Check the format
-        if (\preg_match('/^[\p{L}\d.!$%&\'*+\/=?_`{|}~\- ^]{1,64}$/ui', $name) !== 1) {
-            return true;
+        $result = [];
+
+        try {
+            $result['emails'] = Query::query('SELECT `email`, `subscribed`, `activation` FROM `uc__emails` WHERE `user_id`=:user_id ORDER BY `email`;', [':user_id' => [$this->id, 'int']], return: 'all');
+            // Count how many emails are activated (to restrict removal of emails)
+            $result['count_activated'] = \count(\array_filter(\array_column($result['emails'], 'activation'), \is_null(...)));
+            $result['count_subscribed'] = \count(\array_filter(\array_column($result['emails'], 'subscribed'), static fn($x): bool => $x !== null));
+            $this->emails = $result;
+
+            return $result;
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+
+    /**
+     * Get owned FFXIV entities.
+     *
+     * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    public function getFF(): array
+    {
+        $output_array = [];
+        // Get token
+        $output_array['token'] = Query::query('SELECT `ff_token` FROM `uc__users` WHERE `user_id`=:user_id;', [':user_id' => [$this->id, 'int']], return: 'value');
+        // Get linked characters
+        $output_array['characters'] = Query::query("SELECT 'character' AS `type`, `ffxiv__character`.`character_id` AS `id`, `name`, `avatar` AS `icon` FROM `ffxiv__character` WHERE `character_id` IN (SELECT `character_id` FROM `uc__user_to_ff_character` WHERE `user_id`=:user_id) ORDER BY `name`;", [':user_id' => [$this->id, 'int']], return: 'all');
+        // Get linked groups
+        foreach ($output_array['characters'] as $character) {
+            $output_array['groups'][$character['id']] = AbstractEntity::cleanCrestResults(
+                Query::query(
+                    /* @lang SQL */
+                    '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rank_id`=0)
+                UNION ALL
+                (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`ls_id` AS `id`, `ffxiv__linkshell`.`name` AS `name`, NULL AS `crest_part_1`, NULL AS `crest_part_2`, NULL AS `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rank_id`=`ffxiv__linkshell_rank`.`ls_rank_id` WHERE `character_id`=:id AND `ffxiv__linkshell_character`.`current`=1 AND `ffxiv__linkshell_character`.`rank_id`=1)
+                UNION ALL
+                (SELECT \'pvpteam\' AS `type`, 1 AS `crossworld`, `ffxiv__pvpteam_character`.`pvp_id` AS `id`, `ffxiv__pvpteam`.`name` AS `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam` ON `ffxiv__pvpteam_character`.`pvp_id`=`ffxiv__pvpteam`.`pvp_id` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_character`.`rank_id`=`ffxiv__pvpteam_rank`.`pvp_rank_id` WHERE `character_id`=:id AND `ffxiv__pvpteam_character`.`current`=1 AND `ffxiv__pvpteam_character`.`rank_id`=1)
+                ORDER BY `name`;',
+                    [':id' => [$character['id'], 'int']],
+                    return: 'all',
+                ),
+            );
         }
 
-        // Check against DB table
-        try {
-            return Query::query('SELECT `name` FROM `uc__bad_names` WHERE `name`=:name', [':name' => $name], return: 'check');
-        } catch (\Throwable) {
-            return false;
+        return $output_array;
+    }
+
+    /**
+     * Get posts created by the user.
+     *
+     * @return array
+     */
+    public function getPosts(): array
+    {
+        $where = '`talks__posts`.`author`=:author';
+        $bindings = [':author' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']];
+        if (
+            !$this->id !== $_SESSION['user_id']
+            && !\in_array('view_scheduled', $_SESSION['permissions'], strict: true)
+        ) {
+            $where .= ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)';
         }
+
+        if (
+            !$this->id !== $_SESSION['user_id']
+            && !\in_array('view_private', $_SESSION['permissions'], strict: true)
+        ) {
+            $where .= ' AND `talks__threads`.`private`=0';
+        }
+
+        $posts = new Posts($bindings, $where, '`talks__posts`.`published` DESC')->listEntities();
+        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        if (
+            !\is_array($posts)
+            || !\is_array($posts['entities'])
+        ) {
+            return [];
+        }
+
+        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        return $posts['entities'];
+    }
+
+    /**
+     * Similar to getPosts(), but only gets posts, that are the first posts in threads.
+     *
+     * @param bool $only_with_banner
+     *
+     * @return array
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function getTalksStarters(bool $only_with_banner = false): array
+    {
+        // Can't think of a good way to get this in 1 query, thus first getting the latest threads
+        $threads = $this->getThreads();
+        // Now we get post's details
+        if (\count($threads) === 0) {
+            return [];
+        }
+
+        // Keep only items with og_image
+        if ($only_with_banner) {
+            foreach ($threads as $key => $thread) {
+                if (empty($thread['og_image'])) {
+                    unset($threads[$key]);
+                } else {
+                    $thread['og_image'] = Images::ogImage($thread['og_image']);
+                    if (empty($thread['og_image'])) {
+                        unset($threads[$key]);
+                    } else {
+                        $threads[$key]['og_image'] = $thread['og_image'];
+                    }
+                }
+            }
+
+            if (\count($threads) === 0) {
+                return [];
+            }
+        }
+
+        // Convert regular 0, 1, ... n IDs to real thread IDs for later use
+        $threads = Editors::digitToKey($threads, 'id');
+        // Get the posts' IDs
+        $ids = \array_column($threads, 'first_post');
+        // Get posts
+        $where = '';
+        $bindings = [':user_id' => [$_SESSION['user_id'], 'int']];
+        if (!\in_array('view_scheduled', $_SESSION['permissions'], strict: true)) {
+            $where .= ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)';
+        }
+
+        if (!\in_array('view_private', $_SESSION['permissions'], strict: true)) {
+            $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:author)';
+            $bindings[':author'] = [$_SESSION['user_id'], 'int'];
+        }
+
+        $bindings[':postIDs'] = [$ids, 'in', 'int'];
+        $posts = new Posts($bindings, '`talks__posts`.`post_id` IN (:postIDs)'.$where, '`talks__posts`.`published` DESC')->listEntities();
+        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        if (
+            \is_array($posts)
+            && \is_array($posts['entities'])
+        ) {
+            // Get like value for each post if the current user has appropriate permission
+            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            foreach ($posts['entities'] as &$post) {
+                if (!empty($threads[$post['thread_id']]['og_image'])) {
+                    $post['og_image'] = $threads[$post['thread_id']]['og_image'];
+                }
+            }
+
+            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            return $posts['entities'];
+        }
+
+        return [];
+    }
+
+    /**
+     * Get threads created by a user.
+     *
+     * @return array
+     */
+    public function getThreads(): array
+    {
+        $where = '`talks__threads`.`author`=:user_id';
+        $bindings = [':user_id' => [$this->id, 'int']];
+        if (!\in_array('view_scheduled', $_SESSION['permissions'], strict: true)) {
+            $where .= ' AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6)';
+        }
+
+        if (!\in_array('view_private', $_SESSION['permissions'], strict: true)) {
+            $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:author)';
+            $bindings[':author'] = [$_SESSION['user_id'], 'int'];
+        }
+
+        $threads = new Threads($bindings, $where, '`talks__threads`.`published` DESC')->listEntities();
+        // Clean any threads with empty `first_post` (means the thread is either empty or is in progress of creation)
+        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        if (
+            \is_array($threads)
+            && \is_array($threads['entities'])
+        ) {
+            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            foreach ($threads['entities'] as $key => $thread) {
+                if (empty($thread['first_post'])) {
+                    /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+                    unset($threads['entities'][$key]);
+                }
+            }
+        } else {
+            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            $threads['entities'] = [];
+        }
+
+        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        return $threads['entities'];
     }
 
     /**
@@ -634,6 +661,8 @@ final class User extends Entity
      * @param bool $after_registration Flag indicating if login is being done after initial registration
      *
      * @return array<string, bool|int|string>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     public function login(bool $after_registration = false): array
     {
@@ -748,159 +777,80 @@ final class User extends Entity
     }
 
     /**
-     * Initiate password reset through email.
+     * Function to log the user out.
      *
-     * @return array
+     * @return bool
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
-    public function remind(): array
+    public function logout(): bool
     {
-        if (empty($_POST['signinup']['email'])) {
-            Security::log(LogType::PasswordReset->value, 'No email/name provided');
-
-            return ['http_error' => 400, 'reason' => 'No email/name provided'];
+        Security::log(LogType::Logout->value, 'Logout');
+        // Remove rememberme cookie
+        // From browser
+        /* @noinspection SecureCookiesTransferInspection -- Necessary parameters are provided through the array */
+        \setcookie(
+            'rememberme_'.Config::$http_host,
+            '',
+            \array_merge(Config::$cookie_settings, ['expires' => \time() - 3600]),
+        );
+        // From DB
+        if (!empty($_SESSION['cookie_id'])) {
+            $_POST['cookie'] = $_SESSION['cookie_id'];
+            $this->deleteCookie(logout: true);
         }
 
-        // Check DB
-        if (!Query::$dbh instanceof \PDO) {
-            return ['http_error' => 503, 'reason' => 'Database unavailable'];
+        // Clean session (affects $_SESSION only)
+        \session_unset();
+        // Destroy session (destroys it storage)
+        $result = \session_destroy();
+        if (!\headers_sent()) {
+            \header('Clear-Site-Data: "*"');
         }
 
-        // Get the password of the user while also checking if it exists
-        try {
-            $credentials = Query::query(
-                'SELECT `uc__users`.`user_id`, `uc__users`.`username`, `uc__emails`.`email` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__users`.`user_id`=`uc__emails`.`user_id` WHERE (`uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail) AND `uc__emails`.`activation` IS NULL AND `uc__users`.`system`=0  LIMIT 1',
-                [':mail' => $_POST['signinup']['email']],
-                return: 'row',
-            );
-        } catch (\Throwable) {
-            $credentials = null;
-        }
-
-        // Process only if a user was found
-        if (
-            $credentials !== null
-            && $credentials !== []
-        ) {
-            /* @noinspection UnusedFunctionResultInspection Needed to just update current ID */
-            $this->setId($credentials['user_id']);
-            // Get permissions
-            $_SESSION['permissions'] = $this->getPermissions();
-            if (!\in_array('can_login', $_SESSION['permissions'], strict: true)) {
-                Security::log(LogType::PasswordReset->value, "Attempt to reset password for account that can't login", user_id: (int) $this->id);
-
-                // Return fake "true" to minimize spoofing registered emails
-                return ['response' => true];
-            }
-
-            $token = Security::genToken();
-
-            try {
-                // Write the reset token to DB
-                Query::query('UPDATE `uc__users` SET `password_reset`=:token WHERE `user_id`=:user_id', [':user_id' => $credentials['user_id'], ':token' => Security::passHash($token)]);
-                Security::log(LogType::PasswordReset->value, 'Attempt to reset password for account', user_id: (int) $this->id);
-                new PasswordReset()->save($this->id, ['token' => $token, 'user_id' => $credentials['user_id']], email: true, push: false, email_override: $credentials['email'])->send();
-            } catch (\Throwable) {
-                return ['http_error' => 500, 'reason' => 'Password reset failed'];
-            }
-        }
-
-        return ['response' => true];
+        return $result;
     }
 
     /**
-     * Setting cookie for remembering user.
+     * Function to change the password.
      *
-     * @param string $cookie_id
+     * @param string $password Password to set
+     * @param bool   $refresh  Whether this is an automatic salt refresh
      *
-     * @return void
+     * @return bool
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
-    public function rememberMe(string $cookie_id = ''): void
+    public function passChange(#[\SensitiveParameter] string $password, bool $refresh = false): bool
     {
-        try {
-            if ($this->system) {
-                return;
-            }
-
-            // Generate cookie ID
-            if ($cookie_id === '') {
-                $cookie_id = \bin2hex(\random_bytes(64));
-            }
-
-            // Generate cookie password
-            $pass = \bin2hex(\random_bytes(128));
-            $hashed_pass = Security::passHash($pass);
-            // Write cookie data to DB
-            if (
-                $this->id !== null && $this->id !== ''
-                || (
-                    !empty($_SESSION['user_id'])
-                    && !\in_array((int) $_SESSION['user_id'], SystemUser::getSystemUsers(), strict: true)
-                )
-            ) {
-                // Check if a cookie exists and get its `validator`. This also helps with race conditions a bit
-                $current_pass = Query::query(
-                    'SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
-                    [
-                        ':cookie' => $cookie_id,
-                        ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
-                    ],
-                    return: 'value',
-                );
-                $affected = empty($current_pass)
-                    ? Query::query(
-                        'INSERT IGNORE INTO `uc__cookies` (`cookie_id`, `validator`, `user_id`) VALUES (:cookie, :pass, :id);',
-                        [
-                            ':cookie' => $cookie_id,
-                            ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
-                            ':pass' => $hashed_pass,
-                        ],
-                    )
-                    : Query::query(
-                        'UPDATE `uc__cookies` SET `validator`=:pass, `time`=CURRENT_TIMESTAMP(6) WHERE `user_id`=:id AND `cookie_id`=:cookie AND `validator`=:validator;',
-                        [
-                            ':cookie' => $cookie_id,
-                            ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
-                            ':pass' => $hashed_pass,
-                            ':validator' => $current_pass,
-                        ],
-                        return: 'affected',
-                    );
-                // Update stuff only if we did insert a cookie or update the validator value
-                if ($affected > 0) {
-                    // Set cookie ID to session if it's not already linked or if it was linked to another cookie (not sure if that would even be possible)
-                    if (
-                        empty($_SESSION['cookie_id'])
-                        || $_SESSION['cookie_id'] !== $cookie_id
-                    ) {
-                        $_SESSION['cookie_id'] = $cookie_id;
-                    }
-
-                    // Set cookie
-                    $current_pass = Query::query(
-                        'SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
-                        [
-                            ':cookie' => $cookie_id,
-                            ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
-                        ],
-                        return: 'value',
-                    );
-                    // Another attempt to prevent race conditions
-                    if ($current_pass === $hashed_pass) {
-                        /* @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
-                        \setcookie(
-                            'rememberme_'.Config::$http_host,
-                            \json_encode(['cookie_id' => Security::encrypt($cookie_id), 'pass' => Security::encrypt($pass)], \JSON_THROW_ON_ERROR | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION),
-                            \array_merge(Config::$cookie_settings, ['expires' => \time() + 2592000]),
-                        );
-                    }
-                }
-            }
-
-            return;
-        } catch (\Throwable $exception) {
-            Errors::error_log($exception);
-            // Do nothing, since not critical
+        if (
+            $this->id === null
+            || $this->id === ''
+        ) {
+            return false;
         }
+
+        if ($this->system) {
+            return false;
+        }
+
+        $result = Query::query(
+            'UPDATE `uc__users` SET `password`=:password, `strikes`=0, `password_reset`=NULL WHERE `user_id`=:user_id;',
+            [
+                ':password' => [Security::passHash($password), 'string'],
+                ':user_id' => [$this->id, 'string'],
+            ],
+        );
+        if (\session_status() === \PHP_SESSION_ACTIVE) {
+            Security::session_regenerate_id(delete_old_session: true);
+        }
+
+        Security::log(LogType::PasswordChange->value, 'Attempted to change password', $result);
+        if (!$refresh) {
+            new PasswordChange()->save($this->id)->send();
+        }
+
+        return $result;
     }
 
     /**
@@ -955,329 +905,11 @@ final class User extends Entity
     }
 
     /**
-     * Function to change the password.
-     *
-     * @param string $password Password to set
-     * @param bool   $refresh  Whether this is an automatic salt refresh
-     *
-     * @return bool
-     */
-    public function passChange(#[\SensitiveParameter] string $password, bool $refresh = false): bool
-    {
-        if (
-            $this->id === null
-            || $this->id === ''
-        ) {
-            return false;
-        }
-
-        if ($this->system) {
-            return false;
-        }
-
-        $result = Query::query(
-            'UPDATE `uc__users` SET `password`=:password, `strikes`=0, `password_reset`=NULL WHERE `user_id`=:user_id;',
-            [
-                ':password' => [Security::passHash($password), 'string'],
-                ':user_id' => [$this->id, 'string'],
-            ],
-        );
-        if (\session_status() === \PHP_SESSION_ACTIVE) {
-            Security::session_regenerate_id(delete_old_session: true);
-        }
-
-        Security::log(LogType::PasswordChange->value, 'Attempted to change password', $result);
-        if (!$refresh) {
-            new PasswordChange()->save($this->id)->send();
-        }
-
-        return $result;
-    }
-
-    /**
-     * Reset number of failed logins.
-     *
-     * @return bool
-     */
-    public function resetStrikes(): bool
-    {
-        if (
-            $this->id === null
-            || $this->id === ''
-        ) {
-            return false;
-        }
-
-        if ($this->system) {
-            return false;
-        }
-
-        return Query::query(
-            'UPDATE `uc__users` SET `strikes`=0, `password_reset`=NULL WHERE `user_id`=:user_id;',
-            [
-                ':user_id' => [$this->id, 'string'],
-            ],
-        );
-    }
-
-    /**
-     * Delete cookie.
-     *
-     * @param bool $logout Flag indicating whether a cookie is being deleted during normal logout
-     *
-     * @return bool
-     */
-    public function deleteCookie(bool $logout = false): bool
-    {
-        if (
-            $this->id === null
-            || $this->id === ''
-            || empty($_POST['cookie'])
-        ) {
-            return false;
-        }
-
-        if ($this->system) {
-            return false;
-        }
-
-        $result = Query::query(
-            'DELETE FROM `uc__cookies` WHERE `user_id`=:user_id AND `cookie_id`=:cookie;',
-            [
-                ':cookie' => $_POST['cookie'],
-                ':user_id' => [$this->id, 'int'],
-            ],
-            return: 'affected',
-        );
-        if ($result > 0) {
-            Security::log(LogType::Logout->value, $logout ? 'Cookie deleted during logout' : 'Manually deleted a cookie', 'Cookie ID deleted is '.$_POST['cookie']);
-        }
-
-        return true;
-    }
-
-    /**
-     * Delete session.
-     *
-     * @return bool
-     */
-    public function deleteSession(): bool
-    {
-        if (
-            $this->id === null
-            || $this->id === ''
-            || empty($_POST['session'])
-        ) {
-            return false;
-        }
-
-        if ($this->system) {
-            return false;
-        }
-
-        $result = Query::query(
-            'DELETE FROM `uc__sessions` WHERE `user_id`=:user_id AND `session_id`=:session;',
-            [
-                ':session' => $_POST['session'],
-                ':user_id' => [$this->id, 'string'],
-            ],
-            return: 'affected',
-        );
-        if ($result > 0) {
-            Security::log(LogType::Logout->value, 'Manually deleted a session', 'Session ID deleted is '.$_POST['session']);
-        }
-
-        return true;
-    }
-
-    /**
-     * Get threads created by a user.
-     *
-     * @return array
-     */
-    public function getThreads(): array
-    {
-        $where = '`talks__threads`.`author`=:user_id';
-        $bindings = [':user_id' => [$this->id, 'int']];
-        if (!\in_array('view_scheduled', $_SESSION['permissions'], strict: true)) {
-            $where .= ' AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6)';
-        }
-
-        if (!\in_array('view_private', $_SESSION['permissions'], strict: true)) {
-            $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:author)';
-            $bindings[':author'] = [$_SESSION['user_id'], 'int'];
-        }
-
-        $threads = new Threads($bindings, $where, '`talks__threads`.`published` DESC')->listEntities();
-        // Clean any threads with empty `first_post` (means the thread is either empty or is in progress of creation)
-        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-        if (
-            \is_array($threads)
-            && \is_array($threads['entities'])
-        ) {
-            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-            foreach ($threads['entities'] as $key => $thread) {
-                if (empty($thread['first_post'])) {
-                    /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-                    unset($threads['entities'][$key]);
-                }
-            }
-        } else {
-            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-            $threads['entities'] = [];
-        }
-
-        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-        return $threads['entities'];
-    }
-
-    /**
-     * Get posts created by the user.
-     *
-     * @return array
-     */
-    public function getPosts(): array
-    {
-        $where = '`talks__posts`.`author`=:author';
-        $bindings = [':author' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']];
-        if (
-            !$this->id !== $_SESSION['user_id']
-            && !\in_array('view_scheduled', $_SESSION['permissions'], strict: true)
-        ) {
-            $where .= ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)';
-        }
-
-        if (
-            !$this->id !== $_SESSION['user_id']
-            && !\in_array('view_private', $_SESSION['permissions'], strict: true)
-        ) {
-            $where .= ' AND `talks__threads`.`private`=0';
-        }
-
-        $posts = new Posts($bindings, $where, '`talks__posts`.`published` DESC')->listEntities();
-        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-        if (
-            !\is_array($posts)
-            || !\is_array($posts['entities'])
-        ) {
-            return [];
-        }
-
-        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-        return $posts['entities'];
-    }
-
-    /**
-     * Similar to getPosts(), but only gets posts, that are the first posts in threads.
-     *
-     * @param bool $only_with_banner
-     *
-     * @return array
-     */
-    public function getTalksStarters(bool $only_with_banner = false): array
-    {
-        // Can't think of a good way to get this in 1 query, thus first getting the latest threads
-        $threads = $this->getThreads();
-        // Now we get post's details
-        if (\count($threads) === 0) {
-            return [];
-        }
-
-        // Keep only items with og_image
-        if ($only_with_banner) {
-            foreach ($threads as $key => $thread) {
-                if (empty($thread['og_image'])) {
-                    unset($threads[$key]);
-                } else {
-                    $thread['og_image'] = Images::ogImage($thread['og_image']);
-                    if (empty($thread['og_image'])) {
-                        unset($threads[$key]);
-                    } else {
-                        $threads[$key]['og_image'] = $thread['og_image'];
-                    }
-                }
-            }
-
-            if (\count($threads) === 0) {
-                return [];
-            }
-        }
-
-        // Convert regular 0, 1, ... n IDs to real thread IDs for later use
-        $threads = Editors::digitToKey($threads, 'id');
-        // Get the posts' IDs
-        $ids = \array_column($threads, 'first_post');
-        // Get posts
-        $where = '';
-        $bindings = [':user_id' => [$_SESSION['user_id'], 'int']];
-        if (!\in_array('view_scheduled', $_SESSION['permissions'], strict: true)) {
-            $where .= ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)';
-        }
-
-        if (!\in_array('view_private', $_SESSION['permissions'], strict: true)) {
-            $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:author)';
-            $bindings[':author'] = [$_SESSION['user_id'], 'int'];
-        }
-
-        $bindings[':postIDs'] = [$ids, 'in', 'int'];
-        $posts = new Posts($bindings, '`talks__posts`.`post_id` IN (:postIDs)'.$where, '`talks__posts`.`published` DESC')->listEntities();
-        /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-        if (
-            \is_array($posts)
-            && \is_array($posts['entities'])
-        ) {
-            // Get like value for each post if the current user has appropriate permission
-            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-            foreach ($posts['entities'] as &$post) {
-                if (!empty($threads[$post['thread_id']]['og_image'])) {
-                    $post['og_image'] = $threads[$post['thread_id']]['og_image'];
-                }
-            }
-
-            /* @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-            return $posts['entities'];
-        }
-
-        return [];
-    }
-
-    /**
-     * Function to log the user out.
-     *
-     * @return bool
-     */
-    public function logout(): bool
-    {
-        Security::log(LogType::Logout->value, 'Logout');
-        // Remove rememberme cookie
-        // From browser
-        /* @noinspection SecureCookiesTransferInspection -- Necessary parameters are provided through the array */
-        \setcookie(
-            'rememberme_'.Config::$http_host,
-            '',
-            \array_merge(Config::$cookie_settings, ['expires' => \time() - 3600]),
-        );
-        // From DB
-        if (!empty($_SESSION['cookie_id'])) {
-            $_POST['cookie'] = $_SESSION['cookie_id'];
-            $this->deleteCookie(logout: true);
-        }
-
-        // Clean session (affects $_SESSION only)
-        \session_unset();
-        // Destroy session (destroys it storage)
-        $result = \session_destroy();
-        if (!\headers_sent()) {
-            \header('Clear-Site-Data: "*"');
-        }
-
-        return $result;
-    }
-
-    /**
      * Register a new user.
      *
      * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     public function register(): array
     {
@@ -1384,6 +1016,164 @@ final class User extends Entity
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Registration failed'];
         }
+    }
+
+    /**
+     * Setting cookie for remembering user.
+     *
+     * @param string $cookie_id
+     *
+     * @return void
+     */
+    public function rememberMe(string $cookie_id = ''): void
+    {
+        try {
+            if ($this->system) {
+                return;
+            }
+
+            // Generate cookie ID
+            if ($cookie_id === '') {
+                $cookie_id = \bin2hex(\random_bytes(64));
+            }
+
+            // Generate cookie password
+            $pass = \bin2hex(\random_bytes(128));
+            $hashed_pass = Security::passHash($pass);
+            // Write cookie data to DB
+            if (
+                ($this->id !== null && $this->id !== '')
+                || (
+                    !empty($_SESSION['user_id'])
+                    && !\in_array((int) $_SESSION['user_id'], SystemUser::getSystemUsers(), strict: true)
+                )
+            ) {
+                // Check if a cookie exists and get its `validator`. This also helps with race conditions a bit
+                $current_pass = Query::query(
+                    'SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
+                    [
+                        ':cookie' => $cookie_id,
+                        ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
+                    ],
+                    return: 'value',
+                );
+                $affected = empty($current_pass)
+                    ? Query::query(
+                        'INSERT IGNORE INTO `uc__cookies` (`cookie_id`, `validator`, `user_id`) VALUES (:cookie, :pass, :id);',
+                        [
+                            ':cookie' => $cookie_id,
+                            ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
+                            ':pass' => $hashed_pass,
+                        ],
+                    )
+                    : Query::query(
+                        'UPDATE `uc__cookies` SET `validator`=:pass, `time`=CURRENT_TIMESTAMP(6) WHERE `user_id`=:id AND `cookie_id`=:cookie AND `validator`=:validator;',
+                        [
+                            ':cookie' => $cookie_id,
+                            ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
+                            ':pass' => $hashed_pass,
+                            ':validator' => $current_pass,
+                        ],
+                        return: 'affected',
+                    );
+                // Update stuff only if we did insert a cookie or update the validator value
+                if ($affected > 0) {
+                    // Set cookie ID to session if it's not already linked or if it was linked to another cookie (not sure if that would even be possible)
+                    if (
+                        empty($_SESSION['cookie_id'])
+                        || $_SESSION['cookie_id'] !== $cookie_id
+                    ) {
+                        $_SESSION['cookie_id'] = $cookie_id;
+                    }
+
+                    // Set cookie
+                    $current_pass = Query::query(
+                        'SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
+                        [
+                            ':cookie' => $cookie_id,
+                            ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
+                        ],
+                        return: 'value',
+                    );
+                    // Another attempt to prevent race conditions
+                    if ($current_pass === $hashed_pass) {
+                        /* @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
+                        \setcookie(
+                            'rememberme_'.Config::$http_host,
+                            \json_encode(['cookie_id' => Security::encrypt($cookie_id), 'pass' => Security::encrypt($pass)], \JSON_THROW_ON_ERROR | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION),
+                            \array_merge(Config::$cookie_settings, ['expires' => \time() + 2592000]),
+                        );
+                    }
+                }
+            }
+
+            return;
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception);
+            // Do nothing, since not critical
+        }
+    }
+
+    /**
+     * Initiate password reset through email.
+     *
+     * @return array
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function remind(): array
+    {
+        if (empty($_POST['signinup']['email'])) {
+            Security::log(LogType::PasswordReset->value, 'No email/name provided');
+
+            return ['http_error' => 400, 'reason' => 'No email/name provided'];
+        }
+
+        // Check DB
+        if (!Query::$dbh instanceof \PDO) {
+            return ['http_error' => 503, 'reason' => 'Database unavailable'];
+        }
+
+        // Get the password of the user while also checking if it exists
+        try {
+            $credentials = Query::query(
+                'SELECT `uc__users`.`user_id`, `uc__users`.`username`, `uc__emails`.`email` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__users`.`user_id`=`uc__emails`.`user_id` WHERE (`uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail) AND `uc__emails`.`activation` IS NULL AND `uc__users`.`system`=0  LIMIT 1',
+                [':mail' => $_POST['signinup']['email']],
+                return: 'row',
+            );
+        } catch (\Throwable) {
+            $credentials = null;
+        }
+
+        // Process only if a user was found
+        if (
+            $credentials !== null
+            && $credentials !== []
+        ) {
+            /* @noinspection UnusedFunctionResultInspection Needed to just update current ID */
+            $this->setId($credentials['user_id']);
+            // Get permissions
+            $_SESSION['permissions'] = $this->getPermissions();
+            if (!\in_array('can_login', $_SESSION['permissions'], strict: true)) {
+                Security::log(LogType::PasswordReset->value, "Attempt to reset password for account that can't login", user_id: (int) $this->id);
+
+                // Return fake "true" to minimize spoofing registered emails
+                return ['response' => true];
+            }
+
+            $token = Security::genToken();
+
+            try {
+                // Write the reset token to DB
+                Query::query('UPDATE `uc__users` SET `password_reset`=:token WHERE `user_id`=:user_id', [':user_id' => $credentials['user_id'], ':token' => Security::passHash($token)]);
+                Security::log(LogType::PasswordReset->value, 'Attempt to reset password for account', user_id: (int) $this->id);
+                new PasswordReset()->save($this->id, ['token' => $token, 'user_id' => $credentials['user_id']], email: true, push: false, email_override: $credentials['email'])->send();
+            } catch (\Throwable) {
+                return ['http_error' => 500, 'reason' => 'Password reset failed'];
+            }
+        }
+
+        return ['response' => true];
     }
 
     /**
@@ -1502,19 +1292,260 @@ final class User extends Entity
         }
 
         // Log
-        Security::log(LogType::UserRemoval->value, 'Removal', ['user_id' => $this->id, 'hard' => $hard, 'result' => $result], ($hard ? SystemUser::Deleted->value : $this->id));
+        Security::log(LogType::UserRemoval->value, 'Removal', ['user_id' => $this->id, 'hard' => $hard, 'result' => $result], $hard ? SystemUser::Deleted->value : $this->id);
 
         return $result;
     }
 
     /**
-     * Function to get initial data from DB.
+     * Reset number of failed logins.
+     *
+     * @return bool
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    public function resetStrikes(): bool
+    {
+        if (
+            $this->id === null
+            || $this->id === ''
+        ) {
+            return false;
+        }
+
+        if ($this->system) {
+            return false;
+        }
+
+        return Query::query(
+            'UPDATE `uc__users` SET `strikes`=0, `password_reset`=NULL WHERE `user_id`=:user_id;',
+            [
+                ':user_id' => [$this->id, 'string'],
+            ],
+        );
+    }
+
+    /**
+     * Set current avatar.
+     *
+     * @param string $file_id
      *
      * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    public function setAvatar(string $file_id = ''): array
+    {
+        if ($this->system) {
+            return ['http_error' => 403, 'reason' => "Can't modify system user"];
+        }
+
+        if (
+            !empty($_POST['avatar'])
+            && \is_string($_POST['avatar'])
+        ) {
+            $file_id = $_POST['avatar'];
+        }
+
+        // Log the change
+        Security::log(LogType::Avatar->value, 'Changed active avatar', $file_id);
+        Query::query([
+            // Set the chosen avatar as current
+            ['UPDATE `uc__avatars` SET `current`=1 WHERE `user_id`=:user_id AND `file_id`=:file_id;', [':user_id' => [$this->id, 'int'], ':file_id' => $file_id]],
+            // Set the rest as non-current
+            ['UPDATE `uc__avatars` SET `current`=0 WHERE `user_id`=:user_id AND `file_id`<>:file_id;', [':user_id' => [$this->id, 'int'], ':file_id' => $file_id]],
+        ]);
+
+        return ['location' => $this->getAvatar(), 'response' => true];
+    }
+
+    /**
+     * Update user profile data.
+     *
+     * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    public function updateProfile(): array
+    {
+        if ($this->system) {
+            return ['http_error' => 403, 'reason' => "Can't modify system user"];
+        }
+
+        if (empty($_POST['details'])) {
+            return ['http_error' => 400, 'reason' => 'No data provided'];
+        }
+
+        // Ensure we get current values (to not generate queries for fields with the same data
+        $this->get();
+        // Generate queries and data for log
+        $queries = [];
+        $log = [];
+        // Queries for names
+        foreach (['first_name', 'last_name', 'middle_name', 'father_name', 'prefix', 'suffix'] as $field) {
+            $_POST['details']['name'][$field] = Sanitization::removeNonPrintable($_POST['details']['name'][$field] ?? '', full_list: true);
+            if ($this->name[$field] === $_POST['details']['name'][$field]) {
+                continue;
+            }
+
+            $log[$field] = ['old' => $this->name[$field], 'new' => $_POST['details']['name'][$field]];
+            $queries[] = [
+                'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `user_id`=:user_id;',
+                [
+                    ':'.$field => [
+                        empty($_POST['details']['name'][$field]) ? null : $_POST['details']['name'][$field],
+                        empty($_POST['details']['name'][$field]) ? 'null' : 'string',
+                    ],
+                    ':user_id' => [$this->id, 'int'],
+                ],
+            ];
+        }
+
+        // Query for a birthday
+        if (
+            isset($_POST['details']['dates']['birthday'])
+            && $this->dates['birthday'] !== $_POST['details']['dates']['birthday']
+        ) {
+            $log['birthday'] = ['old' => $this->name['birthday'], 'new' => $_POST['details']['dates']['birthday']];
+            $queries[] = [
+                'UPDATE `uc__users` SET `birthday`=:birthday WHERE `user_id`=:user_id;',
+                [
+                    ':birthday' => [
+                        empty($_POST['details']['dates']['birthday']) ? null : $_POST['details']['dates']['birthday'],
+                        empty($_POST['details']['dates']['birthday']) ? 'null' : 'date',
+                    ],
+                    ':user_id' => [$this->id, 'int'],
+                ],
+            ];
+        }
+
+        // Query for time zone
+        $_POST['details']['timezone'] = Sanitization::removeNonPrintable($_POST['details']['timezone'] ?? 'UTC', full_list: true);
+        if (
+            $this->timezone !== $_POST['details']['timezone']
+            && \in_array($_POST['details']['timezone'], \timezone_identifiers_list(), strict: true)
+        ) {
+            $log['timezone'] = ['old' => $this->timezone, 'new' => $_POST['details']['timezone']];
+            $queries[] = [
+                'UPDATE `uc__users` SET `timezone`=:timezone WHERE `user_id`=:user_id;',
+                [
+                    ':timezone' => [
+                        empty($_POST['details']['timezone']) ? null : $_POST['details']['timezone'],
+                        empty($_POST['details']['timezone']) ? 'null' : 'string',
+                    ],
+                    ':user_id' => [$this->id, 'int'],
+                ],
+            ];
+        }
+
+        // Query for sex
+        if (isset($_POST['details']['sex'])) {
+            if ($_POST['details']['sex'] === 'null') {
+                $_POST['details']['sex'] = null;
+            } elseif ($_POST['details']['sex'] > 1) {
+                $_POST['details']['sex'] = 1;
+            } elseif ($_POST['details']['sex'] <= 0) {
+                $_POST['details']['sex'] = 0;
+            }
+
+            if ($this->sex !== $_POST['details']['sex']) {
+                $log['sex'] = ['old' => $this->sex, 'new' => $_POST['details']['sex']];
+                $queries[] = [
+                    'UPDATE `uc__users` SET `sex`=:sex WHERE `user_id`=:user_id;',
+                    [
+                        ':sex' => [
+                            $_POST['details']['sex'],
+                            $_POST['details']['sex'] === null ? 'null' : 'int',
+                        ],
+                        ':user_id' => [$this->id, 'int'],
+                    ],
+                ];
+            }
+        }
+
+        // Query for website
+        if (isset($_POST['details']['website'])) {
+            $_POST['details']['website'] = Security::sanitizeURL($_POST['details']['website']);
+            if (
+                !empty($_POST['details']['website'])
+                || \mb_strlen($_POST['details']['website'], 'UTF-8') > 255
+            ) {
+                $_POST['details']['website'] = $this->website ?? null;
+            }
+
+            if ($this->website !== $_POST['details']['website']) {
+                $log['website'] = ['old' => $this->website, 'new' => $_POST['details']['website']];
+                $queries[] = [
+                    'UPDATE `uc__users` SET `timezone`=:timezone WHERE `user_id`=:user_id;',
+                    [
+                        ':timezone' => [
+                            empty($_POST['details']['timezone']) ? null : $_POST['details']['timezone'],
+                            empty($_POST['details']['timezone']) ? 'null' : 'string',
+                        ],
+                        ':user_id' => [$this->id, 'int'],
+                    ],
+                ];
+            }
+        }
+
+        // Queries for other fields
+        foreach (['country', 'city', 'about'] as $field) {
+            $_POST['details'][$field] = Sanitization::removeNonPrintable($_POST['details'][$field] ?? '', full_list: true);
+            if ($this->{$field} === $_POST['details'][$field]) {
+                continue;
+            }
+
+            $log[$field] = ['old' => $this->{$field}, 'new' => $_POST['details'][$field]];
+            $queries[] = [
+                'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `user_id`=:user_id;',
+                [
+                    ':'.$field => [
+                        empty($_POST['details'][$field]) ? null : $_POST['details'][$field],
+                        empty($_POST['details'][$field]) ? 'null' : 'string',
+                    ],
+                    ':user_id' => [$this->id, 'int'],
+                ],
+            ];
+        }
+
+        if (\count($queries) === 0) {
+            return ['http_error' => 400, 'reason' => 'No changes detected'];
+        }
+
+        $result = Query::query($queries);
+        // Log the change
+        Security::log(LogType::UserDetailsChanged->value, 'Changed details', $log);
+
+        return ['response' => $result];
+    }
+
+    /**
+     * Function to check if a name is already used.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function usedName(string $name): bool
+    {
+        // Check against DB table
+        try {
+            return Query::query('SELECT `username` FROM `uc__users` WHERE `username`=:name', [':name' => $name], return: 'check');
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * Function to get initial data from DB.
+     *
+     * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    #[\Override]
     protected function getFromDB(): array
     {
-
         $db_data = Query::query('SELECT `username`, `system`, `strikes`, `ff_token`, `registered`, `updated`, `parent_id`, (IF(`parent_id` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `user_id`=:user_id))) AS `parentname`, `birthday`, `first_name`, `last_name`, `middle_name`, `father_name`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`user_id`=`uc__user_to_section`.`user_id` WHERE `uc__users`.`user_id`=:user_id', ['user_id' => [$this->id, 'int']], return: 'row');
         if (empty($db_data)) {
             return [];
@@ -1547,6 +1578,7 @@ final class User extends Entity
      *
      * @return void
      */
+    #[\Override]
     protected function process(array $from_db): void
     {
         // Populate names
@@ -1563,39 +1595,32 @@ final class User extends Entity
         // Populate parent details
         $this->parent['id'] = $from_db['parent_id'];
         $this->parent['name'] = $from_db['parentname'];
-        // Pupulate personal sections
+        // Populate personal sections
         $this->sections = [
             'blog' => empty($from_db['blog']) ? null : $from_db['blog'],
             'changelog' => empty($from_db['changelog']) ? null : $from_db['changelog'],
             'knowledgebase' => empty($from_db['knowledgebase']) ? null : $from_db['knowledgebase'],
         ];
         $this->system = (bool) $from_db['system'];
-        // Clean up the array
-        unset(
-            $from_db['system'],
-            $from_db['parent_id'],
-            $from_db['parentname'],
-            $from_db['first_name'],
-            $from_db['last_name'],
-            $from_db['middle_name'],
-            $from_db['father_name'],
-            $from_db['prefix'],
-            $from_db['suffix'],
-            $from_db['registered'],
-            $from_db['updated'],
-            $from_db['birthday'],
-            $from_db['blog'],
-            $from_db['changelog'],
-            $from_db['knowledgebase'],
-        );
-        // Populate the rest properties
-        Converters::arrayToProperties($this, $from_db);
+        $this->username = $from_db['username'];
+        $this->strikes = $from_db['strikes'];
+        $this->ff_token = $from_db['ff_token'];
+        $this->sex = $from_db['sex'];
+        $this->about = $from_db['about'];
+        $this->timezone = $from_db['timezone'];
+        $this->country = $from_db['country'];
+        $this->city = $from_db['city'];
+        $this->website = $from_db['website'];
+        $this->groups = $from_db['groups'];
+        $this->permissions = $from_db['permissions'];
+        $this->activated = $from_db['activated'];
+        $this->current_avatar = $from_db['current_avatar'];
     }
 
     /**
      * Get user permissions.
      *
-     * @return array
+     * @return array<int, string>
      */
     private function getPermissions(): array
     {

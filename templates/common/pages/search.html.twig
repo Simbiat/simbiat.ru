@@ -57,7 +57,7 @@
             {% elseif type == 'crossworld_linkshells' %}
                 Crossworld Linkshells:
             {% endif %}
-            {% if sub_result.count>sub_result.results|length %}
+            {% if sub_result.count > sub_result.results|length %}
                 {# Set list link #}
                 {% if type == 'openbics' %}
                     {% set list_url = '/bictracker/openbics/' %}

@@ -9,11 +9,14 @@ use App\Enum\SystemUser;
 use App\HomePage;
 use App\Service\Config;
 use App\Service\Errors;
+use Random\RandomException;
 use Simbiat\Database\Query;
 use Simbiat\http20\Headers;
 
 /**
  * Implement session handling using database.
+ *
+ * @api TODO: most likely will need to remove during migration to Symfony. For now this is mostly to silence Psalm.
  */
 final class Session implements \SessionHandlerInterface, \SessionIdInterface, \SessionUpdateTimestampHandlerInterface
 {
@@ -23,9 +26,8 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
      * @param int $session_life Default lifetime for session in seconds (5 minutes)
      */
     public function __construct(
-        private int $session_life = 300
-    )
-    {
+        private int $session_life = 300,
+    ) {
         if ($this->session_life < 0) {
             $this->session_life = 300;
         }
@@ -48,6 +50,105 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
+     * Close the session.
+     *
+     * @see  https://php.net/manual/en/sessionhandlerinterface.close.php
+     *
+     * @return bool <p>
+     *                  The return value (usually TRUE on success, FALSE on failure).
+     *                  Note this value is returned internally to PHP for processing.
+     *                  </p>
+     *
+     * @since 5.4
+     */
+    #[\Override]
+    public function close(): bool
+    {
+        // No need to do anything at this point
+        return true;
+    }
+
+    /**
+     * Create session ID.
+     *
+     * @see https://php.net/manual/en/sessionidinterface.create-sid.php
+     *
+     * @return string The new session ID. Note that this value is returned internally to PHP for processing.
+     *
+     * @throws \RuntimeException
+     */
+    #[\Override]
+    public function create_sid(): string
+    {
+        $result = \session_create_id();
+        if ($result === false) {
+            throw new \RuntimeException('Failed to create session id.');
+        }
+
+        return $result;
+    }
+
+    /**
+     * Destroy a session.
+     *
+     * @see  https://php.net/manual/en/sessionhandlerinterface.destroy.php
+     *
+     * @param string $id The session ID being destroyed.
+     *
+     * @return bool The return value (usually TRUE on success, FALSE on failure).
+     *              Note this value is returned internally to PHP for processing.
+     *
+     * @since 5.4
+     */
+    #[\Override]
+    public function destroy(string $id): bool
+    {
+        try {
+            return Query::query('DELETE FROM `uc__sessions` WHERE `session_id`=:id', [':id' => $id]);
+        } catch (\Throwable $e) {
+            Errors::error_log($e);
+
+            return false;
+        }
+    }
+
+    /**
+     * Cleanup old sessions.
+     *
+     * @see  https://php.net/manual/en/sessionhandlerinterface.gc.php
+     *
+     * @param int $max_lifetime Sessions that have not updated for
+     *                          the last max_lifetime seconds will be removed.
+     *
+     * @return false|int Returns the number of deleted sessions on success, or false on failure. Prior to PHP version 7.1, the function returned true in case of success.
+     *                   Note this value is returned internally to PHP for processing.
+     *
+     * @since 5.4
+     */
+    #[\Override]
+    public function gc(int $max_lifetime = 300): false|int
+    {
+        try {
+            /** @var int $expired */
+            $expired = Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND);', [':life' => [$max_lifetime, 'int']], return: 'affected');
+
+            /** @var int $system_users */
+            $system_users = Query::query('DELETE FROM `uc__sessions` WHERE `user_id` IN (:system_user_id, :deleted_user_id);', [':system_user_id' => [SystemUser::System->value, 'int'], ':deleted_user_id' => [SystemUser::Deleted->value, 'int']], return: 'affected');
+
+            return $expired + $system_users;
+        } catch (\Throwable $throwable) {
+            // Ignore deadlocks
+            if (\mb_stripos($throwable->getMessage(), 'Deadlock', 0, 'UTF-8') !== false) {
+                return 0;
+            }
+
+            Errors::error_log($throwable);
+
+            return false;
+        }
+    }
+
+    /**
      * Initialize session.
      *
      * @see  https://php.net/manual/en/sessionhandlerinterface.open.php
@@ -60,6 +161,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
      *
      * @since 5.4
      */
+    #[\Override]
     public function open(string $path, string $name): bool
     {
         // If the controller was initialized - session is ready
@@ -67,27 +169,9 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Close the session.
-     *
-     * @see  https://php.net/manual/en/sessionhandlerinterface.close.php
-     *
-     * @return bool <p>
-     *                  The return value (usually TRUE on success, FALSE on failure).
-     *                  Note this value is returned internally to PHP for processing.
-     *                  </p>
-     *
-     * @since 5.4
-     */
-    public function close(): bool
-    {
-        // No need to do anything at this point
-        return true;
-    }
-
-    /**
      * Read session data.
      *
-     * @see  https://php.net/manual/en/sessionhandlerinterface.read.php
+     * @see https://php.net/manual/en/sessionhandlerinterface.read.php
      *
      * @param string $id The session id to read data for.
      *
@@ -96,7 +180,10 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
      *                Note this value is returned internally to PHP for processing.
      *
      * @since 5.4
+     *
+     * @throws \RuntimeException
      */
+    #[\Override]
     public function read(string $id): string
     {
         // Get session data
@@ -116,10 +203,67 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         }
 
         // Login through cookie if it is present
-        $data = \array_merge($data, $this->cookieLogin());
-        $this->dataRefresh($data);
+        $data = \array_merge($data, self::cookieLogin());
+        self::dataRefresh($data);
 
         return \serialize($data);
+    }
+
+    /**
+     * Update the timestamp of a session.
+     *
+     * @see https://www.php.net/manual/sessionupdatetimestamphandlerinterface.updatetimestamp.php
+     *
+     * @param string $id   The session id
+     * @param string $data The encoded session data. This data is the
+     *                     result of the PHP internally encoding
+     *                     the $_SESSION superglobal to a serialized
+     *                     string and passing it as this parameter.
+     *                     Please note sessions use an alternative serialization method.
+     *
+     * @return bool
+     */
+    #[\Override]
+    public function updateTimestamp(string $id, string $data): bool
+    {
+        try {
+            return Query::query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP(6) WHERE `session_id` = :id;', [':id' => $id]);
+        } catch (\Throwable $e) {
+            Errors::error_log($e);
+
+            return false;
+        }
+    }
+
+    /**
+     * Validate session id.
+     *
+     * @see https://www.php.net/manual/sessionupdatetimestamphandlerinterface.validateid
+     *
+     * @param string $id The session id
+     *
+     * @return bool Note this value is returned internally to PHP for processing.
+     */
+    #[\Override]
+    public function validateId(string $id): bool
+    {
+        // Get ID
+        try {
+            $session_id = Query::query('SELECT `session_id` FROM `uc__sessions` WHERE `session_id` = :id;', [':id' => $id], return: 'value');
+        } catch (\Throwable $e) {
+            Errors::error_log($e);
+
+            return false;
+        }
+
+        // Check if it was returned
+        if (empty($session_id)) {
+            // No such session exists
+            return false;
+        }
+
+        // Validate session id using hash_equals to mitigate timing attacks
+        return \hash_equals($session_id, $id);
     }
 
     /**
@@ -134,13 +278,14 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
      *                     string and passing it as this parameter.
      *                     Please note sessions use an alternative serialization method.
      *
+     * @since 5.4
+     *
      * @return bool The return value (usually TRUE on success, FALSE on failure).
      *              Note this value is returned internally to PHP for processing.
      *
-     * @since 5.4
-     *
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
+    #[\Override]
     public function write(string $id, string $data): bool
     {
         // Deserialize to check if UserAgent data is present
@@ -203,25 +348,25 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                 [
                     // Whether a cookie is associated with this session
                     ':cookie_id' => [
-                        (empty($data['cookie_id']) ? null : $data['cookie_id']),
-                        (empty($data['cookie_id']) ? 'null' : 'string'),
+                        empty($data['cookie_id']) ? null : $data['cookie_id'],
+                        empty($data['cookie_id']) ? 'null' : 'string',
                     ],
                     // Actual session data
                     ':data' => [
-                        (empty($data) ? '' : Security::encrypt(\serialize($data))),
+                        empty($data) ? '' : Security::encrypt(\serialize($data)),
                         'string',
                     ],
                     ':id' => $id,
                     ':ip' => [
-                        (empty($data['ip']) ? null : $data['ip']),
-                        (empty($data['ip']) ? 'null' : 'string'),
+                        empty($data['ip']) ? null : $data['ip'],
+                        empty($data['ip']) ? 'null' : 'string',
                     ],
                     // What page is being viewed
                     ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : \mb_substr(\mb_ltrim($_SERVER['REQUEST_URI'], '/', 'UTF-8'), 0, 256, 'UTF-8')),
                     // user_agent details only for logged-in users for the ability to review active sessions
                     ':user_agent' => [
-                        (empty($data['useragent']['full']) ? null : $data['useragent']['full']),
-                        (empty($data['useragent']['full']) ? 'null' : 'string'),
+                        empty($data['useragent']['full']) ? null : $data['useragent']['full'],
+                        empty($data['useragent']['full']) ? 'null' : 'string',
                     ],
                     ':user_id' => [$data['user_id'], 'int'],
                 ],
@@ -233,12 +378,12 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                     [
                         ':cookie' => $data['cookie_id'],
                         ':ip' => [
-                            (empty($data['ip']) ? null : $data['ip']),
-                            (empty($data['ip']) ? 'null' : 'string'),
+                            empty($data['ip']) ? null : $data['ip'],
+                            empty($data['ip']) ? 'null' : 'string',
                         ],
                         ':user_agent' => [
-                            (empty($data['useragent']['full']) ? null : $data['useragent']['full']),
-                            (empty($data['useragent']['full']) ? 'null' : 'string'),
+                            empty($data['useragent']['full']) ? null : $data['useragent']['full'],
+                            empty($data['useragent']['full']) ? 'null' : 'string',
                         ],
                     ],
                 ];
@@ -259,126 +404,74 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     }
 
     /**
-     * Destroy a session.
+     * Attempt to log in using a cookie.
      *
-     * @see  https://php.net/manual/en/sessionhandlerinterface.destroy.php
-     *
-     * @param string $id The session ID being destroyed.
-     *
-     * @return bool The return value (usually TRUE on success, FALSE on failure).
-     *              Note this value is returned internally to PHP for processing.
-     *
-     * @since 5.4
+     * @return array{user_id?: int|string, cookie_id?: string}
      */
-    public function destroy(string $id): bool
+    private static function cookieLogin(): array
     {
-        try {
-            return Query::query('DELETE FROM `uc__sessions` WHERE `session_id`=:id', [':id' => $id]);
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
-
-            return false;
+        $cookie_name = \str_replace(['.', ' '], '_', 'rememberme_'.Config::$http_host);
+        if (!\is_string($cookie_name)) {
+            return [];
         }
-    }
 
-    /**
-     * Cleanup old sessions.
-     *
-     * @see  https://php.net/manual/en/sessionhandlerinterface.gc.php
-     *
-     * @param int $max_lifetime Sessions that have not updated for
-     *                          the last max_lifetime seconds will be removed.
-     *
-     * @return false|int Returns the number of deleted sessions on success, or false on failure. Prior to PHP version 7.1, the function returned true in case of success.
-     *                   Note this value is returned internally to PHP for processing.
-     *
-     * @since 5.4
-     */
-    public function gc(int $max_lifetime = 300): false|int
-    {
+        // Check if a cookie exists
+        if (empty($_COOKIE[$cookie_name])) {
+            return [];
+        }
+
+        // Validate cookie
         try {
-            /** @var int $expired */
-            $expired = Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND);', [':life' => [$max_lifetime, 'int']], return: 'affected');
-            /** @var int $system_users */
-            $system_users = Query::query('DELETE FROM `uc__sessions` WHERE `user_id` IN (:system_user_id, :deleted_user_id);', [':system_user_id' => [SystemUser::System->value, 'int'], ':deleted_user_id' => [SystemUser::Deleted->value, 'int']], return: 'affected');
-
-            return $expired + $system_users;
-        } catch (\Throwable $throwable) {
-            // Ignore deadlocks
-            if (\mb_stripos($throwable->getMessage(), 'Deadlock', 0, 'UTF-8') !== false) {
-                return 0;
+            // Decode data
+            /** @var array{cookie_id?: string, pass?: string} $data */
+            $data = \json_decode($_COOKIE[$cookie_name], associative: true, flags: \JSON_THROW_ON_ERROR);
+            if (
+                empty($data['cookie_id'])
+                || empty($data['pass'])
+            ) {
+                // No expected data found
+                return [];
             }
 
-            Errors::error_log($throwable);
+            // Cache Security object
+            $data['cookie_id'] = Security::decrypt($data['cookie_id']);
+            $data['pass'] = Security::decrypt($data['pass']);
 
-            return false;
-        }
-    }
+            // Get user data
+            /** @var array{validator: string, user_id: int|string} $saved_data */
+            $saved_data = Query::query(
+                'SELECT `validator`, `user_id` FROM `uc__cookies` WHERE `uc__cookies`.`cookie_id`=:id;',
+                [':id' => $data['cookie_id']],
+                return: 'row',
+            );
+            if (
+                empty($saved_data)
+                || empty($saved_data['validator'])
+            ) {
+                // No cookie found or no password present
+                return [];
+            }
 
-    /**
-     * Create session ID.
-     *
-     * @see https://php.net/manual/en/sessionidinterface.create-sid.php
-     *
-     * @return string The new session ID. Note that this value is returned internally to PHP for processing.
-     */
-    public function create_sid(): string
-    {
-        return \session_create_id();
-    }
+            // Validate cookie password
+            if (!\password_verify($data['pass'], $saved_data['validator'])) {
+                // Wrong password
+                return [];
+            }
 
-    /**
-     * Validate session id.
-     *
-     * @see https://www.php.net/manual/sessionupdatetimestamphandlerinterface.validateid
-     *
-     * @param string $id The session id
-     *
-     * @return bool Note this value is returned internally to PHP for processing.
-     */
-    public function validateId(string $id): bool
-    {
-        // Get ID
-        try {
-            $session_id = Query::query('SELECT `session_id` FROM `uc__sessions` WHERE `session_id` = :id;', [':id' => $id], return: 'value');
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
+            $user = new User($saved_data['user_id']);
+            // Reset strikes if any
+            $user->resetStrikes();
+            // Update cookie
+            $user->rememberMe($data['cookie_id']);
 
-            return false;
-        }
+            return [
+                'cookie_id' => $data['cookie_id'],
+                'user_id' => $saved_data['user_id'],
+            ];
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception);
 
-        // Check if it was returned
-        if (empty($session_id)) {
-            // No such session exists
-            return false;
-        }
-
-        // Validate session id using hash_equals to mitigate timing attacks
-        return \hash_equals($session_id, $id);
-    }
-
-    /**
-     * Update the timestamp of a session.
-     *
-     * @see https://www.php.net/manual/sessionupdatetimestamphandlerinterface.updatetimestamp.php
-     *
-     * @param string $id   The session id
-     * @param string $data The encoded session data. This data is the
-     *                     result of the PHP internally encoding
-     *                     the $_SESSION superglobal to a serialized
-     *                     string and passing it as this parameter.
-     *                     Please note sessions use an alternative serialization method.
-     *
-     * @return bool
-     */
-    public function updateTimestamp(string $id, string $data): bool
-    {
-        try {
-            return Query::query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP(6) WHERE `session_id` = :id;', [':id' => $id]);
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
-
-            return false;
+            return [];
         }
     }
 
@@ -389,13 +482,13 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
      *
      * @return void
      */
-    private function dataRefresh(array &$data): void
+    private static function dataRefresh(array &$data): void
     {
         $data['wants_privacy'] = Headers::isDNT() || Headers::isGPC();
         // Add UserAgent data
         $data['useragent'] = HomePage::$user_agent;
         // Add IP data
-        $this->getIP($data);
+        self::getIP($data);
         // Add previous and current pages to attempt to determine if this is a page refresh or a new visit
         $data['new_view'] = false;
         if (
@@ -467,9 +560,10 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
 
     /**
      * Function to return IP, country and city.
+     *
      * @param array<string, mixed> $data
      */
-    private function getIP(array &$data): void
+    private static function getIP(array &$data): void
     {
         $ip = null;
         // Get real visitor IP if behind CloudFlare network
@@ -481,7 +575,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         $forwarded = $_SERVER['HTTP_X_FORWARDED'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_FORWARDED'] ?? $_SERVER['HTTP_FORWARDED_FOR'] ?? '';
         if (!empty($forwarded)) {
             // Get a list of IPs that do validate as proper IP
-            $ips = \array_filter(\array_map(\trim(...), \explode(',', $forwarded)), static fn($value): string|false => \filter_var($value, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6));
+            $ips = \array_filter(\array_map(\trim(...), \explode(',', $forwarded)), static fn($value): false|string => \filter_var($value, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6));
             // Check if any are left
             if ($ips !== []) {
                 // Get the right-most IP
@@ -506,73 +600,5 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         }
 
         $data['ip'] = $ip ?? null;
-    }
-
-    /**
-     * Attempt to log in using a cookie.
-     *
-     * @return array
-     */
-    private function cookieLogin(): array
-    {
-        $cookie_name = \str_replace(['.', ' '], '_', 'rememberme_'.Config::$http_host);
-        if (!\is_string($cookie_name)) {
-            return [];
-        }
-
-        // Check if a cookie exists
-        if (empty($_COOKIE[$cookie_name])) {
-            return [];
-        }
-
-        // Validate cookie
-        try {
-            // Decode data
-            $data = \json_decode($_COOKIE[$cookie_name], associative: true, flags: \JSON_THROW_ON_ERROR);
-            if (
-                empty($data['cookie_id'])
-                || empty($data['pass'])
-            ) {
-                // No expected data found
-                return [];
-            }
-
-            // Cache Security object
-            $data['cookie_id'] = Security::decrypt($data['cookie_id']);
-            $data['pass'] = Security::decrypt($data['pass']);
-            // Get user data
-            $saved_data = Query::query(
-                'SELECT `validator`, `user_id` FROM `uc__cookies` WHERE `uc__cookies`.`cookie_id`=:id',
-                [':id' => $data['cookie_id']],
-                return: 'row',
-            );
-            if (
-                empty($saved_data)
-                || empty($saved_data['validator'])
-            ) {
-                // No cookie found or no password present
-                return [];
-            }
-
-            // Validate cookie password
-            if (!\password_verify($data['pass'], $saved_data['validator'])) {
-                // Wrong password
-                return [];
-            }
-
-            $user = new User($saved_data['user_id']);
-            // Reset strikes if any
-            $user->resetStrikes();
-            // Update cookie
-            $user->rememberMe($data['cookie_id']);
-            $saved_data['cookie_id'] = $data['cookie_id'];
-            unset($saved_data['validator']);
-
-            return $saved_data;
-        } catch (\Throwable $exception) {
-            Errors::error_log($exception);
-
-            return [];
-        }
     }
 }

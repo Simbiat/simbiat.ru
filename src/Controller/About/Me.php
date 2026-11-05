@@ -12,7 +12,7 @@ use App\Controller\Abstracts\StaticPage;
 final class Me extends StaticPage
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -22,22 +22,10 @@ final class Me extends StaticPage
     ];
 
     /**
-     * @var string Sub service name
-     */
-    #[\Override]
-    protected string $subservice_name = 'me';
-
-    /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
      */
     #[\Override]
     protected string $h1 = 'About me';
-
-    /**
-     * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $og_desc = 'About owner of Simbiat Software';
 
     /**
      * @var array<int, string> List of images to H2 push
@@ -52,12 +40,25 @@ final class Me extends StaticPage
     ];
 
     /**
+     * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $og_desc = 'About owner of Simbiat Software';
+
+    /**
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'me';
+
+    /**
      * Static pages have all the data in Twig templates, thus we usually return the empty array.
      *
      * @param array $path
      *
      * @return array
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         return [

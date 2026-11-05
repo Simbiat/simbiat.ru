@@ -22,7 +22,7 @@ final readonly class Database
     /**
      * Inject dependencies.
      *
-     * @param \Doctrine\DBAL\Connection $connection
+     * @param Connection $connection
      */
     public function __construct(
         /**
@@ -32,48 +32,9 @@ final readonly class Database
     ) {}
 
     /**
-     * Create a list of ordered tables for backup generation.
-     *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
-     * @return int
-     */
-    #[AsCommand(name: 'app:db:order', description: 'Generate list of ordered tables')]
-    public function order(OutputInterface $output): int
-    {
-        $output->writeln(Errors::logfmt('Generating ordered list of tables...'));
-
-        try {
-            /** @var \PDO $pdo IDE complains due to more generic object */
-            $pdo = $this->connection->getNativeConnection();
-            $dump_order = '';
-            // Get tables in order
-            new Manage($pdo);
-            foreach (Manage::showOrderedTables(Config::$database_name) as $table) {
-                // Get DDL statement
-                $create = Manage::showCreateTable($table['schema'], $table['table'], if_not_exist: true, add_use: true);
-                if ($create === null) {
-                    throw new \UnexpectedValueException('Failed to get CREATE statement for table `'.$table['table'].'`;');
-                }
-
-                // Add item to the file with dump order
-                $dump_order .= $table['table'].' ';
-            }
-
-            \file_put_contents(Config::$work_dir.'/data/backups/recommended_table_order.txt', $dump_order);
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable, cli: true);
-
-            return Command::FAILURE;
-        }
-
-        return Command::SUCCESS;
-    }
-
-    /**
      * Generate DDLs.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */
@@ -129,7 +90,7 @@ final readonly class Database
     /**
      * Create optimization scripts to run during database backup.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */
@@ -156,6 +117,45 @@ final readonly class Database
                      ->setGlobalFineTune('compress_auto_run', flag: true)
                      ->setGlobalFineTune('use_flush', flag: true);
             $analyzer->writeCommandsToFiles(Config::$work_dir.'/data/backups/optimization', Config::$database_name, [], integrate: true);
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable, cli: true);
+
+            return Command::FAILURE;
+        }
+
+        return Command::SUCCESS;
+    }
+
+    /**
+     * Create a list of ordered tables for backup generation.
+     *
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
+    #[AsCommand(name: 'app:db:order', description: 'Generate list of ordered tables')]
+    public function order(OutputInterface $output): int
+    {
+        $output->writeln(Errors::logfmt('Generating ordered list of tables...'));
+
+        try {
+            /** @var \PDO $pdo IDE complains due to more generic object */
+            $pdo = $this->connection->getNativeConnection();
+            $dump_order = '';
+            // Get tables in order
+            new Manage($pdo);
+            foreach (Manage::showOrderedTables(Config::$database_name) as $table) {
+                // Get DDL statement
+                $create = Manage::showCreateTable($table['schema'], $table['table'], if_not_exist: true, add_use: true);
+                if ($create === null) {
+                    throw new \UnexpectedValueException('Failed to get CREATE statement for table `'.$table['table'].'`;');
+                }
+
+                // Add item to the file with dump order
+                $dump_order .= $table['table'].' ';
+            }
+
+            \file_put_contents(Config::$work_dir.'/data/backups/recommended_table_order.txt', $dump_order);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable, cli: true);
 

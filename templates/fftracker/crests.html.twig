@@ -60,7 +60,7 @@
             </a>
         {% endif %}
         {% if files[path].files %}
-            {{ include('common/elements/iconlist.html.twig', {icons: files[path].files}, with_context = false) }}
+            {{ include('common/elements/iconlist.html.twig', {icons: files[path].files}, with_context: false) }}
         {% else %}
             <ul>
                 {% if files[path].name == 'Backgrounds' %}

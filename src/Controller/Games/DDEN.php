@@ -9,7 +9,7 @@ use App\Controller\Abstracts\Game;
 final class DDEN extends Game
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -19,22 +19,22 @@ final class DDEN extends Game
     ];
 
     /**
-     * @var string Sub service name
+     * @var string Path to game's JS file
      */
     #[\Override]
-    protected string $subservice_name = 'dden';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Dangerous Dave: Endless Nightmare';
+    protected string $gamemaker_js = '/assets/html5games/dden/Dangerous Dave Endless Nightmare.js';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
      */
     #[\Override]
     protected string $h1 = 'Dangerous Dave: Endless Nightmare';
+
+    /**
+     * @var bool Flag to indicate the game has sound
+     */
+    #[\Override]
+    protected bool $has_sound = true;
 
     /**
      * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
@@ -49,14 +49,14 @@ final class DDEN extends Game
     protected string $og_image = '/ogimages/dden.webp';
 
     /**
-     * @var string Path to game's JS file
+     * @var string Sub service name
      */
     #[\Override]
-    protected string $gamemaker_js = '/assets/html5games/dden/Dangerous Dave Endless Nightmare.js';
+    protected string $subservice_name = 'dden';
 
     /**
-     * @var bool Flag to indicate the game has sound
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
      */
     #[\Override]
-    protected bool $has_sound = true;
+    protected string $title = 'Dangerous Dave: Endless Nightmare';
 }

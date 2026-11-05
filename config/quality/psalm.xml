@@ -30,11 +30,31 @@
             <file name="/app/config/reference.php"/>
             <directory name="/app/node_modules"/>
             <directory name="/app/packages/DDCIcons/icons"/>
+            <directory name="/app/packages/Sniffs/tests"/>
             <directory name="/app/public"/>
             <directory name="/app/var"/>
             <directory name="/app/vendor"/>
         </ignoreFiles>
     </projectFiles>
+    <issueHandlers>
+        <UnusedVariable>
+            <errorLevel type="suppress">
+                <file name="/app/config/phpmyadmin.php"/>
+            </errorLevel>
+        </UnusedVariable>
+        <PossiblyUndefinedGlobalVariable>
+            <errorLevel type="suppress">
+                <file name="/app/config/phpmyadmin.php"/>
+            </errorLevel>
+        </PossiblyUndefinedGlobalVariable>
+        <!-- Seems to be producing false-positives for some static methods, no clear pattern observed  -->
+        <PossiblyUnusedMethod errorLevel="suppress"/>
+        <!-- Below rules produce frequent false-positives when skipping arguments or sometimes even without obvious explanation. Similar rules seem to be working fine on PHPStan level, though  -->
+        <PossiblyInvalidArgument errorLevel="suppress"/>
+        <InvalidReturnType errorLevel="suppress"/>
+        <InvalidReturnStatement errorLevel="suppress"/>
+        <MixedReturnTypeCoercion errorLevel="suppress"/>
+    </issueHandlers>
     <fileExtensions>
         <extension name=".php"/>
         <extension name=".twig"

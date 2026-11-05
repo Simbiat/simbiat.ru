@@ -19,19 +19,34 @@ use Simbiat\http20\Headers;
 abstract class Api
 {
     /**
-     * @var array Supported edges
+     * @var bool Flag indicating, that lack of authentication can be bypassed by an access_token
      */
-    protected array $sub_routes = [];
+    protected bool $access_token_possible = false;
 
     /**
-     * @var array Description of the nodes (need to be in the same order)
+     * @var array List of allowed origins, if we want to limit them
      */
-    protected array $routes_description = [];
+    protected array $allowed_origins = [];
 
     /**
-     * @var bool Flag to indicate that this is a top level node (false by default)
+     * @var bool Flag indicating, that authentication is required
      */
-    protected bool $top_level = false;
+    protected bool $authentication_needed = false;
+
+    /**
+     * @var int Cache age, in case we prefer the generated page to be cached
+     */
+    protected int $cache_age = 0;
+
+    /**
+     * @var bool Flag to indicate need to validate CSRF
+     */
+    protected bool $csrf = false;
+
+    /**
+     * @var array Description of the node
+     */
+    protected array $description = [];
 
     /**
      * @var bool Flag to indicate that this is the lowest level
@@ -44,9 +59,14 @@ abstract class Api
     protected array $methods = ['GET' => ''];
 
     /**
-     * @var array Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+     * @var array List of permissions, from which at least 1 is required to have access the node
      */
-    protected array $verbs = [];
+    protected array $required_permission = [];
+
+    /**
+     * @var array Description of the nodes (need to be in the same order)
+     */
+    protected array $routes_description = [];
 
     /**
      * @var bool Flag to indicate, that no database is required for this node
@@ -54,39 +74,19 @@ abstract class Api
     protected bool $static = false;
 
     /**
-     * @var int Cache age, in case we prefer the generated page to be cached
+     * @var array Supported edges
      */
-    protected int $cache_age = 0;
+    protected array $sub_routes = [];
 
     /**
-     * @var array Description of the node
+     * @var bool Flag to indicate that this is a top level node (false by default)
      */
-    protected array $description = [];
+    protected bool $top_level = false;
 
     /**
-     * @var bool Flag indicating, that authentication is required
+     * @var array Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
      */
-    protected bool $authentication_needed = false;
-
-    /**
-     * @var bool Flag indicating, that lack of authentication can be bypassed by an access_token
-     */
-    protected bool $access_token_possible = false;
-
-    /**
-     * @var array List of permissions, from which at least 1 is required to have access the node
-     */
-    protected array $required_permission = [];
-
-    /**
-     * @var bool Flag to indicate need to validate CSRF
-     */
-    protected bool $csrf = false;
-
-    /**
-     * @var array List of allowed origins, if we want to limit them
-     */
-    protected array $allowed_origins = [];
+    protected array $verbs = [];
 
     /**
      * This is a general routing check for supported node.
@@ -153,7 +153,7 @@ abstract class Api
 
         if ($this->top_level) {
             // Override template
-            $result['template_override'] = 'common/pages/api.html.twig';
+            $result = ['template_override' => 'common/pages/api.html.twig'];
             // Prepare JSON output
             $result['json_ready'] = ['status' => 200];
             if (
@@ -255,53 +255,6 @@ abstract class Api
     }
 
     /**
-     * Method to filter output fields.
-     *
-     * @param array $array
-     *
-     * @return void
-     */
-    final protected function fieldFilter(array &$array): void
-    {
-        $fields = $_GET['fields'] ?? $_POST['fields'] ?? null;
-        if (empty($fields)) {
-            return;
-        }
-
-        $filter = \explode(',', $fields);
-        if (\count($filter) === 0) {
-            return;
-        }
-
-        foreach ($array as $field => $value) {
-            if (!\in_array($field, $filter, strict: true)) {
-                unset($array[$field]);
-            }
-        }
-    }
-
-    /**
-     * Check that method used is allowed.
-     *
-     * @return bool
-     */
-    final protected function methodCheck(): bool
-    {
-        // Generate a list of allowed methods
-        $allowed_methods = \array_keys(\array_merge(['HEAD' => '', 'OPTIONS' => '', 'GET' => ''], $this->methods));
-        // Send headers
-        if (!\headers_sent()) {
-            \header('Access-Control-Allow-Methods: '.\implode(', ', $allowed_methods));
-            \header('Allow: '.\implode(', ', $allowed_methods));
-        }
-
-        // Check if allowed method is used.
-
-        /* @noinspection InArrayMissUseInspection -- EA incorrectly suggests use of `array_key_exists`, which does not fit here, due to how $allowed_methods is used in the whole method*/
-        return \in_array(HomePage::$method, $allowed_methods, strict: true);
-    }
-
-    /**
      * Function to help protect against CSRF. Suggested using for forms or APIs. Needs to be used before writing anything to `$_SESSION`.
      *
      * @return bool
@@ -376,11 +329,39 @@ abstract class Api
     }
 
     /**
+     * Method to filter output fields.
+     *
+     * @param array $array
+     *
+     * @return void
+     */
+    final protected function fieldFilter(array &$array): void
+    {
+        $fields = $_GET['fields'] ?? $_POST['fields'] ?? null;
+        if (empty($fields)) {
+            return;
+        }
+
+        $filter = \explode(',', $fields);
+        if (\count($filter) === 0) {
+            return;
+        }
+
+        foreach ($array as $field => $value) {
+            if (!\in_array($field, $filter, strict: true)) {
+                unset($array[$field]);
+            }
+        }
+    }
+
+    /**
      * This is an actual API response generation based on further details of the $path.
      *
      * @param array $path
      *
      * @return array<string>
+     *
+     * @throws \UnexpectedValueException
      */
     abstract protected function genData(array $path): array;
 
@@ -390,6 +371,8 @@ abstract class Api
      * @param array<int, mixed> $path
      *
      * @return array
+     *
+     * @throws \UnexpectedValueException
      */
     protected function getData(array $path): array
     {
@@ -463,5 +446,26 @@ abstract class Api
         }
 
         return $result;
+    }
+
+    /**
+     * Check that method used is allowed.
+     *
+     * @return bool
+     */
+    final protected function methodCheck(): bool
+    {
+        // Generate a list of allowed methods
+        $allowed_methods = \array_keys(\array_merge(['HEAD' => '', 'OPTIONS' => '', 'GET' => ''], $this->methods));
+        // Send headers
+        if (!\headers_sent()) {
+            \header('Access-Control-Allow-Methods: '.\implode(', ', $allowed_methods));
+            \header('Allow: '.\implode(', ', $allowed_methods));
+        }
+
+        // Check if allowed method is used.
+
+        /* @noinspection InArrayMissUseInspection -- EA incorrectly suggests use of `array_key_exists`, which does not fit here, due to how $allowed_methods is used in the whole method */
+        return \in_array(HomePage::$method, $allowed_methods, strict: true);
     }
 }

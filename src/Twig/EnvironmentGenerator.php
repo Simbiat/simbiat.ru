@@ -20,12 +20,12 @@ final class EnvironmentGenerator
     /**
      * Function to get the actual Twig environment object.
      *
-     * @return \Twig\Environment
+     * @return ?Environment
      */
-    public static function getTwig(): Environment
+    public static function getTwig(): ?Environment
     {
         if (self::$environment !== null) {
-            # TODO: needs to move to kernel.request listener
+            // TODO: needs to move to kernel.request listener
             self::$environment->getExtension(CoreExtension::class)->setTimezone($_SESSION['timezone'] ?? $_SERVER['HTTP_X_CLIENT_TIMEZONE'] ?? 'UTC');
         }
 

@@ -17,6 +17,8 @@ use Simbiat\Database\Query;
 
 /**
  * Generic class for FFXIV entities.
+ *
+ * @api TODO: most likely will need to remove once entities migrate to Doctrine. For now this is mostly to silence Psalm.
  */
 abstract class AbstractEntity extends Entity
 {
@@ -27,9 +29,245 @@ abstract class AbstractEntity extends Entity
     protected ?array $lodestone = null;
 
     /**
+     * Clean component crests to have a proper image, even if they are empty.
+     *
+     * @param array $results
+     *
+     * @return array
+     */
+    final public static function cleanCrestResults(array $results): array
+    {
+        foreach ($results as $key => $result) {
+            if (
+                isset($result['crest_part_1'])
+                || isset($result['crest_part_2'])
+                || isset($result['crest_part_3'])
+            ) {
+                $results[$key]['icon'] = self::crestToFavicon([$result['crest_part_1'], $result['crest_part_2'], $result['crest_part_3']]);
+                if (
+                    isset($result['gc_id'])
+                    && \str_contains($results[$key]['icon'], 'not_found')
+                    && \in_array($result['gc_id'], [1, 2, 3], strict: true)
+                ) {
+                    $results[$key]['icon'] = $result['gc_id'];
+                }
+            } else {
+                $results[$key]['icon'] = '/assets/images/fftracker/merged-crests/not_found.webp';
+            }
+
+            unset($results[$key]['crest_part_1'], $results[$key]['crest_part_2'], $results[$key]['crest_part_3'], $results[$key]['gc_id']);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Function to turn a group crest into a favicon.
+     *
+     * @param array<int, mixed> $images
+     *
+     * @return string
+     */
+    final public static function crestToFavicon(array $images): string
+    {
+        $images = self::sortComponents($images);
+        $merged_filenames = (empty($images[0]) ? '' : \basename($images[0])).(empty($images[1]) ? '' : \basename($images[1])).(empty($images[2]) ? '' : \basename($images[2]));
+        // Get hash of the merged images based on their names
+        $crest_hash = \hash('sha3-512', $merged_filenames);
+        // Get a full path
+        $full_path = \mb_substr($crest_hash, 0, 2, 'UTF-8').'/'.\mb_substr($crest_hash, 2, 2, 'UTF-8').'/'.$crest_hash.'.webp';
+        // Generate an image file, if missing
+        if (!\is_file(Config::$merged_crests_cache.$full_path)) {
+            self::crestMerge($images, Config::$merged_crests_cache.$full_path);
+        }
+
+        return '/assets/images/fftracker/merged-crests/'.$full_path;
+    }
+
+    /**
+     * Function to download crest components from Lodestone.
+     *
+     * @param array $images
+     *
+     * @return void
+     */
+    final public function downloadCrestComponents(array $images): void
+    {
+        foreach ($images as $key => $image) {
+            if (!empty($image)) {
+                // Emblem S7f_4f44211af230eac35370ef3e9fe15e51_07_128x128.png is not working, so it should be S7f_4f44211af230eac35370ef3e9fe15e51_08_128x128.png
+                // This was fixed by SE at some point, but now it's broken again, so we change the URL ourselves
+                $url_to_download = \preg_replace('/S7f_4f44211af230eac35370ef3e9fe15e51_07_128x128.png/', 'S7f_4f44211af230eac35370ef3e9fe15e51_08_128x128.png', $image);
+                // Check if we have already downloaded the component image and use that one to speed up the process
+                if ($key === 0) {
+                    // If it's background, we need to check if a subdirectory exists and create it, and create it if it does not
+                    $sub_dir = \mb_substr(\basename($image), 0, 3, 'UTF-8');
+                    $concurrent_directory = Config::$crests_components.'backgrounds/'.$sub_dir;
+                    if (
+                        !\is_dir($concurrent_directory)
+                        && !\mkdir($concurrent_directory)
+                        && !\is_dir($concurrent_directory)
+                    ) {
+                        throw new \RuntimeException(\sprintf('Directory "%s" was not created', $concurrent_directory));
+                    }
+                } elseif ($key === 2) {
+                    // If it's an emblem, we need to check if a subdirectory exists and create it, and create it if it does not
+                    $sub_dir = \mb_substr(\basename($image), 0, 3, 'UTF-8');
+                    $concurrent_directory = Config::$crests_components.'emblems/'.$sub_dir;
+                    if (
+                        !\is_dir($concurrent_directory)
+                        && !\mkdir($concurrent_directory)
+                        && !\is_dir($concurrent_directory)
+                    ) {
+                        throw new \RuntimeException(\sprintf('Directory "%s" was not created', $concurrent_directory));
+                    }
+                } else {
+                    $sub_dir = '';
+                }
+
+                $cached_image = self::crestToLocal($image);
+                if (!empty($cached_image)) {
+                    // Try downloading the component if it's not present locally
+                    if (!\is_file($cached_image)) {
+                        Images::download($url_to_download, $cached_image, convert: false);
+                    }
+
+                    // If it's an emblem, check that other emblem variants are downloaded as well
+                    if ($key === 2) {
+                        $emblem_index = (int) \preg_replace('/(.+_)(\d{2})(_.+\.png)/', '$2', \basename($image));
+                        for ($iteration = 0; $iteration <= 7; ++$iteration) {
+                            if ($iteration !== $emblem_index) {
+                                $emblem_file = Config::$crests_components.'emblems/'.$sub_dir.'/'.\preg_replace('/(.+_)(\d{2})(_.+\.png)/', '${1}0'.$iteration.'$3', \basename($image));
+                                if (!\is_file($emblem_file)) {
+                                    // We generate the link to download an emblem
+                                    // In addition S7f_4f44211af230eac35370ef3e9fe15e51_07_128x128.png is not working, so it should be S7f_4f44211af230eac35370ef3e9fe15e51_08_128x128.png
+                                    // This was fixed by SE at some point, but now it's broken again, so we change the URL ourselves
+                                    $url_to_download = \preg_replace(['/(.+_)(\d{2})(_.+\.png)/', '/S7f_4f44211af230eac35370ef3e9fe15e51_07_128x128.png/'], ['${1}0'.$iteration.'$3', 'S7f_4f44211af230eac35370ef3e9fe15e51_08_128x128.png'], $image);
+
+                                    try {
+                                        Images::download($url_to_download, $emblem_file, convert: false);
+                                    } catch (\Throwable) {
+                                        // Do nothing, not critical
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Get entity data from Lodestone.
+     *
+     * @param bool $allow_sleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
+     *
+     * @return array|string
+     *
+     * @internal
+     */
+    abstract public function getFromLodestone(bool $allow_sleep = false): array|string;
+
+    /**
+     * Register the entity if it has not been registered already.
+     *
+     * @return bool|int
+     *
+     * @internal
+     */
+    final public function register(): bool|int
+    {
+        // Check if ID was set
+        if ($this->id === null) {
+            return 400;
+        }
+
+        $id_column = match ($this::ENTITY_TYPE) {
+            'character' => 'character_id',
+            'achievement' => 'achievement_id',
+            'freecompany' => 'fc_id',
+            'linkshell', 'crossworldlinkshell' => 'ls_id',
+            'pvpteam' => 'pvp_id',
+        };
+
+        try {
+            $check = Query::query('SELECT `'.$id_column.'` FROM `ffxiv__'.($this::ENTITY_TYPE === 'crossworldlinkshell' ? 'linkshell' : $this::ENTITY_TYPE).'` WHERE `'.$id_column.'` = :id', [':id' => $this->id], return: 'check');
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception, debug: $this->debug);
+
+            return 503;
+        }
+
+        if ($check) {
+            // Entity already registered
+            return 409;
+        }
+
+        // Try to get data from Lodestone
+        try {
+            $temp_lodestone = $this->getFromLodestone();
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception, 'Failed to get '.$this::ENTITY_TYPE.' with ID '.$this->id, debug: $this->debug);
+
+            return false;
+        }
+
+        if (!\is_array($temp_lodestone)) {
+            return 503;
+        }
+
+        $this->lodestone = $temp_lodestone;
+        if (
+            isset($this->lodestone['404'])
+            && $this->lodestone['404'] === true
+        ) {
+            return 404;
+        }
+
+        // Characters can mark their profiles as private on Lodestone since Dawntrail
+        if (
+            $this::ENTITY_TYPE === 'character'
+            && isset($this->lodestone['private'])
+            && $this->lodestone['private'] === true
+        ) {
+            return 403;
+        }
+
+        // At some point, empty linkshells became possible on lodestone, those that have a page, but no members at all, and are not searchable by name. Possibly private linkshells or something like that
+        // Since they lack some basic information, it's not possible to register them, so treat them as private
+        if (
+            isset($this->lodestone['empty'])
+            && $this->lodestone['empty'] === true
+            && \in_array($this::ENTITY_TYPE, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'], strict: true)
+        ) {
+            return 403;
+        }
+
+        unset($this->lodestone['404']);
+
+        return $this->updateDB();
+    }
+
+    /**
+     * Function to remove Lodestone domain(s) from image links.
+     *
+     * @param string $url
+     *
+     * @return string
+     */
+    final public static function removeLodestoneDomain(string $url): string
+    {
+        return \str_replace([
+            'https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/',
+            'https://lds-img.finalfantasyxiv.com/itemicon/',
+        ], '', $url);
+    }
+
+    /**
      * Attempt to schedule an update for the entity.
      *
-     * @return null|int
+     * @return int|null
      *
      * @internal
      */
@@ -67,7 +305,11 @@ abstract class AbstractEntity extends Entity
                     $cron_task->add();
                     $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
                     if ($scheduled) {
-                        return \strtotime($scheduled);
+                        $result = \strtotime($scheduled);
+
+                        return $result === false
+                            ? null
+                            : $result;
                     }
                 } catch (\Throwable) {
                     return null;
@@ -86,7 +328,11 @@ abstract class AbstractEntity extends Entity
                 $cron_task = new TaskInstance('ff_update_entity', [(string) $this->id, $this::ENTITY_TYPE]);
                 $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
                 if ($scheduled) {
-                    return \strtotime($scheduled);
+                    $result = \strtotime($scheduled);
+
+                    return $result === false
+                        ? null
+                        : $result;
                 }
 
                 // Check if there were not too many items scheduled earlier
@@ -96,7 +342,11 @@ abstract class AbstractEntity extends Entity
                     $cron_task->settingsFromArray(['priority' => 1, 'message' => 'Updating '.$this::ENTITY_TYPE.' with ID '.$this->id])->add();
                     $scheduled = $cron_task->next_time?->format('Y-m-d H:i:s.u');
                     if ($scheduled) {
-                        return \strtotime($scheduled);
+                        $result = \strtotime($scheduled);
+
+                        return $result === false
+                            ? null
+                            : $result;
                     }
 
                     return null;
@@ -236,254 +486,13 @@ abstract class AbstractEntity extends Entity
     }
 
     /**
-     * Get entity data from Lodestone.
-     *
-     * @param bool $allow_sleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
-     *
-     * @return array|string
-     *
-     * @internal
-     */
-    abstract public function getFromLodestone(bool $allow_sleep = false): array|string;
-
-    /**
-     * Function to update the entity in DB.
-     *
-     * @return bool
-     */
-    abstract protected function updateDB(): bool;
-
-    /**
-     * Register the entity if it has not been registered already.
-     *
-     * @return bool|int
-     *
-     * @internal
-     */
-    final public function register(): bool|int
-    {
-        // Check if ID was set
-        if ($this->id === null) {
-            return 400;
-        }
-
-        $id_column = match ($this::ENTITY_TYPE) {
-            'character' => 'character_id',
-            'achievement' => 'achievement_id',
-            'freecompany' => 'fc_id',
-            'linkshell', 'crossworldlinkshell' => 'ls_id',
-            'pvpteam' => 'pvp_id',
-        };
-
-        try {
-            $check = Query::query('SELECT `'.$id_column.'` FROM `ffxiv__'.($this::ENTITY_TYPE === 'crossworldlinkshell' ? 'linkshell' : $this::ENTITY_TYPE).'` WHERE `'.$id_column.'` = :id', [':id' => $this->id], return: 'check');
-        } catch (\Throwable $exception) {
-            Errors::error_log($exception, debug: $this->debug);
-
-            return 503;
-        }
-
-        if ($check) {
-            // Entity already registered
-            return 409;
-        }
-
-        // Try to get data from Lodestone
-        try {
-            $temp_lodestone = $this->getFromLodestone();
-        } catch (\Throwable $exception) {
-            Errors::error_log($exception, 'Failed to get '.$this::ENTITY_TYPE.' with ID '.$this->id, debug: $this->debug);
-
-            return false;
-        }
-
-        if (!\is_array($temp_lodestone)) {
-            return 503;
-        }
-
-        $this->lodestone = $temp_lodestone;
-        if (
-            isset($this->lodestone['404'])
-            && $this->lodestone['404'] === true
-        ) {
-            return 404;
-        }
-
-        // Characters can mark their profiles as private on Lodestone since Dawntrail
-        if (
-            $this::ENTITY_TYPE === 'character'
-            && isset($this->lodestone['private'])
-            && $this->lodestone['private'] === true
-        ) {
-            return 403;
-        }
-
-        // At some point, empty linkshells became possible on lodestone, those that have a page, but no members at all, and are not searchable by name. Possibly private linkshells or something like that
-        // Since they lack some basic information, it's not possible to register them, so treat them as private
-        if (
-            isset($this->lodestone['empty'])
-            && $this->lodestone['empty'] === true
-            && \in_array($this::ENTITY_TYPE, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'], strict: true)
-        ) {
-            return 403;
-        }
-
-        unset($this->lodestone['404']);
-
-        return $this->updateDB();
-    }
-
-    /**
-     * Function to download crest components from Lodestone.
-     *
-     * @param array $images
-     *
-     * @return void
-     */
-    final public function downloadCrestComponents(array $images): void
-    {
-        foreach ($images as $key => $image) {
-            if (!empty($image)) {
-                // Emblem S7f_4f44211af230eac35370ef3e9fe15e51_07_128x128.png is not working, so it should be S7f_4f44211af230eac35370ef3e9fe15e51_08_128x128.png
-                // This was fixed by SE at some point, but now it's broken again, so we change the URL ourselves
-                $url_to_download = \preg_replace('/S7f_4f44211af230eac35370ef3e9fe15e51_07_128x128.png/', 'S7f_4f44211af230eac35370ef3e9fe15e51_08_128x128.png', $image);
-                // Check if we have already downloaded the component image and use that one to speed up the process
-                if ($key === 0) {
-                    // If it's background, we need to check if a subdirectory exists and create it, and create it if it does not
-                    $sub_dir = \mb_substr(\basename($image), 0, 3, 'UTF-8');
-                    $concurrent_directory = Config::$crests_components.'backgrounds/'.$sub_dir;
-                    if (
-                        !\is_dir($concurrent_directory)
-                        && !\mkdir($concurrent_directory)
-                        && !\is_dir($concurrent_directory)
-                    ) {
-                        throw new \RuntimeException(\sprintf('Directory "%s" was not created', $concurrent_directory));
-                    }
-                } elseif ($key === 2) {
-                    // If it's an emblem, we need to check if a subdirectory exists and create it, and create it if it does not
-                    $sub_dir = \mb_substr(\basename($image), 0, 3, 'UTF-8');
-                    $concurrent_directory = Config::$crests_components.'emblems/'.$sub_dir;
-                    if (
-                        !\is_dir($concurrent_directory)
-                        && !\mkdir($concurrent_directory)
-                        && !\is_dir($concurrent_directory)
-                    ) {
-                        throw new \RuntimeException(\sprintf('Directory "%s" was not created', $concurrent_directory));
-                    }
-                } else {
-                    $sub_dir = '';
-                }
-
-                $cached_image = self::crestToLocal($image);
-                if (!empty($cached_image)) {
-                    // Try downloading the component if it's not present locally
-                    if (!\is_file($cached_image)) {
-                        Images::download($url_to_download, $cached_image, convert: false);
-                    }
-
-                    // If it's an emblem, check that other emblem variants are downloaded as well
-                    if ($key === 2) {
-                        $emblem_index = (int) \preg_replace('/(.+_)(\d{2})(_.+\.png)/', '$2', \basename($image));
-                        for ($iteration = 0; $iteration <= 7; ++$iteration) {
-                            if ($iteration !== $emblem_index) {
-                                $emblem_file = Config::$crests_components.'emblems/'.$sub_dir.'/'.\preg_replace('/(.+_)(\d{2})(_.+\.png)/', '${1}0'.$iteration.'$3', \basename($image));
-                                if (!\is_file($emblem_file)) {
-                                    // We generate the link to download an emblem
-                                    // In addition S7f_4f44211af230eac35370ef3e9fe15e51_07_128x128.png is not working, so it should be S7f_4f44211af230eac35370ef3e9fe15e51_08_128x128.png
-                                    // This was fixed by SE at some point, but now it's broken again, so we change the URL ourselves
-                                    $url_to_download = \preg_replace(['/(.+_)(\d{2})(_.+\.png)/', '/S7f_4f44211af230eac35370ef3e9fe15e51_07_128x128.png/'], ['${1}0'.$iteration.'$3', 'S7f_4f44211af230eac35370ef3e9fe15e51_08_128x128.png'], $image);
-
-                                    try {
-                                        Images::download($url_to_download, $emblem_file, convert: false);
-                                    } catch (\Throwable) {
-                                        // Do nothing, not critical
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Function to remove Lodestone domain(s) from image links.
-     *
-     * @param string $url
-     *
-     * @return string
-     */
-    final public static function removeLodestoneDomain(string $url): string
-    {
-        return \str_replace([
-            'https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/',
-            'https://lds-img.finalfantasyxiv.com/itemicon/',
-        ], '', $url);
-    }
-
-    /**
-     * Function to turn a group crest into a favicon.
-     *
-     * @param array<int, mixed> $images
-     *
-     * @return string
-     */
-    final public static function crestToFavicon(array $images): string
-    {
-        $images = self::sortComponents($images);
-        $merged_filenames = (empty($images[0]) ? '' : \basename($images[0])).(empty($images[1]) ? '' : \basename($images[1])).(empty($images[2]) ? '' : \basename($images[2]));
-        // Get hash of the merged images based on their names
-        $crest_hash = \hash('sha3-512', $merged_filenames);
-        // Get a full path
-        $full_path = \mb_substr($crest_hash, 0, 2, 'UTF-8').'/'.\mb_substr($crest_hash, 2, 2, 'UTF-8').'/'.$crest_hash.'.webp';
-        // Generate an image file, if missing
-        if (!\is_file(Config::$merged_crests_cache.$full_path)) {
-            self::crestMerge($images, Config::$merged_crests_cache.$full_path);
-        }
-
-        return '/assets/images/fftracker/merged-crests/'.$full_path;
-    }
-
-    /**
-     * Clean component crests to have a proper image, even if they are empty.
-     *
-     * @param array $results
-     *
-     * @return array
-     */
-    final public static function cleanCrestResults(array $results): array
-    {
-        foreach ($results as $key => $result) {
-            if (
-                isset($result['crest_part_1'])
-                || isset($result['crest_part_2'])
-                || isset($result['crest_part_3'])
-            ) {
-                $results[$key]['icon'] = self::crestToFavicon([$result['crest_part_1'], $result['crest_part_2'], $result['crest_part_3']]);
-                if (
-                    isset($result['gc_id'])
-                    && \str_contains($results[$key]['icon'], 'not_found')
-                    && \in_array($result['gc_id'], [1, 2, 3], strict: true)
-                ) {
-                    $results[$key]['icon'] = $result['gc_id'];
-                }
-            } else {
-                $results[$key]['icon'] = '/assets/images/fftracker/merged-crests/not_found.webp';
-            }
-
-            unset($results[$key]['crest_part_1'], $results[$key]['crest_part_2'], $results[$key]['crest_part_3'], $results[$key]['gc_id']);
-        }
-
-        return $results;
-    }
-
-    /**
      * Helper function to add new characters to Cron en masse.
      *
      * @param array $members
      *
      * @return void
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     protected function charMassCron(array $members): void
     {
@@ -503,6 +512,13 @@ abstract class AbstractEntity extends Entity
         }
     }
 
+    /**
+     * @param int|string $character_id
+     * @param array      $lodestone_data
+     * @param array      $queries
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
     protected function charQuickRegister(int|string $character_id, array &$lodestone_data, array &$queries): void
     {
         // Check if character is registered
@@ -529,11 +545,51 @@ abstract class AbstractEntity extends Entity
     }
 
     /**
+     * Function to merge 1 to 3 images making up a crest on Lodestone into 1 stored on the tracker side.
+     *
+     * @param array  $images     Array of crest components
+     * @param string $final_path Where to save the final file
+     * @param bool   $debug      Debug mode to log errors
+     *
+     * @return bool
+     */
+    protected static function crestMerge(array $images, #[FileReference] string $final_path, bool $debug = false): bool
+    {
+        try {
+            // Don't do anything if an empty array
+            if ($images === []) {
+                return false;
+            }
+
+            // Check if the path exists and create it recursively, if not
+            /* @noinspection PhpUsageOfSilenceOperatorInspection */
+            if (
+                !\is_dir(\dirname($final_path))
+                && !@\mkdir(\dirname($final_path), recursive: true)
+                && !\is_dir(\dirname($final_path))
+            ) {
+                throw new \RuntimeException(\sprintf('Directory "%s" was not created', $final_path));
+            }
+
+            $gd = Images::merge($images);
+
+            // Save the file
+            return $gd instanceof \GdImage && \imagewebp($gd, $final_path, \IMG_WEBP_LOSSLESS);
+        } catch (\Throwable $exception) {
+            if ($debug) {
+                Errors::error_log($exception, debug: $debug);
+            }
+
+            return false;
+        }
+    }
+
+    /**
      * Function converts image URL to a local path.
      *
      * @param string $image
      *
-     * @return null|string
+     * @return string|null
      */
     protected static function crestToLocal(string $image): ?string
     {
@@ -592,44 +648,11 @@ abstract class AbstractEntity extends Entity
     }
 
     /**
-     * Function to merge 1 to 3 images making up a crest on Lodestone into 1 stored on the tracker side.
-     *
-     * @param array  $images     Array of crest components
-     * @param string $final_path Where to save the final file
-     * @param bool   $debug      Debug mode to log errors
+     * Function to update the entity in DB.
      *
      * @return bool
      */
-    protected static function crestMerge(array $images, #[FileReference] string $final_path, bool $debug = false): bool
-    {
-        try {
-            // Don't do anything if an empty array
-            if ($images === []) {
-                return false;
-            }
-
-            // Check if the path exists and create it recursively, if not
-            /* @noinspection PhpUsageOfSilenceOperatorInspection */
-            if (
-                !\is_dir(\dirname($final_path))
-                && !@\mkdir(\dirname($final_path), recursive: true)
-                && !\is_dir(\dirname($final_path))
-            ) {
-                throw new \RuntimeException(\sprintf('Directory "%s" was not created', $final_path));
-            }
-
-            $gd = Images::merge($images);
-
-            // Save the file
-            return $gd instanceof \GdImage && \imagewebp($gd, $final_path, \IMG_WEBP_LOSSLESS);
-        } catch (\Throwable $exception) {
-            if ($debug) {
-                Errors::error_log($exception, debug: $debug);
-            }
-
-            return false;
-        }
-    }
+    abstract protected function updateDB(): bool;
 
     /**
      * Remove a scheduled job from Cron, if any.

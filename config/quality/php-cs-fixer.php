@@ -4,7 +4,6 @@
 
 declare(strict_types=1);
 
-use JetBrains\PhpStorm\Pure;
 use PhpCsFixer\Config;
 use PhpCsFixer\Config\RuleCustomisationPolicyInterface;
 use PhpCsFixer\Finder;
@@ -18,9 +17,14 @@ final readonly class SkipSpecificFilesPolicy implements RuleCustomisationPolicyI
      *
      * @return non-empty-string
      */
+    #[\Override]
     public function getPolicyVersionForCache(): string
     {
-        return hash_file(PHP_VERSION_ID >= 8_01_00 ? 'xxh128' : 'md5', __FILE__);
+        $hash = hash_file(\PHP_VERSION_ID >= 8_01_00 ? 'xxh128' : 'md5', __FILE__);
+
+        return $hash === false
+            ? ''
+            : $hash;
     }
 
     /**
@@ -28,10 +32,10 @@ final readonly class SkipSpecificFilesPolicy implements RuleCustomisationPolicyI
      *
      * @return array
      */
-    #[Pure]
+    #[\Override]
     public function getRuleCustomisers(): array
     {
-        $skip_for_files = (static fn(array $paths): \Closure => static fn(SplFileInfo $file): bool => !in_array($file->getPathname(), $paths, strict: true));
+        $skip_for_files = (static fn(array $paths): \Closure => static fn(\SplFileInfo $file): bool => !in_array($file->getPathname(), $paths, strict: true));
 
         return [
             'date_time_immutable' => $skip_for_files([
@@ -106,7 +110,7 @@ return new Config()
         'date_time_create_from_format_call' => true,
         'date_time_immutable' => true,
         'explicit_indirect_variable' => true,
-        'explicit_string_variable' => true,
+        'explicit_string_variable' => false,
         'final_class' => true,
         'final_internal_class' => true,
         'final_public_method_for_abstract_class' => true,
@@ -132,8 +136,7 @@ return new Config()
         'native_function_invocation' => ['include' => ['@internal', '@compiler_optimized'], 'scope' => 'namespaced', 'strict' => true],
         // PHPStorm @noinspection does not work with `//` comments
         'single_line_comment_style' => ['comment_types' => ['hash']],
-        // Need to empty `phpdoc_tags`, because then it conflicts SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation, which is needed, because some tools seem to rely on FQN.
-        'fully_qualified_strict_types' => ['leading_backslash_in_global_namespace' => true, 'import_symbols' => true, 'phpdoc_tags' => []],
+        'fully_qualified_strict_types' => ['leading_backslash_in_global_namespace' => true, 'import_symbols' => true],
         // False-positives with some constructs (like phpcs:disable) and with descriptions that are multiple sentences.
         'phpdoc_annotation_without_dot' => false,
         // Conflicts other SAT
@@ -152,8 +155,17 @@ return new Config()
         'phpdoc_no_empty_return' => false,
         // If turned on, this affects multi-line declarations (Symfony constructor), which benefit from alignments
         'type_declaration_spaces' => false,
+        // The next 2 are replace SlevomatCodingStandard.TypeHints.NullTypeHintOnLastPosition
+        'ordered_types' => ['null_adjustment' => 'always_last'],
+        'phpdoc_types_order' => ['null_adjustment' => 'always_last'],
+        'blank_line_before_statement' => ['statements' => ['break', 'case', 'continue', 'declare', 'default', 'exit', 'goto', 'include', 'include_once', 'phpdoc', 'require', 'require_once', 'return', 'switch', 'throw', 'try', 'yield', 'yield_from']],
+        // Explicit binary mode
+        'fopen_flags' => ['b_mode' => true],
+        // `true` is set by Symfony, but this conflicts with PHPStorm's logic, and there is no way to control it there
+        'statement_indentation' => ['stick_comment_to_next_continuous_control_statement' => false],
+        'phpdoc_to_comment' => ['ignored_tags' => ['psalm-suppress']],
     ])
-    ->setRuleCustomisationPolicy(new SkipSpecificFilesPolicy())
+    ->setRuleCustomisationPolicy(new \SkipSpecificFilesPolicy())
     ->setFinder(
         new Finder()
             // root folder to check

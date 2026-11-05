@@ -20,219 +20,72 @@ use Simbiat\StringHelpers\Sanitize;
 
 /**
  * Forum post.
+ *
+ * @api TODO: most likely will need to remove once entities migrate to Doctrine. For now this is mostly to silence Psalm.
  */
 final class Post extends Entity
 {
-    public string $name = '';
+    /**
+     * @var string|null Access token for support tickets from contact form
+     */
+    public ?string $access_token = null;
 
-    public string $type = 'Blog';
-
-    public bool $system = true;
-
-    public bool $private = false;
-
-    public bool $locked = false;
-
-    public bool $owned = false;
-
-    public ?int $created = null;
-
-    public ?int $published = null;
+    public array $attachments = [];
 
     public int $author = 1;
 
     public string $author_name = 'Deleted user';
 
-    public ?int $updated = null;
+    public string $avatar = '/assets/images/avatar.svg';
+
+    public ?int $created = null;
+
+    public int $dislikes = 0;
 
     public int $editor = 1;
 
     public string $editor_name = 'Deleted user';
 
-    public ?int $thread_id = null;
-
-    public ?int $thread_author = 1;
-
-    public array $reply_to = [];
-
-    public string $text = '';
-
-    public string $avatar = '/assets/images/avatar.svg';
-
-    /**
-     * @var array List of parents for the section
-     */
-    public array $parents = [];
+    public ?int $is_liked = null;
 
     /**
      * @var int Likes of the post
      */
     public int $likes = 0;
 
-    public int $dislikes = 0;
+    public bool $locked = false;
 
-    public ?int $is_liked = null;
+    public string $name = '';
+
+    public bool $owned = false;
 
     /**
      * @var int Number of the page to which the post belongs (at the time of access)
      */
     public int $page = 1;
 
-    public array $attachments = [];
-
     /**
-     * @var string|null Access token for support tickets from contact form
+     * @var array List of parents for the section
      */
-    public ?string $access_token = null;
+    public array $parents = [];
 
-    /**
-     * Get post's history only if the respective permission is available. Text is retrieved only for a specific version if it exists.
-     *
-     * @param float $time
-     *
-     * @return array
-     */
-    public function getHistory(float $time = 0): array
-    {
-        try {
-            if (\in_array('view_posts_history', $_SESSION['permissions'], strict: true)) {
-                $data = $time > 0 ? Query::query('SELECT UNIX_TIMESTAMP(`time`) AS `time`, `text` FROM `talks__posts_history` WHERE `post_id`=:post_id AND `time`=:time LIMIT 1;', [':post_id' => [$this->id, 'int'], ':time' => [$time, 'datetime']], return: 'row') : Query::query('SELECT UNIX_TIMESTAMP(`time`) AS `time`, `text` FROM `talks__posts_history` WHERE `post_id`=:post_id AND `text`!=(SELECT `text` FROM `talks__posts` WHERE `post_id`=:post_id) ORDER BY `time` DESC;', [':post_id' => [$this->id, 'int']], return: 'pair');
-            } else {
-                $data = [];
-            }
-        } catch (\Throwable) {
-            $data = [];
-        }
+    public bool $private = false;
 
-        // If we have only 1 item, that means that a text has not changed, so treat this as "no history"
-        if (\count($data) < 2) {
-            return [];
-        }
+    public ?int $published = null;
 
-        return $data;
-    }
+    public array $reply_to = [];
 
-    /**
-     * Like the post.
-     *
-     * @param bool $dislike
-     *
-     * @return array<string, int|string>
-     */
-    public function like(bool $dislike = false): array
-    {
-        // Check permission
-        if (!\in_array('can_like', $_SESSION['permissions'], strict: true)) {
-            return ['http_error' => 403, 'reason' => 'No `can_like` permission'];
-        }
+    public bool $system = true;
 
-        $author = Query::query('SELECT `author` FROM `talks__posts` WHERE `post_id`=:post_id;', [':post_id' => [$this->id, 'int']], return: 'value');
-        if ($author === $_SESSION['user_id']) {
-            if ($dislike) {
-                return ['http_error' => 400, 'reason' => 'No reason to bring yourself down'];
-            }
+    public string $text = '';
 
-            return ['http_error' => 400, 'reason' => 'This is not the site for self-pleasuring'];
-        }
+    public ?int $thread_author = 1;
 
-        // Get the current value (if any)
-        $is_liked = (int) (Query::query(
-            'SELECT `like_value` FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
-            [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']],
-            return: 'value',
-        ) ?? 0);
-        if (
-            (
-                $dislike
-                && $is_liked === -1
-            )
-            || (
-                !$dislike
-                && $is_liked === 1
-            )
-        ) {
-            // Remove the (dis)like
-            try {
-                $result = Query::query(
-                    'DELETE FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
-                    [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']],
-                );
-            } catch (\Throwable) {
-                $result = false;
-            }
+    public ?int $thread_id = null;
 
-            if ($result) {
-                return ['response' => 0];
-            }
+    public string $type = 'Blog';
 
-            return ['http_error' => 500, 'reason' => 'Failed to remove '.($dislike ? 'dis' : '').'like from post'];
-        }
-
-        // Insert/update the value
-        try {
-            $result = Query::query(
-                'INSERT INTO `talks__likes` (`post_id`, `user_id`, `like_value`) VALUES (:post_id, :user_id, :like) ON DUPLICATE KEY UPDATE `like_value`=:like;',
-                [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int'], ':like' => [($dislike ? -1 : 1), 'int']],
-            );
-        } catch (\Throwable) {
-            $result = false;
-        }
-
-        if ($result) {
-            return ['response' => ($dislike ? -1 : 1)];
-        }
-
-        return ['http_error' => 500, 'reason' => 'Failed to '.($dislike ? 'dis' : '').'like post'];
-    }
-
-    /**
-     * Move thread to another section.
-     *
-     * @return array
-     */
-    public function move(): array
-    {
-        // Check permission
-        if (!\in_array('move_posts', $_SESSION['permissions'], strict: true)) {
-            return ['http_error' => 403, 'reason' => 'No `move_posts` permission'];
-        }
-
-        $data = $_POST['post_data'] ?? [];
-        if (empty($data['thread_id'])) {
-            return ['http_error' => 400, 'reason' => 'No thread ID provided'];
-        }
-
-        if (!\is_numeric($data['thread_id'])) {
-            return ['http_error' => 400, 'reason' => 'Parent ID `'.$data['thread_id'].'` is not numeric'];
-        }
-
-        $data['thread_id'] = (int) $data['thread_id'];
-        // Check if parent exists
-        $parent = new Thread($data['thread_id'])->setForPost(for_post: true)->get();
-        if ($parent->id === null) {
-            return ['http_error' => 400, 'reason' => 'Thread with ID `'.$data['thread_id'].'` does not exist'];
-        }
-
-        try {
-            $affected = Query::query(
-                'UPDATE `talks__posts` SET `thread_id`=:thread_id, `updated`=`updated` WHERE `post_id`=:post_id;',
-                [
-                    ':post_id' => [$this->id, 'int'],
-                    ':thread_id' => [$data['thread_id'], 'int'],
-                ],
-                return: 'affected',
-            );
-            if ($affected > 0) {
-                new Thread($this->thread_id)->updateStats();
-                new Thread($data['thread_id'])->updateStats();
-                $this->notifyAboutChange('move');
-            }
-
-            return ['response' => true];
-        } catch (\Throwable) {
-            return ['response' => false];
-        }
-    }
+    public ?int $updated = null;
 
     /**
      * Add post.
@@ -240,6 +93,8 @@ final class Post extends Entity
      * @param bool $first_post Whether this is first post in thread
      *
      * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     public function add(bool $first_post = false): array
     {
@@ -264,13 +119,13 @@ final class Post extends Entity
                 'INSERT INTO `talks__posts`(`post_id`, `thread_id`, `reply_to`, `published`, `updated`, `author`, `editor`, `text`) VALUES (NULL,:thread_id,:reply_to,:time,:time,:user_id,:user_id,:text);',
                 [
                     ':reply_to' => [
-                        (empty($data['reply_to']) ? null : $data['reply_to']),
-                        (empty($data['reply_to']) ? 'null' : 'int'),
+                        empty($data['reply_to']) ? null : $data['reply_to'],
+                        empty($data['reply_to']) ? 'null' : 'int',
                     ],
                     ':text' => $data['text'],
                     ':thread_id' => [$data['thread_id'], 'int'],
                     ':time' => [
-                        (empty($data['time']) ? 'now' : $data['time']),
+                        empty($data['time']) ? 'now' : $data['time'],
                         'datetime',
                     ],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
@@ -349,9 +204,64 @@ final class Post extends Entity
     }
 
     /**
+     * Delete post.
+     *
+     * @return array
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function delete(): array
+    {
+        // Check permission
+        if (!\in_array('remove_posts', $_SESSION['permissions'], strict: true)) {
+            return ['http_error' => 403, 'reason' => 'No `remove_posts` permission'];
+        }
+
+        // Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
+        if (!$this->attempted) {
+            $this->get();
+        }
+
+        if ($this->id === null) {
+            return ['http_error' => 404, 'reason' => 'Post not found'];
+        }
+
+        // Check if the section is system one
+        if ($this->system) {
+            return ['http_error' => 403, 'reason' => "Can't delete system post"];
+        }
+
+        // Set location for successful removal
+        $location = !empty($this->thread_id)
+            ? '/talks/threads/'.$this->thread_id
+            : '/talks/sections';
+
+        // Attempt removal. We also need to update thread details
+        try {
+            $affected = Query::query(
+                'DELETE FROM `talks__posts` WHERE `post_id`=:post_id;',
+                [':post_id' => [$this->id, 'int']],
+                return: 'affected',
+            );
+            if ($affected > 0) {
+                new Thread($this->thread_id)->updateStats();
+                $this->notifyAboutChange('delete');
+            }
+
+            return ['response' => true, 'location' => $location];
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+
+            return ['http_error' => 500, 'reason' => 'Failed to delete post'];
+        }
+    }
+
+    /**
      * Edit post.
      *
      * @return array<string, int|string>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     public function edit(): array
     {
@@ -450,53 +360,155 @@ final class Post extends Entity
     }
 
     /**
-     * Delete post.
+     * Get post's history only if the respective permission is available. Text is retrieved only for a specific version if it exists.
      *
-     * @return array
+     * @param float $time
+     *
+     * @return array{time: int, text: string}
      */
-    public function delete(): array
+    public function getHistory(float $time = 0): array
+    {
+        try {
+            if (\in_array('view_posts_history', $_SESSION['permissions'], strict: true)) {
+                $data = $time > 0 ? Query::query('SELECT UNIX_TIMESTAMP(`time`) AS `time`, `text` FROM `talks__posts_history` WHERE `post_id`=:post_id AND `time`=:time LIMIT 1;', [':post_id' => [$this->id, 'int'], ':time' => [$time, 'datetime']], return: 'row') : Query::query('SELECT UNIX_TIMESTAMP(`time`) AS `time`, `text` FROM `talks__posts_history` WHERE `post_id`=:post_id AND `text`!=(SELECT `text` FROM `talks__posts` WHERE `post_id`=:post_id) ORDER BY `time` DESC;', [':post_id' => [$this->id, 'int']], return: 'pair');
+            } else {
+                $data = [];
+            }
+        } catch (\Throwable) {
+            $data = [];
+        }
+
+        // If we have only 1 item, that means that a text has not changed, so treat this as "no history"
+        if (\count($data) < 2) {
+            return [];
+        }
+
+        return $data;
+    }
+
+    /**
+     * Like the post.
+     *
+     * @param bool $dislike
+     *
+     * @return array<string, int|string>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    public function like(bool $dislike = false): array
     {
         // Check permission
-        if (!\in_array('remove_posts', $_SESSION['permissions'], strict: true)) {
-            return ['http_error' => 403, 'reason' => 'No `remove_posts` permission'];
+        if (!\in_array('can_like', $_SESSION['permissions'], strict: true)) {
+            return ['http_error' => 403, 'reason' => 'No `can_like` permission'];
         }
 
-        // Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
-        if (!$this->attempted) {
-            $this->get();
+        $author = Query::query('SELECT `author` FROM `talks__posts` WHERE `post_id`=:post_id;', [':post_id' => [$this->id, 'int']], return: 'value');
+        if ($author === $_SESSION['user_id']) {
+            if ($dislike) {
+                return ['http_error' => 400, 'reason' => 'No reason to bring yourself down'];
+            }
+
+            return ['http_error' => 400, 'reason' => 'This is not the site for self-pleasuring'];
         }
 
-        if ($this->id === null) {
-            return ['http_error' => 404, 'reason' => 'Post not found'];
+        // Get the current value (if any)
+        $is_liked = (int) (Query::query(
+            'SELECT `like_value` FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
+            [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']],
+            return: 'value',
+        ) ?? 0);
+        if (
+            (
+                $dislike
+                && $is_liked === -1
+            )
+            || (
+                !$dislike
+                && $is_liked === 1
+            )
+        ) {
+            // Remove the (dis)like
+            try {
+                $result = Query::query(
+                    'DELETE FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
+                    [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']],
+                );
+            } catch (\Throwable) {
+                $result = false;
+            }
+
+            if ($result) {
+                return ['response' => 0];
+            }
+
+            return ['http_error' => 500, 'reason' => 'Failed to remove '.($dislike ? 'dis' : '').'like from post'];
         }
 
-        // Check if the section is system one
-        if ($this->system) {
-            return ['http_error' => 403, 'reason' => "Can't delete system post"];
+        // Insert/update the value
+        try {
+            $result = Query::query(
+                'INSERT INTO `talks__likes` (`post_id`, `user_id`, `like_value`) VALUES (:post_id, :user_id, :like) ON DUPLICATE KEY UPDATE `like_value`=:like;',
+                [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int'], ':like' => [$dislike ? -1 : 1, 'int']],
+            );
+        } catch (\Throwable) {
+            $result = false;
         }
 
-        // Set location for successful removal
-        $location = !empty($this->thread_id)
-            ? '/talks/threads/'.$this->thread_id
-            : '/talks/sections';
+        if ($result) {
+            return ['response' => ($dislike ? -1 : 1)];
+        }
 
-        // Attempt removal. We also need to update thread details
+        return ['http_error' => 500, 'reason' => 'Failed to '.($dislike ? 'dis' : '').'like post'];
+    }
+
+    /**
+     * Move thread to another section.
+     *
+     * @return array
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function move(): array
+    {
+        // Check permission
+        if (!\in_array('move_posts', $_SESSION['permissions'], strict: true)) {
+            return ['http_error' => 403, 'reason' => 'No `move_posts` permission'];
+        }
+
+        $data = $_POST['post_data'] ?? [];
+        if (empty($data['thread_id'])) {
+            return ['http_error' => 400, 'reason' => 'No thread ID provided'];
+        }
+
+        if (!\is_numeric($data['thread_id'])) {
+            return ['http_error' => 400, 'reason' => 'Parent ID `'.$data['thread_id'].'` is not numeric'];
+        }
+
+        $data['thread_id'] = (int) $data['thread_id'];
+        // Check if parent exists
+        $parent = new Thread($data['thread_id'])->setForPost(for_post: true)->get();
+        if ($parent->id === null) {
+            return ['http_error' => 400, 'reason' => 'Thread with ID `'.$data['thread_id'].'` does not exist'];
+        }
+
         try {
             $affected = Query::query(
-                'DELETE FROM `talks__posts` WHERE `post_id`=:post_id;',
-                [':post_id' => [$this->id, 'int']],
+                'UPDATE `talks__posts` SET `thread_id`=:thread_id, `updated`=`updated` WHERE `post_id`=:post_id;',
+                [
+                    ':post_id' => [$this->id, 'int'],
+                    ':thread_id' => [$data['thread_id'], 'int'],
+                ],
                 return: 'affected',
             );
             if ($affected > 0) {
                 new Thread($this->thread_id)->updateStats();
-                $this->notifyAboutChange('delete');
+                new Thread($data['thread_id'])->updateStats();
+                $this->notifyAboutChange('move');
             }
 
-            return ['response' => true, 'location' => $location];
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
-
-            return ['http_error' => 500, 'reason' => 'Failed to delete post'];
+            return ['response' => true];
+        } catch (\Throwable) {
+            return ['response' => false];
         }
     }
 
@@ -504,7 +516,10 @@ final class Post extends Entity
      * Get data from DB.
      *
      * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function getFromDB(): array
     {
         // Set a page required for threads
@@ -548,6 +563,7 @@ final class Post extends Entity
      *
      * @return void
      */
+    #[\Override]
     protected function process(array $from_db): void
     {
         $this->name = $from_db['name'];
@@ -584,119 +600,25 @@ final class Post extends Entity
     }
 
     /**
-     * Get page number.
+     * Helper to add text to history.
      *
-     * @param int $thread
-     *
-     * @return int
-     */
-    private function getPage(int $thread): int
-    {
-        $posts = [];
-
-        try {
-            // Regular list does not fit due to pagination and due to excessive data, so using a custom query to get all posts
-            $posts = Query::query('SELECT `post_id` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], strict: true) ? '' : ' AND `published`<=CURRENT_TIMESTAMP(6)').' ORDER BY `published`;', [':thread_id' => [$thread, 'int']], return: 'column');
-        } catch (\Throwable) {
-            // Do nothing
-        }
-
-        if (empty($posts)) {
-            return 1;
-        }
-
-        // Get ordinal number of the post
-        $number = \array_search($this->id, $posts, strict: true);
-
-        // Get page
-        return (int) \ceil(($number + 1) / 50);
-    }
-
-    /**
-     * @param string $type Change type
+     * @param string $text
      *
      * @return void
      */
-    private function notifyAboutChange(#[ExpectedValues(['change', 'delete', 'move'])] string $type): void
+    private function addHistory(string $text): void
     {
-        $for_notification = $type === 'delete' ? [
-                'author' => $this->author,
-                'parent_name' => Query::query('SELECT `name` FROM `talks__threads` WHERE `thread_id`=:thread_id', [':thread_id' => $this->thread_id], return: 'value'),
-                'post_id' => $this->id,
-            ] : Query::query(
-                'SELECT `post_id`, `author`, `thread_id`,
-                                                        (SELECT `name` FROM `talks__threads` WHERE `thread_id`=`main_select`.`thread_id`) AS `parent_name`
-                                                        FROM `talks__posts` AS `main_select` WHERE `post_id`=:post_id;',
-                [':post_id' => [$this->id, 'int']],
-                return: 'row',
+        try {
+            Query::query(
+                'INSERT INTO `talks__posts_history` (`post_id`, `user_id`, `text`) VALUES (:post_id, :user_id, :text);',
+                [
+                    ':post_id' => [$this->id, 'int'],
+                    ':text' => $text,
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
             );
-        $for_notification['reason'] = $_POST['post_data']['change_reason'] ?? '';
-        $for_notification['change_type'] = $type;
-        $for_notification['editor_id'] = $_SESSION['user_id'];
-        $for_notification['editor_name'] = $_SESSION['username'];
-        if (
-            $for_notification['author'] !== $_SESSION['user_id']
-            && !\in_array($for_notification['author'], SystemUser::getSystemUsers(), strict: true)
-        ) {
-            (void) new PostChange()->save($for_notification['author'], $for_notification)->send();
-        }
-    }
-
-    /**
-     * Update token linked to a ticket, where post is made.
-     *
-     * @param null|string $email      Email to send notification to
-     * @param bool        $first_post Whether this is first post
-     *
-     * @return void
-     */
-    private function tokenUpdate(#[\SensitiveParameter] ?string $email = null, bool $first_post = false): void
-    {
-        // Get email linked to the thread if it was not provided
-        if (
-            $email === null
-            || $email === ''
-        ) {
-            $email = Query::query('SELECT `email` FROM `talks__contact_form` WHERE `thread_id`=:thread_id;', [':thread_id' => $this->thread_id], return: 'value');
-        }
-
-        // If email is empty, then - do not refresh the token, because the anonymous user without the email will not know that it changed. If the current user is anonymous, then we can refresh it, since they will get URL in UI
-        if (
-            $_SESSION['user_id'] !== SystemUser::Unknown->value
-            && Sanitize::whiteString($email ?? '')
-        ) {
-            return;
-        }
-
-        $new_token = \uuid_create(7);
-
-        try {
-            if ($this->access_token === null) {
-                $affected = Query::query('INSERT INTO `talks__contact_form` (`thread_id`, `email`, `access_token`) VALUES (:thread_id, :email, :token);', [':token' => $new_token, ':email' => [$email, ($email === null || $email === '' ? 'null' : 'string')], ':thread_id' => $this->thread_id], return: 'affected');
-            } else {
-                $affected = Query::query('UPDATE `talks__contact_form` SET `access_token`=:token WHERE `thread_id`=:thread_id;', [':token' => $new_token, ':thread_id' => $this->thread_id], return: 'affected');
-            }
-
-            // Should be just 1
-            if ($affected === 1) {
-                $this->access_token = $new_token;
-                // Send notification
-                if (
-                    $email !== null
-                    && $email !== ''
-                ) {
-                    $ticket = \preg_replace('/^\[Contact Form]\s*/ui', '', $this->name);
-                    $twig_vars = ['ticket' => $ticket, 'token' => $new_token, 'thread_id' => $this->thread_id];
-                    if ($first_post) {
-                        (void) new TicketCreation()->save(SystemUser::Unknown->value, $twig_vars, email: true, push: false, email_override: $email);
-                    } else {
-                        (void) new TicketNewPost()->save(SystemUser::Unknown->value, $twig_vars, email: true, push: false, email_override: $email);
-                    }
-                }
-            }
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
-            // Do nothing. While it's ideal to change the token, if it fails - it's not that big of a deal
         }
     }
 
@@ -745,25 +667,63 @@ final class Post extends Entity
     }
 
     /**
-     * Helper to add text to history.
+     * Get page number.
      *
-     * @param string $text
+     * @param int $thread
+     *
+     * @return int
+     */
+    private function getPage(int $thread): int
+    {
+        $posts = [];
+
+        try {
+            // Regular list does not fit due to pagination and due to excessive data, so using a custom query to get all posts
+            $posts = Query::query('SELECT `post_id` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], strict: true) ? '' : ' AND `published`<=CURRENT_TIMESTAMP(6)').' ORDER BY `published`;', [':thread_id' => [$thread, 'int']], return: 'column');
+        } catch (\Throwable) {
+            // Do nothing
+        }
+
+        if (empty($posts)) {
+            return 1;
+        }
+
+        // Get ordinal number of the post
+        $number = \array_search($this->id, $posts, strict: true);
+
+        // Get page
+        return (int) \ceil(($number + 1) / 50);
+    }
+
+    /**
+     * @param string $type Change type
      *
      * @return void
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
-    private function addHistory(string $text): void
+    private function notifyAboutChange(#[ExpectedValues(['change', 'delete', 'move'])] string $type): void
     {
-        try {
-            Query::query(
-                'INSERT INTO `talks__posts_history` (`post_id`, `user_id`, `text`) VALUES (:post_id, :user_id, :text);',
-                [
-                    ':post_id' => [$this->id, 'int'],
-                    ':text' => $text,
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
+        $for_notification = $type === 'delete' ? [
+                'author' => $this->author,
+                'parent_name' => Query::query('SELECT `name` FROM `talks__threads` WHERE `thread_id`=:thread_id', [':thread_id' => $this->thread_id], return: 'value'),
+                'post_id' => $this->id,
+            ] : Query::query(
+                'SELECT `post_id`, `author`, `thread_id`,
+                                                        (SELECT `name` FROM `talks__threads` WHERE `thread_id`=`main_select`.`thread_id`) AS `parent_name`
+                                                        FROM `talks__posts` AS `main_select` WHERE `post_id`=:post_id;',
+                [':post_id' => [$this->id, 'int']],
+                return: 'row',
             );
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+        $for_notification['reason'] = $_POST['post_data']['change_reason'] ?? '';
+        $for_notification['change_type'] = $type;
+        $for_notification['editor_id'] = $_SESSION['user_id'];
+        $for_notification['editor_name'] = $_SESSION['username'];
+        if (
+            $for_notification['author'] !== $_SESSION['user_id']
+            && !\in_array($for_notification['author'], SystemUser::getSystemUsers(), strict: true)
+        ) {
+            (void) new PostChange()->save($for_notification['author'], $for_notification)->send();
         }
     }
 
@@ -773,6 +733,8 @@ final class Post extends Entity
      * @param array<string, mixed> $data
      *
      * @return array|bool
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     private function sanitizeInput(array &$data): array|bool
     {
@@ -894,5 +856,65 @@ final class Post extends Entity
         $data['hide_update'] = Sanitization::checkboxToBoolean($data['hide_update']);
 
         return true;
+    }
+
+    /**
+     * Update token linked to a ticket, where post is made.
+     *
+     * @param string|null $email      Email to send notification to
+     * @param bool        $first_post Whether this is first post
+     *
+     * @return void
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    private function tokenUpdate(#[\SensitiveParameter] ?string $email = null, bool $first_post = false): void
+    {
+        // Get email linked to the thread if it was not provided
+        if (
+            $email === null
+            || $email === ''
+        ) {
+            $email = Query::query('SELECT `email` FROM `talks__contact_form` WHERE `thread_id`=:thread_id;', [':thread_id' => $this->thread_id], return: 'value');
+        }
+
+        // If email is empty, then - do not refresh the token, because the anonymous user without the email will not know that it changed. If the current user is anonymous, then we can refresh it, since they will get URL in UI
+        if (
+            $_SESSION['user_id'] !== SystemUser::Unknown->value
+            && Sanitize::whiteString($email ?? '')
+        ) {
+            return;
+        }
+
+        $new_token = \uuid_create(7);
+
+        try {
+            if ($this->access_token === null) {
+                $affected = Query::query('INSERT INTO `talks__contact_form` (`thread_id`, `email`, `access_token`) VALUES (:thread_id, :email, :token);', [':token' => $new_token, ':email' => [$email, $email === null || $email === '' ? 'null' : 'string'], ':thread_id' => $this->thread_id], return: 'affected');
+            } else {
+                $affected = Query::query('UPDATE `talks__contact_form` SET `access_token`=:token WHERE `thread_id`=:thread_id;', [':token' => $new_token, ':thread_id' => $this->thread_id], return: 'affected');
+            }
+
+            // Should be just 1
+            if ($affected === 1) {
+                $this->access_token = $new_token;
+                // Send notification
+                if (
+                    $email !== null
+                    && $email !== ''
+                ) {
+                    $ticket = \preg_replace('/^\[Contact Form]\s*/ui', '', $this->name);
+                    $twig_vars = ['ticket' => $ticket, 'token' => $new_token, 'thread_id' => $this->thread_id];
+                    if ($first_post) {
+                        (void) new TicketCreation()->save(SystemUser::Unknown->value, $twig_vars, email: true, push: false, email_override: $email);
+                    } else {
+                        (void) new TicketNewPost()->save(SystemUser::Unknown->value, $twig_vars, email: true, push: false, email_override: $email);
+                    }
+                }
+            }
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+            // Do nothing. While it's ideal to change the token, if it fails - it's not that big of a deal
+        }
     }
 }

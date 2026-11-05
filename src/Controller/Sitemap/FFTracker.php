@@ -9,7 +9,7 @@ use App\Controller\Abstracts\Sitemap;
 final class FFTracker extends Sitemap
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */

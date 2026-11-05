@@ -9,7 +9,13 @@ use App\Controller\Abstracts\Page;
 final class Removal extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * @var bool Flag indicating that authentication is required
+     */
+    #[\Override]
+    protected bool $authentication_needed = true;
+
+    /**
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -19,16 +25,10 @@ final class Removal extends Page
     ];
 
     /**
-     * @var string Sub service name
+     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
      */
     #[\Override]
-    protected string $subservice_name = 'removal';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Removal';
+    protected string $cache_strategy = 'private';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
@@ -43,24 +43,25 @@ final class Removal extends Page
     protected string $og_desc = 'Page to remove your profile';
 
     /**
-     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
+     * @var string Sub service name
      */
     #[\Override]
-    protected string $cache_strategy = 'private';
+    protected string $subservice_name = 'removal';
 
     /**
-     * @var bool Flag indicating that authentication is required
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
      */
     #[\Override]
-    protected bool $authentication_needed = true;
+    protected string $title = 'Removal';
 
     /**
-     * This is actual page generation based on further details of the $path
+     * This is actual page generation based on further details of the $path.
      *
      * @param array<int, string> $path
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         // This page is essentially static with 2 buttons.

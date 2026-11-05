@@ -12,6 +12,11 @@ use Simbiat\http20\Headers;
 abstract class General extends Api
 {
     /**
+     * @var string Entity class name
+     */
+    protected string $entity_class = '';
+
+    /**
      * @var bool Flag to indicate that this is the lowest level
      */
     #[\Override]
@@ -24,17 +29,6 @@ abstract class General extends Api
     protected array $methods = ['GET' => '', 'PATCH' => 'update', 'POST' => 'register'];
 
     /**
-     * @var array<string, string> Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
-     */
-    #[\Override]
-    protected array $verbs = ['update' => 'Attempt updating entity', 'register' => 'Attempt to register entity to tracker', 'lodestone' => 'Show data grabbed directly from Lodestone'];
-
-    /**
-     * @var string Entity class name
-     */
-    protected string $entity_class = '';
-
-    /**
      * @var string Name to show in errors
      */
     protected string $name_for_errors = '';
@@ -44,6 +38,22 @@ abstract class General extends Api
      */
     protected string $name_for_links = '';
 
+    /**
+     * @var array<string, string> Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+     */
+    #[\Override]
+    protected array $verbs = ['update' => 'Attempt updating entity', 'register' => 'Attempt to register entity to tracker', 'lodestone' => 'Show data grabbed directly from Lodestone'];
+
+    /**
+     * This is an actual API response generation based on further details of the $path.
+     *
+     * @param array $path
+     *
+     * @psalm-suppress MixedReturnTypeCoercion TODO: needs to be removed during migration to Symfony. Need to use objects instead of ararys.
+     *
+     * @return array<string, mixed>
+     */
+    #[\Override]
     protected function genData(array $path): array
     {
         // Reset verb for consistency if it's not set

@@ -30,17 +30,7 @@ use App\Controller\SupOps\Solution;
 final class SupOps extends Router
 {
     /**
-     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
-     */
-    #[\Override]
-    protected array $sub_routes = [
-        'pitch', 'glossary', 'problem', 'solution', 'flow', 'metrics', 'resolution', 'interoperability', 'scale', 'comparison', 'needs',
-        'facts', 'feedback', 'automation', 'collaboration', 'transparency', 'sustainability',
-        'l0', 'l1', 'l2', 'l3', 'l4',
-    ];
-
-    /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -50,19 +40,29 @@ final class SupOps extends Router
     ];
 
     #[\Override]
-    protected string $title = 'SupOps';
-
-    #[\Override]
     protected string $h1 = 'SupOps';
 
     #[\Override]
     protected string $og_desc = "SupOps: inspired by DevOps to reduce your customers' frustrations with tech support";
 
     #[\Override]
-    protected string $service_name = 'supops';
+    protected string $og_image = '/supops/logo/ogimage.webp';
 
     #[\Override]
-    protected string $og_image = '/supops/logo/ogimage.webp';
+    protected string $service_name = 'supops';
+
+    /**
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
+    #[\Override]
+    protected array $sub_routes = [
+        'pitch', 'glossary', 'problem', 'solution', 'flow', 'metrics', 'resolution', 'interoperability', 'scale', 'comparison', 'needs',
+        'facts', 'feedback', 'automation', 'collaboration', 'transparency', 'sustainability',
+        'l0', 'l1', 'l2', 'l3', 'l4',
+    ];
+
+    #[\Override]
+    protected string $title = 'SupOps';
 
     /**
      * This is the actual page generation based on further details of the $path.
@@ -71,6 +71,7 @@ final class SupOps extends Router
      *
      * @return array
      */
+    #[\Override]
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {

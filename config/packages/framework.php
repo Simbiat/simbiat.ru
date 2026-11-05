@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-# TODO: Need to review possible settings, that could benefit from not using default values
+// TODO: Need to review possible settings, that could benefit from not using default values
 return static function (ContainerConfigurator $containerConfigurator): void {
     $containerConfigurator->extension('framework', [
         'secret' => '%env(APP_SECRET)%',
@@ -16,10 +16,10 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     ]);
     if ($containerConfigurator->env() === 'test') {
         $containerConfigurator->extension('framework', [
-            'test' => true,
             'session' => [
                 'storage_factory_id' => 'session.storage.factory.mock_file',
             ],
+            'test' => true,
         ]);
     }
 };

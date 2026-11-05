@@ -19,7 +19,7 @@ final class BIC
     /**
      * Clean old sessions.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */

@@ -28,6 +28,11 @@ final class Contact extends Api
     #[\Override]
     protected array $verbs = ['add' => 'Submit support request'];
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    #[\Override]
     protected function genData(array $path): array
     {
         // Only creation of new threads. 26 is the static ID of the forum where the threads go

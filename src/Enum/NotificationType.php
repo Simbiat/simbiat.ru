@@ -9,34 +9,34 @@ namespace App\Enum;
  */
 enum NotificationType: int
 {
-    case Test = 0;
-
     #[\Deprecated(message: 'No longer sent from PHP')]
     case CronFailure = 1;
 
-    #[\Deprecated(message: 'No longer sent from PHP')]
-    case ErrorLog = 2;
     case DatabaseDown = 3;
     case DatabaseUp = 4;
 
     #[\Deprecated(message: 'No longer sent from PHP')]
-    case NoSpace = 5;
-
-    #[\Deprecated(message: 'No longer sent from PHP')]
     case EnoughSpace = 6;
 
-    case UserActivation = 7;
-    case PasswordReset = 8;
-    case PasswordChange = 9;
-    case UserLock = 10;
+    #[\Deprecated(message: 'No longer sent from PHP')]
+    case ErrorLog = 2;
+
     case LoginFailed = 11;
     case LoginSuccess = 12;
-
-    case NewThread = 13;
     case NewPost = 14;
+    case NewThread = 13;
+
+    #[\Deprecated(message: 'No longer sent from PHP')]
+    case NoSpace = 5;
+
+    case PasswordChange = 9;
+    case PasswordReset = 8;
+    case PostChange = 19;
+    case SectionChange = 17;
+    case Test = 0;
+    case ThreadChange = 18;
     case TicketCreation = 15;
     case TicketNewPost = 16;
-    case SectionChange = 17;
-    case ThreadChange = 18;
-    case PostChange = 19;
+    case UserActivation = 7;
+    case UserLock = 10;
 }

@@ -13,14 +13,14 @@ use App\Service\Errors;
 final class NewPost extends Notification
 {
     /**
-     * Subject for email.
-     */
-    protected const string SUBJECT = 'New post in watched thread';
-
-    /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high.
      */
     protected const int PRIORITY = 1;
+
+    /**
+     * Subject for email.
+     */
+    protected const string SUBJECT = 'New post in watched thread';
 
     /**
      * Whether a non-empty array of Twig variables is required.
@@ -34,6 +34,7 @@ final class NewPost extends Notification
      *
      * @return self
      */
+    #[\Override]
     protected function setText(array $twig_vars = []): self
     {
         // If Twig variables are required, but not provided - do not do anything. This will result in failure on save and send.

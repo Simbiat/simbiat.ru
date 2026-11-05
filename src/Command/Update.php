@@ -20,7 +20,7 @@ final class Update
      * It is encouraged to code stuff in a way to avoid potential impact in case of running it twice.
      * It is also encouraged to use `writeln` to output stuff to the command line for the sake of monitoring.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */

@@ -15,28 +15,21 @@ final class Companies extends Search
     protected string $entity_type = 'freecompany';
 
     /**
-     * @var string Name of the table to search use
+     * @var array<int, string> List of optional columns for direct comparison. The higher in the list a field is the more weight/relevancy condition with it will have
      */
     #[\Override]
-    protected string $table = 'ffxiv__freecompany';
+    protected array $exact = [
+        'fc_id',
+        'name',
+        'tag',
+        'estate_zone',
+    ];
 
     /**
      * @var string List of fields
      */
     #[\Override]
     protected string $fields = '`fc_id` as `id`, `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id`, `updated`';
-
-    /**
-     * @var string Default order (for the main page, for example)
-     */
-    #[\Override]
-    protected string $order_default = '`Updated` DESC';
-
-    /**
-     * @var string Order for list pages
-     */
-    #[\Override]
-    protected string $order_list = '`name` ASC';
 
     /**
      * @var array<int, string> List of FULLTEXT columns. The higher in the list a field is the more weight/relevancy condition with it will have
@@ -51,17 +44,6 @@ final class Companies extends Search
     ];
 
     /**
-     * @var array<int, string> List of optional columns for direct comparison. The higher in the list a field is the more weight/relevancy condition with it will have
-     */
-    #[\Override]
-    protected array $exact = [
-        'fc_id',
-        'name',
-        'tag',
-        'estate_zone',
-    ];
-
-    /**
      * @var array<int, string> List of optional columns for LIKE %% comparison. The higher in the list a field is the more weight/relevancy condition with it will have
      */
     #[\Override]
@@ -73,6 +55,25 @@ final class Companies extends Search
         'estate_message',
     ];
 
+    /**
+     * @var string Default order (for the main page, for example)
+     */
+    #[\Override]
+    protected string $order_default = '`Updated` DESC';
+
+    /**
+     * @var string Order for list pages
+     */
+    #[\Override]
+    protected string $order_list = '`name` ASC';
+
+    /**
+     * @var string Name of the table to search use
+     */
+    #[\Override]
+    protected string $table = 'ffxiv__freecompany';
+
+    #[\Override]
     protected function postProcess(array $results): array
     {
         return AbstractEntity::cleanCrestResults($results);

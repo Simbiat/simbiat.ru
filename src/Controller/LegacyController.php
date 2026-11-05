@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\HomePage;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -26,7 +27,12 @@ final class LegacyController
     /**
      * Old page bootstrap.
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param Request $request
+     *
+     * @return Response
+     *
+     * @throws BadRequestException|\InvalidArgumentException
+     * @throws \RuntimeException
      */
     #[Route(path: '/{path}', name: 'app_legacy', requirements: ['path' => '.*'], priority: -100)]
     public function index(Request $request): Response

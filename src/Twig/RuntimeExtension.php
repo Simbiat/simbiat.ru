@@ -19,16 +19,15 @@ use Twig\Extension\RuntimeExtensionInterface;
 final class RuntimeExtension implements RuntimeExtensionInterface
 {
     /**
-     * Generate a link for the file.
+     * PHP's basename function.
      *
-     * @param string $filename
+     * @param string $string
      *
      * @return string
      */
-    #[Pure]
-    public function uploadedLink(string $filename): string
+    public function basename(string $string): string
     {
-        return Sanitization::getUploadedFileLink($filename);
+        return \basename($string);
     }
 
     /**
@@ -37,6 +36,8 @@ final class RuntimeExtension implements RuntimeExtensionInterface
      * @param float|int|string $bytes
      *
      * @return string
+     *
+     * @throws \UnexpectedValueException
      */
     public function cuteBytes(float|int|string $bytes): string
     {
@@ -49,49 +50,12 @@ final class RuntimeExtension implements RuntimeExtensionInterface
      * @param array $items
      *
      * @return string
+     *
+     * @throws \UnexpectedValueException
      */
     public function genBread(array $items): string
     {
         return HTML::breadcrumbs($items);
-    }
-
-    /**
-     * Generate timeline.
-     *
-     * @param array $items    Array of items
-     * @param int   $br_limit Maximum number of `<br>` elements between items
-     *
-     * @return string
-     */
-    public function timeline(array $items, int $br_limit = 0): string
-    {
-        return Sanitization::sanitizeHTML(HTML::timeline($items, br_limit: $br_limit), 'timeline');
-    }
-
-    /**
-     * Generate pagination.
-     *
-     * @param int    $current Current page
-     * @param int    $total   Total pages
-     * @param string $prefix  Prefix to use
-     *
-     * @return string
-     */
-    public function pagination(int $current, int $total, string $prefix): string
-    {
-        return HTML::pagination($current, $total, 7, prefix: $prefix, tooltip: 'data-tooltip');
-    }
-
-    /**
-     * PHP's basename function.
-     *
-     * @param string $string
-     *
-     * @return string
-     */
-    public function basename(string $string): string
-    {
-        return \basename($string);
     }
 
     /**
@@ -109,6 +73,52 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     }
 
     /**
+     * Generate `<link>` tags.
+     *
+     * @param array  $links
+     * @param string $type
+     *
+     * @return string
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function linkTags(array $links, string $type = 'header'): string
+    {
+        return Links::links($links, $type, force_cross_origin: true);
+    }
+
+    /**
+     * Generate pagination.
+     *
+     * @param int    $current Current page
+     * @param int    $total   Total pages
+     * @param string $prefix  Prefix to use
+     *
+     * @return string
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function pagination(int $current, int $total, string $prefix): string
+    {
+        return HTML::pagination($current, $total, 7, prefix: $prefix, tooltip: 'data-tooltip');
+    }
+
+    /**
+     * Prettify URL.
+     *
+     * @param string $string
+     *
+     * @return string
+     *
+     * @throws \JsonException
+     * @throws \RuntimeException
+     */
+    public function prettyURL(string $string): string
+    {
+        return Convert::prettyURL($string, '_');
+    }
+
+    /**
      * Sanitize HTML string.
      *
      * @param string $string
@@ -122,6 +132,21 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     }
 
     /**
+     * Generate timeline.
+     *
+     * @param array $items    Array of items
+     * @param int   $br_limit Maximum number of `<br>` elements between items
+     *
+     * @return string
+     *
+     * @throws \JsonException
+     */
+    public function timeline(array $items, int $br_limit = 0): string
+    {
+        return Sanitization::sanitizeHTML(HTML::timeline($items, br_limit: $br_limit), 'timeline');
+    }
+
+    /**
      * Generate `<time>` tag.
      *
      * @param int|string $string
@@ -131,6 +156,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
      * @return string
      *
      * @throws \DateInvalidTimeZoneException
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     public function timeTag(int|string $string, string $format = 'd/m/Y H:i', string $classes = ''): string
     {
@@ -148,27 +174,15 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     }
 
     /**
-     * Generate `<link>` tags.
+     * Generate a link for the file.
      *
-     * @param array  $links
-     * @param string $type
-     *
-     * @return string
-     */
-    public function linkTags(array $links, string $type = 'header'): string
-    {
-        return Links::links($links, $type, force_cross_origin: true);
-    }
-
-    /**
-     * Prettify URL.
-     *
-     * @param string $string
+     * @param string $filename
      *
      * @return string
      */
-    public function prettyURL(string $string): string
+    #[Pure]
+    public function uploadedLink(string $filename): string
     {
-        return Convert::prettyURL($string, '_');
+        return Sanitization::getUploadedFileLink($filename);
     }
 }

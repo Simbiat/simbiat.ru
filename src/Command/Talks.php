@@ -24,7 +24,7 @@ final class Talks
     /**
      * Clean old avatars.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */
@@ -75,36 +75,9 @@ final class Talks
     }
 
     /**
-     * Lock posts older than 1 day so that only users with special permission can edit them.
-     *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
-     * @return int
-     */
-    #[AsCommand(name: 'app:talks:lock_posts', description: 'Lock posts')]
-    public function lockPosts(OutputInterface $output): int
-    {
-        $output->writeln(Errors::logfmt('Locking posts...'));
-
-        try {
-            // Connect to DB
-            Config::dbConnect();
-            if (Config::$dbup) {
-                Query::query('UPDATE `talks__posts` SET `updated`=`updated`, `locked`=1 WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND `locked`=0;');
-            }
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable, cli: true);
-
-            return Command::FAILURE;
-        }
-
-        return Command::SUCCESS;
-    }
-
-    /**
      * Close tickets that have been inactive for some time.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */
@@ -132,9 +105,36 @@ final class Talks
     }
 
     /**
+     * Lock posts older than 1 day so that only users with special permission can edit them.
+     *
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
+    #[AsCommand(name: 'app:talks:lock_posts', description: 'Lock posts')]
+    public function lockPosts(OutputInterface $output): int
+    {
+        $output->writeln(Errors::logfmt('Locking posts...'));
+
+        try {
+            // Connect to DB
+            Config::dbConnect();
+            if (Config::$dbup) {
+                Query::query('UPDATE `talks__posts` SET `updated`=`updated`, `locked`=1 WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND `locked`=0;');
+            }
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable, cli: true);
+
+            return Command::FAILURE;
+        }
+
+        return Command::SUCCESS;
+    }
+
+    /**
      * Remove empty threads older than 1 day.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */

@@ -12,16 +12,6 @@ use App\Controller\Api\Talks\Threads;
 final class Talks extends Api
 {
     /**
-     * @var array<int, string> Supported edges
-     */
-    #[\Override]
-    protected array $sub_routes = [
-        'sections',
-        'threads',
-        'posts',
-    ];
-
-    /**
      * @var array<int, string> Description of the nodes (need to be in the same order)
      */
     #[\Override]
@@ -31,6 +21,17 @@ final class Talks extends Api
         'Endpoint to manage posts',
     ];
 
+    /**
+     * @var array<int, string> Supported edges
+     */
+    #[\Override]
+    protected array $sub_routes = [
+        'sections',
+        'threads',
+        'posts',
+    ];
+
+    #[\Override]
     protected function genData(array $path): array
     {
         return match ($path[0]) {

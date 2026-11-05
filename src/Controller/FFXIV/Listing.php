@@ -16,7 +16,7 @@ use App\Service\Search\RedFlags;
 final class Listing extends \App\Controller\Abstracts\Listing
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -24,6 +24,30 @@ final class Listing extends \App\Controller\Abstracts\Listing
     protected array $breadcrumb = [
         ['href' => '/fftracker/search', 'name' => 'Search'],
     ];
+
+    /**
+     * @var string Full title to be used for description metatags when having a search value
+     */
+    #[\Override]
+    protected string $full_title = 'Search for `%s` on Final Fantasy XIV Tracker';
+
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $h1 = 'FFXIV Tracker Search';
+
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $og_desc = 'FFXIV Tracker Search';
+
+    /**
+     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
+     */
+    #[\Override]
+    protected array $required_permission = ['view_ff'];
 
     /**
      * @var string Service name for breadcrumbs
@@ -44,18 +68,6 @@ final class Listing extends \App\Controller\Abstracts\Listing
     protected string $title = 'FFXIV Tracker Search';
 
     /**
-     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $h1 = 'FFXIV Tracker Search';
-
-    /**
-     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $og_desc = 'FFXIV Tracker Search';
-
-    /**
      * @var array<string, array<string, string>> Linking types to classes
      */
     #[\Override]
@@ -66,19 +78,7 @@ final class Listing extends \App\Controller\Abstracts\Listing
         'freecompanies' => ['name' => 'Free Companies', 'class' => Companies::class],
         'linkshells' => ['name' => 'Linkshells', 'class' => Linkshells::class],
         'points' => ['name' => 'Achievements Leaderboard', 'class' => AchievementPoints::class, 'numbered' => true],
-        'red_flags' => ['name' => 'Red Flags', 'class' => RedFlags::class],
         'pvpteams' => ['name' => 'PvP Teams', 'class' => PVP::class],
+        'red_flags' => ['name' => 'Red Flags', 'class' => RedFlags::class],
     ];
-
-    /**
-     * @var string Full title to be used for description metatags when having a search value
-     */
-    #[\Override]
-    protected string $full_title = 'Search for `%s` on Final Fantasy XIV Tracker';
-
-    /**
-     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
-     */
-    #[\Override]
-    protected array $required_permission = ['view_ff'];
 }

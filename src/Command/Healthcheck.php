@@ -22,7 +22,7 @@ final class Healthcheck
     /**
      * Check if database is up.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      *
@@ -80,10 +80,9 @@ final class Healthcheck
             $error_text = \file_get_contents($crash_flag);
 
             try {
-                /** @var bool $result */
                 $result = Query::query([
                     // Reset any potentially hanged cron jobs (if any)
-                    'UPDATE cron__schedule SET `run_by`=NULL, `status`=0 WHERE `run_by` IS NOT NULL;',
+                    'UPDATE `cron__schedule` SET `run_by`=NULL, `status`=0 WHERE `run_by` IS NOT NULL;',
                 ]);
             } catch (\Throwable) {
                 $result = false;
@@ -109,7 +108,7 @@ final class Healthcheck
             /* @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
             @\unlink($no_db_flag);
             // If we crashed, there is a high chance that some cron jobs failed, as well. Reset any potential jobs like that.
-            Query::query('UPDATE cron__schedule SET `run_by`=NULL, `status`=0 WHERE `run_by` IS NOT NULL;');
+            (void) Query::query('UPDATE `cron__schedule` SET `run_by`=NULL, `status`=0 WHERE `run_by` IS NOT NULL;');
             // Send mail
             new DatabaseUp()->save(
                 SystemUser::Owner->value,

@@ -13,22 +13,24 @@ use Simbiat\FFXIV\Lodestone;
 
 /**
  * Class representing a FFXIV linkshell (chat group).
+ *
+ * @api TODO: most likely will need to remove once entities migrate to Doctrine. For now this is mostly to silence Psalm.
  */
 final class Linkshell extends AbstractEntity
 {
     protected const string ENTITY_TYPE = 'linkshell';
 
-    public array $dates = [];
-
     public ?string $community = null;
 
-    public ?string $server = null;
-
-    public array $old_names = [];
+    public array $dates = [];
 
     public array $members = [];
 
+    public array $old_names = [];
+
     public array $past_members = [];
+
+    public ?string $server = null;
 
     /**
      * Get linkshell data from Lodestone.
@@ -39,6 +41,7 @@ final class Linkshell extends AbstractEntity
      *
      * @return array|string
      */
+    #[\Override]
     public function getFromLodestone(bool $allow_sleep = false): array|string
     {
         $lodestone = new Lodestone();
@@ -106,9 +109,14 @@ final class Linkshell extends AbstractEntity
         return $data;
     }
 
-    /** Function to get initial data from DB
-     * @throws \Exception
+    /**
+     * Function to get initial data from DB.
+     *
+     * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function getFromDB(): array
     {
         // Get general information
@@ -137,7 +145,10 @@ final class Linkshell extends AbstractEntity
      * @param array $from_db
      *
      * @return void
+     *
+     * @throws \InvalidArgumentException
      */
+    #[\Override]
     protected function process(array $from_db): void
     {
         $this->name = $from_db['name'];
@@ -160,8 +171,11 @@ final class Linkshell extends AbstractEntity
      *
      * @return bool
      */
+    #[\Override]
     protected function updateDB(): bool
     {
+        $queries = [];
+
         try {
             // If the `empty` flag is set, it means that the Lodestone page is empty, so we can't update anything besides name, data center and formed date
             if (
@@ -173,8 +187,8 @@ final class Linkshell extends AbstractEntity
                     [
                         ':crossworld' => [false, 'bool'],
                         ':formed' => [
-                            (empty($this->lodestone['formed']) ? null : $this->lodestone['formed']),
-                            (empty($this->lodestone['formed']) ? 'null' : 'datetime'),
+                            empty($this->lodestone['formed']) ? null : $this->lodestone['formed'],
+                            empty($this->lodestone['formed']) ? 'null' : 'datetime',
                         ],
                         ':ls_id' => $this->id,
                         ':name' => $this->lodestone['name'],
@@ -186,13 +200,13 @@ final class Linkshell extends AbstractEntity
                     'INSERT INTO `ffxiv__linkshell`(`ls_id`, `name`, `crossworld`, `formed`, `registered`, `updated`, `deleted`, `server_id`, `community_id`) VALUES (:ls_id, :name, :crossworld, :formed, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), NULL, (SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server OR `data_center`=:server ORDER BY `server_id` LIMIT 1), :community_id) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(6), `deleted`=NULL, `server_id`=(SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server OR `data_center`=:server ORDER BY `server_id` LIMIT 1), `community_id`=:community_id;',
                     [
                         ':community_id' => [
-                            (empty($this->lodestone['community_id']) ? null : $this->lodestone['community_id']),
-                            (empty($this->lodestone['community_id']) ? 'null' : 'string'),
+                            empty($this->lodestone['community_id']) ? null : $this->lodestone['community_id'],
+                            empty($this->lodestone['community_id']) ? 'null' : 'string',
                         ],
                         ':crossworld' => [false, 'bool'],
                         ':formed' => [
-                            (empty($this->lodestone['formed']) ? null : $this->lodestone['formed']),
-                            (empty($this->lodestone['formed']) ? 'null' : 'datetime'),
+                            empty($this->lodestone['formed']) ? null : $this->lodestone['formed'],
+                            empty($this->lodestone['formed']) ? 'null' : 'datetime',
                         ],
                         ':ls_id' => $this->id,
                         ':name' => $this->lodestone['name'],

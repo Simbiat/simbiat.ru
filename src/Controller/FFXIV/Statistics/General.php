@@ -10,7 +10,7 @@ use App\Service\Config;
 abstract class General extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -20,22 +20,15 @@ abstract class General extends Page
     ];
 
     /**
-     * @var string Sub service name
-     */
-    #[\Override]
-    protected string $subservice_name = 'statistics';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Statistics';
-
-    /**
      * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
      */
     #[\Override]
     protected string $h1 = 'Statistics';
+
+    /**
+     * @var string List of JSON files, that we need to try to ingest
+     */
+    protected string $json_to_ingest = '';
 
     /**
      * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
@@ -53,17 +46,25 @@ abstract class General extends Page
     protected bool $static = true;
 
     /**
-     * @var string List of JSON files, that we need to try to ingest
+     * @var string Sub service name
      */
-    protected string $json_to_ingest = '';
+    #[\Override]
+    protected string $subservice_name = 'statistics';
 
     /**
-     * This is actual page generation based on further details of the $path
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'Statistics';
+
+    /**
+     * This is actual page generation based on further details of the $path.
      *
      * @param array<int, string> $path
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         $output_array = [];

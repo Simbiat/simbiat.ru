@@ -24,7 +24,7 @@ final class Sitemap
     /**
      * Generate sitemap.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */
@@ -72,7 +72,7 @@ final class Sitemap
                         // Get path to use for router function (without format)
                         $path = \explode('/', \mb_trim(\str_replace(Config::$base_url.'/sitemap/', '', $link), '/', 'UTF-8'));
                         // Strip trailing .xml extension
-                        $path[\array_key_last($path)] = \str_replace('.xml', '', array_last($path));
+                        $path[\array_key_last($path)] = \str_replace('.xml', '', \array_last($path));
                         // Get filepath and filename
                         $file_path = \mb_rtrim(Config::$sitemap.\implode('/', \array_slice($path, 0, -1)), '/', 'UTF-8');
                         $file_name = \implode('/', \array_slice($path, -1));

@@ -14,7 +14,7 @@ use App\Service\Search\PVP;
 final class Search extends \App\Controller\Abstracts\Search
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -24,16 +24,10 @@ final class Search extends \App\Controller\Abstracts\Search
     ];
 
     /**
-     * @var string Sub service name
+     * @var string Full title to be used for description metatags when having a search value
      */
     #[\Override]
-    protected string $subservice_name = 'search';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'FFXIV Tracker Search';
+    protected string $full_title = 'Search for `%s` on Final Fantasy XIV Tracker';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
@@ -48,6 +42,30 @@ final class Search extends \App\Controller\Abstracts\Search
     protected string $og_desc = 'FFXIV Tracker Search';
 
     /**
+     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
+     */
+    #[\Override]
+    protected array $required_permission = ['view_ff'];
+
+    /**
+     * @var int Items to display per page for search results per type
+     */
+    #[\Override]
+    protected int $search_items = 6;
+
+    /**
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'search';
+
+    /**
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'FFXIV Tracker Search';
+
+    /**
      * @var array<string, array<string, string>> Linking types to classes
      */
     #[\Override]
@@ -59,22 +77,4 @@ final class Search extends \App\Controller\Abstracts\Search
         'linkshells' => ['name' => 'Linkshells', 'class' => Linkshells::class],
         'pvpteams' => ['name' => 'PvP Teams', 'class' => PVP::class],
     ];
-
-    /**
-     * @var int Items to display per page for search results per type
-     */
-    #[\Override]
-    protected int $search_items = 6;
-
-    /**
-     * @var string Full title to be used for description metatags when having a search value
-     */
-    #[\Override]
-    protected string $full_title = 'Search for `%s` on Final Fantasy XIV Tracker';
-
-    /**
-     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
-     */
-    #[\Override]
-    protected array $required_permission = ['view_ff'];
 }

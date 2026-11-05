@@ -10,24 +10,6 @@ use Simbiat\BIC\AccountKeying;
 final class Keying extends Api
 {
     /**
-     * @var array<string, string> Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
-     */
-    #[\Override]
-    protected array $methods = ['POST' => ''];
-
-    /**
-     * @var bool Flag to indicate, that this is the lowest level
-     */
-    #[\Override]
-    protected bool $final_node = true;
-
-    /**
-     * @var bool Flag to indicate, that no database is required for this node
-     */
-    #[\Override]
-    protected bool $static = true;
-
-    /**
      * @var array Description of the node
      */
     #[\Override]
@@ -41,6 +23,34 @@ final class Keying extends Api
         ],
     ];
 
+    /**
+     * @var bool Flag to indicate, that this is the lowest level
+     */
+    #[\Override]
+    protected bool $final_node = true;
+
+    /**
+     * @var array<string, string> Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
+     */
+    #[\Override]
+    protected array $methods = ['POST' => ''];
+
+    /**
+     * @var bool Flag to indicate, that no database is required for this node
+     */
+    #[\Override]
+    protected bool $static = true;
+
+    /**
+     * This is an actual API response generation based on further details of the $path.
+     *
+     * @param array $path
+     *
+     * @psalm-suppress MixedReturnTypeCoercion TODO: needs to be removed during migration to Symfony. Need to use objects instead of ararys.
+     *
+     * @return array<string, mixed>
+     */
+    #[\Override]
     protected function genData(array $path): array
     {
         $bic = $_POST['bic_key'] ?? null;

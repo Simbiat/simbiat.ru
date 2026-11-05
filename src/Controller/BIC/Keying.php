@@ -10,7 +10,7 @@ use Simbiat\BIC\AccountKeying;
 final class Keying extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -18,6 +18,36 @@ final class Keying extends Page
     protected array $breadcrumb = [
         ['href' => '/bictracker/keying', 'name' => 'Ключевание'],
     ];
+
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $h1 = 'Ключевание счёта';
+
+    /**
+     * @var string Language override, to be sent in header (if present)
+     */
+    #[\Override]
+    protected string $language = 'ru-RU';
+
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $og_desc = 'Проверка корректности контрольного символа в номере счёта против номера банковского идентификационного кода';
+
+    /**
+     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
+     */
+    #[\Override]
+    protected array $required_permission = ['view_bic'];
+
+    /**
+     * @var bool Flag to indicate this is a static page
+     */
+    #[\Override]
+    protected bool $static = true;
 
     /**
      * @var string Sub service name
@@ -32,49 +62,22 @@ final class Keying extends Page
     protected string $title = 'Ключевание счёта';
 
     /**
-     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $h1 = 'Ключевание счёта';
-
-    /**
-     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $og_desc = 'Проверка корректности контрольного символа в номере счёта против номера банковского идентификационного кода';
-
-    /**
-     * @var string Language override, to be sent in header (if present)
-     */
-    #[\Override]
-    protected string $language = 'ru-RU';
-
-    /**
-     * @var bool Flag to indicate this is a static page
-     */
-    #[\Override]
-    protected bool $static = true;
-
-    /**
-     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
-     */
-    #[\Override]
-    protected array $required_permission = ['view_bic'];
-
-    /**
-     * This is actual page generation based on further details of the $path
+     * This is actual page generation based on further details of the $path.
      *
      * @param array<int, string> $path
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     protected function generate(array $path): array
     {
-        $output_array['check_result'] = null;
-        $output_array['bic_value'] = null;
-        $output_array['acc_value'] = null;
-        $output_array['first_half'] = null;
-        $output_array['second_half'] = null;
+        $output_array = [
+            'acc_value' => null,
+            'bic_value' => null,
+            'check_result' => null,
+            'first_half' => null,
+            'second_half' => null,
+        ];
         if (
             !empty($path[0])
             && !empty($path[1])

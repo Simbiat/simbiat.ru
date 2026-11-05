@@ -9,7 +9,7 @@ use App\Controller\Abstracts\Page;
 final class CrossworldLinkshell extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -17,18 +17,6 @@ final class CrossworldLinkshell extends Page
     protected array $breadcrumb = [
         ['href' => '/fftracker/crossworld_linkshells', 'name' => 'Crossworld Linkshell'],
     ];
-
-    /**
-     * @var string Sub service name
-     */
-    #[\Override]
-    protected string $subservice_name = 'crossworld_linkshell';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Crossworld Linkshell';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
@@ -49,19 +37,34 @@ final class CrossworldLinkshell extends Page
     protected array $required_permission = ['view_ff'];
 
     /**
-     * This is actual page generation based on further details of the $path
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'crossworld_linkshell';
+
+    /**
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'Crossworld Linkshell';
+
+    /**
+     * This is actual page generation based on further details of the $path.
      *
      * @param array<int, string> $path
      *
      * @return array<string, mixed>
+     *
+     * @throws \UnexpectedValueException
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         // Sanitize ID
         $id = $path[0] ?? '';
         // Try to get details
         $entity = new \App\Entity\FFXIV\CrossworldLinkshell($id);
-        $output_array['linkshell'] = $entity->getArray();
+        $output_array = ['linkshell' => $entity->getArray()];
         // Check if ID was found
         if (empty($output_array['linkshell']['id'])) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];

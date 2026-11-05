@@ -6,7 +6,11 @@ namespace App;
 
 use App\Enum\SystemUser;
 use App\Service\Config;
+use App\Service\Errors;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
+use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -31,7 +35,10 @@ final class Kernel extends BaseKernel
      * Overriding Symfony's boot to replace the previous `Bootstrap.php`.
      *
      * @return void
+     *
+     * @throws ParameterNotFoundException|ServiceCircularReferenceException|ServiceNotFoundException
      */
+    #[\Override]
     public function boot(): void
     {
         parent::boot();
@@ -52,17 +59,24 @@ final class Kernel extends BaseKernel
         // Generate basic settings
         new Config($this->getContainer());
         // Set error handling
-        \set_error_handler(\App\Service\Errors::error_handler(...));
-        \set_exception_handler(\App\Service\Errors::error_log(...));
-        \register_shutdown_function(\App\Service\Errors::shutdown(...));
+        \set_error_handler(Errors::error_handler(...));
+        \set_exception_handler(Errors::error_log(...));
+        \register_shutdown_function(Errors::shutdown(...));
     }
 
     /**
      * Temporary custom handler to process requests like `/%c0`.
      * TODO: Most likely can be removed after proper migration.
      *
+     * @param Request $request
+     * @param int     $type
+     * @param bool    $catch
+     *
+     * @return Response
+     *
      * @throws \Exception
      */
+    #[\Override]
     public function handle(Request $request, int $type = HttpKernelInterface::MAIN_REQUEST, bool $catch = true): Response
     {
         if ($type === HttpKernelInterface::MAIN_REQUEST) {
@@ -81,8 +95,12 @@ final class Kernel extends BaseKernel
 
     /**
      * @return list<string> An array of allowed values for APP_ENV
+     *
+     * @psalm-suppress UnusedMethod -- false-positive due to Symfony's structure
+     *
+     * @noinspection   PhpUnusedPrivateMethodInspection -- https://youtrack.jetbrains.com/issue/WI-85841
      */
-    private function getAllowedEnvs(): array
+    private static function getAllowedEnvs(): array
     {
         return ['prod', 'dev', 'test'];
     }

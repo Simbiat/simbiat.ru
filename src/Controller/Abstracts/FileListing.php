@@ -26,16 +26,11 @@ abstract class FileListing extends StaticPage
      * Directories relative to working dir
      * Expected format: ['URL_path_name' => ['path' => 'path', 'name' => 'name to use in UI', 'depth' => 0]]
      * Depth, when set and more than 0 will mean that, until folders up to this depth, will be scanned only for other folders and as such allow folder traversal
-     * Items to display per page for lists
+     * Items to display per page for lists.
      *
      * @var array<string, array<string, int|string>>
      */
     protected array $dirs = [];
-
-    /**
-     * @var bool Flag whether to go recursive or not
-     */
-    protected bool $recursive = false;
 
     /**
      * @var array<int, string> List of files that should be excluded
@@ -43,14 +38,28 @@ abstract class FileListing extends StaticPage
     protected array $exclude = [];
 
     /**
+     * @var int Page number
+     */
+    protected int $page = 1;
+
+    /**
+     * @var bool Flag whether to go recursive or not
+     */
+    protected bool $recursive = false;
+
+    /**
      * @var string String to search for in file names
      */
     protected string $search_for = '';
 
     /**
-     * @var int Page number
+     * Override the function to do some extra processing over the array.
+     *
+     * @param array $file_details
+     *
+     * @return void
      */
-    protected int $page = 1;
+    protected function extra(array &$file_details): void {}
 
     /**
      * Generate the page.
@@ -59,6 +68,7 @@ abstract class FileListing extends StaticPage
      *
      * @return array
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         $output_array = [];
@@ -106,7 +116,7 @@ abstract class FileListing extends StaticPage
 
                 // Update breadcrumbs
                 $this->attachCrumb($path[0], $this->dirs[$path[0]]['name']);
-                $sub_dir = $this->getRealSubDirPath(Config::$work_dir.$this->dirs[$path[0]]['path'], \array_slice($path, 1));
+                $sub_dir = self::getRealSubDirPath(Config::$work_dir.$this->dirs[$path[0]]['path'], \array_slice($path, 1));
                 if (!$sub_dir) {
                     return ['http_error' => 404, 'reason' => 'Directory `'.$this->dirs[$path[0]]['path'].'/'.\implode('/', \array_slice($path, 1)).'` does not exist.', 'suggested_link' => $this->getLastCrumb()];
                 }
@@ -151,8 +161,9 @@ abstract class FileListing extends StaticPage
     protected function getFiles(#[FileReference] string $path, bool $count_only = false): array
     {
         $iterator = $this->recursive
-            ? new \CallbackFilterIterator(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST), static fn($cur) => $cur->isFile())
-            : new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), static fn($cur) => $cur->isFile());
+            ? new \CallbackFilterIterator(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST), static fn($cur): bool => $cur->isFile())
+            : new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), static fn($cur): bool => $cur->isFile());
+
         // Order results
         /** @noinspection IteratorToArrayKeysCollisionInspection */
         $iterator = \iterator_to_array($iterator);
@@ -205,13 +216,42 @@ abstract class FileListing extends StaticPage
     }
 
     /**
-     * Override the function to do some extra processing over the array.
+     * Get a list of directories.
      *
-     * @param array $file_details
+     * @param string $path       Base path
+     * @param bool   $count_only Whether we just count or generate a full list with details
      *
-     * @return void
+     * @return array
      */
-    protected function extra(array &$file_details): void {}
+    private function getDirs(#[FileReference] string $path, bool $count_only = false): array
+    {
+        // Order results
+        /** @noinspection IteratorToArrayKeysCollisionInspection */
+        $iterator = \iterator_to_array(new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), static fn($cur): bool => $cur->isDir()));
+        \ksort($iterator, \SORT_NATURAL);
+        // Prepare the array
+        $result = [];
+        $result['dirs'] = [];
+        if ($count_only) {
+            $result['count'] = \iterator_count($iterator);
+        } else {
+            foreach ($iterator as $key => $file) {
+                if (!\in_array($key, $this->exclude, strict: true)) {
+                    $file_details = [
+                        'dirname' => $file->getFilename(),
+                        // Path relative to the working directory
+                        'path' => \str_replace(Config::$work_dir, '', $file->getPath()),
+                        'time' => $file->getMTime(),
+                    ];
+                    $result['dirs'][] = $file_details;
+                }
+            }
+
+            $result['count'] = \count($result['dirs']);
+        }
+
+        return $result;
+    }
 
     /**
      * Try to get the actual subdirectory path, based on an actual case of the name, and not the lower case as was passed in URL.
@@ -221,7 +261,7 @@ abstract class FileListing extends StaticPage
      *
      * @return false|string
      */
-    private function getRealSubDirPath(#[FileReference] string $path, array $sub_dir): false|string
+    private static function getRealSubDirPath(#[FileReference] string $path, array $sub_dir): false|string
     {
         $full_sub_dir = '/';
         foreach ($sub_dir as $sub_path) {
@@ -253,6 +293,7 @@ abstract class FileListing extends StaticPage
      */
     private function listFiles(#[FileReference] string $path, #[FileReference] string $sub_dir = ''): array
     {
+        $output_array = [];
         $output_array['files'][$path] = $this->getFiles(Config::$work_dir.$this->dirs[$path]['path'].$sub_dir);
         // Process pagination
         $total_pages = (int) \ceil($output_array['files'][$path]['count'] / $this->list_items);
@@ -304,43 +345,5 @@ abstract class FileListing extends StaticPage
         $this->h1 = $this->dirs[$path]['name'];
 
         return $output_array;
-    }
-
-    /**
-     * Get a list of directories.
-     *
-     * @param string $path       Base path
-     * @param bool   $count_only Whether we just count or generate a full list with details
-     *
-     * @return array
-     */
-    private function getDirs(#[FileReference] string $path, bool $count_only = false): array
-    {
-        // Order results
-        /** @noinspection IteratorToArrayKeysCollisionInspection */
-        $iterator = \iterator_to_array(new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), static fn($cur) => $cur->isDir()));
-        \ksort($iterator, \SORT_NATURAL);
-        // Prepare the array
-        $result = [];
-        $result['dirs'] = [];
-        if ($count_only) {
-            $result['count'] = \iterator_count($iterator);
-        } else {
-            foreach ($iterator as $key => $file) {
-                if (!\in_array($key, $this->exclude, strict: true)) {
-                    $file_details = [
-                        'dirname' => $file->getFilename(),
-                        // Path relative to the working directory
-                        'path' => \str_replace(Config::$work_dir, '', $file->getPath()),
-                        'time' => $file->getMTime(),
-                    ];
-                    $result['dirs'][] = $file_details;
-                }
-            }
-
-            $result['count'] = \count($result['dirs']);
-        }
-
-        return $result;
     }
 }

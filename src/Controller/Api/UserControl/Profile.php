@@ -10,6 +10,12 @@ use App\Entity\User;
 final class Profile extends Api
 {
     /**
+     * @var bool Flag indicating that authentication is required
+     */
+    #[\Override]
+    protected bool $authentication_needed = true;
+
+    /**
      * @var bool Flag to indicate, that this is the lowest level
      */
     #[\Override]
@@ -22,11 +28,9 @@ final class Profile extends Api
     protected array $methods = ['PATCH' => ''];
 
     /**
-     * @var bool Flag indicating that authentication is required
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     #[\Override]
-    protected bool $authentication_needed = true;
-
     protected function genData(array $path): array
     {
         return new User($_SESSION['user_id'])->updateProfile();

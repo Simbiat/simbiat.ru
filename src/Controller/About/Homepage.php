@@ -15,7 +15,7 @@ use Simbiat\HTML\Cut;
 final class Homepage extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -25,22 +25,10 @@ final class Homepage extends Page
     ];
 
     /**
-     * @var string Sub service name
-     */
-    #[\Override]
-    protected string $subservice_name = 'homepage';
-
-    /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
      */
     #[\Override]
     protected string $h1 = 'Home';
-
-    /**
-     * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $og_desc = 'Homepage of Simbiat Software';
 
     /**
      * @var array<int, string> List of images to H2 push
@@ -55,6 +43,22 @@ final class Homepage extends Page
         '/assets/images/supops/logo/ogimage.webp',
     ];
 
+    /**
+     * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $og_desc = 'Homepage of Simbiat Software';
+
+    /**
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'homepage';
+
+    /**
+     * @throws \InvalidArgumentException|\UnexpectedValueException
+     */
+    #[\Override]
     protected function generate(array $path): array
     {
         $output_array = ['h1' => 'Home', 'service_name' => 'homepage'];

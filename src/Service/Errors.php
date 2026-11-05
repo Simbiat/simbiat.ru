@@ -35,34 +35,24 @@ final class Errors
     ];
 
     /**
-     * Helper function to log errors with identifying the page.
+     * A simple wrapper function for var_dump to apply <pre> tag and exit the script (by default).
      *
-     * @param \Throwable $error   Error object
-     * @param mixed      $context Context (extra data) to store in the log
-     * @param bool       $debug   If set to `true` will output the error instead of writing to file
-     * @param bool       $cli     Same as `debug`, but without the `<pre></pre>` wrapper
+     * @param mixed $variable Variable to dump
+     * @param bool  $exit     Whether to stop execution right away
      *
-     * @return false
+     * @return void
      */
-    public static function error_log(\Throwable $error, mixed $context = '', bool $debug = false, bool $cli = false): false
+    public static function dump(mixed $variable, bool $exit = true): void
     {
-        // Generate message
-        $message = self::genLogEntry($error::class.' Exception', $error->getFile(), $error->getLine(), $error->getMessage(), $error->getTraceAsString(), $error->getPrevious(), $context);
-        // Write to log
-        if ($cli) {
-            echo $message;
+        echo '<pre>';
+        /* @noinspection ForgottenDebugOutputInspection This is intentional, since this function is meant for debugging */
+        \var_dump($variable);
+        echo '</pre>';
+        @\ob_flush();
+        @\flush();
+        if ($exit) {
             exit(0);
         }
-
-        if ($debug) {
-            echo '<pre>'.$message.'</pre>';
-            exit(0);
-        }
-
-        // Write to file
-        self::write($message);
-
-        return false;
     }
 
     /**
@@ -107,55 +97,36 @@ final class Errors
     }
 
     /**
-     * Custom shutdown function.
+     * Helper function to log errors with identifying the page.
      *
-     * @return void
+     * @param \Throwable $error   Error object
+     * @param mixed      $context Context (extra data) to store in the log
+     * @param bool       $debug   If set to `true` will output the error instead of writing to file
+     * @param bool       $cli     Same as `debug`, but without the `<pre></pre>` wrapper
+     *
+     * @return false
      */
-    public static function shutdown(): void
+    public static function error_log(\Throwable $error, mixed $context = '', bool $debug = false, bool $cli = false): false
     {
-        // Get error
-        $error = \error_get_last();
-        // Log only time and memory exhaustion to avoid duplicates
-        if (
-            $error !== null
-            && $error !== []
-            && $error['type'] === \E_ERROR
-            && \preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1
-        ) {
-            // Generate message
-            $message = self::genLogEntry(self::PHP_ERROR_TYPES[$error['type']], $error['file'], $error['line'], $error['message']);
-            // Write to file
-            self::write($message);
-        }
+        // Generate message
+        $message = self::genLogEntry($error::class.' Exception', $error->getFile(), $error->getLine(), $error->getMessage(), $error->getTraceAsString(), $error->getPrevious(), $context);
+        // Write to log
+        if ($cli) {
+            echo $message;
 
-        // Rollback if there was an open transaction
-        if (
-            Query::$dbh instanceof \PDO
-            && Query::$dbh->inTransaction()
-        ) {
-            Query::$dbh->rollBack();
-        }
-    }
-
-    /**
-     * A simple wrapper function for var_dump to apply <pre> tag and exit the script (by default).
-     *
-     * @param mixed $variable Variable to dump
-     * @param bool  $exit     Whether to stop execution right away
-     *
-     * @return void
-     */
-    public static function dump(mixed $variable, bool $exit = true): void
-    {
-        echo '<pre>';
-        /* @noinspection ForgottenDebugOutputInspection This is intentional, since this function is meant for debugging */
-        \var_dump($variable);
-        echo '</pre>';
-        @\ob_flush();
-        @\flush();
-        if ($exit) {
             exit(0);
         }
+
+        if ($debug) {
+            echo '<pre>'.$message.'</pre>';
+
+            exit(0);
+        }
+
+        // Write to file
+        self::write($message);
+
+        return false;
     }
 
     /**
@@ -189,6 +160,37 @@ final class Errors
     }
 
     /**
+     * Custom shutdown function.
+     *
+     * @return void
+     */
+    public static function shutdown(): void
+    {
+        // Get error
+        $error = \error_get_last();
+        // Log only time and memory exhaustion to avoid duplicates
+        if (
+            $error !== null
+            && $error !== []
+            && $error['type'] === \E_ERROR
+            && \preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1
+        ) {
+            // Generate message
+            $message = self::genLogEntry(self::PHP_ERROR_TYPES[$error['type']], $error['file'], $error['line'], $error['message']);
+            // Write to file
+            self::write($message);
+        }
+
+        // Rollback if there was an open transaction
+        if (
+            Query::$dbh instanceof \PDO
+            && Query::$dbh->inTransaction()
+        ) {
+            Query::$dbh->rollBack();
+        }
+    }
+
+    /**
      * Helper to write errors in the log.
      *
      * @param string          $type     Error type
@@ -196,7 +198,7 @@ final class Errors
      * @param int|string      $line     Line in file where the error happened
      * @param string          $message  Error message
      * @param string          $trace    Trace from the error
-     * @param null|\Throwable $previous Previous Throwable, if this was re-thrown. Will be merged with context.
+     * @param \Throwable|null $previous Previous Throwable, if this was re-thrown. Will be merged with context.
      * @param mixed           $context  Optional additional cotext
      *
      * @return string
@@ -235,18 +237,6 @@ final class Errors
     }
 
     /**
-     * Helper to write errors in the log.
-     *
-     * @param string $message Error message
-     *
-     * @return void
-     */
-    private static function write(string $message): void
-    {
-        \file_put_contents(Config::$work_dir.'/var/log/php.log', $message, \FILE_APPEND);
-    }
-
-    /**
      * Helper to attempt to get URL, which was used when the error occurred.
      *
      * @return string
@@ -256,5 +246,17 @@ final class Errors
         return \preg_match('/^cli(-server)?$/i', \PHP_SAPI) === 1
             ? 'CLI'
             : $_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
+    }
+
+    /**
+     * Helper to write errors in the log.
+     *
+     * @param string $message Error message
+     *
+     * @return void
+     */
+    private static function write(string $message): void
+    {
+        \file_put_contents(Config::$work_dir.'/var/log/php.log', $message, \FILE_APPEND);
     }
 }

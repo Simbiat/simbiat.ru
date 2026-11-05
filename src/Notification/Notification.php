@@ -24,6 +24,8 @@ use Symfony\Component\Mime\Address;
 
 /**
  * Abstract class for notifications.
+ *
+ * @api TODO: most likely will need to remove once entities migrate to Doctrine. For now this is mostly to silence Psalm.
  */
 abstract class Notification extends Entity
 {
@@ -31,26 +33,6 @@ abstract class Notification extends Entity
      * Maximum attempts for sending notifications over email.
      */
     final public const int MAX_ATTEMPTS = 10;
-
-    /**
-     * Subject for email.
-     */
-    protected const string SUBJECT = '';
-
-    /**
-     * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high.
-     */
-    protected const int PRIORITY = 1;
-
-    /**
-     * Whether a non-empty array of Twig variables is required.
-     */
-    protected const bool TWIG_REQUIRED = false;
-
-    /**
-     * Whether this is a security alert, and we need to collect session details and pass them to Twig.
-     */
-    protected const bool SECURITY_ALERT = false;
 
     /**
      * Whether to send the notification to all emails registered for the user.
@@ -63,29 +45,24 @@ abstract class Notification extends Entity
     protected const bool ALWAYS_SEND = false;
 
     /**
-     * @var string|null Whether notification is supposed to be sent via email (if a valid email)
+     * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high.
      */
-    public protected(set) ?string $email = null;
+    protected const int PRIORITY = 1;
 
     /**
-     * @var bool Whether notification is supposed to be sent via push
+     * Whether this is a security alert, and we need to collect session details and pass them to Twig.
      */
-    public protected(set) bool $push = true;
+    protected const bool SECURITY_ALERT = false;
 
     /**
-     * @var int|null When the notification was created
+     * Subject for email.
      */
-    public protected(set) ?int $created = null;
+    protected const string SUBJECT = '';
 
     /**
-     * @var int|null When notification was sent
+     * Whether a non-empty array of Twig variables is required.
      */
-    public protected(set) ?int $sent = null;
-
-    /**
-     * @var int|null When notification was read
-     */
-    public protected(set) ?int $is_read = null;
+    protected const bool TWIG_REQUIRED = false;
 
     /**
      * @var int Number of attempts so far
@@ -93,9 +70,34 @@ abstract class Notification extends Entity
     public protected(set) int $attempts = 0;
 
     /**
+     * @var int|null When the notification was created
+     */
+    public protected(set) ?int $created = null;
+
+    /**
+     * @var string|null Whether notification is supposed to be sent via email (if a valid email)
+     */
+    public protected(set) ?string $email = null;
+
+    /**
+     * @var int|null When notification was read
+     */
+    public protected(set) ?int $is_read = null;
+
+    /**
      * @var int|null When was the last attempt
      */
     public protected(set) ?int $last_attempt = null;
+
+    /**
+     * @var bool Whether notification is supposed to be sent via push
+     */
+    public protected(set) bool $push = true;
+
+    /**
+     * @var int|null When notification was sent
+     */
+    public protected(set) ?int $sent = null;
 
     /**
      * @var string|null Notification text
@@ -112,6 +114,22 @@ abstract class Notification extends Entity
      * @var int|null ID of the user the notification belongs to
      */
     protected ?int $user = null;
+
+    /**
+     * Delete the notification.
+     *
+     * @return bool
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    final public function delete(): bool
+    {
+        if ($this->id !== null) {
+            return Query::query('DELETE FROM `sys__notifications` WHERE `uuid`=:id;', [':id' => $this->id]);
+        }
+
+        return false;
+    }
 
     /**
      * Mark the notification as read.
@@ -145,49 +163,19 @@ abstract class Notification extends Entity
     }
 
     /**
-     * Validate the ID
-     *
-     * @param int|string $id
-     *
-     * @return void
-     */
-    protected function validateId(int|string $id): void
-    {
-        if (\is_int($id)) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` needs to be a string.');
-        }
-
-        if (!\uuid_is_valid($id)) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
-        }
-    }
-
-    /**
-     * Delete the notification.
-     *
-     * @return bool
-     */
-    final public function delete(): bool
-    {
-        if ($this->id !== null) {
-            return Query::query('DELETE FROM `sys__notifications` WHERE `uuid`=:id;', [':id' => $this->id]);
-        }
-
-        return false;
-    }
-
-    /**
      * Generate and save the notification to database (if available).
      *
-     * @param null|int|string $user_id        ID of the user for which to generate the notification
-     * @param array<string, mixed> $twig_vars Array of variables for Twig
-     * @param bool            $email          Whether the notification should be sent via email
-     * @param bool            $push           Whether the notification should be shown through the app
-     * @param null|string     $email_override Email address to use, if none is found. For test environment, will not matter, since admin email will be used
+     * @param int|string|null      $user_id        ID of the user for which to generate the notification
+     * @param array<string, mixed> $twig_vars      Array of variables for Twig
+     * @param bool                 $email          Whether the notification should be sent via email
+     * @param bool                 $push           Whether the notification should be shown through the app
+     * @param string|null          $email_override Email address to use, if none is found. For test environment, will not matter, since admin email will be used
      *
      * @return $this
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
-    final public function save(null|int|string $user_id = null, array $twig_vars = [], bool $email = true, bool $push = true, ?string $email_override = null): self
+    final public function save(int|string|null $user_id = null, array $twig_vars = [], bool $email = true, bool $push = true, ?string $email_override = null): self
     {
         $this->push = $push;
         if (
@@ -388,6 +376,8 @@ abstract class Notification extends Entity
      * @param bool $debug Whether to send the message or just output it to browser
      *
      * @return bool
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     final public function send(bool $debug = false): bool
     {
@@ -546,6 +536,7 @@ abstract class Notification extends Entity
                 $renderer->render($email);
                 // Need to include the CSS file, since embedded does not seem to apply properly in browser. It's not exactly the same as when email is sent, but close enough.
                 Common::zEcho('<link href="/assets/styles/1234567890.css" rel="stylesheet preload" type="text/css" as="style">'.$email->getHtmlBody(), 'live', exit: false);
+
                 exit(0);
             }
 
@@ -571,19 +562,13 @@ abstract class Notification extends Entity
     }
 
     /**
-     * Generate text for message.
-     *
-     * @param array $twig_vars Array of variables for Twig
-     *
-     * @return self
-     */
-    abstract protected function setText(array $twig_vars = []): self;
-
-    /**
      * Get data from DB.
      *
-     * @return array
+     * @return array<int, array<string, mixed>>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function getFromDB(): array
     {
         return Query::query('SELECT * FROM `sys__notifications` WHERE `uuid`=:id;', [':id' => $this->id], return: 'row');
@@ -596,6 +581,7 @@ abstract class Notification extends Entity
      *
      * @return void
      */
+    #[\Override]
     protected function process(array $from_db): void
     {
         $this->user = $from_db['user_id'] ?? null;
@@ -621,5 +607,35 @@ abstract class Notification extends Entity
         $this->text = Sanitize::whiteString($from_db['text'] ?? '')
             ? null
             : Sanitization::sanitizeHTML($from_db['text']);
+    }
+
+    /**
+     * Generate text for message.
+     *
+     * @param array $twig_vars Array of variables for Twig
+     *
+     * @return self
+     */
+    abstract protected function setText(array $twig_vars = []): self;
+
+    /**
+     * Validate the ID.
+     *
+     * @param int|string $id
+     *
+     * @return void
+     *
+     * @throws \UnexpectedValueException
+     */
+    #[\Override]
+    protected function validateId(int|string $id): void
+    {
+        if (\is_int($id)) {
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` needs to be a string.');
+        }
+
+        if (!\uuid_is_valid($id)) {
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
+        }
     }
 }

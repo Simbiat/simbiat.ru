@@ -15,28 +15,30 @@ use Simbiat\FFXIV\Lodestone;
 
 /**
  * Class representing a FFXIV achievement.
+ *
+ * @api TODO: most likely will need to remove once entities migrate to Doctrine. For now this is mostly to silence Psalm.
  */
 final class Achievement extends AbstractEntity
 {
     protected const string ENTITY_TYPE = 'achievement';
 
-    public int $updated;
-
-    public int $registered;
-
     public ?string $category = null;
 
-    public ?string $subcategory = null;
-
-    public ?string $icon = null;
-
-    public ?string $how_to = null;
+    public array $characters = [];
 
     public ?string $db_id = null;
 
+    public ?string $how_to = null;
+
+    public ?string $icon = null;
+
+    public int $registered;
+
     public array $rewards = [];
 
-    public array $characters = [];
+    public ?string $subcategory = null;
+
+    public int $updated;
 
     /**
      * Get data from Lodestone.
@@ -49,6 +51,7 @@ final class Achievement extends AbstractEntity
      *
      * @throws \Exception
      */
+    #[\Override]
     public function getFromLodestone(bool $allow_sleep = false): array|string
     {
         $achievement = $this->getFromDB(non_private: true);
@@ -60,11 +63,13 @@ final class Achievement extends AbstractEntity
         $lodestone = new Lodestone();
         // If we do not have db_id already - try to get one
         if (empty($achievement['db_id'])) {
-            $achievement['db_id'] = $this->getDBID($achievement['name']);
+            $achievement['db_id'] = self::getDBID($achievement['name']);
         }
 
         // Somewhat simpler and faster processing if we have db_id already
         if (!empty($achievement['db_id'])) {
+            $data = [];
+
             try {
                 $data = $lodestone->getAchievementFromDB($achievement['db_id'])->getResult();
             } catch (\Throwable $exception) {
@@ -140,7 +145,7 @@ final class Achievement extends AbstractEntity
                 && \is_array($data['characters'][$char['id']]['achievements'][$this->id])
             ) {
                 // Try to get achievement ID as seen in Lodestone database (play guide)
-                $data['characters'][$char['id']]['achievements'][$this->id]['db_id'] = $this->getDBID($data['characters'][$char['id']]['achievements'][$this->id]['name']);
+                $data['characters'][$char['id']]['achievements'][$this->id]['db_id'] = self::getDBID($data['characters'][$char['id']]['achievements'][$this->id]['name']);
                 // Remove time
                 unset($data['characters'][$char['id']]['achievements'][$this->id]['time']);
                 $data = $data['characters'][$char['id']]['achievements'][$this->id];
@@ -158,8 +163,11 @@ final class Achievement extends AbstractEntity
      *
      * @param bool $non_private Whether selection of characters is only for non-private characters
      *
-     * @return array
+     * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function getFromDB(bool $non_private = false): array
     {
         // Get general information
@@ -202,6 +210,7 @@ final class Achievement extends AbstractEntity
      *
      * @return void
      */
+    #[\Override]
     protected function process(array $from_db): void
     {
         $this->name = $from_db['name'];
@@ -232,9 +241,9 @@ final class Achievement extends AbstractEntity
      *
      * @return bool
      */
+    #[\Override]
     protected function updateDB(): bool
     {
-
         // Prepare bindings for actual update
         $bindings = [];
         $bindings[':achievement_id'] = $this->id;
@@ -290,9 +299,9 @@ final class Achievement extends AbstractEntity
      *
      * @param string $search_for
      *
-     * @return null|string
+     * @return string|null
      */
-    private function getDBID(string $search_for): ?string
+    private static function getDBID(string $search_for): ?string
     {
         try {
             $db_search_result = new Lodestone()->searchDatabase('achievement', 0, 0, $search_for)->getResult();

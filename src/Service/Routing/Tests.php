@@ -12,13 +12,7 @@ use App\Service\Errors;
 final class Tests extends Router
 {
     /**
-     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
-     */
-    #[\Override]
-    protected array $sub_routes = ['mail', 'styling'];
-
-    /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -28,13 +22,19 @@ final class Tests extends Router
     ];
 
     #[\Override]
-    protected string $title = 'Tests';
-
-    #[\Override]
     protected string $h1 = 'Tests';
 
     #[\Override]
     protected string $og_desc = 'Tests';
+
+    /**
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
+    #[\Override]
+    protected array $sub_routes = ['mail', 'styling'];
+
+    #[\Override]
+    protected string $title = 'Tests';
 
     /**
      * This is the actual page generation based on further details of the $path.
@@ -43,6 +43,7 @@ final class Tests extends Router
      *
      * @return array
      */
+    #[\Override]
     protected function pageGen(array $path): array
     {
         $output_array = [];
@@ -70,8 +71,10 @@ final class Tests extends Router
                 }
 
                 exit(0);
+
             case 'styling':
                 return ['service_name' => 'styling_test', 'static_page' => true];
+
             default:
                 return ['http_error' => 400, 'reason' => 'Unsupported endpoint'];
         }

@@ -9,7 +9,7 @@ use App\Controller\Abstracts\StaticPage;
 final class FACTS extends StaticPage
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -17,6 +17,28 @@ final class FACTS extends StaticPage
     protected array $breadcrumb = [
         ['href' => '/supops/facts', 'name' => 'The FACTS'],
     ];
+
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $h1 = 'SupOps: The FACTS';
+
+    /**
+     * @var array<int, string> List of images to H2 push
+     */
+    #[\Override]
+    protected array $h2_push_extra = [
+        '/assets/images/supops/memes/everybody_lies.avif',
+        '/assets/images/supops/memes/megazord.avif',
+        '/assets/images/supops/navigation/feedback.svg',
+    ];
+
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $og_desc = 'SupOps is built on FACTS';
 
     /**
      * @var string Sub service name
@@ -29,26 +51,4 @@ final class FACTS extends StaticPage
      */
     #[\Override]
     protected string $title = 'SupOps: The FACTS';
-
-    /**
-     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $h1 = 'SupOps: The FACTS';
-
-    /**
-     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $og_desc = 'SupOps is built on FACTS';
-
-    /**
-     * @var array<int, string> List of images to H2 push
-     */
-    #[\Override]
-    protected array $h2_push_extra = [
-        '/assets/images/supops/memes/everybody_lies.avif',
-        '/assets/images/supops/memes/megazord.avif',
-        '/assets/images/supops/navigation/feedback.svg',
-    ];
 }

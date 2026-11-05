@@ -13,17 +13,7 @@ use Simbiat\http20\Headers;
 final class Sitemap extends Router
 {
     /**
-     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
-     */
-    #[\Override]
-    protected array $sub_routes = [
-        'index', 'fftracker',
-        'general', 'bics', 'threads', 'users',
-        'ffxiv_characters', 'ffxiv_freecompanies', 'ffxiv_linkshells', 'ffxiv_pvpteams', 'ffxiv_achievements',
-    ];
-
-    /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -33,16 +23,10 @@ final class Sitemap extends Router
     ];
 
     #[\Override]
-    protected string $title = 'Sitemap';
-
-    #[\Override]
     protected string $h1 = 'Sitemap';
 
     #[\Override]
     protected string $og_desc = 'Sitemap';
-
-    #[\Override]
-    protected string $service_name = 'sitemap';
 
     /**
      * @var string If no path[0] is provided, but we want to show specific page, instead of a stub - redirect to page with this address
@@ -50,13 +34,30 @@ final class Sitemap extends Router
     #[\Override]
     protected string $redirect_main = '/sitemap/index';
 
+    #[\Override]
+    protected string $service_name = 'sitemap';
+
     /**
-     * This is the actual page generation based on further details of the $path
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
+    #[\Override]
+    protected array $sub_routes = [
+        'index', 'fftracker',
+        'general', 'bics', 'threads', 'users',
+        'ffxiv_characters', 'ffxiv_freecompanies', 'ffxiv_linkshells', 'ffxiv_pvpteams', 'ffxiv_achievements',
+    ];
+
+    #[\Override]
+    protected string $title = 'Sitemap';
+
+    /**
+     * This is the actual page generation based on further details of the $path.
      *
      * @param array $path
      *
      * @return array
      */
+    #[\Override]
     protected function pageGen(array $path): array
     {
         // Send 406 if format is not acceptable

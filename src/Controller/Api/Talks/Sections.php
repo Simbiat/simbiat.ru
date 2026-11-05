@@ -11,6 +11,18 @@ use App\HomePage;
 final class Sections extends Api
 {
     /**
+     * @var bool Flag indicating that authentication is required
+     */
+    #[\Override]
+    protected bool $authentication_needed = true;
+
+    /**
+     * @var bool Flag to indicate need to validate CSRF
+     */
+    #[\Override]
+    protected bool $csrf = true;
+
+    /**
      * @var bool Flag to indicate, that this is the lowest level
      */
     #[\Override]
@@ -38,17 +50,17 @@ final class Sections extends Api
     ];
 
     /**
-     * @var bool Flag indicating that authentication is required
+     * This is an actual API response generation based on further details of the $path.
+     *
+     * @param array $path
+     *
+     * @psalm-suppress MixedReturnTypeCoercion TODO: needs to be removed during migration to Symfony. Need to use objects instead of ararys.
+     *
+     * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     #[\Override]
-    protected bool $authentication_needed = true;
-
-    /**
-     * @var bool Flag to indicate need to validate CSRF
-     */
-    #[\Override]
-    protected bool $csrf = true;
-
     protected function genData(array $path): array
     {
         // Reset verb for consistency, if it's not set

@@ -19,14 +19,18 @@ use Simbiat\StringHelpers\Sanitize;
 final class BICLibrary
 {
     /**
+     * Base link for href attribute.
+     */
+    public const string BIC_BASE_HREF = 'https://www.cbr.ru';
+
+    /**
      * Base link where we download BIC files.
      */
     public const string BIC_DOWN_BASE = 'https://www.cbr.ru/PSystem/payment_system/?UniDbQuery.Posted=True&UniDbQuery.To=';
 
-    /**
-     * Base link for href attribute.
-     */
-    public const string BIC_BASE_HREF = 'https://www.cbr.ru';
+    private readonly array $account_restrictions;
+
+    private readonly array $bic_restrictions;
 
     /**
      * Date from the XML file.
@@ -38,10 +42,9 @@ final class BICLibrary
      */
     private array $queries = [];
 
-    private readonly array $bic_restrictions;
-
-    private readonly array $account_restrictions;
-
+    /**
+     * @throws \InvalidArgumentException
+     */
     public function __construct()
     {
         $this->bic_restrictions = Converters::enumNames(RstrType::class);
@@ -49,7 +52,32 @@ final class BICLibrary
     }
 
     /**
+     * Function to get the current library date.
+     *
+     * @return \DateTimeImmutable
+     */
+    public function bicDate(): \DateTimeImmutable
+    {
+        try {
+            $date = Query::query("SELECT `value` FROM `bic__settings` WHERE `setting`='date';", return: 'value');
+
+            $result = \DateTimeImmutable::createFromFormat('!d.m.Y', $date);
+            if ($result === false) {
+                throw new \RuntimeException('Failed to create date.');
+            }
+
+            return $result;
+        } catch (\Throwable) {
+            return \DateTimeImmutable::createFromTimestamp(\time());
+        }
+    }
+
+    /**
      * Function to update the library in the database.
+     *
+     * @param bool $manual
+     *
+     * @return bool|int|string
      */
     public function update(bool $manual = false): bool|int|string
     {
@@ -59,10 +87,10 @@ final class BICLibrary
         $lib_date_initial = $lib_date->format('Y-m-d');
         while ($lib_date->format('Y-m-d') <= $current_date->format('Y-m-d')) {
             try {
-                $download = $this->download($lib_date);
+                $download = self::download($lib_date);
                 if ($download === true) {
                     // The day does not have a library, skip it
-                    $this->log($lib_date->format('d.m.Y'), 'Библиотека за день не найдена: день пропущен', $manual);
+                    self::log($lib_date->format('d.m.Y'), 'Библиотека за день не найдена: день пропущен', $manual);
                     $lib_date = $lib_date->add(new \DateInterval('P1D'));
 
                     continue;
@@ -71,7 +99,7 @@ final class BICLibrary
                 if ($download === false) {
                     // If date is current one or somehow from the future, then assume that file is simply not available yet
                     if ($lib_date->format('Y-m-d') >= $current_date->format('Y-m-d')) {
-                        $this->log($lib_date->format('d.m.Y'), 'Библиотека за день не найдена: скорее всего, ещё не опубликована', $manual);
+                        self::log($lib_date->format('d.m.Y'), 'Библиотека за день не найдена: скорее всего, ещё не опубликована', $manual);
 
                         return true;
                     }
@@ -83,7 +111,7 @@ final class BICLibrary
                 // Some files are known to have double XML definition. We need to fix this.
                 \file_get_contents($download)
                     |> (static fn($x): ?string => \preg_replace('/(<\?xml version="1\.0" encoding="WINDOWS-1251"\?>){2,}/i', '$1', $x))
-                    |> (static fn($x): int|false => \file_put_contents($download, $x));
+                    |> (static fn($x): false|int => \file_put_contents($download, $x));
                 // Load file
                 $library = new \DOMDocument();
                 if (!$library->load(\realpath($download), \LIBXML_PARSEHUGE | \LIBXML_COMPACT | \LIBXML_NOWARNING | \LIBXML_NOERROR | \LIBXML_NONET)) {
@@ -140,16 +168,16 @@ final class BICLibrary
                     foreach (\array_keys($details) as $key) {
                         $bindings[':'.$key] = [
                             $details[$key],
-                            ($details[$key] === null ? 'null' : 'string'),
+                            $details[$key] === null ? 'null' : 'string',
                         ];
                     }
 
                     // Get current details
-                    $current_details = $this->getBIC($bic);
+                    $current_details = self::getBIC($bic);
                     // Check for Parent BIC
                     if (
                         !empty($details['PrntBIC'])
-                        && \count($this->getBIC($details['PrntBIC'])) === 0
+                        && \count(self::getBIC($details['PrntBIC'])) === 0
                     ) {
                         $delay = true;
                     }
@@ -180,7 +208,7 @@ final class BICLibrary
                         }
 
                         // Get current restrictions
-                        $current_rest = $this->getRestrictions($bic);
+                        $current_rest = self::getRestrictions($bic);
                         // Check if any of the restrictions were removed
                         foreach ($current_rest as $restriction) {
                             if (!\in_array($restriction, $library_rest, strict: true)) {
@@ -228,7 +256,7 @@ final class BICLibrary
                         }
 
                         // Get current SWIFTs
-                        $current_swift = $this->getSWIFTs($bic);
+                        $current_swift = self::getSWIFTs($bic);
                         // Add all SWIFTs. Updating the default flag if already existing
                         foreach ($library_swift as $swift) {
                             if (!\in_array($swift, $current_swift, strict: true)) {
@@ -281,7 +309,7 @@ final class BICLibrary
                         }
 
                         // "Remove" accounts
-                        foreach ($this->getAccounts($bic) as $account) {
+                        foreach (self::getAccounts($bic) as $account) {
                             if (!\in_array($account, $library_accounts, strict: true)) {
                                 $this->closeAccount($bic, $account['Account']);
                             }
@@ -291,7 +319,7 @@ final class BICLibrary
                         foreach ($library_accounts as $library_account) {
                             if (
                                 !empty($library_account['AccountCBRBIC'])
-                                && \count($this->getBIC($library_account['AccountCBRBIC'])) === 0
+                                && \count(self::getBIC($library_account['AccountCBRBIC'])) === 0
                             ) {
                                 $delay = true;
                             }
@@ -303,8 +331,8 @@ final class BICLibrary
                                     ':Account' => $library_account['Account'],
                                     // There are known cases when BIC was set to '000000000' for some reason, thus we need to replace it with NULL. We also cover the possibility that it will not be present at all.
                                     ':AccountCBRBIC' => [
-                                        ((int) $library_account['AccountCBRBIC'] === 0 ? null : $library_account['AccountCBRBIC']),
-                                        ((int) $library_account['AccountCBRBIC'] === 0 ? 'null' : 'string'),
+                                        (int) $library_account['AccountCBRBIC'] === 0 ? null : $library_account['AccountCBRBIC'],
+                                        (int) $library_account['AccountCBRBIC'] === 0 ? 'null' : 'string',
                                     ],
                                     ':BIC' => $bic,
                                     ':CK' => $library_account['CK'],
@@ -314,13 +342,13 @@ final class BICLibrary
                             ];
                             if (!empty($library_accounts_rest[$library_account['Account']])) {
                                 // Get current restrictions
-                                $current_rest = $this->getAccountRestrictions($library_account['Account']);
+                                $current_rest = self::getAccountRestrictions($library_account['Account']);
                                 // Add all new restrictions
                                 foreach ($library_accounts_rest[$library_account['Account']] as $restriction) {
                                     if (!\in_array($restriction, $current_rest, strict: true)) {
                                         if (
                                             !empty($restriction['SuccessorBIC'])
-                                            && \count($this->getBIC($restriction['SuccessorBIC'])) === 0
+                                            && \count(self::getBIC($restriction['SuccessorBIC'])) === 0
                                         ) {
                                             $delay = true;
                                         }
@@ -376,7 +404,7 @@ final class BICLibrary
                 // Replace list of queries with delayed queries
                 $this->queries = \array_merge(...$delayed);
                 // Check for removed BICs
-                foreach ($this->getBICs() as $bic) {
+                foreach (self::getBICs() as $bic) {
                     if (!\in_array($bic, $bics, strict: true)) {
                         // Close bic
                         $this->closeBIC($bic);
@@ -394,7 +422,7 @@ final class BICLibrary
                 ];
                 // Run queries for BICs removals and library update
                 Query::query($this->queries);
-                $this->log($lib_date->format('d.m.Y'), 'Успешное обновление', $manual);
+                self::log($lib_date->format('d.m.Y'), 'Успешное обновление', $manual);
                 if (
                     $manual
                     && $lib_date->format('Y-m-d') !== $lib_date_initial
@@ -406,7 +434,7 @@ final class BICLibrary
                 $lib_date = $lib_date->add(new \DateInterval('P1D'));
             } catch (\Throwable $exception) {
                 $error = $exception->getMessage()."\r\n".$exception->getTraceAsString();
-                $this->log($lib_date->format('d.m.Y'), $error, $manual);
+                self::log($lib_date->format('d.m.Y'), $error, $manual);
 
                 return $error;
             } finally {
@@ -419,228 +447,10 @@ final class BICLibrary
     }
 
     /**
-     * Function to get the current library date.
-     *
-     * @return \DateTimeImmutable
-     */
-    public function bicDate(): \DateTimeImmutable
-    {
-        try {
-            $date = Query::query("SELECT `value` FROM `bic__settings` WHERE `setting`='date';", return: 'value');
-
-            return \DateTimeImmutable::createFromFormat('!d.m.Y', $date);
-        } catch (\Throwable) {
-            return \DateTimeImmutable::createFromTimestamp(\time());
-        }
-    }
-
-    /**
-     * Get a BIC from DB.
-     */
-    private function getBIC(string $bic): array
-    {
-        $result = Query::query(
-            'SELECT `BIC`, `DateIn`, `DateOut`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr` FROM `bic__list` WHERE `BIC`=:BIC;',
-            [':BIC' => $bic],
-            return: 'row',
-        );
-        if ($result !== []) {
-            \ksort($result, \SORT_NATURAL);
-            // Pad BICs with zeros
-            $result['BIC'] = \mb_str_pad((string) $result['BIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
-            if ($result['PrntBIC'] !== null) {
-                $result['PrntBIC'] = \mb_str_pad((string) $result['PrntBIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get restrictions.
-     */
-    private function getRestrictions(string $bic): array
-    {
-        return Query::query(
-            'SELECT `Rstr`, `RstrDate` FROM `bic__bic_rstr` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
-            [':BIC' => $bic],
-            return: 'all',
-        );
-    }
-
-    /**
-     * Get SWIFT accounts.
-     */
-    private function getSWIFTs(string $bic): array
-    {
-        return Query::query(
-            'SELECT `DefaultSWBIC`, `SWBIC` FROM `bic__swift` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
-            [':BIC' => $bic],
-            return: 'all',
-        );
-    }
-
-    /**
-     * #Get accounts.
-     */
-    private function getAccounts(string $bic): array
-    {
-        $result = Query::query(
-            'SELECT `Account`, `AccountCBRBIC`, `CK`, `DateIn`, `RegulationAccountType` FROM `bic__accounts` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
-            [':BIC' => $bic],
-            return: 'all',
-        );
-        // Pad BICs with zeros
-        foreach ($result as $key => $account) {
-            if ($account['AccountCBRBIC'] !== null) {
-                $result[$key]['AccountCBRBIC'] = \mb_str_pad((string) $account['AccountCBRBIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get account restrictions.
-     */
-    private function getAccountRestrictions(string $account): array
-    {
-        $result = Query::query(
-            'SELECT `AccRstr`, `AccRstrDate`, `SuccessorBIC` FROM `bic__acc_rstr` WHERE `Account`=:Account;',
-            [':Account' => $account],
-            return: 'all',
-        );
-        foreach ($result as $key => $restriction) {
-            if ($restriction['SuccessorBIC'] !== null) {
-                $result[$key]['SuccessorBIC'] = \mb_str_pad((string) $restriction['SuccessorBIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get all BICs.
-     */
-    private function getBICs(): array
-    {
-        return Query::query('SELECT `BIC` FROM `bic__list` WHERE `DateOut` IS NULL;', return: 'column');
-    }
-
-    /**
-     * Close BIC.
-     *
-     * @param string $bic
-     *
-     * @return void
-     */
-    private function closeBIC(string $bic): void
-    {
-        // Set end of restriction for all entries if any exist
-        $this->queries[] = $this->endRestriction($bic);
-        // Close all SWIFTs
-        $this->queries[] = $this->closeSwift($bic);
-        // Close all accounts
-        $this->closeAccount($bic);
-        // Close BIC itself
-        $this->queries[] = [
-            'UPDATE `bic__list` SET `DateOut`=:file_date WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
-            [
-                ':BIC' => $bic,
-                ':file_date' => $this->file_date,
-            ],
-        ];
-    }
-
-    /**
-     * End a restriction.
-     *
-     * @param string     $bic         BIC we are working with
-     * @param null|array $restriction Restriction(s) to close. If `null`, will close all restrictions.
-     *
-     * @return array
-     */
-    private function endRestriction(string $bic, ?array $restriction = null): array
-    {
-        if (Sanitize::whiteString($bic)) {
-            return [];
-        }
-
-        // If no details, assume we are ending all restrictions
-        if (
-            $restriction === null
-            || $restriction === []
-        ) {
-            return [
-                'UPDATE `bic__bic_rstr` SET `DateOut`=:file_date WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
-                [
-                    ':BIC' => $bic,
-                    ':file_date' => $this->file_date,
-                ],
-            ];
-        }
-
-        // Otherwise, use details to narrow down
-        if (!isset($restriction['Rstr'], $restriction['RstrDate'])) {
-            return [];
-        }
-
-        return [
-            'UPDATE `bic__bic_rstr` SET `DateOut`=:file_date WHERE `BIC`=:BIC AND `Rstr`=:Rstr AND `RstrDate`=:RstrDate;',
-            [
-                ':BIC' => $bic,
-                ':file_date' => $this->file_date,
-                ':Rstr' => $restriction['Rstr'],
-                ':RstrDate' => $restriction['RstrDate'],
-            ],
-        ];
-    }
-
-    /**
-     * Close SWIFT.
-     *
-     * @param string          $bic     BIC we are working with
-     * @param null|string     $swift   SWIFT to close
-     * @param bool|int|string $default Whether this is a default BIC or not
-     *
-     * @return array
-     */
-    private function closeSwift(string $bic, ?string $swift = null, bool|int|string $default = false): array
-    {
-        if (Sanitize::whiteString($bic)) {
-            return [];
-        }
-
-        // If swift is empty, assume that we are removing all accounts
-        if (
-            $swift === null
-            || Sanitize::whiteString($swift)
-        ) {
-            return [
-                'UPDATE `bic__swift` SET `DateOut`=:file_date, `DefaultSWBIC`=0 WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
-                [
-                    ':BIC' => $bic,
-                    ':file_date' => $this->file_date,
-                ],
-            ];
-        }
-
-        return [
-            'UPDATE `bic__swift` SET `DateOut`=:file_date, `DefaultSWBIC`=0 WHERE `BIC`=:BIC AND `SWBIC`=:SWBIC AND `DefaultSWBIC`=:DefaultSWBIC;',
-            [
-                ':BIC' => $bic,
-                ':DefaultSWBIC' => [$default, 'bool'],
-                ':file_date' => $this->file_date,
-                ':SWBIC' => $swift,
-            ],
-        ];
-    }
-
-    /**
      * Close account(s).
      *
      * @param string      $bic     BIC we are working with
-     * @param null|string $account Account to close. If `null`, all accounts will be closed.
+     * @param string|null $account Account to close. If `null`, all accounts will be closed.
      *
      * @return void
      */
@@ -677,55 +487,23 @@ final class BICLibrary
     }
 
     /**
-     * End account restrictions.
+     * Close BIC.
      *
-     * @param string     $bic         BIC we are working with
-     * @param bool       $account     Account we are working with
-     * @param null|array $restriction Restriction(s) to close. If `null`, will close all restrictions
+     * @param string $bic
      *
-     * @return array
+     * @return void
      */
-    private function endAccountRestriction(string $bic, bool $account = false, ?array $restriction = null): array
+    private function closeBIC(string $bic): void
     {
-        if (Sanitize::whiteString($bic)) {
-            return [];
-        }
-
-        // If the account flag is true, we know the account
-        if ($account) {
-            // If no details, end all restrictions
-            if (
-                $restriction === null
-                || $restriction === []
-            ) {
-                return [
-                    'UPDATE `bic__acc_rstr` SET `DateOut`=:file_date WHERE `Account`=:Account AND `DateOut` IS NULL;',
-                    [
-                        ':Account' => $bic,
-                        ':file_date' => $this->file_date,
-                    ],
-                ];
-            }
-
-            // Otherwise, use details to narrow down
-            if (!isset($restriction['AccRstr'], $restriction['AccRstrDate'])) {
-                return [];
-            }
-
-            return [
-                'UPDATE `bic__acc_rstr` SET `DateOut`=:file_date WHERE `Account`=:Account AND `AccRstr`=:AccRstr AND `AccRstrDate`=:AccRstrDate;',
-                [
-                    ':Account' => $bic,
-                    ':AccRstr' => $restriction['AccRstr'],
-                    ':AccRstrDate' => $restriction['AccRstrDate'],
-                    ':file_date' => $this->file_date,
-                ],
-            ];
-        }
-
-        // Otherwise, we are removing everything for the whole BIC
-        return [
-            'UPDATE `bic__acc_rstr` SET `DateOut`=:file_date WHERE `DateOut` IS NULL AND `Account` IN (SELECT `Account` FROM `bic__accounts` WHERE `BIC`=:BIC AND `DateOut` IS NULL);',
+        // Set end of restriction for all entries if any exist
+        $this->queries[] = $this->endRestriction($bic);
+        // Close all SWIFTs
+        $this->queries[] = $this->closeSwift($bic);
+        // Close all accounts
+        $this->closeAccount($bic);
+        // Close BIC itself
+        $this->queries[] = [
+            'UPDATE `bic__list` SET `DateOut`=:file_date WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
             [
                 ':BIC' => $bic,
                 ':file_date' => $this->file_date,
@@ -734,23 +512,53 @@ final class BICLibrary
     }
 
     /**
-     * Function to log updates.
+     * Close SWIFT.
      *
-     * @param string $bic_date
-     * @param string $message
-     * @param bool   $manual
+     * @param string          $bic     BIC we are working with
+     * @param string|null     $swift   SWIFT to close
+     * @param bool|int|string $default Whether this is a default BIC or not
      *
-     * @return void
+     * @return array
      */
-    private function log(string $bic_date, string $message, bool $manual = false): void
+    private function closeSwift(string $bic, ?string $swift = null, bool|int|string $default = false): array
     {
-        Security::log(LogType::BICTracker->value, ($manual ? 'Manual' : 'Cron').' update', $message.' ('.$bic_date.')', (!$manual ? SystemUser::System->value : $_SESSION['user_id'] ?? null));
+        if (Sanitize::whiteString($bic)) {
+            return [];
+        }
+
+        // If swift is empty, assume that we are removing all accounts
+        if (
+            $swift === null
+            || Sanitize::whiteString($swift)
+        ) {
+            return [
+                'UPDATE `bic__swift` SET `DateOut`=:file_date, `DefaultSWBIC`=0 WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
+                [
+                    ':BIC' => $bic,
+                    ':file_date' => $this->file_date,
+                ],
+            ];
+        }
+
+        return [
+            'UPDATE `bic__swift` SET `DateOut`=:file_date, `DefaultSWBIC`=0 WHERE `BIC`=:BIC AND `SWBIC`=:SWBIC AND `DefaultSWBIC`=:DefaultSWBIC;',
+            [
+                ':BIC' => $bic,
+                ':DefaultSWBIC' => [$default, 'bool'],
+                ':file_date' => $this->file_date,
+                ':SWBIC' => $swift,
+            ],
+        ];
     }
 
     /**
      * Function to download BIC.
+     *
+     * @param \DateTimeImmutable $date
+     *
+     * @return bool|string
      */
-    private function download(\DateTimeImmutable $date): bool|string
+    private static function download(\DateTimeImmutable $date): bool|string
     {
         // Generate the zip path
         $file_name = \sys_get_temp_dir().'/'.$date->format('Ymd').'_ED807_full.xml';
@@ -810,5 +618,247 @@ final class BICLibrary
 
         // This means that no file was found for the date (which is not necessarily a problem)
         return true;
+    }
+
+    /**
+     * End account restrictions.
+     *
+     * @param string     $bic         BIC we are working with
+     * @param bool       $account     Account we are working with
+     * @param array|null $restriction Restriction(s) to close. If `null`, will close all restrictions
+     *
+     * @return array
+     */
+    private function endAccountRestriction(string $bic, bool $account = false, ?array $restriction = null): array
+    {
+        if (Sanitize::whiteString($bic)) {
+            return [];
+        }
+
+        // If the account flag is true, we know the account
+        if ($account) {
+            // If no details, end all restrictions
+            if (
+                $restriction === null
+                || $restriction === []
+            ) {
+                return [
+                    'UPDATE `bic__acc_rstr` SET `DateOut`=:file_date WHERE `Account`=:Account AND `DateOut` IS NULL;',
+                    [
+                        ':Account' => $bic,
+                        ':file_date' => $this->file_date,
+                    ],
+                ];
+            }
+
+            // Otherwise, use details to narrow down
+            if (!isset($restriction['AccRstr'], $restriction['AccRstrDate'])) {
+                return [];
+            }
+
+            return [
+                'UPDATE `bic__acc_rstr` SET `DateOut`=:file_date WHERE `Account`=:Account AND `AccRstr`=:AccRstr AND `AccRstrDate`=:AccRstrDate;',
+                [
+                    ':Account' => $bic,
+                    ':AccRstr' => $restriction['AccRstr'],
+                    ':AccRstrDate' => $restriction['AccRstrDate'],
+                    ':file_date' => $this->file_date,
+                ],
+            ];
+        }
+
+        // Otherwise, we are removing everything for the whole BIC
+        return [
+            'UPDATE `bic__acc_rstr` SET `DateOut`=:file_date WHERE `DateOut` IS NULL AND `Account` IN (SELECT `Account` FROM `bic__accounts` WHERE `BIC`=:BIC AND `DateOut` IS NULL);',
+            [
+                ':BIC' => $bic,
+                ':file_date' => $this->file_date,
+            ],
+        ];
+    }
+
+    /**
+     * End a restriction.
+     *
+     * @param string     $bic         BIC we are working with
+     * @param array|null $restriction Restriction(s) to close. If `null`, will close all restrictions.
+     *
+     * @return array
+     */
+    private function endRestriction(string $bic, ?array $restriction = null): array
+    {
+        if (Sanitize::whiteString($bic)) {
+            return [];
+        }
+
+        // If no details, assume we are ending all restrictions
+        if (
+            $restriction === null
+            || $restriction === []
+        ) {
+            return [
+                'UPDATE `bic__bic_rstr` SET `DateOut`=:file_date WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
+                [
+                    ':BIC' => $bic,
+                    ':file_date' => $this->file_date,
+                ],
+            ];
+        }
+
+        // Otherwise, use details to narrow down
+        if (!isset($restriction['Rstr'], $restriction['RstrDate'])) {
+            return [];
+        }
+
+        return [
+            'UPDATE `bic__bic_rstr` SET `DateOut`=:file_date WHERE `BIC`=:BIC AND `Rstr`=:Rstr AND `RstrDate`=:RstrDate;',
+            [
+                ':BIC' => $bic,
+                ':file_date' => $this->file_date,
+                ':Rstr' => $restriction['Rstr'],
+                ':RstrDate' => $restriction['RstrDate'],
+            ],
+        ];
+    }
+
+    /**
+     * Get account restrictions.
+     *
+     * @param string $account
+     *
+     * @return array<int, array{AccRstr: string, AccRstrDate: string, SuccessorBIC: ?int}>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    private static function getAccountRestrictions(string $account): array
+    {
+        $result = Query::query(
+            'SELECT `AccRstr`, `AccRstrDate`, `SuccessorBIC` FROM `bic__acc_rstr` WHERE `Account`=:Account;',
+            [':Account' => $account],
+            return: 'all',
+        );
+        foreach ($result as $key => $restriction) {
+            if ($restriction['SuccessorBIC'] !== null) {
+                $result[$key]['SuccessorBIC'] = \mb_str_pad((string) $restriction['SuccessorBIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * #Get accounts.
+     *
+     * @param string $bic
+     *
+     * @return array<int, array{Account: string, AccountCBRBIC: ?int, CK: ?string, DateIn: string, RegulationAccountType: string}>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    private static function getAccounts(string $bic): array
+    {
+        $result = Query::query(
+            'SELECT `Account`, `AccountCBRBIC`, `CK`, `DateIn`, `RegulationAccountType` FROM `bic__accounts` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
+            [':BIC' => $bic],
+            return: 'all',
+        );
+        // Pad BICs with zeros
+        foreach ($result as $key => $account) {
+            if ($account['AccountCBRBIC'] !== null) {
+                $result[$key]['AccountCBRBIC'] = \mb_str_pad((string) $account['AccountCBRBIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get a BIC from DB.
+     *
+     * @param string $bic
+     *
+     * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    private static function getBIC(string $bic): array
+    {
+        $result = Query::query(
+            'SELECT `BIC`, `DateIn`, `DateOut`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr` FROM `bic__list` WHERE `BIC`=:BIC;',
+            [':BIC' => $bic],
+            return: 'row',
+        );
+        if ($result !== []) {
+            \ksort($result, \SORT_NATURAL);
+            // Pad BICs with zeros
+            $result['BIC'] = \mb_str_pad((string) $result['BIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
+            if ($result['PrntBIC'] !== null) {
+                $result['PrntBIC'] = \mb_str_pad((string) $result['PrntBIC'], 9, '0', \STR_PAD_LEFT, 'UTF-8');
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get all BICs.
+     *
+     * @return array<int, int>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    private static function getBICs(): array
+    {
+        return Query::query('SELECT `BIC` FROM `bic__list` WHERE `DateOut` IS NULL;', return: 'column');
+    }
+
+    /**
+     * Get restrictions.
+     *
+     * @param string $bic
+     *
+     * @return array<int, array{Rstr: string, RstrDate: string}>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    private static function getRestrictions(string $bic): array
+    {
+        return Query::query(
+            'SELECT `Rstr`, `RstrDate` FROM `bic__bic_rstr` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
+            [':BIC' => $bic],
+            return: 'all',
+        );
+    }
+
+    /**
+     * Get SWIFT accounts.
+     *
+     * @param string $bic
+     *
+     * @return array<int, array{DefaultSWBIC: int, SWBIC: string}>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    private static function getSWIFTs(string $bic): array
+    {
+        return Query::query(
+            'SELECT `DefaultSWBIC`, `SWBIC` FROM `bic__swift` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
+            [':BIC' => $bic],
+            return: 'all',
+        );
+    }
+
+    /**
+     * Function to log updates.
+     *
+     * @param string $bic_date
+     * @param string $message
+     * @param bool   $manual
+     *
+     * @return void
+     */
+    private static function log(string $bic_date, string $message, bool $manual = false): void
+    {
+        Security::log(LogType::BICTracker->value, ($manual ? 'Manual' : 'Cron').' update', $message.' ('.$bic_date.')', !$manual ? SystemUser::System->value : $_SESSION['user_id'] ?? null);
     }
 }

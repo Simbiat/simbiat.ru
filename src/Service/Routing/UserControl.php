@@ -17,13 +17,7 @@ use App\Controller\UserControl\Unsubscribe;
 final class UserControl extends Router
 {
     /**
-     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
-     */
-    #[\Override]
-    protected array $sub_routes = ['activate', 'register', 'emails', 'unsubscribe', 'profile', 'password', 'removal', 'sessions', 'fftracker', 'avatars'];
-
-    /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -33,27 +27,34 @@ final class UserControl extends Router
     ];
 
     #[\Override]
-    protected string $title = 'User Cabinet';
-
-    #[\Override]
     protected string $h1 = 'User Cabinet';
 
     #[\Override]
     protected string $og_desc = 'User Cabinet';
 
     #[\Override]
-    protected string $service_name = 'uc';
-
-    #[\Override]
     protected string $redirect_main = '/uc/profile/';
 
+    #[\Override]
+    protected string $service_name = 'uc';
+
     /**
-     * This is the actual page generation based on further details of the $path
+     * @var array<int, string> List supported "paths". Basic ones only, some extra validation may be required further
+     */
+    #[\Override]
+    protected array $sub_routes = ['activate', 'register', 'emails', 'unsubscribe', 'profile', 'password', 'removal', 'sessions', 'fftracker', 'avatars'];
+
+    #[\Override]
+    protected string $title = 'User Cabinet';
+
+    /**
+     * This is the actual page generation based on further details of the $path.
      *
      * @param array $path
      *
      * @return array
      */
+    #[\Override]
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {

@@ -4,8 +4,8 @@ common:
     log_level: error
     log_dir: /usr/local/logs/
     log_max_size: 50
-    log_max_age: 14
-    log_max_files: 30
+    log_max_age: 1
+    log_max_files: 10
     compress_logs: true
 config_paths:
     config_dir: /etc/crowdsec/

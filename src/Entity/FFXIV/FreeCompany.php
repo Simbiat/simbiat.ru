@@ -14,42 +14,44 @@ use Simbiat\FFXIV\Lodestone;
 
 /**
  * Class representing a FFXIV free company (guild).
+ *
+ * @api TODO: most likely will need to remove once entities migrate to Doctrine. For now this is mostly to silence Psalm.
  */
 final class FreeCompany extends AbstractEntity
 {
     protected const string ENTITY_TYPE = 'freecompany';
 
-    public array $dates = [];
-
-    public ?string $tag = null;
-
-    public array $crest = [];
-
-    public int $rank = 0;
-
-    public ?string $slogan = null;
-
-    public bool $recruiting = false;
+    public ?string $active = null;
 
     public ?string $community = null;
 
-    public ?string $grand_company = null;
+    public array $crest = [];
 
-    public ?string $active = null;
-
-    public array $location = [];
+    public array $dates = [];
 
     public array $focus = [];
 
-    public array $seeking = [];
+    public ?string $grand_company = null;
 
-    public array $old_names = [];
-
-    public array $ranking = [];
+    public array $location = [];
 
     public array $members = [];
 
+    public array $old_names = [];
+
     public array $past_members = [];
+
+    public int $rank = 0;
+
+    public array $ranking = [];
+
+    public bool $recruiting = false;
+
+    public array $seeking = [];
+
+    public ?string $slogan = null;
+
+    public ?string $tag = null;
 
     /**
      * Get data from Lodestone.
@@ -60,6 +62,7 @@ final class FreeCompany extends AbstractEntity
      *
      * @return array|string
      */
+    #[\Override]
     public function getFromLodestone(bool $allow_sleep = false): array|string
     {
         $lodestone = new Lodestone();
@@ -126,8 +129,11 @@ final class FreeCompany extends AbstractEntity
     /**
      * Function to get initial data from DB.
      *
-     * @throws \Exception
+     * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function getFromDB(): array
     {
         // Get general information
@@ -155,7 +161,10 @@ final class FreeCompany extends AbstractEntity
      * @param array $from_db
      *
      * @return void
+     *
+     * @throws \InvalidArgumentException
      */
+    #[\Override]
     protected function process(array $from_db): void
     {
         $this->name = $from_db['name'];
@@ -229,8 +238,11 @@ final class FreeCompany extends AbstractEntity
      *
      * @return bool
      */
+    #[\Override]
     protected function updateDB(): bool
     {
+        $queries = [];
+
         try {
             // Download crest components
             $this->downloadCrestComponents($this->lodestone['crest']);
@@ -250,40 +262,40 @@ final class FreeCompany extends AbstractEntity
                     `name`=:name, `server_id`=(SELECT `server_id` FROM `ffxiv__server` WHERE `server`=:server), `formed`=:formed, `updated`=CURRENT_TIMESTAMP(6), `deleted`=NULL, `gc_id`=(SELECT `gc_id` FROM `ffxiv__grandcompany` WHERE `gc_name`=:grand_company), `tag`=:tag, `crest_part_1`=:crest_part_1, `crest_part_2`=:crest_part_2, `crest_part_3`=:crest_part_3, `rank`=:rank, `slogan`=:slogan, `active_id`=(SELECT `active_id` FROM `ffxiv__timeactive` WHERE `active`=:active AND `active` IS NOT NULL LIMIT 1), `recruitment`=:recruitment, `community_id`=:community_id, `estate_zone`=:estate_zone, `estate_id`=(SELECT `estate_id` FROM `ffxiv__estate` WHERE CONCAT(\'Plot \', `plot`, \', \', `ward`, \' Ward, \', `area`, \' (\', CASE WHEN `size` = 1 THEN \'Small\' WHEN `size` = 2 THEN \'Medium\' WHEN `size` = 3 THEN \'Large\' END, \')\')=:estate_address LIMIT 1), `estate_message`=:estate_message, `role_playing`=:role_playing, `leveling`=:leveling, `casual`=:casual, `hardcore`=:hardcore, `dungeons`=:dungeons, `guildhests`=:guildhests, `trials`=:trials, `raids`=:raids, `pvp`=:pvp, `tank`=:tank, `healer`=:healer, `dps`=:dps, `crafter`=:crafter, `gatherer`=:gatherer;',
                 [
                     ':active' => [
-                        (empty($this->lodestone['active']) ? null : $this->lodestone['active']),
-                        (empty($this->lodestone['active']) ? 'null' : 'string'),
+                        empty($this->lodestone['active']) ? null : $this->lodestone['active'],
+                        empty($this->lodestone['active']) ? 'null' : 'string',
                     ],
                     ':casual' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Casual', \array_column($this->lodestone['focus'], 'name'), strict: true)]['enabled']),
                     ':community_id' => [
-                        (empty($this->lodestone['community_id']) ? null : $this->lodestone['community_id']),
-                        (empty($this->lodestone['community_id']) ? 'null' : 'string'),
+                        empty($this->lodestone['community_id']) ? null : $this->lodestone['community_id'],
+                        empty($this->lodestone['community_id']) ? 'null' : 'string',
                     ],
                     ':crafter' => (empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][\array_search('Crafter', \array_column($this->lodestone['seeking'], 'name'), strict: true)]['enabled']),
                     ':crest_part_1' => [
-                        (empty($this->lodestone['crest'][0]) ? null : $this->lodestone['crest'][0]),
-                        (empty($this->lodestone['crest'][0]) ? 'null' : 'string'),
+                        empty($this->lodestone['crest'][0]) ? null : $this->lodestone['crest'][0],
+                        empty($this->lodestone['crest'][0]) ? 'null' : 'string',
                     ],
                     ':crest_part_2' => [
-                        (empty($this->lodestone['crest'][1]) ? null : $this->lodestone['crest'][1]),
-                        (empty($this->lodestone['crest'][1]) ? 'null' : 'string'),
+                        empty($this->lodestone['crest'][1]) ? null : $this->lodestone['crest'][1],
+                        empty($this->lodestone['crest'][1]) ? 'null' : 'string',
                     ],
                     ':crest_part_3' => [
-                        (empty($this->lodestone['crest'][2]) ? null : $this->lodestone['crest'][2]),
-                        (empty($this->lodestone['crest'][2]) ? 'null' : 'string'),
+                        empty($this->lodestone['crest'][2]) ? null : $this->lodestone['crest'][2],
+                        empty($this->lodestone['crest'][2]) ? 'null' : 'string',
                     ],
                     ':dps' => (empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][\array_search('DPS', \array_column($this->lodestone['seeking'], 'name'), strict: true)]['enabled']),
                     ':dungeons' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Dungeons', \array_column($this->lodestone['focus'], 'name'), strict: true)]['enabled']),
                     ':estate_address' => [
-                        (empty($this->lodestone['estate']['address']) ? null : $this->lodestone['estate']['address']),
-                        (empty($this->lodestone['estate']['address']) ? 'null' : 'string'),
+                        empty($this->lodestone['estate']['address']) ? null : $this->lodestone['estate']['address'],
+                        empty($this->lodestone['estate']['address']) ? 'null' : 'string',
                     ],
                     ':estate_message' => [
-                        (empty($this->lodestone['estate']['greeting']) ? null : Sanitization::sanitizeHTML($this->lodestone['estate']['greeting'])),
-                        (empty($this->lodestone['estate']['greeting']) ? 'null' : 'string'),
+                        empty($this->lodestone['estate']['greeting']) ? null : Sanitization::sanitizeHTML($this->lodestone['estate']['greeting']),
+                        empty($this->lodestone['estate']['greeting']) ? 'null' : 'string',
                     ],
                     ':estate_zone' => [
-                        (empty($this->lodestone['estate']['name']) ? null : $this->lodestone['estate']['name']),
-                        (empty($this->lodestone['estate']['name']) ? 'null' : 'string'),
+                        empty($this->lodestone['estate']['name']) ? null : $this->lodestone['estate']['name'],
+                        empty($this->lodestone['estate']['name']) ? 'null' : 'string',
                     ],
                     ':fc_id' => $this->id,
                     ':formed' => [$this->lodestone['formed'], 'datetime'],
@@ -301,8 +313,8 @@ final class FreeCompany extends AbstractEntity
                     ':role_playing' => (empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][\array_search('Role-playing', \array_column($this->lodestone['focus'], 'name'), strict: true)]['enabled']),
                     ':server' => $this->lodestone['server'],
                     ':slogan' => [
-                        (empty($this->lodestone['slogan']) ? null : Sanitization::sanitizeHTML($this->lodestone['slogan'])),
-                        (empty($this->lodestone['slogan']) ? 'null' : 'string'),
+                        empty($this->lodestone['slogan']) ? null : Sanitization::sanitizeHTML($this->lodestone['slogan']),
+                        empty($this->lodestone['slogan']) ? 'null' : 'string',
                     ],
                     ':tag' => $this->lodestone['tag'],
                     ':tank' => (empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][\array_search('Tank', \array_column($this->lodestone['seeking'], 'name'), strict: true)]['enabled']),

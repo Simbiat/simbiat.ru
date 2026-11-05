@@ -22,7 +22,7 @@ final class Mailer
     /**
      * Send queued notification emails.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */
@@ -35,6 +35,7 @@ final class Mailer
             if (Config::$dbup) {
                 // Send messages
                 $output->writeln(Errors::logfmt('Sending emails...'));
+
                 // According to Proton support:
                 // Here are approximate limits for your reference:
                 // 400 emails per hour

@@ -9,6 +9,11 @@ ALERT_ONCE="/etc/supercronic/bin/alert-once.sh"
 CLEAR_STAMP="/etc/supercronic/bin/clear-stamp.sh"
 CHECK_CONTAINER="/etc/supercronic/bin/check-container.sh"
 
+if [ $# -lt 2 ]; then
+    log "Usage: $0 <container_name> <command>"
+    exit 1
+fi
+
 log() {
     echo "time=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" msg=\"$1\"" >&2
 }
@@ -25,9 +30,12 @@ on_error() {
 }
 trap 'on_error $LINENO' ERR
 
+CONTAINER="$1"
+shift
+
 mkdir -p "$STATE_DIR"
 
-find "$STATE_DIR" -type f -name '*' -mtime +7 -delete
+find "$STATE_DIR" -type f -name '*' -mtime +7 -delete || log "Warning: state-file pruning failed (rc=$?)"
 
 # Temp files for capturing exec output; cleaned up on any exit path.
 TMP_STDOUT=$(mktemp "$STATE_DIR/.cron.out.XXXXXX") || exit 1
@@ -39,14 +47,6 @@ cleanup() {
     rm -f -- "$TMP_STDOUT" "$TMP_STDERR";
 }
 trap cleanup EXIT
-
-if [ $# -lt 2 ]; then
-    log "Usage: $0 <container_name> <command>"
-    exit 1
-fi
-
-CONTAINER="$1"
-shift
 
 # unique signature per container + command combination
 CMD_SIG=$(printf '%s' "$*" | md5sum | cut -c1-12)

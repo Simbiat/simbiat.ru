@@ -21,41 +21,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class Clean
 {
     /**
-     * Clean old sessions.
-     *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
-     * @return int
-     */
-    #[AsCommand(name: 'app:clean:sessions', description: 'Clean old sessions')]
-    public function sessions(OutputInterface $output): int
-    {
-        try {
-            // Connect to DB
-            Config::dbConnect();
-            if (Config::$dbup) {
-                $result = new Session()->gc();
-                if ($result === false) {
-                    $output->writeln(Errors::logfmt('Failed to clean old sessions. Check logs.'));
-
-                    return Command::FAILURE;
-                }
-
-                $output->writeln(Errors::logfmt($result.' session(s) removed'));
-            }
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable, cli: true);
-
-            return Command::FAILURE;
-        }
-
-        return Command::SUCCESS;
-    }
-
-    /**
      * Clean old cookies.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */
@@ -105,9 +73,38 @@ final class Clean
     }
 
     /**
+     * Remove dead links.
+     *
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
+    #[AsCommand(name: 'app:clean:dead_links', description: 'Remove dead links')]
+    public function deadLinks(OutputInterface $output): int
+    {
+        $output->writeln(Errors::logfmt('Removing dead links...'));
+
+        try {
+            // Connect to DB
+            Config::dbConnect();
+            if (Config::$dbup) {
+                // TODO https://github.com/Simbiat/simbiat.ru/issues/96
+
+                return Command::SUCCESS;
+            }
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable, cli: true);
+
+            return Command::FAILURE;
+        }
+
+        return Command::SUCCESS;
+    }
+
+    /**
      * Clean old logs.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */
@@ -135,9 +132,115 @@ final class Clean
     }
 
     /**
+     * Remove old notifications.
+     *
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
+    #[AsCommand(name: 'app:clean:notifications', description: 'Remove old notifications')]
+    public function notifications(OutputInterface $output): int
+    {
+        $output->writeln(Errors::logfmt('Removing old notifications...'));
+
+        try {
+            // Connect to DB
+            Config::dbConnect();
+            if (Config::$dbup) {
+                Query::query('DELETE FROM `sys__notifications` WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 YEAR);');
+            }
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable, cli: true);
+
+            return Command::FAILURE;
+        }
+
+        return Command::SUCCESS;
+    }
+
+    /**
+     * Reset OPCache, both for web and CLI.
+     *
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
+    #[AsCommand(name: 'app:clean:opcache', description: 'Reset OPCache, both for web and CLI')]
+    public function opcache(OutputInterface $output): int
+    {
+        try {
+            $output->writeln(Errors::logfmt('Resetting CLI OPCache...'));
+            if (\opcache_get_status()) {
+                if (!\opcache_reset()) {
+                    $output->writeln(Errors::logfmt('Failed to reset CLI OPCache', 'error'));
+                }
+            } else {
+                $output->writeln(Errors::logfmt('opcache.enable_cli is off, skipping...'));
+            }
+
+            $output->writeln(Errors::logfmt('Resetting web OPCache...'));
+            $ch = \curl_init('http://localhost:2027');
+            \curl_setopt($ch, \CURLOPT_RETURNTRANSFER, value: true);
+            \curl_setopt($ch, \CURLOPT_NOBODY, value: true);
+            \curl_setopt($ch, \CURLOPT_FAILONERROR, value: false);
+            $response = \curl_exec($ch);
+            if ($response === false) {
+                $output->writeln(Errors::logfmt('Connection failed: '.\curl_error($ch), 'error'));
+
+                return Command::FAILURE;
+            }
+
+            $http_code = \curl_getinfo($ch, \CURLINFO_RESPONSE_CODE);
+            if ($http_code !== 200) {
+                $output->writeln(Errors::logfmt('Unexpected HTTP code: '.$http_code, 'error'));
+
+                return Command::FAILURE;
+            }
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable, cli: true);
+
+            return Command::FAILURE;
+        }
+
+        return Command::SUCCESS;
+    }
+
+    /**
+     * Clean old sessions.
+     *
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
+    #[AsCommand(name: 'app:clean:sessions', description: 'Clean old sessions')]
+    public function sessions(OutputInterface $output): int
+    {
+        try {
+            // Connect to DB
+            Config::dbConnect();
+            if (Config::$dbup) {
+                $result = new Session()->gc();
+                if ($result === false) {
+                    $output->writeln(Errors::logfmt('Failed to clean old sessions. Check logs.'));
+
+                    return Command::FAILURE;
+                }
+
+                $output->writeln(Errors::logfmt($result.' session(s) removed'));
+            }
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable, cli: true);
+
+            return Command::FAILURE;
+        }
+
+        return Command::SUCCESS;
+    }
+
+    /**
      * Clean old statistics.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */
@@ -167,38 +270,9 @@ final class Clean
     }
 
     /**
-     * Remove dead links.
-     *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
-     * @return int
-     */
-    #[AsCommand(name: 'app:clean:dead_links', description: 'Remove dead links')]
-    public function deadLinks(OutputInterface $output): int
-    {
-        $output->writeln(Errors::logfmt('Removing dead links...'));
-
-        try {
-            // Connect to DB
-            Config::dbConnect();
-            if (Config::$dbup) {
-                // TODO https://github.com/Simbiat/simbiat.ru/issues/96
-
-                return Command::SUCCESS;
-            }
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable, cli: true);
-
-            return Command::FAILURE;
-        }
-
-        return Command::SUCCESS;
-    }
-
-    /**
      * Clean uploaded files that either do not physically exist or are not linked as an avatar, attachment, or og:image.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */
@@ -258,80 +332,6 @@ final class Clean
                         }
                     }
                 }
-            }
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable, cli: true);
-
-            return Command::FAILURE;
-        }
-
-        return Command::SUCCESS;
-    }
-
-    /**
-     * Remove old notifications.
-     *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
-     * @return int
-     */
-    #[AsCommand(name: 'app:clean:notifications', description: 'Remove old notifications')]
-    public function notifications(OutputInterface $output): int
-    {
-        $output->writeln(Errors::logfmt('Removing old notifications...'));
-
-        try {
-            // Connect to DB
-            Config::dbConnect();
-            if (Config::$dbup) {
-                Query::query('DELETE FROM `sys__notifications` WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 YEAR);');
-            }
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable, cli: true);
-
-            return Command::FAILURE;
-        }
-
-        return Command::SUCCESS;
-    }
-
-    /**
-     * Reset OPCache, both for web and CLI.
-     *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
-     * @return int
-     */
-    #[AsCommand(name: 'app:clean:opcache', description: 'Reset OPCache, both for web and CLI')]
-    public function opcache(OutputInterface $output): int
-    {
-        try {
-            $output->writeln(Errors::logfmt('Resetting CLI OPCache...'));
-            if (\opcache_get_status()) {
-                if (!\opcache_reset()) {
-                    $output->writeln(Errors::logfmt('Failed to reset CLI OPCache', 'error'));
-                }
-            } else {
-                $output->writeln(Errors::logfmt('opcache.enable_cli is off, skipping...'));
-            }
-
-            $output->writeln(Errors::logfmt('Resetting web OPCache...'));
-            $ch = \curl_init('http://localhost:2027');
-            \curl_setopt($ch, \CURLOPT_RETURNTRANSFER, value: true);
-            \curl_setopt($ch, \CURLOPT_NOBODY, value: true);
-            \curl_setopt($ch, \CURLOPT_FAILONERROR, value: false);
-            $response = \curl_exec($ch);
-            if ($response === false) {
-                $output->writeln(Errors::logfmt('Connection failed: '.\curl_error($ch), 'error'));
-
-                return Command::FAILURE;
-            }
-
-            $http_code = \curl_getinfo($ch, \CURLINFO_RESPONSE_CODE);
-            if ($http_code !== 200) {
-                $output->writeln(Errors::logfmt('Unexpected HTTP code: '.$http_code, 'error'));
-
-                return Command::FAILURE;
             }
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable, cli: true);

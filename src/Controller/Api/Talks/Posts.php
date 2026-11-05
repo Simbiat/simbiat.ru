@@ -11,6 +11,18 @@ use App\HomePage;
 final class Posts extends Api
 {
     /**
+     * @var bool Flag indicating, that lack of authentication can be bypassed by an access_token
+     */
+    #[\Override]
+    protected bool $access_token_possible = true;
+
+    /**
+     * @var bool Flag indicating that authentication is required
+     */
+    #[\Override]
+    protected bool $authentication_needed = true;
+
+    /**
      * @var bool Flag to indicate, that this is the lowest level
      */
     #[\Override]
@@ -29,17 +41,17 @@ final class Posts extends Api
     protected array $verbs = ['add' => 'Add post', 'delete' => 'Delete post', 'edit' => 'Edit post', 'like' => 'Like a post', 'dislike' => 'Dislike a post', 'move' => 'Move post to different thread'];
 
     /**
-     * @var bool Flag indicating that authentication is required
+     * This is an actual API response generation based on further details of the $path.
+     *
+     * @param array $path
+     *
+     * @psalm-suppress MixedReturnTypeCoercion TODO: needs to be removed during migration to Symfony. Need to use objects instead of ararys.
+     *
+     * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     #[\Override]
-    protected bool $authentication_needed = true;
-
-    /**
-     * @var bool Flag indicating, that lack of authentication can be bypassed by an access_token
-     */
-    #[\Override]
-    protected bool $access_token_possible = true;
-
     protected function genData(array $path): array
     {
         // Check for ID

@@ -20,34 +20,31 @@ use Simbiat\StringHelpers\Sanitize;
 
 /**
  * Forum section.
+ *
+ * @api TODO: most likely will need to remove once entities migrate to Doctrine. For now this is mostly to silence Psalm.
  */
 final class Section extends Entity
 {
-    public string $name = '';
+    public int $author = 1;
 
-    public string $type = 'Category';
-
-    public string $inherited_type = 'Category';
-
-    public bool $system = true;
-
-    public bool $private = false;
+    /**
+     * @var array List of direct children
+     */
+    public array $children = [];
 
     public ?int $closed = null;
 
     public ?int $created = null;
 
-    public ?int $published = null;
-
-    public int $author = 1;
-
-    public ?int $updated = null;
+    public string $description = '';
 
     public int $editor = 1;
 
     public string $icon = '/assets/images/talks/category.svg';
 
-    public string $description = '';
+    public string $inherited_type = 'Category';
+
+    public string $name = '';
 
     /**
      * @var bool Flag indicating that section is owned by the current user
@@ -55,31 +52,36 @@ final class Section extends Entity
     public bool $owned = false;
 
     /**
-     * @var array List of parents for the section
-     */
-    public array $parents = [];
-
-    /**
      * @var int ID of direct parent
      */
     public int $parent_id = 0;
 
     /**
-     * @var array List of direct children
+     * @var array List of parents for the section
      */
-    public array $children = [];
+    public array $parents = [];
 
-    /**
-     * @var array List of threads
-     */
-    public array $threads = [];
+    public bool $private = false;
+
+    public ?int $published = null;
+
+    public int $sequence = 0;
 
     /**
      * @var array List of subscribers
      */
     public array $subscribers = [];
 
-    public int $sequence = 0;
+    public bool $system = true;
+
+    /**
+     * @var array List of threads
+     */
+    public array $threads = [];
+
+    public string $type = 'Category';
+
+    public ?int $updated = null;
 
     #[\Override]
     protected string $id_format = '/^top|\d+$/mi';
@@ -90,139 +92,11 @@ final class Section extends Entity
     private bool $for_thread = false;
 
     /**
-     * Function to set a flag to return only the data required for a thread (for the sake of optimization).
-     *
-     * @param bool $for_thread
-     *
-     * @return $this
-     */
-    public function setForThread(bool $for_thread): self
-    {
-        $this->for_thread = $for_thread;
-
-        return $this;
-    }
-
-    /**
-     * Function to (un)mark the section as private.
-     *
-     * @param bool $private
-     *
-     * @return array<string, bool|int|string>
-     */
-    public function setPrivate(bool $private = false): array
-    {
-        // Check permission
-        if (!\in_array('edit_sections', $_SESSION['permissions'], strict: true)) {
-            return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
-        }
-
-        try {
-            $affected = Query::query(
-                'UPDATE `talks__sections` SET `private`=:private, `editor`=:user_id WHERE `section_id`=:section_id;',
-                [
-                    ':private' => [$private, 'bool'],
-                    ':section_id' => [$this->id, 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-                return: 'affected',
-            );
-            if ($affected > 0) {
-                $this->private = $private;
-                $this->notifyAboutChange($private ? 'private' : 'public');
-            }
-
-            // TODO need to mark all children as private as well
-            return ['response' => true];
-        } catch (\Throwable) {
-            return ['response' => false];
-        }
-    }
-
-    /**
-     * Function to close/open a section.
-     *
-     * @param bool $closed
-     *
-     * @return array
-     */
-    public function setClosed(bool $closed = false): array
-    {
-        // Check permission
-        if (!\in_array('edit_sections', $_SESSION['permissions'], strict: true)) {
-            return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
-        }
-
-        try {
-            $affected = Query::query(
-                'UPDATE `talks__sections` SET `closed`=:closed, `editor`=:user_id WHERE `section_id`=:section_id;',
-                [
-                    ':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')],
-                    ':section_id' => [$this->id, 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-                return: 'affected',
-            );
-            if ($affected > 0) {
-                $this->closed = ($closed ? \time() : null);
-                $this->notifyAboutChange($closed ? 'close' : 'open');
-            }
-
-            return ['response' => true];
-        } catch (\Throwable) {
-            return ['response' => false];
-        }
-    }
-
-    /**
-     * Move section to another parent section.
-     *
-     * @return array
-     */
-    public function move(): array
-    {
-        // Check permission
-        if (!\in_array('move_sections', $_SESSION['permissions'], strict: true)) {
-            return ['http_error' => 403, 'reason' => 'No `move_sections` permission'];
-        }
-
-        $data = $_POST['section_data'] ?? [];
-        if (empty($data['parent_id'])) {
-            return ['http_error' => 400, 'reason' => 'No section ID provided'];
-        }
-
-        $parent = new self($data['parent_id'])->get();
-        if ($parent->id === null) {
-            return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parent_id'].'` does not exist'];
-        }
-
-        try {
-            $affected = Query::query(
-                'UPDATE `talks__sections` SET `parent_id`=:parent_id, `editor`=:user_id WHERE `section_id`=:section_id;',
-                [
-                    ':parent_id' => [
-                        (empty($data['parent_id']) ? null : $data['parent_id']),
-                        (empty($data['parent_id']) ? 'null' : 'int'),
-                    ],
-                    ':section_id' => [$this->id, 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-                return: 'affected',
-            );
-            if ($affected > 0) {
-                $this->notifyAboutChange('move');
-            }
-
-            return ['response' => true];
-        } catch (\Throwable) {
-            return ['response' => false];
-        }
-    }
-
-    /**
      * Create a new section.
      *
      * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     public function add(): array
     {
@@ -238,23 +112,23 @@ final class Section extends Entity
                 'INSERT INTO `talks__sections`(`section_id`, `name`, `description`, `parent_id`, `sequence`, `type`, `closed`, `private`, `published`, `author`, `editor`, `icon`) VALUES (NULL,:name,:description,:parent_id,:sequence,:type,:closed,:private,:time,:user_id,:user_id,:icon);',
                 [
                     ':closed' => [
-                        ($data['closed'] ? 'now' : null),
-                        ($data['closed'] ? 'datetime' : 'null'),
+                        $data['closed'] ? 'now' : null,
+                        $data['closed'] ? 'datetime' : 'null',
                     ],
                     ':description' => \mb_trim($data['description'], encoding: 'UTF-8'),
                     ':icon' => [
-                        (empty($data['icon']) ? null : $data['icon']),
-                        (empty($data['icon']) ? 'null' : 'string'),
+                        empty($data['icon']) ? null : $data['icon'],
+                        empty($data['icon']) ? 'null' : 'string',
                     ],
                     ':name' => \mb_trim($data['name'], encoding: 'UTF-8'),
                     ':parent_id' => [
-                        (empty($data['parent_id']) ? null : $data['parent_id']),
-                        (empty($data['parent_id']) ? 'null' : 'int'),
+                        empty($data['parent_id']) ? null : $data['parent_id'],
+                        empty($data['parent_id']) ? 'null' : 'int',
                     ],
                     ':private' => [$data['private'], 'bool'],
                     ':sequence' => [$data['order'], 'int'],
                     ':time' => [
-                        (empty($data['time']) ? 'now' : $data['time']),
+                        empty($data['time']) ? 'now' : $data['time'],
                         'datetime',
                     ],
                     ':type' => [$data['type'], 'int'],
@@ -275,6 +149,7 @@ final class Section extends Entity
                         );
 
                         break;
+
                     case 4:
                         Query::query(
                             'INSERT INTO `uc__user_to_section` (`user_id`, `changelog`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `changelog`=:section_id;',
@@ -285,6 +160,7 @@ final class Section extends Entity
                         );
 
                         break;
+
                     case 6:
                         Query::query(
                             'INSERT INTO `uc__user_to_section` (`user_id`, `knowledgebase`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `knowledgebase`=:section_id;',
@@ -307,61 +183,11 @@ final class Section extends Entity
     }
 
     /**
-     * Edit section data.
-     *
-     * @return array<string, bool|int|string>
-     */
-    public function edit(): array
-    {
-        // Sanitize data
-        $data = $_POST['section_data'] ?? [];
-        $sanitize = $this->sanitizeInput($data, edit: true);
-        if (\is_array($sanitize)) {
-            return $sanitize;
-        }
-
-        // Check if we are changing to a category and if we have any threads in it
-        if (
-            $data['type'] === 1
-            && Query::query('SELECT `thread_id` FROM `talks__threads` WHERE `section_id`=:section_id LIMIT 1;', [':section_id' => [$this->id, 'int']], return: 'check')
-        ) {
-            return ['http_error' => 400, 'reason' => "Can't change section type to `Category`, because it has threads in it"];
-        }
-
-        try {
-            $queries = [];
-            $queries[] = [
-                'UPDATE `talks__sections` SET `name`=:name, `description`=:description, `sequence`=:sequence, `type`=:type, `editor`=:user_id, `icon`=COALESCE(:icon, `icon`) WHERE `section_id`=:section_id;',
-                [
-                    ':description' => \mb_trim($data['description'], encoding: 'UTF-8'),
-                    ':icon' => [
-                        (empty($data['icon']) ? null : $data['icon']),
-                        (empty($data['icon']) ? 'null' : 'string'),
-                    ],
-                    ':name' => \mb_trim($data['name'], encoding: 'UTF-8'),
-                    ':section_id' => [$this->id, 'int'],
-                    ':sequence' => [$data['order'], 'int'],
-                    ':type' => [$data['type'], 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-            ];
-            $affected = Query::query($queries, return: 'affected');
-            if ($affected > 0) {
-                $this->notifyAboutChange('change');
-            }
-
-            return ['response' => true];
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
-
-            return ['http_error' => 500, 'reason' => 'Failed to update section'];
-        }
-    }
-
-    /**
      * Delete section.
      *
      * @return array
+     *
+     * @throws \UnexpectedValueException
      */
     public function delete(): array
     {
@@ -416,36 +242,97 @@ final class Section extends Entity
     }
 
     /**
+     * Edit section data.
+     *
+     * @return array<string, bool|int|string>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    public function edit(): array
+    {
+        // Sanitize data
+        $data = $_POST['section_data'] ?? [];
+        $sanitize = $this->sanitizeInput($data, edit: true);
+        if (\is_array($sanitize)) {
+            return $sanitize;
+        }
+
+        // Check if we are changing to a category and if we have any threads in it
+        if (
+            $data['type'] === 1
+            && Query::query('SELECT `thread_id` FROM `talks__threads` WHERE `section_id`=:section_id LIMIT 1;', [':section_id' => [$this->id, 'int']], return: 'check')
+        ) {
+            return ['http_error' => 400, 'reason' => "Can't change section type to `Category`, because it has threads in it"];
+        }
+
+        try {
+            $queries = [];
+            $queries[] = [
+                'UPDATE `talks__sections` SET `name`=:name, `description`=:description, `sequence`=:sequence, `type`=:type, `editor`=:user_id, `icon`=COALESCE(:icon, `icon`) WHERE `section_id`=:section_id;',
+                [
+                    ':description' => \mb_trim($data['description'], encoding: 'UTF-8'),
+                    ':icon' => [
+                        empty($data['icon']) ? null : $data['icon'],
+                        empty($data['icon']) ? 'null' : 'string',
+                    ],
+                    ':name' => \mb_trim($data['name'], encoding: 'UTF-8'),
+                    ':section_id' => [$this->id, 'int'],
+                    ':sequence' => [$data['order'], 'int'],
+                    ':type' => [$data['type'], 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+            ];
+            $affected = Query::query($queries, return: 'affected');
+            if ($affected > 0) {
+                $this->notifyAboutChange('change');
+            }
+
+            return ['response' => true];
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+
+            return ['http_error' => 500, 'reason' => 'Failed to update section'];
+        }
+    }
+
+    /**
      * Function to get section types allowed inside a section.
      *
      * @param int|string $type
      *
-     * @return array
+     * @return array{value: int, name: string, description: string, icon: string}
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     public static function getSectionTypes(int|string $type = ''): array
     {
         $where = '';
+
         switch (\mb_strtolower($type, 'UTF-8')) {
             case 'blog':
             case '2':
                 $where = " WHERE `talks__types`.`type`='Blog'";
 
                 break;
+
             case 'forum':
             case '3':
                 $where = " WHERE `talks__types`.`type` IN ('Category', 'Forum')";
 
                 break;
+
             case 'changelog':
             case '4':
                 $where = " WHERE `talks__types`.`type` IN ('Category', 'Changelog')";
 
                 break;
+
             case 'support':
             case '5':
                 $where = " WHERE `talks__types`.`type` IN ('Category', 'Support')";
 
                 break;
+
             case 'knowledgebase':
             case '6':
                 $where = " WHERE `talks__types`.`type` IN ('Category', 'Knowledgebase')";
@@ -457,10 +344,145 @@ final class Section extends Entity
     }
 
     /**
-     * Function to get initial data from DB.
+     * Move section to another parent section.
+     *
+     * @return array
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function move(): array
+    {
+        // Check permission
+        if (!\in_array('move_sections', $_SESSION['permissions'], strict: true)) {
+            return ['http_error' => 403, 'reason' => 'No `move_sections` permission'];
+        }
+
+        $data = $_POST['section_data'] ?? [];
+        if (empty($data['parent_id'])) {
+            return ['http_error' => 400, 'reason' => 'No section ID provided'];
+        }
+
+        $parent = new self($data['parent_id'])->get();
+        if ($parent->id === null) {
+            return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parent_id'].'` does not exist'];
+        }
+
+        try {
+            $affected = Query::query(
+                'UPDATE `talks__sections` SET `parent_id`=:parent_id, `editor`=:user_id WHERE `section_id`=:section_id;',
+                [
+                    ':parent_id' => [
+                        empty($data['parent_id']) ? null : $data['parent_id'],
+                        empty($data['parent_id']) ? 'null' : 'int',
+                    ],
+                    ':section_id' => [$this->id, 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+                return: 'affected',
+            );
+            if ($affected > 0) {
+                $this->notifyAboutChange('move');
+            }
+
+            return ['response' => true];
+        } catch (\Throwable) {
+            return ['response' => false];
+        }
+    }
+
+    /**
+     * Function to close/open a section.
+     *
+     * @param bool $closed
      *
      * @return array
      */
+    public function setClosed(bool $closed = false): array
+    {
+        // Check permission
+        if (!\in_array('edit_sections', $_SESSION['permissions'], strict: true)) {
+            return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
+        }
+
+        try {
+            $affected = Query::query(
+                'UPDATE `talks__sections` SET `closed`=:closed, `editor`=:user_id WHERE `section_id`=:section_id;',
+                [
+                    ':closed' => [$closed ? 'now' : null, $closed ? 'datetime' : 'null'],
+                    ':section_id' => [$this->id, 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+                return: 'affected',
+            );
+            if ($affected > 0) {
+                $this->closed = ($closed ? \time() : null);
+                $this->notifyAboutChange($closed ? 'close' : 'open');
+            }
+
+            return ['response' => true];
+        } catch (\Throwable) {
+            return ['response' => false];
+        }
+    }
+
+    /**
+     * Function to set a flag to return only the data required for a thread (for the sake of optimization).
+     *
+     * @param bool $for_thread
+     *
+     * @return $this
+     */
+    public function setForThread(bool $for_thread): self
+    {
+        $this->for_thread = $for_thread;
+
+        return $this;
+    }
+
+    /**
+     * Function to (un)mark the section as private.
+     *
+     * @param bool $private
+     *
+     * @return array<string, bool|int|string>
+     */
+    public function setPrivate(bool $private = false): array
+    {
+        // Check permission
+        if (!\in_array('edit_sections', $_SESSION['permissions'], strict: true)) {
+            return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
+        }
+
+        try {
+            $affected = Query::query(
+                'UPDATE `talks__sections` SET `private`=:private, `editor`=:user_id WHERE `section_id`=:section_id;',
+                [
+                    ':private' => [$private, 'bool'],
+                    ':section_id' => [$this->id, 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+                return: 'affected',
+            );
+            if ($affected > 0) {
+                $this->private = $private;
+                $this->notifyAboutChange($private ? 'private' : 'public');
+            }
+
+            // TODO need to mark all children as private as well
+            return ['response' => true];
+        } catch (\Throwable) {
+            return ['response' => false];
+        }
+    }
+
+    /**
+     * Function to get initial data from DB.
+     *
+     * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    #[\Override]
     protected function getFromDB(): array
     {
         // Set the page required for threads
@@ -669,6 +691,7 @@ final class Section extends Entity
      *
      * @return void
      */
+    #[\Override]
     protected function process(array $from_db): void
     {
         $this->name = $from_db['name'];
@@ -710,6 +733,8 @@ final class Section extends Entity
      * @param int $id
      *
      * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     private function getParents(int $id): array
     {
@@ -732,6 +757,8 @@ final class Section extends Entity
      * @param string $type Change type
      *
      * @return void
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     private function notifyAboutChange(#[ExpectedValues(['private', 'public', 'close', 'open', 'change', 'delete', 'move'])] string $type): void
     {
@@ -789,9 +816,11 @@ final class Section extends Entity
      * Sanitize section data.
      *
      * @param array<string, mixed> $data Data to check
-     * @param bool  $edit Flag to indicate if this is an edit or not
+     * @param bool                 $edit Flag to indicate if this is an edit or not
      *
      * @return array|bool
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     private function sanitizeInput(array &$data, bool $edit = false): array|bool
     {
@@ -883,6 +912,7 @@ final class Section extends Entity
                 }
 
                 break;
+
             case 3:
                 if (
                     $data['parent_id'] !== 2
@@ -892,6 +922,7 @@ final class Section extends Entity
                 }
 
                 break;
+
             case 4:
                 if (
                     $data['parent_id'] !== 3
@@ -913,6 +944,7 @@ final class Section extends Entity
                 }
 
                 break;
+
             case 5:
                 if (
                     $data['parent_id'] !== 5
@@ -922,6 +954,7 @@ final class Section extends Entity
                 }
 
                 break;
+
             case 6:
                 if (
                     $data['parent_id'] !== 4

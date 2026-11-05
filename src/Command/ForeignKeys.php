@@ -29,7 +29,7 @@ final class ForeignKeys
      * While logic should be written in a way to prevent such "violations", having a job to forcefully remove them is useful.
      * Nullable values will be set to NULL.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */

@@ -5,15 +5,15 @@
     This is list of characters with potential red flags identified for them. Check each character for more details.
 {% endif %}
 {% if service_name == 'bictracker' %}
-    <p>Показано {{ search_result.entities|length }} ({{ 1+((pagination.current-1)*pagination.per) }} по {{ search_result.entities|length+((pagination.current-1)*100) }}) записей из {{ search_result.count }}.</p>
+    <p>Показано {{ search_result.entities|length }} ({{ 1 + ((pagination.current - 1) * pagination.per) }} по {{ search_result.entities|length + ((pagination.current - 1) * 100) }}) записей из {{ search_result.count }}.</p>
 {% else %}
-    <p>Showing {{ search_result.entities|length }} ({{ 1+((pagination.current-1)*pagination.per) }} to {{ search_result.entities|length+((pagination.current-1)*100) }}) from total of {{ search_result.count }}.</p>
+    <p>Showing {{ search_result.entities|length }} ({{ 1 + ((pagination.current - 1) * pagination.per) }} to {{ search_result.entities|length + ((pagination.current - 1) * 100) }}) from total of {{ search_result.count }}.</p>
 {% endif %}
 {% if numbered %}
     <ol class="search_results">
         {% for entity in search_result.entities %}
             <li>
-                <span class="no_select">{{ loop.index+((pagination.current-1)*pagination.per) }}.</span>
+                <span class="no_select">{{ loop.index + ((pagination.current - 1) * pagination.per) }}.</span>
                 {{ include('common/elements/entitycard.html.twig', entity) }}
             </li>
         {% endfor %}

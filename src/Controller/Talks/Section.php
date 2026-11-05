@@ -12,7 +12,7 @@ use Simbiat\http20\Headers;
 final class Section extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -20,18 +20,6 @@ final class Section extends Page
     protected array $breadcrumb = [
         ['href' => '/talks/sections/', 'name' => 'Sections'],
     ];
-
-    /**
-     * @var string Sub service name
-     */
-    #[\Override]
-    protected string $subservice_name = 'section';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Talks';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
@@ -52,12 +40,27 @@ final class Section extends Page
     protected array $required_permission = ['view_posts'];
 
     /**
-     * This is actual page generation based on further details of the $path
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'section';
+
+    /**
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'Talks';
+
+    /**
+     * This is actual page generation based on further details of the $path.
      *
      * @param array<int, string> $path
      *
      * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         // Sanitize ID

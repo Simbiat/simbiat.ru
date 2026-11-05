@@ -18,7 +18,7 @@ final class Maintain
     /**
      * Recalculate Argon settings.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return int
      */

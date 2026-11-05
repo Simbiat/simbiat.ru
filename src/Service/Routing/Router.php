@@ -9,26 +9,18 @@ use App\Service\Images;
 use Simbiat\http20\Headers;
 
 /**
- * CLass to handle page routing while generating breadcrumbs.
+ * Class to handle page routing while generating breadcrumbs.
+ *
+ * @api TODO: most likely will need to remove during migration to Symfony. For now this is mostly to silence Psalm.
  */
 abstract class Router
 {
     /**
-     * @var array List supported "paths". Basic ones only, some extra validation may be required further
-     */
-    protected array $sub_routes = [];
-
-    /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
     protected array $breadcrumb = [];
-
-    /**
-     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    protected string $title = '';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
@@ -46,14 +38,34 @@ abstract class Router
     protected string $og_image = '';
 
     /**
+     * @var string If no path[0] is provided, but we want to show a specific page, instead of a stub - redirect to page with this address
+     */
+    protected string $redirect_main = '';
+
+    /**
      * @var string Service name
      */
     protected string $service_name = '';
 
     /**
-     * @var string If no path[0] is provided, but we want to show a specific page, instead of a stub - redirect to page with this address
+     * @var array List supported "paths". Basic ones only, some extra validation may be required further
      */
-    protected string $redirect_main = '';
+    protected array $sub_routes = [];
+
+    /**
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    protected string $title = '';
+
+    final public function __construct()
+    {
+        // Check that subclass has set appropriate properties
+        foreach (['sub_routes', 'breadcrumb'] as $property) {
+            if (empty($this->{$property})) {
+                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
+            }
+        }
+    }
 
     /**
      * This is a general routing check for supported page.
@@ -138,14 +150,4 @@ abstract class Router
      * @return array
      */
     abstract protected function pageGen(array $path): array;
-
-    final public function __construct()
-    {
-        // Check that subclass has set appropriate properties
-        foreach (['sub_routes', 'breadcrumb'] as $property) {
-            if (empty($this->{$property})) {
-                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
-            }
-        }
-    }
 }

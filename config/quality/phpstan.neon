@@ -29,6 +29,7 @@ parameters:
         - /app/data
         - /app/node_modules
         - /app/packages/DDCIcons/icons
+        - /app/packages/Sniffs/tests
         - /app/public
         - /app/var
         - /app/vendor
@@ -42,7 +43,7 @@ parameters:
         nodesByStringCountMax: 1024
         resolvedPhpDocBlockCacheCountMax: 4056
         nameScopeMapMemoryCacheCountMax: 4056
-    #TODO: uncomment when moving to APP_DEBUG issue is resolved
+    #TODO: uncomment when APP_DEBUG issue is resolved
     #symfony:
         #containerXmlPath: /app/var/cache/dev/App_KernelDevDebugContainer.xml
     #TODO: Consider using PHP configs, when they become *the* standard (used by recipes, at least)

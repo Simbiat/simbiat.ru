@@ -14,7 +14,7 @@ use Simbiat\StringHelpers\Sanitize;
 final class Thread extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -22,18 +22,6 @@ final class Thread extends Page
     protected array $breadcrumb = [
         ['href' => '/talks/sections/', 'name' => 'Sections'],
     ];
-
-    /**
-     * @var string Sub service name
-     */
-    #[\Override]
-    protected string $subservice_name = 'thread';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Talks';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
@@ -54,12 +42,27 @@ final class Thread extends Page
     protected array $required_permission = ['view_posts'];
 
     /**
-     * This is actual page generation based on further details of the $path
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'thread';
+
+    /**
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'Talks';
+
+    /**
+     * This is actual page generation based on further details of the $path.
      *
      * @param array<int, string> $path
      *
      * @return array<string, mixed>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         // Sanitize ID
@@ -84,11 +87,9 @@ final class Thread extends Page
             ) {
                 if ($output_array['type'] === 'Support') {
                     if (
-                        (
-                            $output_array['access_token'] === null
-                            || $output_array['access_token'] === ''
-                            || $output_array['access_token'] !== ($_GET['access_token'] ?? '')
-                        )
+                        $output_array['access_token'] === null
+                        || $output_array['access_token'] === ''
+                        || $output_array['access_token'] !== ($_GET['access_token'] ?? '')
                     ) {
                         // Return same error to limit potential of brute-forcing a token
                         return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
@@ -192,7 +193,7 @@ final class Thread extends Page
             <meta property="article:modified_time" content="'.\date('c', $output_array['updated']).'" />'
             .($output_array['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />')
             .($output_array['editor'] !== 1 && $output_array['editor'] !== $output_array['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />' : '')
-            .'<meta property="article:section" content="'.array_last($output_array['parents'])['name'].'" />';
+            .'<meta property="article:section" content="'.\array_last($output_array['parents'])['name'].'" />';
         foreach ($output_array['tags'] as $tag) {
             $output_array['ogextra'] .= '<meta property="article:tag" content="'.$tag.'" />';
         }

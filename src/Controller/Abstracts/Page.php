@@ -19,76 +19,9 @@ use Simbiat\StringHelpers\Sanitize;
 abstract class Page
 {
     /**
-     * Current breadcrumb for navigation
-     *
-     * @var array<int, array<string, string>>
-     */
-    protected array $breadcrumb = [];
-
-    /**
      * @var array Alternative representations of the content
      */
     protected array $alt_links = [];
-
-    /**
-     * @var string Sub service name
-     */
-    protected string $subservice_name = '';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    protected string $title = '';
-
-    /**
-     * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    protected string $h1 = '';
-
-    /**
-     * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    protected string $og_desc = '';
-
-    /**
-     * @var string Page's banner. Defaults to website's banner. Needs to be inside /assets/images directory and start with /
-     */
-    protected string $og_image = '';
-
-    /**
-     * @var int Cache age, in case we prefer the generated page to be cached
-     */
-    protected int $cache_age = 0;
-
-    /**
-     * @var int Time of last data modification (defaults to current time on initialization)
-     */
-    protected int $last_modified = 0;
-
-    /**
-     * @var bool Flag to check if the Last Modified header was sent already
-     */
-    protected bool $header_sent = false;
-
-    /**
-     * @var string Language override, to be sent in header (if present)
-     */
-    protected string $language = '';
-
-    /**
-     * @var bool Flag to indicate this is a static page
-     */
-    protected bool $static = false;
-
-    /**
-     * @var array<int, string> Allowed methods
-     */
-    protected array $methods = ['GET', 'POST', 'HEAD', 'OPTIONS'];
-
-    /**
-     * @var string Cache strategy: aggressive, private, none, live, month, week, day, hour
-     */
-    protected string $cache_strategy = 'hour';
 
     /**
      * @var bool Flag indicating that authentication is required
@@ -96,9 +29,26 @@ abstract class Page
     protected bool $authentication_needed = false;
 
     /**
-     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
+     * Current breadcrumb for navigation.
+     *
+     * @var array<int, array<string, string>>
      */
-    protected array $required_permission = [];
+    protected array $breadcrumb = [];
+
+    /**
+     * @var int Cache age, in case we prefer the generated page to be cached
+     */
+    protected int $cache_age = 0;
+
+    /**
+     * @var string Cache strategy: aggressive, private, none, live, month, week, day, hour
+     */
+    protected string $cache_strategy = 'hour';
+
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    protected string $h1 = '';
 
     /**
      * @var array<int, string> Static list of images to H2 push, which are common for the page type
@@ -124,11 +74,78 @@ abstract class Page
     protected array $h2_push_extra = [];
 
     /**
+     * @var bool Flag to check if the Last Modified header was sent already
+     */
+    protected bool $header_sent = false;
+
+    /**
+     * @var string Language override, to be sent in header (if present)
+     */
+    protected string $language = '';
+
+    /**
+     * @var int Time of last data modification (defaults to current time on initialization)
+     */
+    protected int $last_modified = 0;
+
+    /**
+     * @var array<int, string> Allowed methods
+     */
+    protected array $methods = ['GET', 'POST', 'HEAD', 'OPTIONS'];
+
+    /**
+     * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    protected string $og_desc = '';
+
+    /**
+     * @var string Page's banner. Defaults to website's banner. Needs to be inside /assets/images directory and start with /
+     */
+    protected string $og_image = '';
+
+    /**
+     * @var array<int, string> List of permissions, from which at least 1 is required to have access to the page
+     */
+    protected array $required_permission = [];
+
+    /**
+     * @var bool Flag to indicate this is a static page
+     */
+    protected bool $static = false;
+
+    /**
+     * @var string Sub service name
+     */
+    protected string $subservice_name = '';
+
+    /**
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    protected string $title = '';
+
+    final public function __construct()
+    {
+        // Check that subclass has set appropriate properties
+        foreach (['subservice_name', 'breadcrumb'] as $property) {
+            if (empty($this->{$property})) {
+                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
+            }
+        }
+
+        // Set last modified data
+        $this->last_modified = \time();
+    }
+
+    /**
      * Get the page.
      *
      * @param array $path
      *
-     * @return array<string>
+     * @psalm-suppress MixedReturnTypeCoercion TODO: needs to be removed during migration to Symfony. Need to use objects instead of ararys.
+     *
+     * @return array<string, mixed>
+     *
+     * @throws \UnexpectedValueException
      */
     final public function get(array $path): array
     {
@@ -142,7 +159,7 @@ abstract class Page
 
         // If we have a static page, and HTTP error is set at this stage, it can break the rendering of the page. As such we remove the error.
         if ($this->static) {
-            HomePage::$http_error = [];
+            HomePage::$http_error = null;
         }
 
         // Check if user has required permission
@@ -152,8 +169,8 @@ abstract class Page
         ) {
             $page = ['http_error' => 403, 'reason' => 'No `'.\implode('` or `', $this->required_permission).'` permission'];
         } elseif (
-            HomePage::$http_error === []
-            || HomePage::$http_error === null
+            HomePage::$http_error === null
+            || HomePage::$http_error === []
         ) {
             // Generate the page only if no prior errors detected
             // Generate a list of allowed methods
@@ -167,8 +184,8 @@ abstract class Page
             // Check if allowed method is used
             if (!\in_array(HomePage::$method, $allowed_methods, strict: true)) {
                 $page = ['http_error' => 405];
-                // Check that user is authenticated
             } elseif (
+                // Check that user is authenticated
                 $this->authentication_needed
                 && $_SESSION['user_id'] === 1
             ) {
@@ -223,13 +240,13 @@ abstract class Page
                 $this->h2_push[$key] = ['href' => $image, 'rel' => 'preload', 'as' => 'image'];
             }
 
-            Links::links($this->h2_push, force_cross_origin: true);
+            (void) Links::links($this->h2_push, force_cross_origin: true);
         }
 
         if (\count($this->alt_links) !== 0) {
             // Send HTTP header
             if (!HomePage::$stale_return) {
-                Links::links($this->alt_links, force_cross_origin: true);
+                (void) Links::links($this->alt_links, force_cross_origin: true);
             }
 
             // Add a link to HTML
@@ -267,17 +284,57 @@ abstract class Page
     }
 
     /**
-     * Generate Last-Modified header.
+     * Function to append a breadcrumb, which is based on the last crumb currently set.
      *
-     * @param null|int|string $time
+     * @param string $path  Current path node
+     * @param string $name  Current path name
+     * @param bool   $query Whether the current path name is an actual node or a GET parameter
      *
      * @return void
      */
-    final protected function lastModified(null|int|string $time = null): void
+    final protected function attachCrumb(string $path, string $name, bool $query = false): void
+    {
+        // Add a path to breadcrumbs
+        $this->breadcrumb[] = [
+            'href' => \array_last($this->breadcrumb)['href'].($query ? '&' : '/').$path,
+            'name' => $name,
+        ];
+    }
+
+    /**
+     * This is the actual page generation based on further details of the `$path`.
+     *
+     * @param array $path
+     *
+     * @return array
+     */
+    abstract protected function generate(array $path): array;
+
+    /**
+     * Function to get last breadcrumb's href.
+     *
+     * @return string
+     */
+    final protected function getLastCrumb(): string
+    {
+        return \array_last($this->breadcrumb)['href'];
+    }
+
+    /**
+     * Generate Last-Modified header.
+     *
+     * @param int|string|null $time
+     *
+     * @return void
+     */
+    final protected function lastModified(int|string|null $time = null): void
     {
         // Convert string to int
         if (\is_string($time)) {
-            $time = \strtotime($time);
+            $string_time = \strtotime($time);
+            $time = $string_time !== false
+                ? $string_time
+                : 0;
         }
 
         // If time is less than 0, use the Last Modified set initially
@@ -300,34 +357,6 @@ abstract class Page
     }
 
     /**
-     * Function to append a breadcrumb, which is based on the last crumb currently set.
-     *
-     * @param string $path  Current path node
-     * @param string $name  Current path name
-     * @param bool   $query Whether the current path name is an actual node or a GET parameter
-     *
-     * @return void
-     */
-    final protected function attachCrumb(string $path, string $name, bool $query = false): void
-    {
-        // Add a path to breadcrumbs
-        $this->breadcrumb[] = [
-            'href' => \array_last($this->breadcrumb)['href'].($query ? '&' : '/').$path,
-            'name' => $name,
-        ];
-    }
-
-    /**
-     * Function to get last breadcrumb's href.
-     *
-     * @return string
-     */
-    final protected function getLastCrumb(): string
-    {
-        return \array_last($this->breadcrumb)['href'];
-    }
-
-    /**
      * Function to set og:desc.
      *
      * @param string $string
@@ -338,6 +367,7 @@ abstract class Page
     {
         // Remove <details> to avoid spoilers and generally complex items
         $string = '<html>'.$string.'</html>';
+
         /** @noinspection DuplicatedCode */
         $html = new \DOMDocument(encoding: 'UTF-8');
         // `mb_encode_numericentity` is done as per workaround for UTF-8 loss/corruption on loading from https://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly
@@ -360,27 +390,5 @@ abstract class Page
         if (!Sanitize::whiteString($new_description)) {
             $this->og_desc = $new_description;
         }
-    }
-
-    /**
-     * This is the actual page generation based on further details of the `$path`.
-     *
-     * @param array $path
-     *
-     * @return array
-     */
-    abstract protected function generate(array $path): array;
-
-    final public function __construct()
-    {
-        // Check that subclass has set appropriate properties
-        foreach (['subservice_name', 'breadcrumb'] as $property) {
-            if (empty($this->{$property})) {
-                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
-            }
-        }
-
-        // Set last modified data
-        $this->last_modified = \time();
     }
 }

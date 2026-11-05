@@ -13,9 +13,9 @@ use App\Service\Errors;
 final class ThreadChange extends Notification
 {
     /**
-     * Subject for email.
+     * Whether to send to all emails registered for the user.
      */
-    protected const string SUBJECT = 'Thread edited';
+    protected const bool ALL_EMAILS = true;
 
     /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high.
@@ -23,9 +23,9 @@ final class ThreadChange extends Notification
     protected const int PRIORITY = 2;
 
     /**
-     * Whether to send to all emails registered for the user.
+     * Subject for email.
      */
-    protected const bool ALL_EMAILS = true;
+    protected const string SUBJECT = 'Thread edited';
 
     /**
      * Generate text for message.
@@ -34,6 +34,7 @@ final class ThreadChange extends Notification
      *
      * @return self
      */
+    #[\Override]
     protected function setText(array $twig_vars = []): self
     {
         try {

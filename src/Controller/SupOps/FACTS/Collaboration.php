@@ -9,7 +9,7 @@ use App\Controller\Abstracts\StaticPage;
 final class Collaboration extends StaticPage
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -17,6 +17,27 @@ final class Collaboration extends StaticPage
     protected array $breadcrumb = [
         ['href' => '/supops/collaboration', 'name' => 'Collaboration'],
     ];
+
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $h1 = 'SupOps: Collaboration';
+
+    /**
+     * @var array<int, string> List of images to H2 push
+     */
+    #[\Override]
+    protected array $h2_push_extra = [
+        '/assets/images/supops/facts/collaboration.svg',
+        '/assets/images/supops/navigation/transparency.svg',
+    ];
+
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $og_desc = 'SupOps: Solutions are co‑created';
 
     /**
      * @var string Sub service name
@@ -29,25 +50,4 @@ final class Collaboration extends StaticPage
      */
     #[\Override]
     protected string $title = 'SupOps: Collaboration';
-
-    /**
-     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $h1 = 'SupOps: Collaboration';
-
-    /**
-     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $og_desc = 'SupOps: Solutions are co‑created';
-
-    /**
-     * @var array<int, string> List of images to H2 push
-     */
-    #[\Override]
-    protected array $h2_push_extra = [
-        '/assets/images/supops/facts/collaboration.svg',
-        '/assets/images/supops/navigation/transparency.svg',
-    ];
 }

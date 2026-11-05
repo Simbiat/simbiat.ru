@@ -10,7 +10,13 @@ use App\Entity\User;
 final class Avatars extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * @var bool Flag indicating that authentication is required
+     */
+    #[\Override]
+    protected bool $authentication_needed = true;
+
+    /**
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -20,16 +26,10 @@ final class Avatars extends Page
     ];
 
     /**
-     * @var string Sub service name
+     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
      */
     #[\Override]
-    protected string $subservice_name = 'avatars';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Avatars';
+    protected string $cache_strategy = 'private';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
@@ -44,24 +44,27 @@ final class Avatars extends Page
     protected string $og_desc = 'Page to edit your avatars';
 
     /**
-     * @var string Cache strategy: aggressive, private, live, month, week, day, hour
+     * @var string Sub service name
      */
     #[\Override]
-    protected string $cache_strategy = 'private';
+    protected string $subservice_name = 'avatars';
 
     /**
-     * @var bool Flag indicating that authentication is required
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
      */
     #[\Override]
-    protected bool $authentication_needed = true;
+    protected string $title = 'Avatars';
 
     /**
-     * This is actual page generation based on further details of the $path
+     * This is actual page generation based on further details of the $path.
      *
      * @param array<int, string> $path
      *
      * @return array<string, mixed>
+     *
+     * @throws \UnexpectedValueException
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         return ['avatars' => new User($_SESSION['user_id'])->getAvatars()];

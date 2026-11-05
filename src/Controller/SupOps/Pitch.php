@@ -9,7 +9,7 @@ use App\Controller\Abstracts\StaticPage;
 final class Pitch extends StaticPage
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -17,6 +17,27 @@ final class Pitch extends StaticPage
     protected array $breadcrumb = [
         ['href' => '/supops', 'name' => 'SupOps'],
     ];
+
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $h1 = 'SupOps: The Pitch';
+
+    /**
+     * @var array<int, string> List of images to H2 push
+     */
+    #[\Override]
+    protected array $h2_push_extra = [
+        '/assets/images/supops/logo/rectangle_color.svg',
+        '/assets/images/supops/navigation/problem.svg',
+    ];
+
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $og_desc = 'SupOps: The Pitch';
 
     /**
      * @var string Sub service name
@@ -29,25 +50,4 @@ final class Pitch extends StaticPage
      */
     #[\Override]
     protected string $title = 'SupOps: The Pitch';
-
-    /**
-     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $h1 = 'SupOps: The Pitch';
-
-    /**
-     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $og_desc = 'SupOps: The Pitch';
-
-    /**
-     * @var array<int, string> List of images to H2 push
-     */
-    #[\Override]
-    protected array $h2_push_extra = [
-        '/assets/images/supops/logo/rectangle_color.svg',
-        '/assets/images/supops/navigation/problem.svg',
-    ];
 }

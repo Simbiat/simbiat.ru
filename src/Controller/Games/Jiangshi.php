@@ -9,7 +9,7 @@ use App\Controller\Abstracts\Game;
 final class Jiangshi extends Game
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -19,22 +19,28 @@ final class Jiangshi extends Game
     ];
 
     /**
-     * @var string Sub service name
+     * @var string Path to game's JS file
      */
     #[\Override]
-    protected string $subservice_name = 'jiangshi';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Jiangshi';
+    protected string $gamemaker_js = '/assets/html5games/Jiangshi/Jiangshi.js';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
      */
     #[\Override]
     protected string $h1 = 'Jiangshi';
+
+    /**
+     * @var bool Flag to indicate the game has music
+     */
+    #[\Override]
+    protected bool $has_music = true;
+
+    /**
+     * @var bool Flag to indicate the game has sound
+     */
+    #[\Override]
+    protected bool $has_sound = true;
 
     /**
      * @var string Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
@@ -49,20 +55,14 @@ final class Jiangshi extends Game
     protected string $og_image = '/ogimages/jiangshi.webp';
 
     /**
-     * @var string Path to game's JS file
+     * @var string Sub service name
      */
     #[\Override]
-    protected string $gamemaker_js = '/assets/html5games/Jiangshi/Jiangshi.js';
+    protected string $subservice_name = 'jiangshi';
 
     /**
-     * @var bool Flag to indicate the game has sound
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
      */
     #[\Override]
-    protected bool $has_sound = true;
-
-    /**
-     * @var bool Flag to indicate the game has music
-     */
-    #[\Override]
-    protected bool $has_music = true;
+    protected string $title = 'Jiangshi';
 }

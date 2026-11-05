@@ -6,6 +6,9 @@ namespace App\Service;
 
 use Simbiat\Database\Query;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
+use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Twig\Environment;
 
 /**
@@ -13,78 +16,83 @@ use Twig\Environment;
  */
 final class Config
 {
-    public private(set) static string $work_dir = '';
-
-    public private(set) static string $environment = 'dev';
-
     public private(set) static string $admin_email = '';
 
     public private(set) static string $admin_name = '';
 
-    public private(set) static string $site_name = '';
-
-    public private(set) static string $from_email = '';
-
-    public private(set) static string $http_host = '';
+    public private(set) static array $argon_settings = [];
 
     public private(set) static string $base_url = '';
 
-    public private(set) static string $html_cache = '';
-
-    public private(set) static string $sitemap = '';
-
-    public private(set) static string $js_dir = '';
-
-    public private(set) static string $css_dir = '';
-
-    public private(set) static string $img_dir = '';
-
-    public private(set) static string $uploaded = '';
-
-    public private(set) static string $uploaded_img = '';
-
-    public private(set) static string $ddl_dir = '';
-
-    public private(set) static string $geoip = '';
+    public private(set) static array $cookie_settings = [];
 
     public private(set) static string $crests_components = '';
 
-    public private(set) static string $merged_crests_cache = '';
-
-    public private(set) static string $icons = '';
-
-    public private(set) static string $statistics = '';
-
-    public private(set) static array $cookie_settings = [];
-
-    public private(set) static array $group_ids = [];
-
-    public private(set) static array $tracking_query_parameters = [];
-
-    public private(set) static array $teapot_browsers = [];
-
-    public private(set) static string $mailer_dsn = '';
+    public private(set) static string $css_dir = '';
 
     public private(set) static string $database_name = '';
-
-    public private(set) static string $encryption_passphrase = '';
-
-    public private(set) static array $argon_settings = [];
-
-    public private(set) static Environment $twig;
-
-    /**
-     * @var bool Track if the DB connection is up
-     */
-    public private(set) static bool $dbup = false;
 
     /**
      * @var bool DB maintenance flag
      */
     public private(set) static bool $db_update = false;
 
+    /**
+     * @var bool Track if the DB connection is up
+     */
+    public private(set) static bool $dbup = false;
+
+    public private(set) static string $ddl_dir = '';
+
+    public private(set) static string $encryption_passphrase = '';
+
+    public private(set) static string $environment = 'dev';
+
+    public private(set) static string $from_email = '';
+
+    public private(set) static string $geoip = '';
+
+    public private(set) static array $group_ids = [];
+
+    public private(set) static string $html_cache = '';
+
+    public private(set) static string $http_host = '';
+
+    public private(set) static string $icons = '';
+
+    public private(set) static string $img_dir = '';
+
+    public private(set) static string $js_dir = '';
+
+    public private(set) static string $mailer_dsn = '';
+
+    public private(set) static string $merged_crests_cache = '';
+
+    public private(set) static string $site_name = '';
+
+    public private(set) static string $sitemap = '';
+
+    public private(set) static string $statistics = '';
+
+    public private(set) static array $teapot_browsers = [];
+
+    public private(set) static array $tracking_query_parameters = [];
+
+    public private(set) static Environment $twig;
+
+    public private(set) static string $uploaded = '';
+
+    public private(set) static string $uploaded_img = '';
+
+    public private(set) static string $work_dir = '';
+
     private static ContainerInterface $container;
 
+    /**
+     * @param ContainerInterface $container
+     *
+     * @throws ParameterNotFoundException|ServiceCircularReferenceException|ServiceNotFoundException
+     */
     public function __construct(ContainerInterface $container)
     {
         self::$container = $container;

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- TODO: Monitor discussion about PER ruleset https://github.com/PHPCSStandards/PHP_CodeSniffer/issues/29 -->
 <ruleset name="Application" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="/vendor/squizlabs/php_codesniffer/phpcs.xsd">
+         xsi:noNamespaceSchemaLocation="../../vendor/squizlabs/php_codesniffer/phpcs.xsd">
 
     <description>
         PHPCS configuration for Symfony application.
@@ -47,12 +47,14 @@
     <!-- Symfony coding standard -->
     <rule ref="Symfony">
         <exclude name="Symfony.Commenting.License.Warning"/>
+        <!-- Duplicates phpdoc_separation from PHP CS Fixer -->
+        <exclude name="Symfony.Commenting.Annotations.Invalid"/>
         <exclude name="Symfony.ControlStructure.YodaConditions"/>
         <!-- Duplicates SlevomatCodingStandard.Arrays.TrailingArrayComma.MissingTrailingComma and highlights the first line in the array instead of last -->
         <exclude name="Symfony.Arrays.MultiLineArrayComma.Invalid"/>
         <!-- Duplicates PSR12.Classes.ClassInstantiation.MissingParentheses -->
         <exclude name="Symfony.Objects.ObjectInstantiation.Invalid"/>
-        <!-- Duplicates SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing -->
+        <!-- Duplicates blank_line_before_statement from PHP CS Fixer -->
         <exclude name="Symfony.Formatting.BlankLineBeforeReturn"/>
     </rule>
     <rule ref="Symfony.Files.AlphanumericFilename">
@@ -76,10 +78,14 @@
     <!-- Useful modern strictness -->
 
     <rule ref="Generic.PHP.DisallowShortOpenTag"/>
-    <rule ref="Generic.CodeAnalysis.EmptyStatement"/>
+    <rule ref="Generic.CodeAnalysis.EmptyStatement">
+        <exclude-pattern>/app/packages/Sniffs/tests</exclude-pattern>
+    </rule>
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
 
-    <rule ref="Squiz.PHP.CommentedOutCode"/>
+    <rule ref="Squiz.PHP.CommentedOutCode">
+        <exclude-pattern>/app/packages/Sniffs/tests</exclude-pattern>
+    </rule>
 
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
         <!-- Duplicates Symfony.Whitespace.DiscourageFitzinator.Invalid -->
@@ -91,11 +97,9 @@
     </rule>
 
     <!-- Symfony projects typically use attributes -->
-    <rule ref="SlevomatCodingStandard.Attributes"/>
-    <rule ref="SlevomatCodingStandard.Attributes.AttributesOrder">
-        <properties>
-            <property name="orderAlphabetically" value="true"/>
-        </properties>
+    <rule ref="SlevomatCodingStandard.Attributes">
+        <!-- Duplicates ordered_attributes from PHP CS Fixer and slightly conflicts it, since ordering considers the `\` for global scope attributes -->
+        <exclude name="SlevomatCodingStandard.Attributes.AttributesOrder"/>
     </rule>
     <rule ref="SlevomatCodingStandard.Attributes.AttributeAndTargetSpacing">
         <properties>
@@ -113,6 +117,10 @@
         <exclude name="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat"/>
         <!-- Seems inconsistent -->
         <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.UselessAnnotation"/>
+        <!-- Covered by ordered_types and phpdoc_types_order from PHP CS Fixer -->
+        <exclude name="SlevomatCodingStandard.TypeHints.NullTypeHintOnLastPosition"/>
+        <!-- Prevents alignment in constructor promotions -->
+        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHintSpacing"/>
     </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
         <properties>
@@ -123,12 +131,18 @@
     <!-- Namespaces -->
     <rule ref="SlevomatCodingStandard.Namespaces">
         <exclude name="SlevomatCodingStandard.Namespaces.UseOnlyWhitelistedNamespaces.NonFullyQualified"/>
+        <!-- Redundant with fully_qualified_strict_types with leading_backslash_in_global_namespace from PHP CS Fixer -->
+        <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedExceptions"/>
+        <!-- Redundant with fully_qualified_strict_types with leading_backslash_in_global_namespace from PHP CS Fixer -->
+        <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation"/>
     </rule>
     <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly">
         <properties>
             <property name="allowFullyQualifiedGlobalClasses" value="true"/>
             <property name="allowFullyQualifiedGlobalFunctions" value="true"/>
             <property name="allowFullyQualifiedGlobalConstants" value="true"/>
+            <!-- I am not sure why this one needs to be disabled, but if I don't it removes the leading slash from some non-namespaced files, even though it should not, based on the settings above. -->
+            <property name="allowWhenNoNamespace" value="false"/>
         </properties>
     </rule>
     <rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalFunctions">
@@ -145,12 +159,20 @@
         <exclude-pattern>/app/packages/Cron/TraitForCron.php</exclude-pattern>
         <exclude-pattern>/app/packages/Database/Maintainer/TraitForMaintainer.php</exclude-pattern>
     </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+        <properties>
+            <property name="searchAnnotations" value="true"/>
+        </properties>
+    </rule>
 
     <!-- Classes -->
     <rule ref="SlevomatCodingStandard.Classes">
         <!-- Following 2 rules react to empty constructors used for dependency injections -->
         <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineAfterOpeningBrace"/>
         <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineBeforeClosingBrace"/>
+        <!-- Following 2 rules react to empty classes like custom exceptions with no custom code -->
+        <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.MultipleEmptyLinesAfterOpeningBrace"/>
+        <exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.MultipleEmptyLinesBeforeClosingBrace"/>
         <exclude name="SlevomatCodingStandard.Classes.ClassLength.ClassTooLong"/>
         <!-- Conflicts Symfony practices -->
         <exclude name="SlevomatCodingStandard.Classes.DisallowConstructorPropertyPromotion"/>
@@ -158,10 +180,22 @@
         <exclude name="SlevomatCodingStandard.Classes.RequireMultiLineMethodSignature"/>
         <!-- Generic.NamingConventions.AbstractClassNamePrefix.Missing and Symfony standards -->
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming"/>
+        <!-- Conflicts ordered_class_elements in PHP CS Fixer -->
+        <exclude name="SlevomatCodingStandard.Classes.ClassStructure"/>
+        <!-- This can legitimately break things, if a constant is overridden by child classes. It can indicate potential issues, though, so excluding only from BF. -->
+        <exclude phpcbf-only="true" name="SlevomatCodingStandard.Classes.DisallowLateStaticBindingForConstants"/>
     </rule>
     <rule ref="SlevomatCodingStandard.Classes.TraitUseSpacing">
         <properties>
             <property name="linesCountBeforeFirstUseWhenFirstInClass" value="0"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Classes.RequireSingleLineMethodSignature">
+        <properties>
+            <!-- Allow multiline for constructors -->
+            <property name="excludedMethodPatterns" type="array">
+                <element value="/__construct/"/>
+            </property>
         </properties>
     </rule>
 
@@ -198,6 +232,10 @@
         <!-- Duplicates PSR12.Classes.ClassInstantiation.MissingParentheses -->
         <exclude name="SlevomatCodingStandard.ControlStructures.NewWithParentheses"/>
         <exclude name="SlevomatCodingStandard.ControlStructures.DisallowShortTernaryOperator"/>
+        <!-- Duplicates blank_line_before_statement from PHP CS Fixer -->
+        <exclude name="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing"/>
+        <!-- Duplicates PHPStan empty.notAllowed -->
+        <exclude name="SlevomatCodingStandard.ControlStructures.DisallowEmpty"/>
     </rule>
     <rule ref="SlevomatCodingStandard.ControlStructures.EarlyExit">
         <properties>
@@ -328,6 +366,8 @@
             <property name="linesCountBetweenDescriptionAndAnnotations" value="1"/>
             <property name="linesCountBetweenDifferentAnnotationsTypes" value="1"/>
         </properties>
+        <!-- Duplicates phpdoc_separation from PHP CS Fixer -->
+        <exclude name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectLinesCountBetweenDifferentAnnotationsTypes"/>
     </rule>
     <rule ref="SlevomatCodingStandard.PHP">
         <!-- PHPDoc is usually much cleaner than assert() -->
@@ -337,7 +377,10 @@
     </rule>
     <rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces">
         <properties>
+            <!-- Allow alignment in docblocks -->
             <property name="ignoreSpacesInAnnotation" value="true"/>
+            <!-- Allow alignment in constructor promotions -->
+            <property name="ignoreSpacesInParameters" value="true"/>
         </properties>
     </rule>
     <rule ref="SlevomatCodingStandard.PHP.UselessParentheses">
@@ -376,6 +419,20 @@
         <exclude name="PEAR.WhiteSpace.ScopeClosingBrace"/>
     </rule>
 
+    <!-- Reacts to empty classes like custom exceptions with no custom code -->
+    <rule ref="PEAR.Classes.ClassDeclaration.OpenBraceNewLine">
+        <exclude name="PEAR.Classes.ClassDeclaration.OpenBraceNewLine"/>
+    </rule>
+    <!-- Reacts to empty classes like custom exceptions with no custom code -->
+    <rule ref="PSR2.Classes.ClassDeclaration.OpenBraceNewLine">
+        <exclude name="PSR2.Classes.ClassDeclaration.OpenBraceNewLine"/>
+    </rule>
+
+    <!-- Seems to provide false-positive with some chaining calls -->
+    <rule ref="PEAR.Functions.FunctionCallSignature.OpeningIndent">
+        <exclude-pattern>/app/config/quality/rector.php</exclude-pattern>
+    </rule>
+
     <!-- Reacts to empty functions in abstracts -->
     <rule ref="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine">
         <exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine"/>
@@ -384,7 +441,7 @@
     <!-- My own sniffs -->
     <rule ref="/app/packages/Sniffs/Simbiat/ruleset.xml"/>
     <rule ref="Simbiat">
-        <exclude-pattern phpcbf-only="true">/app/packages/Sniffs/tests/*</exclude-pattern>
+        <exclude-pattern>/app/packages/Sniffs/tests/*</exclude-pattern>
     </rule>
     <rule ref="Simbiat.SQL.DateTimeFunctions">
         <properties>

@@ -15,7 +15,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                     'server_version' => '13.0.2-MariaDB',
                     'options' => [
                         Mysql::ATTR_FOUND_ROWS => true,
-                        PDO::ATTR_TIMEOUT => 1,
+                        \PDO::ATTR_TIMEOUT => 1,
                         Mysql::ATTR_INIT_COMMAND => <<<'EOD'
                                 SET SESSION character_set_client = 'utf8mb4',
                                 SESSION collation_connection = 'utf8mb4_0900_as_cs',
@@ -62,30 +62,32 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         ]);
     }
 
-    if ($containerConfigurator->env() === 'prod') {
-        $containerConfigurator->extension('doctrine', [
-            'orm' => [
-                'query_cache_driver' => [
-                    'type' => 'pool',
-                    'pool' => 'doctrine.system_cache_pool',
-                ],
-                'result_cache_driver' => [
-                    'type' => 'pool',
-                    'pool' => 'doctrine.result_cache_pool',
-                ],
-            ],
-        ]);
-        $containerConfigurator->extension('framework', [
-            'cache' => [
-                'pools' => [
-                    'doctrine.result_cache_pool' => [
-                        'adapter' => 'cache.app',
-                    ],
-                    'doctrine.system_cache_pool' => [
-                        'adapter' => 'cache.system',
-                    ],
-                ],
-            ],
-        ]);
+    if ($containerConfigurator->env() !== 'prod') {
+        return;
     }
+
+    $containerConfigurator->extension('doctrine', [
+        'orm' => [
+            'query_cache_driver' => [
+                'pool' => 'doctrine.system_cache_pool',
+                'type' => 'pool',
+            ],
+            'result_cache_driver' => [
+                'pool' => 'doctrine.result_cache_pool',
+                'type' => 'pool',
+            ],
+        ],
+    ]);
+    $containerConfigurator->extension('framework', [
+        'cache' => [
+            'pools' => [
+                'doctrine.result_cache_pool' => [
+                    'adapter' => 'cache.app',
+                ],
+                'doctrine.system_cache_pool' => [
+                    'adapter' => 'cache.system',
+                ],
+            ],
+        ],
+    ]);
 };

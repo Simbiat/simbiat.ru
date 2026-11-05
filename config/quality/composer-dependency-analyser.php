@@ -20,11 +20,14 @@ return new Configuration()
     ->addPathToScan('/app/public/index.php', isDev: false)
     ->addPathToScan('/app/src', isDev: false)
     ->addPathToScan('/app/tests', isDev: true)
-    ->setFileExtensions(['php']) // applies only to directory scanning, not directly listed files
+    // applies only to directory scanning, not directly listed files
+    ->setFileExtensions(['php'])
 
     // Adjust analysis
-    ->enableAnalysisOfUnusedDevDependencies() // dev packages are often used only in CI, so this is not enabled by default
-    ->disableReportingUnmatchedIgnores(); // do not report ignores that never matched any error
+    // dev packages are often used only in CI, so this is not enabled by default
+    ->enableAnalysisOfUnusedDevDependencies()
+    // do not report ignores that never matched any error
+    ->disableReportingUnmatchedIgnores();
 
 // TODO: Enable once there is a public update with this feature
 // Make CLI file paths clickable to your IDE (uses OSC 8 hyperlinks)

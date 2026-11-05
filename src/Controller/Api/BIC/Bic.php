@@ -11,12 +11,6 @@ use Simbiat\http20\Headers;
 final class Bic extends Api
 {
     /**
-     * @var bool Flag to indicate, that this is the lowest level
-     */
-    #[\Override]
-    protected bool $final_node = true;
-
-    /**
      * @var array<string, string> Description of the node
      */
     #[\Override]
@@ -25,6 +19,22 @@ final class Bic extends Api
         'ID_regexp' => '/^\d+$/mi',
     ];
 
+    /**
+     * @var bool Flag to indicate, that this is the lowest level
+     */
+    #[\Override]
+    protected bool $final_node = true;
+
+    /**
+     * This is an actual API response generation based on further details of the $path.
+     *
+     * @param array $path
+     *
+     * @psalm-suppress MixedReturnTypeCoercion TODO: needs to be removed during migration to Symfony. Need to use objects instead of ararys.
+     *
+     * @return array<string, mixed>
+     */
+    #[\Override]
     protected function genData(array $path): array
     {
         try {

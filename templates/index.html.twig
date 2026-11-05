@@ -153,7 +153,7 @@
                                 {{ include('errors/' ~ http_error ~ '.html.twig') }}
                                 {% if http_error not in [503, 418] and session_data.prev_page %}
                                     <p>You can try going back to previous
-                                        <a href="{{ session_data.prev_page }}">page</a>.
+                                        <a href="{{ session_data.prev_page }}"><span>page</span></a>.
                                     </p>
                                 {% endif %}
                             {% else %}

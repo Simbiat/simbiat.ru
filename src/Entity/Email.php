@@ -11,7 +11,6 @@ use App\Enum\SystemUser;
 use App\Notification\UserActivation;
 use App\Security\Security;
 use App\Service\Config;
-use Simbiat\ArrayHelpers\Converters;
 use Simbiat\Database\Query;
 use Simbiat\StringHelpers\Sanitize;
 
@@ -20,6 +19,16 @@ use Simbiat\StringHelpers\Sanitize;
  */
 final class Email extends Entity
 {
+    /**
+     * @var bool Whether this is anonymous user
+     */
+    public private(set) bool $anonymous = true;
+
+    /**
+     * @var bool Whether mail is banned
+     */
+    public private(set) bool $banned = false;
+
     /**
      * @var bool Whether mail is registered
      */
@@ -36,240 +45,14 @@ final class Email extends Entity
     public private(set) ?string $username = null;
 
     /**
-     * @var bool Whether this is anonymous user
-     */
-    public private(set) bool $anonymous = true;
-
-    /**
-     * @var bool Whether mail is banned
-     */
-    public private(set) bool $banned = false;
-
-    /**
-     * @var string|null Whether email is subscribed to notifications (when not null)
-     */
-    private ?string $subscribed = null;
-
-    /**
      * @var string|null Whether email is activated (when null)
      */
     private ?string $activation = 'not yet activated';
 
     /**
-     * Validate the ID
-     *
-     * @param int|string $id
-     *
-     * @return void
+     * @var string|null Whether email is subscribed to notifications (when not null)
      */
-    protected function validateId(#[\SensitiveParameter] int|string $id): void
-    {
-        // Validate that string is email
-        if (\filter_var($id, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
-            // Not an email, something is wrong, protect ourselves
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.self::class.'` has incorrect format.');
-        }
-
-        // For email, we also need to get details right away, this is the best place to do it
-        $this->id = $id;
-        /* @noinspection UnusedFunctionResultInspection */
-        $this->getFromDB();
-    }
-
-    /**
-     * Check if mail is either banned or used.
-     *
-     * @return bool
-     */
-    public function isBad(): bool
-    {
-        if (
-            $this->id === null
-            || Sanitize::whiteString($this->id)
-        ) {
-            return true;
-        }
-
-        return $this->banned || ($this->registered && !$this->anonymous && $this->activation === null);
-    }
-
-    /**
-     * Subscribe email to notifications.
-     *
-     * @return bool
-     */
-    public function subscribe(): bool
-    {
-        // Ensure we have latest data
-        if ($this->username === null) {
-            $this->setId($this->id);
-        }
-
-        $subscribed = \bin2hex(\gzdeflate(\mb_str_pad($this->id, 100, "\0", encoding: 'UTF-8')."\n".Security::genToken()));
-        $queries = [];
-        // If this is an anonymous mail, then we do not "reset" other subscriptions, since we use that user to collect all emails, that may be used by different actual people
-        if (!$this->anonymous) {
-            $queries[] = [
-                'UPDATE `uc__emails` SET `subscribed`=NULL WHERE `user_id`=:user_id AND `subscribed` IS NOT NULL;',
-                [
-                    ':email' => $this->id,
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-            ];
-        }
-
-        $queries[] = [
-            'UPDATE `uc__emails` SET `subscribed`=:subscribed WHERE `user_id`=:user_id AND `email`=:email;',
-            [
-                ':email' => $this->id,
-                ':subscribed' => $subscribed,
-                ':user_id' => [$_SESSION['user_id'], 'int'],
-            ],
-        ];
-        $result = Query::query($queries);
-        Security::session_regenerate_id(delete_old_session: true);
-        Security::log(LogType::UserDetailsChanged->value, 'Attempted to subscribe email', ['email' => $this->id, 'result' => $result]);
-
-        return $result;
-    }
-
-    /**
-     * Unsubscribe email.
-     *
-     * @param string $token
-     *
-     * @return array
-     */
-    public function unsubscribe(#[\SensitiveParameter] string $token = ''): array
-    {
-        if ($token === '') {
-            return ['http_error' => 400, 'reason' => 'No email token provided'];
-        }
-
-        try {
-            /** @noinspection PhpUsageOfSilenceOperatorInspection Suppressing to avoid warnings in log, which are pointless in this case */
-            $email = \explode("\n", @\gzinflate(@\hex2bin($token)));
-            if (!\array_key_exists(0, $email)) {
-                throw new \UnexpectedValueException('Malformed token');
-            }
-
-            $email = \mb_rtrim($email[0], "\0", 'UTF-8');
-        } catch (\Throwable) {
-            return ['http_error' => 400, 'reason' => 'Token provided looks malformed'];
-        }
-
-        try {
-            // Get the details for email
-            $this->setId($email);
-        } catch (\Throwable) {
-            return ['http_error' => 400, 'reason' => 'Token provided does not represent a valid email'];
-        }
-
-        // If this is an anonymous email - remove it completely
-        if ($this->anonymous) {
-            return ['response' => $this->delete(), 'email' => $this->id];
-        }
-
-        // If we are not subscribed - return true. Detailed checks may be abused here, so doing only this
-        if ($this->subscribed === null) {
-            return ['response' => true, 'email' => $this->id];
-        }
-
-        if ($this->subscribed !== $token) {
-            return ['http_error' => 400, 'reason' => 'Token provided looks malformed'];
-        }
-
-        if ($_SESSION['user_id'] === SystemUser::Unknown->value) {
-            $result = Query::query('UPDATE `uc__emails` SET `subscribed`=NULL WHERE `user_id`=:user_id AND `email`=:email AND `subscribed`=:token', [':user_id' => SystemUser::Unknown->value, ':email' => $this->id, ':token' => $token]);
-        } else {
-            if (!$this->safeToUnsubscribe()) {
-                return ['http_error' => 409, 'reason' => "Can't unsubscribe this email at the moment at its current state"];
-            }
-
-            $result = Query::query('UPDATE `uc__emails` SET `subscribed`=NULL WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
-            Security::session_regenerate_id(delete_old_session: true);
-        }
-
-        Security::log(LogType::UserDetailsChanged->value, 'Attempted to unsubscribe email', ['email' => $this->id, 'result' => $result]);
-
-        return ['response' => $result, 'email' => $this->id];
-    }
-
-    /**
-     * Delete email.
-     *
-     * @return bool
-     */
-    public function delete(): bool
-    {
-        // Ensure we have latest data
-        if ($this->username === null) {
-            $this->setId($this->id);
-        }
-
-        if (
-            !$this->anonymous
-            && !$this->safeToDelete()
-        ) {
-            return false;
-        }
-
-        $result = Query::query('DELETE FROM `uc__emails` WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
-        Security::session_regenerate_id(delete_old_session: true);
-        Security::log(LogType::UserDetailsChanged->value, 'Attempted to delete email', ['email' => $this->id, 'result' => $result]);
-
-        return $result;
-    }
-
-    /**
-     * Add email.
-     *
-     * @param bool $confirm Whether to generate confirmation mail right away or not
-     *
-     * @return array
-     */
-    public function add(bool $confirm = false): array
-    {
-        // Ensure we have latest data
-        if ($this->username === null) {
-            $this->setId($this->id);
-        }
-
-        // Check if mail is banned or in use
-        if ($this->isBad()) {
-            // Do not provide details on why exactly it failed to avoid email spoofing
-            return ['http_error' => 403, 'reason' => 'Bad email provided'];
-        }
-
-        // Add email
-        if ($this->registered) {
-            if (
-                !$this->anonymous
-                && $this->activation === null
-            ) {
-                // Should not get here, but still return an error at this point
-                return ['http_error' => 403, 'reason' => 'Bad email provided'];
-            }
-
-            $result = Query::query('UPDATE `uc__emails` SET `user_id`=:user_id, `subscribed`=DEFAULT, `activation`=DEFAULT WHERE `email`=:email;', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
-        } else {
-            try {
-                $result = Query::query('INSERT INTO `uc__emails` (`user_id`, `email`) VALUE (:user_id, :email);', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
-            } catch (\Throwable) {
-                $result = false;
-            }
-        }
-
-        Security::log(LogType::UserDetailsChanged->value, 'Attempted to add email', ['email' => $this->id, 'result' => $result]);
-        if ($result) {
-            $this->setId($this->id);
-            Security::session_regenerate_id(delete_old_session: true);
-
-            return ['status' => 201, 'response' => !$confirm || $this->confirm()];
-        }
-
-        return ['http_error' => 500, 'reason' => 'Failed to write email to database'];
-    }
+    private ?string $subscribed = null;
 
     /**
      * Activate user.
@@ -278,6 +61,8 @@ final class Email extends Entity
      * @param string $activation Activation code that we are trying to validate
      *
      * @return bool
+     *
+     * @throws \UnexpectedValueException
      */
     public function activate(int $user_id, #[\SensitiveParameter] string $activation): bool
     {
@@ -336,9 +121,63 @@ final class Email extends Entity
     }
 
     /**
+     * Add email.
+     *
+     * @param bool $confirm Whether to generate confirmation mail right away or not
+     *
+     * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    public function add(bool $confirm = false): array
+    {
+        // Ensure we have latest data
+        if ($this->username === null) {
+            $this->setId($this->id);
+        }
+
+        // Check if mail is banned or in use
+        if ($this->isBad()) {
+            // Do not provide details on why exactly it failed to avoid email spoofing
+            return ['http_error' => 403, 'reason' => 'Bad email provided'];
+        }
+
+        // Add email
+        if ($this->registered) {
+            if (
+                !$this->anonymous
+                && $this->activation === null
+            ) {
+                // Should not get here, but still return an error at this point
+                return ['http_error' => 403, 'reason' => 'Bad email provided'];
+            }
+
+            $result = Query::query('UPDATE `uc__emails` SET `user_id`=:user_id, `subscribed`=DEFAULT, `activation`=DEFAULT WHERE `email`=:email;', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
+        } else {
+            try {
+                $result = Query::query('INSERT INTO `uc__emails` (`user_id`, `email`) VALUE (:user_id, :email);', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
+            } catch (\Throwable) {
+                $result = false;
+            }
+        }
+
+        Security::log(LogType::UserDetailsChanged->value, 'Attempted to add email', ['email' => $this->id, 'result' => $result]);
+        if ($result) {
+            $this->setId($this->id);
+            Security::session_regenerate_id(delete_old_session: true);
+
+            return ['status' => 201, 'response' => !$confirm || $this->confirm()];
+        }
+
+        return ['http_error' => 500, 'reason' => 'Failed to write email to database'];
+    }
+
+    /**
      * Confirm email.
      *
      * @return bool
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     public function confirm(): bool
     {
@@ -370,10 +209,164 @@ final class Email extends Entity
     }
 
     /**
+     * Delete email.
+     *
+     * @return bool
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    public function delete(): bool
+    {
+        // Ensure we have latest data
+        if ($this->username === null) {
+            $this->setId($this->id);
+        }
+
+        if (
+            !$this->anonymous
+            && !$this->safeToDelete()
+        ) {
+            return false;
+        }
+
+        $result = Query::query('DELETE FROM `uc__emails` WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
+        Security::session_regenerate_id(delete_old_session: true);
+        Security::log(LogType::UserDetailsChanged->value, 'Attempted to delete email', ['email' => $this->id, 'result' => $result]);
+
+        return $result;
+    }
+
+    /**
+     * Check if mail is either banned or used.
+     *
+     * @return bool
+     */
+    public function isBad(): bool
+    {
+        if (
+            $this->id === null
+            || Sanitize::whiteString($this->id)
+        ) {
+            return true;
+        }
+
+        return $this->banned || ($this->registered && !$this->anonymous && $this->activation === null);
+    }
+
+    /**
+     * Subscribe email to notifications.
+     *
+     * @return bool
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    public function subscribe(): bool
+    {
+        // Ensure we have latest data
+        if ($this->username === null) {
+            $this->setId($this->id);
+        }
+
+        $subscribed = \bin2hex(\gzdeflate(\mb_str_pad($this->id, 100, "\0", encoding: 'UTF-8')."\n".Security::genToken()));
+        $queries = [];
+        // If this is an anonymous mail, then we do not "reset" other subscriptions, since we use that user to collect all emails, that may be used by different actual people
+        if (!$this->anonymous) {
+            $queries[] = [
+                'UPDATE `uc__emails` SET `subscribed`=NULL WHERE `user_id`=:user_id AND `subscribed` IS NOT NULL;',
+                [
+                    ':email' => $this->id,
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+            ];
+        }
+
+        $queries[] = [
+            'UPDATE `uc__emails` SET `subscribed`=:subscribed WHERE `user_id`=:user_id AND `email`=:email;',
+            [
+                ':email' => $this->id,
+                ':subscribed' => $subscribed,
+                ':user_id' => [$_SESSION['user_id'], 'int'],
+            ],
+        ];
+        $result = Query::query($queries);
+        Security::session_regenerate_id(delete_old_session: true);
+        Security::log(LogType::UserDetailsChanged->value, 'Attempted to subscribe email', ['email' => $this->id, 'result' => $result]);
+
+        return $result;
+    }
+
+    /**
+     * Unsubscribe email.
+     *
+     * @param string $token
+     *
+     * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    public function unsubscribe(#[\SensitiveParameter] string $token = ''): array
+    {
+        if ($token === '') {
+            return ['http_error' => 400, 'reason' => 'No email token provided'];
+        }
+
+        try {
+            /** @noinspection PhpUsageOfSilenceOperatorInspection Suppressing to avoid warnings in log, which are pointless in this case */
+            $email = \explode("\n", @\gzinflate(@\hex2bin($token)));
+            if (!\array_key_exists(0, $email)) {
+                throw new \UnexpectedValueException('Malformed token');
+            }
+
+            $email = \mb_rtrim($email[0], "\0", 'UTF-8');
+        } catch (\Throwable) {
+            return ['http_error' => 400, 'reason' => 'Token provided looks malformed'];
+        }
+
+        try {
+            // Get the details for email
+            $this->setId($email);
+        } catch (\Throwable) {
+            return ['http_error' => 400, 'reason' => 'Token provided does not represent a valid email'];
+        }
+
+        // If this is an anonymous email - remove it completely
+        if ($this->anonymous) {
+            return ['response' => $this->delete(), 'email' => $this->id];
+        }
+
+        // If we are not subscribed - return true. Detailed checks may be abused here, so doing only this
+        if ($this->subscribed === null) {
+            return ['response' => true, 'email' => $this->id];
+        }
+
+        if ($this->subscribed !== $token) {
+            return ['http_error' => 400, 'reason' => 'Token provided looks malformed'];
+        }
+
+        if ($_SESSION['user_id'] === SystemUser::Unknown->value) {
+            $result = Query::query('UPDATE `uc__emails` SET `subscribed`=NULL WHERE `user_id`=:user_id AND `email`=:email AND `subscribed`=:token', [':user_id' => SystemUser::Unknown->value, ':email' => $this->id, ':token' => $token]);
+        } else {
+            if (!$this->safeToUnsubscribe()) {
+                return ['http_error' => 409, 'reason' => "Can't unsubscribe this email at the moment at its current state"];
+            }
+
+            $result = Query::query('UPDATE `uc__emails` SET `subscribed`=NULL WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
+            Security::session_regenerate_id(delete_old_session: true);
+        }
+
+        Security::log(LogType::UserDetailsChanged->value, 'Attempted to unsubscribe email', ['email' => $this->id, 'result' => $result]);
+
+        return ['response' => $result, 'email' => $this->id];
+    }
+
+    /**
      * Function to get initial data from DB.
      *
      * @return array
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function getFromDB(): array
     {
         $details = Query::query('SELECT `email`, `uc__emails`.`user_id`, `username`, `subscribed`, `activation` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__emails`.`user_id`=`uc__users`.`user_id` WHERE `email`=:mail', [':mail' => $this->id], return: 'row');
@@ -405,33 +398,43 @@ final class Email extends Entity
      *
      * @return void
      */
+    #[\Override]
     protected function process(array $from_db): void
     {
-        Converters::arrayToProperties($this, $from_db);
+        // Processing is done in getFromDB by design
     }
 
     /**
-     * Check if it's safe to unsubscribe the email.
+     * Validate the ID.
      *
-     * @return bool
+     * @param int|string $id
+     *
+     * @return void
+     *
+     * @throws \RuntimeException
+     * @throws \UnexpectedValueException
      */
-    private function safeToUnsubscribe(): bool
+    #[\Override]
+    protected function validateId(#[\SensitiveParameter] int|string $id): void
     {
-        $emails = new User($_SESSION['user_id'])->getEmails();
-        $exists = \array_search($this->id, \array_column($emails['emails'], 'email'), strict: true);
+        // Validate that string is email
+        if (\filter_var($id, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
+            // Not an email, something is wrong, protect ourselves
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.self::class.'` has incorrect format.');
+        }
 
-        return !(
-            // Safe to unsubscribe if mail does not exist for the user
-            $exists !== false
-            // Safe to unsubscribe only if there are other emails that are subscribed
-            && $emails['emails'][$exists]['activation'] === null && $emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1
-        );
+        // For email, we also need to get details right away, this is the best place to do it
+        $this->id = $id;
+        /* @noinspection UnusedFunctionResultInspection */
+        $this->getFromDB();
     }
 
     /**
      * Check if it's safe to remove the email.
      *
      * @return bool
+     *
+     * @throws \UnexpectedValueException
      */
     private function safeToDelete(): bool
     {
@@ -449,6 +452,26 @@ final class Email extends Entity
             || $emails['count_activated'] === 1
             // Safe to delete if it's not the only one subscribed
             || ($emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1)
+        );
+    }
+
+    /**
+     * Check if it's safe to unsubscribe the email.
+     *
+     * @return bool
+     *
+     * @throws \UnexpectedValueException
+     */
+    private function safeToUnsubscribe(): bool
+    {
+        $emails = new User($_SESSION['user_id'])->getEmails();
+        $exists = \array_search($this->id, \array_column($emails['emails'], 'email'), strict: true);
+
+        return !(
+            // Safe to unsubscribe if mail does not exist for the user
+            $exists !== false
+            // Safe to unsubscribe only if there are other emails that are subscribed
+            && $emails['emails'][$exists]['activation'] === null && $emails['emails'][$exists]['subscribed'] !== null && $emails['count_subscribed'] === 1
         );
     }
 }

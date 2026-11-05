@@ -7,5 +7,5 @@
 {% if reason == 'Failed to connect to database' %}
     <div class="tiny_align_center error">The contact form relies on a database, which is currently unavailable, so the form is not available. Please try again later.</div>
 {% else %}
-    {{ include('talks/forms/thread.html.twig', {'thread_edit': false, 'contact_form': true, 'type': 'Support'}) }}
+    {{ include('talks/forms/thread.html.twig', {thread_edit: false, contact_form: true, type: 'Support'}) }}
 {% endif %}

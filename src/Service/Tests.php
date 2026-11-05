@@ -13,39 +13,28 @@ use Simbiat\http20\Sharing;
 
 final class Tests
 {
-    // Function to test Lodestone
-    // Incorporate below ones, when and if required
-    // $data = $lodestone->searchLinkshell()->getResult();
-    // $data = $lodestone->searchDatabase('duty', 2)->getResult();
-    // $data = $lodestone->searchDatabase('achievement', 0, 0, 'hit the floor')->getResult();
-    // $data = $lodestone->getCharacterAchievements('6691027', false, 39, true, false)->getResult();
-    // $data = $lodestone->getWorldStatus(true)->getResult();
-    // $data = $lodestone->getDeepDungeon(2, '', '', '')->getResult();
-
     /**
-     *Function to test file upload using PUT
+     * Function to test download.
      *
      * @param string $filepath
+     * @param string $bytes
      *
-     * @return never
+     * @return void
      */
     #[NoReturn]
-    public function uploadPut(#[FileReference] string $filepath): never
+    public function downloadTest(#[FileReference] string $filepath, string $bytes = ''): void
     {
-        $curl = new Curl()::$curl_handle;
-        \curl_setopt($curl, \CURLOPT_URL, Config::$base_url);
-        \curl_setopt($curl, \CURLOPT_UPLOAD, value: true);
-        \curl_setopt($curl, \CURLOPT_HEADER, value: false);
-        \curl_setopt($curl, \CURLOPT_PUT, 1);
-        \curl_setopt($curl, \CURLOPT_HTTPHEADER, ['Content-type: '.\mime_content_type($filepath), 'Content-Disposition: attachment; filename="'.\basename($filepath).'"']);
-        \curl_setopt($curl, \CURLOPT_INFILE, \fopen($filepath, 'rb'));
-        \curl_setopt($curl, \CURLOPT_INFILESIZE, \filesize($filepath));
-        Errors::dump(\curl_exec($curl));
+        if (!empty($bytes)) {
+            $_SERVER['HTTP_RANGE'] = 'bytes='.$bytes;
+        }
+
+        Sharing::download($filepath, '', '', inline: true);
+
         exit(0);
     }
 
     /**
-     * Function to test file upload using POST
+     * Function to test file upload using POST.
      *
      * @param string $upload_path
      * @param int    $max_file_size
@@ -77,22 +66,35 @@ final class Tests
         exit(0);
     }
 
+    // Function to test Lodestone
+    // Incorporate below ones, when and if required
+    // $data = $lodestone->searchLinkshell()->getResult();
+    // $data = $lodestone->searchDatabase('duty', 2)->getResult();
+    // $data = $lodestone->searchDatabase('achievement', 0, 0, 'hit the floor')->getResult();
+    // $data = $lodestone->getCharacterAchievements('6691027', false, 39, true, false)->getResult();
+    // $data = $lodestone->getWorldStatus(true)->getResult();
+    // $data = $lodestone->getDeepDungeon(2, '', '', '')->getResult();
+
     /**
-     * Function to test download
+     *Function to test file upload using PUT.
      *
      * @param string $filepath
-     * @param string $bytes
      *
-     * @return void
+     * @return never
      */
     #[NoReturn]
-    public function downloadTest(#[FileReference] string $filepath, string $bytes = ''): void
+    public function uploadPut(#[FileReference] string $filepath): never
     {
-        if (!empty($bytes)) {
-            $_SERVER['HTTP_RANGE'] = 'bytes='.$bytes;
-        }
+        $curl = new Curl()::$curl_handle;
+        \curl_setopt($curl, \CURLOPT_URL, Config::$base_url);
+        \curl_setopt($curl, \CURLOPT_UPLOAD, value: true);
+        \curl_setopt($curl, \CURLOPT_HEADER, value: false);
+        \curl_setopt($curl, \CURLOPT_PUT, 1);
+        \curl_setopt($curl, \CURLOPT_HTTPHEADER, ['Content-type: '.\mime_content_type($filepath), 'Content-Disposition: attachment; filename="'.\basename($filepath).'"']);
+        \curl_setopt($curl, \CURLOPT_INFILE, \fopen($filepath, 'rb'));
+        \curl_setopt($curl, \CURLOPT_INFILESIZE, \filesize($filepath));
+        Errors::dump(\curl_exec($curl));
 
-        Sharing::download($filepath, '', '', inline: true);
         exit(0);
     }
 }

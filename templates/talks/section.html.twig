@@ -42,7 +42,7 @@
             </thead>
             <tbody>
                 {% for section in children.entities %}
-                    {{ include('talks/rows/section.html.twig', {'section': section, 'permissions': session_data.permissions}, with_context = false) }}
+                    {{ include('talks/rows/section.html.twig', {section: section, permissions: session_data.permissions}, with_context: false) }}
                 {% endfor %}
             </tbody>
         </table>
@@ -59,7 +59,7 @@
             </thead>
             <tbody>
                 {% for thread in threads.entities %}
-                    {{ include('talks/rows/thread.html.twig', {'thread': thread, 'permissions': session_data.permissions}, with_context = false) }}
+                    {{ include('talks/rows/thread.html.twig', {thread: thread, permissions: session_data.permissions}, with_context: false) }}
                 {% endfor %}
             </tbody>
         </table>

@@ -23,54 +23,9 @@ final class Sanitization
     /**
      * Static sanitizer configs for a little bit of performance.
      *
-     * @var array<string, null|\Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig>
+     * @var array<string, HtmlSanitizerConfig|null>
      */
     public private(set) static array $sanitizer_config = ['body' => null, 'head' => null, 'timeline' => null];
-
-    /**
-     * Sanitize HTML string.
-     *
-     * @param string $string String to sanitize
-     * @param string $for    Flag indicating for which element we are doing sanitization
-     *
-     * @return string
-     */
-    public static function sanitizeHTML(string $string, #[ExpectedValues(self::SANITIZATION_ELEMENT_NAMES)] string $for = 'body'): string
-    {
-        if (!\in_array($for, self::SANITIZATION_ELEMENT_NAMES, strict: true)) {
-            return '';
-        }
-
-        // Check if config has been created already
-        $config = self::$sanitizer_config[$for] ?: self::initSanitizer($for);
-        // Remove excessive new lines
-        $string = \preg_replace(['/(\s*<br \/>\s*){5,}/mi', '/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi'], ['<br>', ''], $string);
-        // Run the sanitizer
-        $sanitizer = new HtmlSanitizer($config);
-
-        return $for === 'head'
-            ? $sanitizer->sanitizeFor('head', $string)
-            : $sanitizer->sanitize($string);
-
-        // TODO add loading="lazy" decoding="async" to all images. Also probably need to sanitize classes. At least gallery_zoom showed the need for that (needed to replace galleryZoom).
-    }
-
-    /**
-     * Remove controls characters from strings and arrays.
-     *
-     * @param string $string    String to sanitize. Arrays are also accepted, but it's expected that they will have string values only.
-     * @param bool   $full_list Flag whether newlines and tabs should also be removed
-     *
-     * @return string
-     */
-    public static function removeNonPrintable(string $string, bool $full_list = false): string
-    {
-        if ($full_list) {
-            return \preg_replace('/[[:cntrl:]]/iu', '', $string) ?? '';
-        }
-
-        return \preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/iu', '', $string) ?? '';
-    }
 
     /**
      * Remove control characters from strings in an array.
@@ -116,14 +71,97 @@ final class Sanitization
     }
 
     /**
+     * Get a link for the uploaded file based on its filename (ID + extension).
+     *
+     * @param string $filename
+     *
+     * @return string
+     */
+    #[Pure(true)]
+    public static function getUploadedFileLink(string $filename): string
+    {
+        // Get hash tree
+        $hash_tree = self::hashTree($filename);
+        // Check if the file exists in images
+        if (\file_exists(Config::$uploaded_img.$hash_tree.'/'.$filename)) {
+            return '/assets/images/uploaded/'.$hash_tree.'/'.$filename;
+        }
+
+        if (\file_exists(Config::$uploaded.$hash_tree.'/'.$filename)) {
+            return '/assets/uploaded/'.$hash_tree.'/'.$filename;
+        }
+
+        return '/assets/images/noimage.svg';
+    }
+
+    /**
+     * Function to generate a "hash tree" from string.
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    public static function hashTree(string $string): string
+    {
+        return \mb_substr($string, 0, 2, 'UTF-8').'/'.\mb_substr($string, 2, 2, 'UTF-8').'/'.\mb_substr($string, 4, 2, 'UTF-8');
+    }
+
+    /**
+     * Remove controls characters from strings and arrays.
+     *
+     * @param string $string    String to sanitize. Arrays are also accepted, but it's expected that they will have string values only.
+     * @param bool   $full_list Flag whether newlines and tabs should also be removed
+     *
+     * @return string
+     */
+    public static function removeNonPrintable(string $string, bool $full_list = false): string
+    {
+        if ($full_list) {
+            return \preg_replace('/[[:cntrl:]]/iu', '', $string) ?? '';
+        }
+
+        return \preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/iu', '', $string) ?? '';
+    }
+
+    /**
+     * Sanitize HTML string.
+     *
+     * @param string $string String to sanitize
+     * @param string $for    Flag indicating for which element we are doing sanitization
+     *
+     * @return string
+     */
+    public static function sanitizeHTML(string $string, #[ExpectedValues(self::SANITIZATION_ELEMENT_NAMES)] string $for = 'body'): string
+    {
+        if (!\in_array($for, self::SANITIZATION_ELEMENT_NAMES, strict: true)) {
+            return '';
+        }
+
+        // Check if config has been created already
+        $config = self::$sanitizer_config[$for] ?: self::initSanitizer($for);
+        // Remove excessive new lines
+        $string = \preg_replace(['/(\s*<br \/>\s*){5,}/mi', '/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi'], ['<br>', ''], $string);
+        // Run the sanitizer
+        $sanitizer = new HtmlSanitizer($config);
+
+        return $for === 'head'
+            ? $sanitizer->sanitizeFor('head', $string)
+            : $sanitizer->sanitize($string);
+
+        // TODO add loading="lazy" decoding="async" to all images. Also probably need to sanitize classes. At least gallery_zoom showed the need for that (needed to replace galleryZoom).
+    }
+
+    /**
      * Function to sanitize time for creating scheduled section/threads/posts.
      *
-     * @param null|int|string $time
-     * @param null|string     $timezone
+     * @param int|string|null $time
+     * @param string|null     $timezone
      *
-     * @return null|int
+     * @return int|null
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
-    public static function scheduledTime(null|int|string &$time, ?string &$timezone = null): ?int
+    public static function scheduledTime(int|string|null &$time, ?string &$timezone = null): ?int
     {
         if (\in_array('post_scheduled', $_SESSION['permissions'], strict: true)) {
             if (empty($time)) {
@@ -155,47 +193,11 @@ final class Sanitization
     }
 
     /**
-     * Function to generate a "hash tree" from string.
-     *
-     * @param string $string
-     *
-     * @return string
-     */
-    public static function hashTree(string $string): string
-    {
-        return \mb_substr($string, 0, 2, 'UTF-8').'/'.\mb_substr($string, 2, 2, 'UTF-8').'/'.\mb_substr($string, 4, 2, 'UTF-8');
-    }
-
-    /**
-     * Get a link for the uploaded file based on its filename (ID + extension).
-     *
-     * @param string $filename
-     *
-     * @return string
-     */
-    #[Pure(true)]
-    public static function getUploadedFileLink(string $filename): string
-    {
-        // Get hash tree
-        $hash_tree = self::hashTree($filename);
-        // Check if the file exists in images
-        if (\file_exists(Config::$uploaded_img.$hash_tree.'/'.$filename)) {
-            return '/assets/images/uploaded/'.$hash_tree.'/'.$filename;
-        }
-
-        if (\file_exists(Config::$uploaded.$hash_tree.'/'.$filename)) {
-            return '/assets/uploaded/'.$hash_tree.'/'.$filename;
-        }
-
-        return '/assets/images/noimage.svg';
-    }
-
-    /**
      * Helper function to generate HtmlSanitizerConfig if it's not created yet.
      *
      * @param string $for Flag indicating for which element we are doing sanitization
      *
-     * @return \Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig
+     * @return HtmlSanitizerConfig
      */
     private static function initSanitizer(#[ExpectedValues(self::SANITIZATION_ELEMENT_NAMES)] string $for = 'body'): HtmlSanitizerConfig
     {

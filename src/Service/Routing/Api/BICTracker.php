@@ -12,14 +12,6 @@ use App\Controller\Api\BIC\Keying;
 final class BICTracker extends Api
 {
     /**
-     * @var array<int, string> Supported edges
-     */
-    #[\Override]
-    protected array $sub_routes = [
-        'bics', 'keying', 'dbupdate',
-    ];
-
-    /**
      * @var array<int, string> Description of the nodes (need to be in the same order)
      */
     #[\Override]
@@ -29,6 +21,15 @@ final class BICTracker extends Api
         'Node to force BIC database update',
     ];
 
+    /**
+     * @var array<int, string> Supported edges
+     */
+    #[\Override]
+    protected array $sub_routes = [
+        'bics', 'keying', 'dbupdate',
+    ];
+
+    #[\Override]
     protected function genData(array $path): array
     {
         return match ($path[0]) {

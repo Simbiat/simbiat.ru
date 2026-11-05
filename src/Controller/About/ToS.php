@@ -9,7 +9,7 @@ use App\Controller\Abstracts\StaticPage;
 final class ToS extends StaticPage
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -17,18 +17,6 @@ final class ToS extends StaticPage
     protected array $breadcrumb = [
         ['href' => '/about/tos', 'name' => 'Terms of Service'],
     ];
-
-    /**
-     * @var string Sub service name
-     */
-    #[\Override]
-    protected string $subservice_name = 'tos';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Terms of Service';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
@@ -41,4 +29,16 @@ final class ToS extends StaticPage
      */
     #[\Override]
     protected string $og_desc = 'Terms of Service';
+
+    /**
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'tos';
+
+    /**
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'Terms of Service';
 }

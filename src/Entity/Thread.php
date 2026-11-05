@@ -9,7 +9,6 @@ namespace App\Entity;
 use App\Enum\SystemUser;
 use App\Notification\NewThread;
 use App\Notification\ThreadChange;
-use App\Notification\TicketChange;
 use App\Security\Security;
 use App\Service\Curl;
 use App\Service\Errors;
@@ -25,47 +24,47 @@ use Simbiat\StringHelpers\Sanitize;
 
 /**
  * Forum thread.
+ *
+ * @api TODO: most likely will need to remove once entities migrate to Doctrine. For now this is mostly to silence Psalm.
  */
 final class Thread extends Entity
 {
-    public string $name = '';
-
-    public string $type = 'Blog';
-
-    public bool $system = false;
-
-    public bool $private = false;
-
-    public bool $pinned = false;
-
-    public ?int $closed = null;
-
-    public bool $owned = false;
-
-    public ?int $created = null;
-
-    public ?int $published = null;
+    /**
+     * @var string|null Access token for support tickets from contact form
+     */
+    public ?string $access_token = null;
 
     public int $author = 1;
 
-    public ?int $updated = null;
+    public ?int $closed = null;
+
+    public ?int $created = null;
 
     public int $editor = 1;
+
+    /**
+     * @var string|null Contact email for the anonymous creator of the ticket
+     */
+    public ?string $email = null;
+
+    /**
+     * @var array List of external links
+     */
+    public array $external_links = [];
+
+    public string $language = 'en';
+
+    public int $last_page = 1;
 
     public ?int $last_post = null;
 
     public int $last_poster = 1;
 
-    public int $last_page = 1;
+    public string $name = '';
 
     public ?string $og_image = null;
 
-    public string $language = 'en';
-
-    /**
-     * @var array List of parents for the thread
-     */
-    public array $parents = [];
+    public bool $owned = false;
 
     /**
      * @var array Direct parent
@@ -78,34 +77,36 @@ final class Thread extends Entity
     public int $parent_id = 0;
 
     /**
+     * @var array List of parents for the thread
+     */
+    public array $parents = [];
+
+    public bool $pinned = false;
+
+    /**
      * @var array List of posts
      */
     public array $posts = [];
+
+    public bool $private = false;
+
+    public ?int $published = null;
+
+    /**
+     * @var array List of subscribers
+     */
+    public array $subscribers = [];
+
+    public bool $system = false;
 
     /**
      * @var array List of tags
      */
     public array $tags = [];
 
-    /**
-     * @var array List of external links
-     */
-    public array $external_links = [];
+    public string $type = 'Blog';
 
-    /**
-     * @var null|string Access token for support tickets from contact form
-     */
-    public ?string $access_token = null;
-
-    /**
-     * @var null|string Contact email for the anonymous creator of the ticket
-     */
-    public ?string $email = null;
-
-    /**
-     * @var array List of subscribers
-     */
-    public array $subscribers = [];
+    public ?int $updated = null;
 
     /**
      * @var bool Flag indicating if we are getting data for a post and can skip some details
@@ -113,211 +114,14 @@ final class Thread extends Entity
     private bool $for_post = false;
 
     /**
-     * Function to set a flag, indicating that data is needed for a post (for optimization).
-     *
-     * @param bool $for_post
-     *
-     * @return $this
-     */
-    public function setForPost(bool $for_post): self
-    {
-        $this->for_post = $for_post;
-
-        return $this;
-    }
-
-    /**
-     * Function that (un)marks a section as thread.
-     *
-     * @param bool $private
-     *
-     * @return array<string, bool|int|string>
-     */
-    public function setPrivate(bool $private = false): array
-    {
-        // Ensure we have current data to check ownership
-        if (!$this->attempted) {
-            $this->get();
-        }
-
-        // Check permission
-        if (!\in_array('mark_private', $_SESSION['permissions'], strict: true)) {
-            return ['http_error' => 403, 'reason' => 'No `mark_private` permission'];
-        }
-
-        try {
-            $affected = Query::query(
-                'UPDATE `talks__threads` SET `private`=:private, `editor`=:user_id WHERE `thread_id`=:thread_id;',
-                [
-                    ':private' => [$private, 'bool'],
-                    ':thread_id' => [$this->id, 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-                return: 'affected',
-            );
-            if ($affected > 0) {
-                $this->private = $private;
-                $this->notifyAboutChange($private ? 'private' : 'public');
-            }
-
-            return ['response' => true];
-        } catch (\Throwable) {
-            return ['response' => false];
-        }
-    }
-
-    /**
-     * Function to close/open a thread.
-     *
-     * @param bool $closed
-     *
-     * @return array<string, bool|int|string>
-     */
-    public function setClosed(bool $closed = false): array
-    {
-        // Closure is critical, so ensure that we get the actual data, even if this function is somehow called outside API
-        if (!$this->attempted) {
-            $this->get();
-        }
-
-        // Check permissions
-        if (
-            $this->owned
-            && !\in_array('close_own_threads', $_SESSION['permissions'], strict: true)
-        ) {
-            return ['http_error' => 403, 'reason' => 'No `close_own_threads` permission'];
-        }
-
-        if (
-            !$this->owned
-            && !\in_array('close_others_threads', $_SESSION['permissions'], strict: true)
-        ) {
-            return ['http_error' => 403, 'reason' => 'No `close_others_threads` permission'];
-        }
-
-        try {
-            $affected = Query::query(
-                'UPDATE `talks__threads` SET `closed`=:closed, `editor`=:user_id WHERE `thread_id`=:thread_id;',
-                [
-                    ':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')],
-                    ':thread_id' => [$this->id, 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-                return: 'affected',
-            );
-            $this->closed = (!$closed ? null : \time());
-            if ($affected > 0) {
-                $this->notifyAboutChange($closed ? 'close' : 'open');
-            }
-
-            return ['response' => true];
-        } catch (\Throwable) {
-            return ['response' => false];
-        }
-    }
-
-    /**
-     * Move thread to another section.
-     *
-     * @return array
-     */
-    public function move(): array
-    {
-        // Ensure we have current data to check ownership
-        if (!$this->attempted) {
-            $this->get();
-        }
-
-        // Check permission
-        if (!\in_array('move_threads', $_SESSION['permissions'], strict: true)) {
-            return ['http_error' => 403, 'reason' => 'No `move_threads` permission'];
-        }
-
-        $data = $_POST['thread_data'] ?? [];
-        if (empty($data['parent_id'])) {
-            return ['http_error' => 400, 'reason' => 'No section ID provided'];
-        }
-
-        if (!\is_numeric($data['parent_id'])) {
-            return ['http_error' => 400, 'reason' => 'Parent ID `'.$data['parent_id'].'` is not numeric'];
-        }
-
-        $data['parent_id'] = (int) $data['parent_id'];
-        // Check if parent exists
-        $parent = new Section($data['parent_id'])->setForThread(for_thread: true)->get();
-        if ($parent->id === null) {
-            return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parent_id'].'` does not exist'];
-        }
-
-        try {
-            $affected = Query::query(
-                'UPDATE `talks__threads` SET `section_id`=:parent_id, `editor`=:user_id WHERE `thread_id`=:thread_id;',
-                [
-                    ':parent_id' => [
-                        (empty($data['parent_id']) ? null : $data['parent_id']),
-                        (empty($data['parent_id']) ? 'null' : 'int'),
-                    ],
-                    ':thread_id' => [$this->id, 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-                return: 'affected',
-            );
-            if ($affected > 0) {
-                $this->notifyAboutChange('move');
-            }
-
-            return ['response' => true];
-        } catch (\Throwable) {
-            return ['response' => false];
-        }
-    }
-
-    /**
-     * Function to pin/unpin a thread.
-     *
-     * @param bool $pinned
-     *
-     * @return array<string, bool|int|string>
-     */
-    public function setPinned(bool $pinned = false): array
-    {
-        // Ensure we have current data to check ownership
-        if (!$this->attempted) {
-            $this->get();
-        }
-
-        // Check permission
-        if (!\in_array('can_pin', $_SESSION['permissions'], strict: true)) {
-            return ['http_error' => 403, 'reason' => 'No `can_pin` permission'];
-        }
-
-        try {
-            $affected = Query::query(
-                'UPDATE `talks__threads` SET `pinned`=:pinned, `editor`=:user_id WHERE `thread_id`=:thread_id;',
-                [
-                    ':pinned' => [$pinned, 'bool'],
-                    ':thread_id' => [$this->id, 'int'],
-                    ':user_id' => [$_SESSION['user_id'], 'int'],
-                ],
-                return: 'affected',
-            );
-            $this->pinned = $pinned;
-            if ($affected > 0) {
-                $this->notifyAboutChange($this->pinned ? 'pin' : 'unpin');
-            }
-
-            return ['response' => true];
-        } catch (\Throwable) {
-            return ['response' => false];
-        }
-    }
-
-    /**
      * Add thread.
      *
      * @param bool $with_post Flag allows creating a thread without a post. Useful when creating "special" threads, meant to not be owned by a user posting, so that they cannot edit it.
      *
      * @return array
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     public function add(bool $with_post = true): array
     {
@@ -377,20 +181,20 @@ final class Thread extends Entity
                 'INSERT INTO `talks__threads`(`thread_id`, `name`, `section_id`, `language`, `pinned`, `closed`, `private`, `og_image`, `published`, `author`, `editor`, `last_poster`) VALUES (NULL, :name, :parent_id, :language, COALESCE(:pinned, DEFAULT(`pinned`)), COALESCE(:closed, DEFAULT(`closed`)), COALESCE(:private, DEFAULT(`private`)), :og_image, :time,:user_id,:user_id,:user_id);',
                 [
                     ':closed' => [
-                        ($data['closed'] ? 'now' : null),
-                        ($data['closed'] ? 'datetime' : 'null'),
+                        $data['closed'] ? 'now' : null,
+                        $data['closed'] ? 'datetime' : 'null',
                     ],
                     ':language' => $data['language'],
                     ':name' => \mb_trim($data['name'], encoding: 'UTF-8'),
                     ':og_image' => [
-                        (empty($data['og_image']) ? null : $data['og_image']),
-                        (empty($data['og_image']) ? 'null' : 'string'),
+                        empty($data['og_image']) ? null : $data['og_image'],
+                        empty($data['og_image']) ? 'null' : 'string',
                     ],
                     ':parent_id' => [$data['parent_id'], 'int'],
                     ':pinned' => [$data['pinned'], 'bool'],
                     ':private' => [$data['private'], 'bool'],
                     ':time' => [
-                        (empty($data['time']) ? 'now' : $data['time']),
+                        empty($data['time']) ? 'now' : $data['time'],
                         'datetime',
                     ],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
@@ -461,35 +265,65 @@ final class Thread extends Entity
     }
 
     /**
-     * Update thread's posts stats.
+     * Delete section.
      *
-     * @return void
+     * @return array
+     *
+     * @throws \UnexpectedValueException
      */
-    public function updateStats(): void
+    public function delete(): array
     {
-        if ($this->id === null) {
-            return;
+        // Check permission
+        if (!\in_array('remove_threads', $_SESSION['permissions'], strict: true)) {
+            return ['http_error' => 403, 'reason' => 'No `remove_threads` permission'];
         }
 
-        Query::query(
-            'UPDATE `talks__threads` AS `threads`
-                    LEFT JOIN (
-                        SELECT `thread_id`, COUNT(*) OVER () AS `count`, `published`, `author` FROM `talks__posts` WHERE `thread_id`=:thread_id ORDER BY `published` DESC LIMIT 1
-                    ) AS `posts` ON `threads`.`thread_id` = `posts`.`thread_id`
-                    SET
-                        `updated`=`updated`,
-                        `threads`.`posts` = COALESCE(`posts`.`count`, 0),
-                        `threads`.`last_post` = COALESCE(`posts`.`published`, `threads`.`published`),
-                        `threads`.`last_poster` = COALESCE(`posts`.`author`, `threads`.`author`)
-                    WHERE `threads`.`thread_id` = :thread_id;',
-            [':thread_id' => [$this->id, 'int']],
-        );
+        // Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
+        if (!$this->attempted) {
+            $this->get();
+        }
+
+        if ($this->id === null) {
+            return ['http_error' => 404, 'reason' => 'Thread not found'];
+        }
+
+        // Check if the section is system one
+        if ($this->system) {
+            return ['http_error' => 403, 'reason' => "Can't delete system thread"];
+        }
+
+        // Check if the section has any subsections or threads
+        if (!empty($this->posts['entities'])) {
+            return ['http_error' => 400, 'reason' => "Can't delete non-empty thread"];
+        }
+
+        // Set location for successful removal
+        $location = !empty($this->parent['id'])
+            ? '/talks/sections/'.$this->parent['id'].'/'
+            : '/talks/sections/';
+
+        // Attempt removal
+        try {
+            $affected = Query::query('DELETE FROM `talks__threads` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'affected');
+            if ($affected > 0) {
+                $this->notifyAboutChange('delete');
+            }
+
+            return ['response' => true, 'location' => $location];
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+
+            return ['http_error' => 500, 'reason' => 'Failed to delete thread'];
+        }
     }
 
     /**
      * Edit section data.
      *
      * @return array<string, bool|int|string>
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     public function edit(): array
     {
@@ -537,8 +371,8 @@ final class Thread extends Entity
                     ':language' => $data['language'],
                     ':name' => \mb_trim($data['name'], encoding: 'UTF-8'),
                     ':og_image' => [
-                        (empty($data['og_image']) ? null : $data['og_image']),
-                        (empty($data['og_image']) ? 'null' : 'string'),
+                        empty($data['og_image']) ? null : $data['og_image'],
+                        empty($data['og_image']) ? 'null' : 'string',
                     ],
                     ':thread_id' => [$this->id, 'int'],
                     ':user_id' => [$_SESSION['user_id'], 'int'],
@@ -554,7 +388,7 @@ final class Thread extends Entity
                 );
             }
 
-            $data['alt_links'] = $this->altLinksSanitize($data['alt_links']);
+            $data['alt_links'] = self::altLinksSanitize($data['alt_links']);
             // Add alt links as per the edited form
             foreach ($data['alt_links'] as $key => $link) {
                 if ($link === null) {
@@ -609,70 +443,11 @@ final class Thread extends Entity
     }
 
     /**
-     * Delete section.
-     *
-     * @return array
-     */
-    public function delete(): array
-    {
-        // Check permission
-        if (!\in_array('remove_threads', $_SESSION['permissions'], strict: true)) {
-            return ['http_error' => 403, 'reason' => 'No `remove_threads` permission'];
-        }
-
-        // Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
-        if (!$this->attempted) {
-            $this->get();
-        }
-
-        if ($this->id === null) {
-            return ['http_error' => 404, 'reason' => 'Thread not found'];
-        }
-
-        // Check if the section is system one
-        if ($this->system) {
-            return ['http_error' => 403, 'reason' => "Can't delete system thread"];
-        }
-
-        // Check if the section has any subsections or threads
-        if (!empty($this->posts['entities'])) {
-            return ['http_error' => 400, 'reason' => "Can't delete non-empty thread"];
-        }
-
-        // Set location for successful removal
-        $location = !empty($this->parent['id'])
-            ? '/talks/sections/'.$this->parent['id'].'/'
-            : '/talks/sections/';
-
-        // Attempt removal
-        try {
-            $affected = Query::query('DELETE FROM `talks__threads` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'affected');
-            if ($affected > 0) {
-                $this->notifyAboutChange('delete');
-            }
-
-            return ['response' => true, 'location' => $location];
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
-
-            return ['http_error' => 500, 'reason' => 'Failed to delete thread'];
-        }
-    }
-
-    /**
-     * Get language from DB.
-     *
-     * @return array
-     */
-    public static function getLanguages(): array
-    {
-        return Query::query('SELECT `tag` AS `value`, `name` FROM `sys__languages` ORDER BY `name`;', return: 'all');
-    }
-
-    /**
      * Get supported alternative link types.
      *
-     * @return array
+     * @return array<int, array{type_id: int, type: string, icon: string, regex: string}>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     public static function getAltLinkTypes(): array
     {
@@ -680,10 +455,262 @@ final class Thread extends Entity
     }
 
     /**
+     * Get language from DB.
+     *
+     * @return array<int, array{tag: string, name: string}>
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    public static function getLanguages(): array
+    {
+        return Query::query('SELECT `tag` AS `value`, `name` FROM `sys__languages` ORDER BY `name`;', return: 'all');
+    }
+
+    /**
+     * Move thread to another section.
+     *
+     * @return array
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function move(): array
+    {
+        // Ensure we have current data to check ownership
+        if (!$this->attempted) {
+            (void) $this->get();
+        }
+
+        // Check permission
+        if (!\in_array('move_threads', $_SESSION['permissions'], strict: true)) {
+            return ['http_error' => 403, 'reason' => 'No `move_threads` permission'];
+        }
+
+        $data = $_POST['thread_data'] ?? [];
+        if (empty($data['parent_id'])) {
+            return ['http_error' => 400, 'reason' => 'No section ID provided'];
+        }
+
+        if (!\is_numeric($data['parent_id'])) {
+            return ['http_error' => 400, 'reason' => 'Parent ID `'.$data['parent_id'].'` is not numeric'];
+        }
+
+        $data['parent_id'] = (int) $data['parent_id'];
+        // Check if parent exists
+        $parent = new Section($data['parent_id'])->setForThread(for_thread: true)->get();
+        if ($parent->id === null) {
+            return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parent_id'].'` does not exist'];
+        }
+
+        try {
+            $affected = Query::query(
+                'UPDATE `talks__threads` SET `section_id`=:parent_id, `editor`=:user_id WHERE `thread_id`=:thread_id;',
+                [
+                    ':parent_id' => [
+                        empty($data['parent_id']) ? null : $data['parent_id'],
+                        empty($data['parent_id']) ? 'null' : 'int',
+                    ],
+                    ':thread_id' => [$this->id, 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+                return: 'affected',
+            );
+            if ($affected > 0) {
+                $this->notifyAboutChange('move');
+            }
+
+            return ['response' => true];
+        } catch (\Throwable) {
+            return ['response' => false];
+        }
+    }
+
+    /**
+     * Function to close/open a thread.
+     *
+     * @param bool $closed
+     *
+     * @return array<string, bool|int|string>
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function setClosed(bool $closed = false): array
+    {
+        // Closure is critical, so ensure that we get the actual data, even if this function is somehow called outside API
+        if (!$this->attempted) {
+            $this->get();
+        }
+
+        // Check permissions
+        if (
+            $this->owned
+            && !\in_array('close_own_threads', $_SESSION['permissions'], strict: true)
+        ) {
+            return ['http_error' => 403, 'reason' => 'No `close_own_threads` permission'];
+        }
+
+        if (
+            !$this->owned
+            && !\in_array('close_others_threads', $_SESSION['permissions'], strict: true)
+        ) {
+            return ['http_error' => 403, 'reason' => 'No `close_others_threads` permission'];
+        }
+
+        try {
+            $affected = Query::query(
+                'UPDATE `talks__threads` SET `closed`=:closed, `editor`=:user_id WHERE `thread_id`=:thread_id;',
+                [
+                    ':closed' => [$closed ? 'now' : null, $closed ? 'datetime' : 'null'],
+                    ':thread_id' => [$this->id, 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+                return: 'affected',
+            );
+            $this->closed = (!$closed ? null : \time());
+            if ($affected > 0) {
+                $this->notifyAboutChange($closed ? 'close' : 'open');
+            }
+
+            return ['response' => true];
+        } catch (\Throwable) {
+            return ['response' => false];
+        }
+    }
+
+    /**
+     * Function to set a flag, indicating that data is needed for a post (for optimization).
+     *
+     * @param bool $for_post
+     *
+     * @return $this
+     */
+    public function setForPost(bool $for_post): self
+    {
+        $this->for_post = $for_post;
+
+        return $this;
+    }
+
+    /**
+     * Function to pin/unpin a thread.
+     *
+     * @param bool $pinned
+     *
+     * @return array<string, bool|int|string>
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function setPinned(bool $pinned = false): array
+    {
+        // Ensure we have current data to check ownership
+        if (!$this->attempted) {
+            (void) $this->get();
+        }
+
+        // Check permission
+        if (!\in_array('can_pin', $_SESSION['permissions'], strict: true)) {
+            return ['http_error' => 403, 'reason' => 'No `can_pin` permission'];
+        }
+
+        try {
+            $affected = Query::query(
+                'UPDATE `talks__threads` SET `pinned`=:pinned, `editor`=:user_id WHERE `thread_id`=:thread_id;',
+                [
+                    ':pinned' => [$pinned, 'bool'],
+                    ':thread_id' => [$this->id, 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+                return: 'affected',
+            );
+            $this->pinned = $pinned;
+            if ($affected > 0) {
+                $this->notifyAboutChange($this->pinned ? 'pin' : 'unpin');
+            }
+
+            return ['response' => true];
+        } catch (\Throwable) {
+            return ['response' => false];
+        }
+    }
+
+    /**
+     * Function that (un)marks a section as thread.
+     *
+     * @param bool $private
+     *
+     * @return array<string, bool|int|string>
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function setPrivate(bool $private = false): array
+    {
+        // Ensure we have current data to check ownership
+        if (!$this->attempted) {
+            (void) $this->get();
+        }
+
+        // Check permission
+        if (!\in_array('mark_private', $_SESSION['permissions'], strict: true)) {
+            return ['http_error' => 403, 'reason' => 'No `mark_private` permission'];
+        }
+
+        try {
+            $affected = Query::query(
+                'UPDATE `talks__threads` SET `private`=:private, `editor`=:user_id WHERE `thread_id`=:thread_id;',
+                [
+                    ':private' => [$private, 'bool'],
+                    ':thread_id' => [$this->id, 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                ],
+                return: 'affected',
+            );
+            if ($affected > 0) {
+                $this->private = $private;
+                $this->notifyAboutChange($private ? 'private' : 'public');
+            }
+
+            return ['response' => true];
+        } catch (\Throwable) {
+            return ['response' => false];
+        }
+    }
+
+    /**
+     * Update thread's posts stats.
+     *
+     * @return void
+     *
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    public function updateStats(): void
+    {
+        if ($this->id === null) {
+            return;
+        }
+
+        Query::query(
+            'UPDATE `talks__threads` AS `threads`
+                    LEFT JOIN (
+                        SELECT `thread_id`, COUNT(*) OVER () AS `count`, `published`, `author` FROM `talks__posts` WHERE `thread_id`=:thread_id ORDER BY `published` DESC LIMIT 1
+                    ) AS `posts` ON `threads`.`thread_id` = `posts`.`thread_id`
+                    SET
+                        `updated`=`updated`,
+                        `threads`.`posts` = COALESCE(`posts`.`count`, 0),
+                        `threads`.`last_post` = COALESCE(`posts`.`published`, `threads`.`published`),
+                        `threads`.`last_poster` = COALESCE(`posts`.`author`, `threads`.`author`)
+                    WHERE `threads`.`thread_id` = :thread_id;',
+            [':thread_id' => [$this->id, 'int']],
+        );
+    }
+
+    /**
      * Function to get initial data from DB.
      *
      * @return array
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException|\UnexpectedValueException
      */
+    #[\Override]
     protected function getFromDB(): array
     {
         // Set the page required for threads
@@ -745,6 +772,7 @@ final class Thread extends Entity
      *
      * @return void
      */
+    #[\Override]
     protected function process(array $from_db): void
     {
         $this->name = $from_db['name'];
@@ -794,17 +822,64 @@ final class Thread extends Entity
     }
 
     /**
+     * Sanitize list of alternative links.
+     *
+     * @param array $alt_links
+     *
+     * @return array
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException|\UnexpectedValueException
+     */
+    private static function altLinksSanitize(array $alt_links): array
+    {
+        // Get supported links and set keys to the respective values of the `type` field
+        $supported = Editors::digitToKey(self::getAltLinkTypes(), 'type');
+        foreach ($alt_links as $key => $link) {
+            /* @noinspection IsEmptyFunctionUsageInspection We have less control on what values come here, so treat all possible empty values as bad one */
+            if (empty($link)) {
+                $alt_links[$key] = null;
+
+                continue;
+            }
+
+            $link = Security::sanitizeURL($link);
+            // Check if a website (sent as a key) is supported and check the value against regex (to avoid using field for YouTube (as an example) for some random website that is not YouTube)
+            if (
+                $link === ''
+                || !\array_key_exists($key, $supported)
+                || \preg_match('/^https:\/\/(www\.)?'.$supported[$key]['regex'].'.*$/ui', $link) !== 1
+            ) {
+                // Remove unsupported or possibly malicious website
+                $alt_links[$key] = null;
+            } else {
+                $alt_links[$key] = $link;
+            }
+        }
+
+        foreach ($supported as $key => $link) {
+            if (!\array_key_exists($key, $alt_links)) {
+                $alt_links[$key] = null;
+            }
+        }
+
+        return $alt_links;
+    }
+
+    /**
      * Get alternative links for the thread.
      *
      * @return array
+     *
+     * @throws \InvalidArgumentException|\RuntimeException|\UnexpectedValueException
      */
     private function getAltLinks(): array
     {
         $links = Query::query(
             'SELECT `url`, `talks__alt_link_types`.`type`, `icon`
-                                        FROM `talks__alt_link_types`
-                                        LEFT JOIN `talks__alt_links` ON `talks__alt_links`.`type`=`talks__alt_link_types`.`type_id`
-                                            AND `thread_id`=:thread_id;',
+                    FROM `talks__alt_link_types`
+                    LEFT JOIN `talks__alt_links` ON `talks__alt_links`.`type`=`talks__alt_link_types`.`type_id`
+                        AND `thread_id`=:thread_id;',
             [':thread_id' => [$this->id, 'int']],
             return: 'all',
         );
@@ -816,6 +891,9 @@ final class Thread extends Entity
      * @param string $type Change type
      *
      * @return void
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     private function notifyAboutChange(#[ExpectedValues(['private', 'public', 'close', 'open', 'change', 'delete', 'move', 'pin', 'unpin'])] string $type): void
     {
@@ -826,9 +904,9 @@ final class Thread extends Entity
             ]
             : Query::query(
                 'SELECT `thread_id`, `author`, `name` AS `new_name`, `section_id`,
-                                                        (SELECT `name` FROM `talks__sections` WHERE `section_id`=`main_select`.`section_id`) AS `parent_name`,
-                                                        (SELECT CONCAT(\'/assets/images/uploaded/\', SUBSTRING(`file_id`, 1, 2), \'/\', SUBSTRING(`file_id`, 3, 2), \'/\', SUBSTRING(`file_id`, 5, 2), \'/\', `file_id`, \'.\', `extension`) AS `icon` FROM `sys__files` WHERE `file_id`=`main_select`.`og_image`) AS `og_image`
-                                                        FROM `talks__threads` AS `main_select` WHERE `thread_id`=:thread_id;',
+                            (SELECT `name` FROM `talks__sections` WHERE `section_id`=`main_select`.`section_id`) AS `parent_name`,
+                            (SELECT CONCAT(\'/assets/images/uploaded/\', SUBSTRING(`file_id`, 1, 2), \'/\', SUBSTRING(`file_id`, 3, 2), \'/\', SUBSTRING(`file_id`, 5, 2), \'/\', `file_id`, \'.\', `extension`) AS `icon` FROM `sys__files` WHERE `file_id`=`main_select`.`og_image`) AS `og_image`
+                        FROM `talks__threads` AS `main_select` WHERE `thread_id`=:thread_id;',
                 [':thread_id' => [$this->id, 'int']],
                 return: 'row',
             );
@@ -868,7 +946,12 @@ final class Thread extends Entity
         }
 
         // Notify Ticket creator
-        if ($this->type === 'Support' && $author === SystemUser::Unknown->value && $author !== $_SESSION['user_id'] && $this->email !== null) {
+        if (
+            $this->type === 'Support'
+            && $author === SystemUser::Unknown->value
+            && $author !== $_SESSION['user_id']
+            && $this->email !== null
+        ) {
             (void) new ThreadChange()->save($author, \array_merge($for_notification, ['token' => $this->access_token, 'ticket' => true, 'name' => \preg_replace('/^\[Contact Form]\s*/ui', '', $this->name)]), email: true, push: false, email_override: $this->email);
         }
 
@@ -897,9 +980,12 @@ final class Thread extends Entity
      * Sanitize section data.
      *
      * @param array<string, mixed> $data Data to sanitize
-     * @param bool  $edit Flag indicating whether this is an edit
+     * @param bool                 $edit Flag indicating whether this is an edit
      *
      * @return array|bool
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException|\UnexpectedValueException
      */
     private function sanitizeInput(array &$data, bool $edit = false): array|bool
     {
@@ -1047,7 +1133,7 @@ final class Thread extends Entity
             $data['alt_links'] = [];
         }
 
-        $data['alt_links'] = $this->altLinksSanitize($data['alt_links']);
+        $data['alt_links'] = self::altLinksSanitize($data['alt_links']);
         // Check if og_image was sent and try to process it, unless `clear_og_image` is set, or the section type is Support
         if (
             $data['og_image']
@@ -1071,47 +1157,5 @@ final class Thread extends Entity
         }
 
         return true;
-    }
-
-    /**
-     * Sanitize list of alternative links.
-     *
-     * @param array $alt_links
-     *
-     * @return array
-     */
-    private function altLinksSanitize(array $alt_links): array
-    {
-        // Get supported links and set keys to the respective values of the `type` field
-        $supported = Editors::digitToKey(self::getAltLinkTypes(), 'type');
-        foreach ($alt_links as $key => $link) {
-            /* @noinspection IsEmptyFunctionUsageInspection We have less control on what values come here, so treat all possible empty values as bad one */
-            if (empty($link)) {
-                $alt_links[$key] = null;
-
-                continue;
-            }
-
-            $link = Security::sanitizeURL($link);
-            // Check if a website (sent as a key) is supported and check the value against regex (to avoid using field for YouTube (as an example) for some random website that is not YouTube)
-            if (
-                $link === ''
-                || !\array_key_exists($key, $supported)
-                || \preg_match('/^https:\/\/(www\.)?'.$supported[$key]['regex'].'.*$/ui', $link) !== 1
-            ) {
-                // Remove unsupported or possibly malicious website
-                $alt_links[$key] = null;
-            } else {
-                $alt_links[$key] = $link;
-            }
-        }
-
-        foreach ($supported as $key => $link) {
-            if (!\array_key_exists($key, $alt_links)) {
-                $alt_links[$key] = null;
-            }
-        }
-
-        return $alt_links;
     }
 }

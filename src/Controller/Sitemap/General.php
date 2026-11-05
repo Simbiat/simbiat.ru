@@ -9,7 +9,7 @@ use App\Controller\Abstracts\StaticPage;
 final class General extends StaticPage
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -17,18 +17,6 @@ final class General extends StaticPage
     protected array $breadcrumb = [
         ['href' => '/sitemap/general.xml', 'name' => 'Static pages'],
     ];
-
-    /**
-     * @var string Sub service name
-     */
-    #[\Override]
-    protected string $subservice_name = 'sitemap';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Static pages';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
@@ -42,6 +30,19 @@ final class General extends StaticPage
     #[\Override]
     protected string $og_desc = 'Static pages';
 
+    /**
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'sitemap';
+
+    /**
+     * @var string Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'Static pages';
+
+    #[\Override]
     protected function generate(array $path): array
     {
         $this->h2_push = [];

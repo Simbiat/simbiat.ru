@@ -13,10 +13,15 @@ final class OpenBics extends Search
     protected string $entity_type = 'bic';
 
     /**
-     * @var string Name of the table to search use
+     * @var array<int, string> List of optional columns for direct comparison. The higher in the list a field is the more weight/relevancy condition with it will have
      */
     #[\Override]
-    protected string $table = 'bic__list';
+    protected array $exact = [
+        'BIC',
+        'OLD_NEWNUM',
+        'RegN',
+        'VKEY',
+    ];
 
     /**
      * @var string List of fields
@@ -25,16 +30,22 @@ final class OpenBics extends Search
     protected string $fields = '`BIC` as `id`, `NameP` as `name`, `DateOut`, `Updated` as `updated`';
 
     /**
-     * @var string Optional WHERE clause for every SELECT
+     * @var array<int, string> List of FULLTEXT columns. The higher in the list a field is the more weight/relevancy condition with it will have
      */
     #[\Override]
-    protected string $where = '`DateOut` IS NULL';
+    protected array $fulltext = [
+        'NameP',
+        'Adr',
+    ];
 
     /**
-     * @var string Optional WHERE clause for SELECT where search term is defined
+     * @var array<int, string> List of optional columns for LIKE %% comparison. The higher in the list a field is the more weight/relevancy condition with it will have
      */
     #[\Override]
-    protected string $where_search = '`BIC` IN (SELECT `BIC` FROM `bic__swift` WHERE `SWBIC`=:what) OR `BIC` IN (SELECT `BIC` FROM `bic__accounts` WHERE `Account`=:what)';
+    protected array $like = [
+        'NameP',
+        'Adr',
+    ];
 
     /**
      * @var string Default order (for main page, for example)
@@ -49,31 +60,20 @@ final class OpenBics extends Search
     protected string $order_list = '`NameP` ASC';
 
     /**
-     * @var array<int, string> List of FULLTEXT columns. The higher in the list a field is the more weight/relevancy condition with it will have
+     * @var string Name of the table to search use
      */
     #[\Override]
-    protected array $fulltext = [
-        'NameP',
-        'Adr',
-    ];
+    protected string $table = 'bic__list';
 
     /**
-     * @var array<int, string> List of optional columns for direct comparison. The higher in the list a field is the more weight/relevancy condition with it will have
+     * @var string Optional WHERE clause for every SELECT
      */
     #[\Override]
-    protected array $exact = [
-        'BIC',
-        'OLD_NEWNUM',
-        'RegN',
-        'VKEY',
-    ];
+    protected string $where = '`DateOut` IS NULL';
 
     /**
-     * @var array<int, string> List of optional columns for LIKE %% comparison. The higher in the list a field is the more weight/relevancy condition with it will have
+     * @var string Optional WHERE clause for SELECT where search term is defined
      */
     #[\Override]
-    protected array $like = [
-        'NameP',
-        'Adr',
-    ];
+    protected string $where_search = '`BIC` IN (SELECT `BIC` FROM `bic__swift` WHERE `SWBIC`=:what) OR `BIC` IN (SELECT `BIC` FROM `bic__accounts` WHERE `Account`=:what)';
 }

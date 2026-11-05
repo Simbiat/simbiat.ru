@@ -13,6 +13,16 @@ use App\Service\Feeds;
 final class MainRouter extends Router
 {
     /**
+     * Current breadcrumb for navigation.
+     *
+     * @var array<int, array<string, string>>
+     */
+    #[\Override]
+    protected array $breadcrumb = [
+        ['href' => '/', 'name' => 'Home page'],
+    ];
+
+    /**
      * @var array<int, string> Supported edges
      */
     #[\Override]
@@ -38,23 +48,18 @@ final class MainRouter extends Router
     ];
 
     /**
-     * Current breadcrumb for navigation
+     * @param array $path
      *
-     * @var array<int, array<string, string>>
-     */
-    #[\Override]
-    protected array $breadcrumb = [
-        ['href' => '/', 'name' => 'Home page'],
-    ];
-
-    /**
+     * @return array
+     *
      * @throws \Exception
      */
+    #[\Override]
     protected function pageGen(array $path): array
     {
         if ($path[0] === 'sitemap') {
             // We want to handle sitemap links equally regardless of trailing .xml extension
-            $path[\array_key_last($path)] = \str_replace('.xml', '', array_last($path));
+            $path[\array_key_last($path)] = \str_replace('.xml', '', \array_last($path));
         }
 
         if (
@@ -84,9 +89,9 @@ final class MainRouter extends Router
             'sitemap' => new Sitemap()->route(\array_slice($path, 1)),
             'rss', 'atom' => new Feeds()->uriParse($path),
             // Errors
-            'error', 'errors', 'httperror', 'httperrors' => $this->error(\array_slice($path, 1)),
+            'error', 'errors', 'httperror', 'httperrors' => self::error(\array_slice($path, 1)),
             '' => new Homepage()->get([]),
-            default => $this->error(['404']),
+            default => self::error(['404']),
         };
     }
 
@@ -97,15 +102,15 @@ final class MainRouter extends Router
      *
      * @return array
      */
-    private function error(array $uri): array
+    private static function error(array $uri): array
     {
         return [
+            'error_page' => true,
             'http_error' => empty($uri[0])
             || !\in_array((int) $uri[0], [300, 301, 302, 303, 305, 307, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 421, 422, 423, 424, 425, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505], strict: true)
                 ? 404
                 : (int) $uri[0],
             'suggested_link' => \dirname($_SERVER['REQUEST_URI'] ?? ''),
-            'error_page' => true
         ];
     }
 }

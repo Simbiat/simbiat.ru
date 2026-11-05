@@ -11,7 +11,7 @@ use App\Service\Config;
 final class Post extends Page
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -19,18 +19,6 @@ final class Post extends Page
     protected array $breadcrumb = [
         ['href' => '/talks/sections/', 'name' => 'Sections'],
     ];
-
-    /**
-     * @var string Sub service name
-     */
-    #[\Override]
-    protected string $subservice_name = 'post';
-
-    /**
-     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $title = 'Talks';
 
     /**
      * @var string Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
@@ -51,12 +39,27 @@ final class Post extends Page
     protected array $required_permission = ['view_posts'];
 
     /**
-     * This is actual page generation based on further details of the $path
+     * @var string Sub service name
+     */
+    #[\Override]
+    protected string $subservice_name = 'post';
+
+    /**
+     * @var string Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $title = 'Talks';
+
+    /**
+     * This is actual page generation based on further details of the $path.
      *
      * @param array<int, string> $path
      *
      * @return array<string, mixed>
+     *
+     * @throws \UnexpectedValueException
      */
+    #[\Override]
     protected function generate(array $path): array
     {
         // Sanitize ID
@@ -150,7 +153,7 @@ final class Post extends Page
                 if (!empty($old_version['text'])) {
                     // Update the text of the post to show
                     $output_array['text'] = $old_version['text'];
-                    $output_array['created'] = (int) $old_version['time'];
+                    $output_array['created'] = $old_version['time'];
                     $output_array['updated'] = $output_array['created'];
                     $this->lastModified($output_array['created']);
                     $history = true;

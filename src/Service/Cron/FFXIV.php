@@ -26,94 +26,6 @@ use Simbiat\FFXIV\Lodestone;
 final class FFXIV
 {
     /**
-     * Update a FFXIV entity.
-     *
-     * @param int|string $id   Entity ID
-     * @param string     $type Entity type
-     *
-     * @return bool|string
-     */
-    public function updateEntity(int|string $id, #[ExpectedValues(['character', 'freecompany', 'pvpteam', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'achievement'])] string $type): bool|string
-    {
-        return match ($type) {
-            'character' => new Character($id)->update(allow_sleep: true),
-            'freecompany' => new FreeCompany($id)->update(allow_sleep: true),
-            'pvpteam' => new PvPTeam($id)->update(allow_sleep: true),
-            'linkshell' => new Linkshell($id)->update(allow_sleep: true),
-            'crossworldlinkshell', 'crossworld_linkshell' => new CrossworldLinkshell($id)->update(allow_sleep: true),
-            'achievement' => new Achievement($id)->update(allow_sleep: true),
-            default => false,
-        };
-    }
-
-    /**
-     * Function to update old entities.
-     *
-     * @param int $limit    How many entities to process
-     * @param int $instance Instance number that called the function
-     *
-     * @return bool|string
-     *
-     * @noinspection PhpUnused Used from Cron Agent
-     */
-    public function updateOld(int $limit = 1, int $instance = 1): bool|string
-    {
-        // Sanitize entities number
-        if ($limit < 1) {
-            $limit = 1;
-        }
-
-        try {
-            $entities = Query::query(
-                '
-                    SELECT `type`, `id`, `priority`, `updated` FROM (
-                        (SELECT \'character\' AS `type`, `ffxiv__character`.`character_id` AS `id`, `updated`, IF(`deleted` IS NULL AND `hidden` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND EXISTS(SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`), 1, 0) as `priority` FROM `ffxiv__character` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
-                        UNION ALL
-                        (SELECT \'freecompany\' AS `type`, `fc_id` AS `id`, `updated`, 0 as `priority` FROM `ffxiv__freecompany` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
-                        UNION ALL
-                        (SELECT \'pvpteam\' AS `type`, `pvp_id` AS `id`, `updated`, 0 as `priority` FROM `ffxiv__pvpteam` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
-                        UNION ALL
-                        (SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `ls_id` AS `id`, `updated`, 0 as `priority` FROM `ffxiv__linkshell` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
-                        UNION ALL
-                        (SELECT \'achievement\' AS `type`, `achievement_id` AS `id`, `updated`, 0 AS `priority` FROM `ffxiv__achievement` as `ach_main` WHERE `achievement_id` = (SELECT `achievement_id` FROM `ffxiv__character_achievement` LEFT JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`character_id`=`ffxiv__character`.`character_id` WHERE `ffxiv__character_achievement`.`achievement_id` = `ach_main`.`achievement_id` AND `ffxiv__character`.`deleted` IS NULL AND `hidden_achievements` IS NULL LIMIT 1) ORDER BY `updated` LIMIT :max_lines OFFSET :offset)
-                    ) `all_entities`
-                    ORDER BY `priority` DESC, `updated` LIMIT :max_lines',
-                [
-                    ':max_lines' => [$limit, 'int'],
-                    ':offset' => [($instance - 1) * $limit, 'int'],
-                ],
-                return: 'all',
-            );
-            $cron_agent = new Agent();
-            foreach ($entities as $entity) {
-                $extra_for_error = $entity['type'].' ID '.$entity['id'];
-                $cron_agent->log('Updating '.$extra_for_error.'...', EventTypes::CustomInformation);
-                $result = $this->updateEntity($entity['id'], $entity['type']);
-                if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement', false, true], strict: true)) {
-                    // If we were throttled, sleep an extra minute, and then do an early return to reduce throttling chance on other jobs. Do not treat this as failure, though
-                    if (\preg_match('/Request throttled by Lodestone/', $result) === 1) {
-                        $cron_agent->log('Throttled on '.$extra_for_error.'. Sleeping...', EventTypes::CustomNotice);
-                        \sleep(60);
-
-                        return true;
-                    }
-
-                    return $result;
-                }
-
-                // Remove the cron task if it's present
-                new TaskInstance('ff_update_entity', [(string) $entity['id'], $entity['type']])->delete();
-            }
-
-            return true;
-        } catch (\Throwable $throwable) {
-            Errors::error_log($throwable, $extra_for_error ?? '');
-
-            return $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
-        }
-    }
-
-    /**
      * Register any new linkshells found.
      *
      * @return bool|string
@@ -215,5 +127,93 @@ final class FFXIV
         }
 
         return true;
+    }
+
+    /**
+     * Update a FFXIV entity.
+     *
+     * @param int|string $id   Entity ID
+     * @param string     $type Entity type
+     *
+     * @return bool|string
+     */
+    public function updateEntity(int|string $id, #[ExpectedValues(['character', 'freecompany', 'pvpteam', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'achievement'])] string $type): bool|string
+    {
+        return match ($type) {
+            'character' => new Character($id)->update(allow_sleep: true),
+            'freecompany' => new FreeCompany($id)->update(allow_sleep: true),
+            'pvpteam' => new PvPTeam($id)->update(allow_sleep: true),
+            'linkshell' => new Linkshell($id)->update(allow_sleep: true),
+            'crossworldlinkshell', 'crossworld_linkshell' => new CrossworldLinkshell($id)->update(allow_sleep: true),
+            'achievement' => new Achievement($id)->update(allow_sleep: true),
+            default => false,
+        };
+    }
+
+    /**
+     * Function to update old entities.
+     *
+     * @param int $limit    How many entities to process
+     * @param int $instance Instance number that called the function
+     *
+     * @return bool|string
+     *
+     * @noinspection PhpUnused Used from Cron Agent
+     */
+    public function updateOld(int $limit = 1, int $instance = 1): bool|string
+    {
+        // Sanitize entities number
+        if ($limit < 1) {
+            $limit = 1;
+        }
+
+        try {
+            $entities = Query::query(
+                '
+                    SELECT `type`, `id`, `priority`, `updated` FROM (
+                        (SELECT \'character\' AS `type`, `ffxiv__character`.`character_id` AS `id`, `updated`, IF(`deleted` IS NULL AND `hidden` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND EXISTS(SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`), 1, 0) as `priority` FROM `ffxiv__character` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
+                        UNION ALL
+                        (SELECT \'freecompany\' AS `type`, `fc_id` AS `id`, `updated`, 0 as `priority` FROM `ffxiv__freecompany` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
+                        UNION ALL
+                        (SELECT \'pvpteam\' AS `type`, `pvp_id` AS `id`, `updated`, 0 as `priority` FROM `ffxiv__pvpteam` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
+                        UNION ALL
+                        (SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `ls_id` AS `id`, `updated`, 0 as `priority` FROM `ffxiv__linkshell` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
+                        UNION ALL
+                        (SELECT \'achievement\' AS `type`, `achievement_id` AS `id`, `updated`, 0 AS `priority` FROM `ffxiv__achievement` as `ach_main` WHERE `achievement_id` = (SELECT `achievement_id` FROM `ffxiv__character_achievement` LEFT JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`character_id`=`ffxiv__character`.`character_id` WHERE `ffxiv__character_achievement`.`achievement_id` = `ach_main`.`achievement_id` AND `ffxiv__character`.`deleted` IS NULL AND `hidden_achievements` IS NULL LIMIT 1) ORDER BY `updated` LIMIT :max_lines OFFSET :offset)
+                    ) `all_entities`
+                    ORDER BY `priority` DESC, `updated` LIMIT :max_lines',
+                [
+                    ':max_lines' => [$limit, 'int'],
+                    ':offset' => [($instance - 1) * $limit, 'int'],
+                ],
+                return: 'all',
+            );
+            $cron_agent = new Agent();
+            foreach ($entities as $entity) {
+                $extra_for_error = $entity['type'].' ID '.$entity['id'];
+                $cron_agent->log('Updating '.$extra_for_error.'...', EventTypes::CustomInformation);
+                $result = $this->updateEntity($entity['id'], $entity['type']);
+                if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement', false, true], strict: true)) {
+                    // If we were throttled, sleep an extra minute, and then do an early return to reduce throttling chance on other jobs. Do not treat this as failure, though
+                    if (\preg_match('/Request throttled by Lodestone/', $result) === 1) {
+                        $cron_agent->log('Throttled on '.$extra_for_error.'. Sleeping...', EventTypes::CustomNotice);
+                        \sleep(60);
+
+                        return true;
+                    }
+
+                    return $result;
+                }
+
+                // Remove the cron task if it's present
+                new TaskInstance('ff_update_entity', [(string) $entity['id'], $entity['type']])->delete();
+            }
+
+            return true;
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable, $extra_for_error ?? '');
+
+            return $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
+        }
     }
 }

@@ -9,7 +9,7 @@ use App\Controller\Abstracts\StaticPage;
 final class Flow extends StaticPage
 {
     /**
-     * Current breadcrumb for navigation
+     * Current breadcrumb for navigation.
      *
      * @var array<int, array<string, string>>
      */
@@ -17,6 +17,27 @@ final class Flow extends StaticPage
     protected array $breadcrumb = [
         ['href' => '/supops/flow', 'name' => 'The Flow'],
     ];
+
+    /**
+     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $h1 = 'SupOps: The Flow';
+
+    /**
+     * @var array<int, string> List of images to H2 push
+     */
+    #[\Override]
+    protected array $h2_push_extra = [
+        '/assets/images/supops/charts/overall.png',
+        '/assets/images/supops/navigation/journey.svg',
+    ];
+
+    /**
+     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+     */
+    #[\Override]
+    protected string $og_desc = 'SupOps: High-level process flow';
 
     /**
      * @var string Sub service name
@@ -29,25 +50,4 @@ final class Flow extends StaticPage
      */
     #[\Override]
     protected string $title = 'SupOps: The Flow';
-
-    /**
-     * @var string Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $h1 = 'SupOps: The Flow';
-
-    /**
-     * @var string Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-     */
-    #[\Override]
-    protected string $og_desc = 'SupOps: High-level process flow';
-
-    /**
-     * @var array<int, string> List of images to H2 push
-     */
-    #[\Override]
-    protected array $h2_push_extra = [
-        '/assets/images/supops/charts/overall.png',
-        '/assets/images/supops/navigation/journey.svg',
-    ];
 }

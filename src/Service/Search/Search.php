@@ -9,6 +9,8 @@ use Simbiat\Database\Query;
 
 /**
  * Function to search for entities.
+ *
+ * @api TODO: most likely will need to remove during migration to Symfony. For now this is mostly to silence Psalm.
  */
 abstract class Search
 {
@@ -17,6 +19,11 @@ abstract class Search
      */
     public int $list_items = 100;
 
+    /**
+     * @var string Count argument. In some cases you may want to count a certain column instead of using * (default).
+     */
+    protected string $count_argument = '*';
+
     // Settings required for subclasses
     /**
      * @var string Type of entity to return as static value in results (required for frontend routing)
@@ -24,9 +31,9 @@ abstract class Search
     protected string $entity_type = '';
 
     /**
-     * @var string Name of the table to search use
+     * @var array<int, string> List of optional columns for direct comparison. The higher in the list a field is the more weight/relevancy condition with it will have
      */
-    protected string $table = '';
+    protected array $exact = [];
 
     /**
      * @var string List of fields
@@ -34,19 +41,9 @@ abstract class Search
     protected string $fields = '';
 
     /**
-     * @var string Optional JOIN string, in case it is required
+     * @var array<int, string> List of FULLTEXT columns. The higher in the list a field is the more weight/relevancy condition with it will have
      */
-    protected string $join = '';
-
-    /**
-     * @var string Optional WHERE clause for every SELECT
-     */
-    protected string $where = '';
-
-    /**
-     * @var string Optional WHERE clause for SELECT where the search term is defined
-     */
-    protected string $where_search = '';
+    protected array $fulltext = [];
 
     /**
      * @var string Optional GROUP BY
@@ -54,9 +51,14 @@ abstract class Search
     protected string $group_by = '';
 
     /**
-     * @var string Count argument. In some cases you may want to count a certain column instead of using * (default).
+     * @var string Optional JOIN string, in case it is required
      */
-    protected string $count_argument = '*';
+    protected string $join = '';
+
+    /**
+     * @var array<int, string> List of optional columns for LIKE %% comparison. The higher in the list a field is the more weight/relevancy condition with it will have
+     */
+    protected array $like = [];
 
     /**
      * @var string Default order (for the main page, for example)
@@ -69,43 +71,57 @@ abstract class Search
     protected string $order_list = '';
 
     /**
-     * @var array<int, string> List of FULLTEXT columns. The higher in the list a field is the more weight/relevancy condition with it will have
+     * @var string Name of the table to search use
      */
-    protected array $fulltext = [];
+    protected string $table = '';
 
     /**
-     * @var array<int, string> List of optional columns for direct comparison. The higher in the list a field is the more weight/relevancy condition with it will have
+     * @var string Optional WHERE clause for every SELECT
      */
-    protected array $exact = [];
+    protected string $where = '';
 
     /**
-     * @var array<int, string> List of optional columns for LIKE %% comparison. The higher in the list a field is the more weight/relevancy condition with it will have
+     * @var string Optional WHERE clause for SELECT where the search term is defined
      */
-    protected array $like = [];
+    protected string $where_search = '';
 
     /**
-     * Actually run the search.
-     *
-     * @param string $what  What to search for
-     * @param int    $limit How many results to provide
-     *
-     * @return array<array>
+     * @param array       $bindings Optional bindings, in the case of more complex WHERE clauses. Needs to be set during construction, since this implies "unique" values.
+     * @param string|null $where    WHERE clause
+     * @param string|null $order    ORDER BY clause
+     * @param string|null $group    GROUP BY clause
      */
-    final public function search(string $what = '', int $limit = 15): array
-    {
-        try {
-            // Count first
-            $results = ['count' => $this->countEntities($what)];
-            // Do actual search only if the count is not 0
-            $results['results'] = $results['count'] > 0
-                ? $this->selectEntities($what, $limit)
-                : [];
+    final public function __construct(
+        protected array $bindings = [],
+        ?string $where = null,
+        ?string $order = null,
+        ?string $group = null,
+    ) {
+        // Check that subclass has set appropriate properties, except $where, which is ok to inherit
+        foreach (['entity_type', 'table', 'fields', 'order_default', 'order_list'] as $property) {
+            if (empty($this->{$property})) {
+                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
+            }
+        }
 
-            return $results;
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
+        if (empty($this->count_argument)) {
+            $this->count_argument = '*';
+        }
 
-            return [];
+        // Override WHERE
+        if ($where !== null) {
+            $this->where = $where;
+        }
+
+        // Override ORDER BY
+        if ($order !== null) {
+            $this->order_list = $order;
+            $this->order_default = $order;
+        }
+
+        // Override GROUP BY
+        if ($group !== null) {
+            $this->group_by = $group;
         }
     }
 
@@ -143,6 +159,32 @@ abstract class Search
             Errors::error_log($e);
 
             return ['count' => $count, 'pages' => $pages, 'entities' => []];
+        }
+    }
+
+    /**
+     * Actually run the search.
+     *
+     * @param string $what  What to search for
+     * @param int    $limit How many results to provide
+     *
+     * @return array{count: int, results: array<string, mixed>}
+     */
+    final public function search(string $what = '', int $limit = 15): array
+    {
+        try {
+            // Count first
+            $results = ['count' => $this->countEntities($what)];
+            // Do actual search only if the count is not 0
+            $results['results'] = $results['count'] > 0
+                ? $this->selectEntities($what, $limit)
+                : [];
+
+            return $results;
+        } catch (\Throwable $e) {
+            Errors::error_log($e);
+
+            return [];
         }
     }
 
@@ -202,6 +244,56 @@ abstract class Search
     }
 
     /**
+     * Generate WHERE for direct comparison.
+     *
+     * @return string
+     */
+    final protected function exact(): string
+    {
+        return '`'.\implode('` = :what OR `', $this->exact).'` = :what';
+    }
+
+    /**
+     * Generate WHERE for %LIKE% comparison.
+     *
+     * @return string
+     */
+    final protected function like(): string
+    {
+        return '`'.\implode('` LIKE :like OR `', $this->like).'` LIKE :like';
+    }
+
+    /**
+     * Optional post-processing. Override to apply. Is not meant for removing results.
+     *
+     * @param array $results
+     *
+     * @return array
+     */
+    protected function postProcess(array $results): array
+    {
+        return $results;
+    }
+
+    /**
+     * Helper function to generate relevancy statement.
+     *
+     * @return string
+     */
+    final protected function relevancy(): string
+    {
+        $result = '(';
+        // Add FULLTEXT comparisons.
+        $factor = \count($this->fulltext);
+        foreach ($this->fulltext as $key => $field) {
+            $result .= '(MATCH (`'.$field.'`) AGAINST (:what IN BOOLEAN MODE))*'.($factor - $key).' + ';
+        }
+
+        // Remove the last +, close the brackets and return
+        return \mb_trim($result, ' +', 'UTF-8').')';
+    }
+
+    /**
      * Generalized function to select entities.
      *
      * @param string $what   What to search for
@@ -257,96 +349,5 @@ abstract class Search
 
             return [];
         }
-    }
-
-    /**
-     * Generate WHERE for direct comparison.
-     *
-     * @return string
-     */
-    final protected function exact(): string
-    {
-        return '`'.\implode('` = :what OR `', $this->exact).'` = :what';
-    }
-
-    /**
-     * Generate WHERE for %LIKE% comparison.
-     *
-     * @return string
-     */
-    final protected function like(): string
-    {
-        return '`'.\implode('` LIKE :like OR `', $this->like).'` LIKE :like';
-    }
-
-    /**
-     * Helper function to generate relevancy statement.
-     *
-     * @return string
-     */
-    final protected function relevancy(): string
-    {
-        $result = '(';
-        // Add FULLTEXT comparisons.
-        $factor = \count($this->fulltext);
-        foreach ($this->fulltext as $key => $field) {
-            $result .= '(MATCH (`'.$field.'`) AGAINST (:what IN BOOLEAN MODE))*'.($factor - $key).' + ';
-        }
-
-        // Remove the last +, close the brackets and return
-        return \mb_trim($result, ' +', 'UTF-8').')';
-    }
-
-    /**
-     * @param array       $bindings Optional bindings, in the case of more complex WHERE clauses. Needs to be set during construction, since this implies "unique" values.
-     * @param null|string $where    WHERE clause
-     * @param null|string $order    ORDER BY clause
-     * @param null|string $group    GROUP BY clause
-     */
-    final public function __construct(
-        protected array $bindings = [],
-        ?string $where = null,
-        ?string $order = null,
-        ?string $group = null
-    )
-    {
-        // Check that subclass has set appropriate properties, except $where, which is ok to inherit
-        foreach (['entity_type', 'table', 'fields', 'order_default', 'order_list'] as $property) {
-            if (empty($this->{$property})) {
-                throw new \LogicException(static::class.' must have a non-empty `'.$property.'` property.');
-            }
-        }
-
-        if (empty($this->count_argument)) {
-            $this->count_argument = '*';
-        }
-
-        // Override WHERE
-        if ($where !== null) {
-            $this->where = $where;
-        }
-
-        // Override ORDER BY
-        if ($order !== null) {
-            $this->order_list = $order;
-            $this->order_default = $order;
-        }
-
-        // Override GROUP BY
-        if ($group !== null) {
-            $this->group_by = $group;
-        }
-    }
-
-    /**
-     * Optional post-processing. Override to apply. Is not meant for removing results.
-     *
-     * @param array $results
-     *
-     * @return array
-     */
-    protected function postProcess(array $results): array
-    {
-        return $results;
     }
 }

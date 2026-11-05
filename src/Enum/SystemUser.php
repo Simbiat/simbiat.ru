@@ -9,10 +9,10 @@ namespace App\Enum;
  */
 enum SystemUser: int
 {
-    case Unknown = 1;
-    case System = 2;
     case Deleted = 3;
     case Owner = 4;
+    case System = 2;
+    case Unknown = 1;
 
     /**
      * Get system users' IDs.

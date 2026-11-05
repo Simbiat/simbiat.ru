@@ -34,8 +34,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                 PasswordAuthenticatedUserInterface::class => [
                     'algorithm' => 'auto',
                     'cost' => 4,
-                    'time_cost' => 3,
                     'memory_cost' => 10,
+                    'time_cost' => 3,
                 ],
             ],
         ]);

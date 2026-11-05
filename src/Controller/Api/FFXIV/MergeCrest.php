@@ -28,6 +28,16 @@ final class MergeCrest extends Api
     #[\Override]
     protected array $verbs = ['merge' => 'Merge crest components into a single file'];
 
+    /**
+     * This is an actual API response generation based on further details of the $path.
+     *
+     * @param array $path
+     *
+     * @psalm-suppress MixedReturnTypeCoercion TODO: needs to be removed during migration to Symfony. Need to use objects instead of ararys.
+     *
+     * @return array<string, mixed>
+     */
+    #[\Override]
     protected function genData(array $path): array
     {
         // Check components' values and files' existence
@@ -43,7 +53,7 @@ final class MergeCrest extends Api
             return ['http_error' => 400, 'reason' => 'Emblem file not found'];
         }
 
-        $images[2] = $_POST['crest_emblem'];
+        $images = [2 => $_POST['crest_emblem']];
         if (!empty($_POST['crest_frame'])) {
             if (\preg_match('/^F[a-fA-F0-9]{2}_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$/u', $_POST['crest_frame']) !== 1) {
                 return ['http_error' => 400, 'reason' => 'Wrong pattern for frame file name'];
