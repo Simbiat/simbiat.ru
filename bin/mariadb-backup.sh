@@ -141,7 +141,7 @@ run_parallel() {
 
     parallel_init "$max_parallel"
 
-    local item pid
+    local item
     local -a pids=()
     for item in "${items_ref[@]}"; do
       read -r -u 3
@@ -563,10 +563,12 @@ SQL_EOF
     # COMPRESS BACKUPS
     # =========================================================
     log_msg "Zipping logical backup"
-    7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -mhe -mtc -mta -mtm -mmt=4 -p"${MARIADB_BACKUP_PASSWORD}" "$backup_dir/$current_date-${logical_name}.7z" "$logical_backup"
+    # PPMd provides the best result in both speed and compression ratio for SQL files. It seems to ignore `-mmt=2` and still runs in 1 thread, though
+    7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=PPMd:mem=64m:o=6 -mhe -mtc -mta -mtm -mmt=2 -p"${MARIADB_BACKUP_PASSWORD}" "$backup_dir/$current_date-${logical_name}.7z" "$logical_backup"
     rm -rf "$logical_backup";
     log_msg "Zipping physical backup"
-    7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -mhe -mtc -mta -mtm -mmt=4 -p"${MARIADB_BACKUP_PASSWORD}" "$backup_dir/$current_date-physical.7z" "$physical_backup"
+    # If faster compression will be required for this one in the future, the only considerably faster one with slightly worse ratio is `-m0=BZip2:d=900k`
+    7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2:d=4M:fb=32 -mhe -mtc -mta -mtm -mmt=6 -p"${MARIADB_BACKUP_PASSWORD}" "$backup_dir/$current_date-physical.7z" "$physical_backup"
     rm -rf "$physical_backup";
     log_msg "Backup completed"
     rm -f "$maintenance_flag"
