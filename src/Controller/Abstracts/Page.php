@@ -208,10 +208,10 @@ abstract class Page
                     $this->lastModified($this->last_modified);
                 }
 
-                $page = \array_merge($page, HomePage::$http_error);
+                $page = \array_merge($page, HomePage::$http_error ?? []);
             }
         } else {
-            $page = HomePage::$http_error;
+            $page = HomePage::$http_error ?? [];
         }
 
         // Ensure properties are included

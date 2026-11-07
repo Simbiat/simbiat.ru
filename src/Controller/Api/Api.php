@@ -429,7 +429,7 @@ abstract class Api
                 !empty(HomePage::$http_error)
                 && !$this->static
             ) {
-                return \array_merge($result, HomePage::$http_error);
+                return \array_merge($result, HomePage::$http_error ?? []);
             }
         }
 

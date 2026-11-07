@@ -230,9 +230,12 @@ touch "${DEPLOY_ARTIFACTS_DIR}/.env.local.php"
 touch "${LOCAL_PROJECT_ROOT}/.env.local.php"
 touch "${DEPLOY_ARTIFACTS_DIR}/empty.ini"
 # `update-ca-certificates` is required for importmap to work (otherwise there will be no certificates in the cert store due to tmpfs mount)
+#docker compose -f ./compose.yaml -f ./compose.predeploy.yaml run --rm --no-deps \
+#    --entrypoint="" "$SVC_FRANKENPHP" sh
+#exit
 docker compose -f ./compose.yaml -f ./compose.predeploy.yaml run --rm --no-deps \
     --entrypoint="" "$SVC_FRANKENPHP" sh -c 'update-ca-certificates && composer install --no-dev --optimize-autoloader && ./bin/console dotenv:dump prod' \
-    || fail "PROD vendor/cache/importmap build failed on DEV."
+    || fail "Build failed on DEV."
 clean_after;
 
 # ---------------------------------------------------------------------------

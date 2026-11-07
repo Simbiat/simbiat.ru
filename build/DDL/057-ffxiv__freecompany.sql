@@ -1,7 +1,7 @@
 USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__freecompany` (
   `fc_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL COMMENT 'Free Company ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/freecompany/freecompanyid/)',
-  `name` varchar(50) NOT NULL COMMENT 'Free Company name',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Free Company name',
   `server_id` tinyint(2) unsigned DEFAULT NULL COMMENT 'ID of the server Free Company resides on',
   `gc_id` tinyint(2) unsigned DEFAULT NULL COMMENT 'ID of Grand Company affiliated with the Free Company',
   `tag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Short name of Free Company',

@@ -2,7 +2,7 @@ USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__character` (
   `character_id` int(10) unsigned NOT NULL COMMENT 'Character ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/character/characterid/)',
   `server_id` tinyint(2) unsigned DEFAULT NULL COMMENT 'ID of the server character resides on',
-  `name` varchar(50) NOT NULL COMMENT 'Character''s name',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Character''s name',
   `avatar` varchar(66) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL COMMENT 'ID portion of the link to character avatar (requires adding of ''l0.jpg'' or ''c0.jpg'' to the end of the field and ''https://img2.finalfantasyxiv.com/f/'' to the beginning to be turned into actual image link)',
   `registered` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT 'When character was initially added to tracker',
   `updated` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'When character was last updated on the tracker',

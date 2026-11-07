@@ -1,7 +1,7 @@
 USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__pvpteam` (
   `pvp_id` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL COMMENT 'PvP Team ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/pvpteam/pvpteamid/)',
-  `name` varchar(50) NOT NULL COMMENT 'PvP Team name',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'PvP Team name',
   `data_center_id` tinyint(2) unsigned DEFAULT NULL COMMENT 'ID of the server PvP Team resides on',
   `formed` datetime(6) DEFAULT NULL COMMENT 'PvP Team formation day as seen on Lodestone',
   `registered` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT 'When PvP Team was initially added to tracker',

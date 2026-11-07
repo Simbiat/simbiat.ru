@@ -1,9 +1,9 @@
 /**
  * @file Handle scripts on the section pages.
  */
-import { TIMEZONE } from 'Common/Constants.mts';
-import { pageRefresh, empty } from 'Common/Helpers.mts';
 import { Ajax } from 'Common/Ajax.mts';
+import { TIMEZONE } from 'Common/Constants.mts';
+import { empty, pageRefresh } from 'Common/Helpers.mts';
 import { Snackbar } from 'Common/Snackbar.mts';
 import { TinyMCE } from 'Common/TinyMCE.mts';
 import { Form } from 'NativeElements/Form.mts';
@@ -169,7 +169,7 @@ export class Sections {
             await Ajax.request({
                 url: `${location.protocol}//${location.host}/api/talks/sections/${(form_data.get('section_data[section_id]') ?? '0') as string}`,
                 form_data,
-                method: 'PATCH',
+                method: 'POST',
                 button,
                 /**
                  * Further processing on success.

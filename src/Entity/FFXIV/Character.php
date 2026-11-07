@@ -225,18 +225,22 @@ final class Character extends AbstractEntity
     {
         // Get general information. Using *, but add name, because otherwise Achievement name overrides Character name, and we do not want that
         $data = Query::query('SELECT *, `ffxiv__character`.`character_id`, `ffxiv__achievement`.`icon` AS `title_icon`, `ffxiv__character`.`name`, `ffxiv__character`.`registered`, `ffxiv__character`.`updated`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`) AS `user_id` FROM `ffxiv__character` LEFT JOIN `ffxiv__clan` ON `ffxiv__character`.`clan_id` = `ffxiv__clan`.`clan_id` LEFT JOIN `ffxiv__guardian` ON `ffxiv__character`.`guardian_id` = `ffxiv__guardian`.`guardian_id` LEFT JOIN `ffxiv__nameday` ON `ffxiv__character`.`nameday_id` = `ffxiv__nameday`.`nameday_id` LEFT JOIN `ffxiv__city` ON `ffxiv__character`.`city_id` = `ffxiv__city`.`city_id` LEFT JOIN `ffxiv__server` ON `ffxiv__character`.`server_id` = `ffxiv__server`.`server_id` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__character`.`gc_rank_id` = `ffxiv__grandcompany_rank`.`gc_rank_id` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__grandcompany_rank`.`gc_id` = `ffxiv__grandcompany`.`gc_id` LEFT JOIN `ffxiv__achievement` ON `ffxiv__character`.`title_id` = `ffxiv__achievement`.`achievement_id` WHERE `ffxiv__character`.`character_id` = :id;', [':id' => $this->id], return: 'row');
-        if (!empty($data['hidden'])) {
+        // Return empty if nothing was found
+        if ($data === []) {
+            return [];
+        }
+        // Get red flags
+        $data['red_flags'] = Query::query('SELECT * FROM `ffxiv__red_flags` WHERE `character_id`=:id;', [':id' => $this->id], return: 'row');
+        if ($data['red_flags'] !== []) {
+            unset($data['red_flags']['character_id']);
+        }
+        if (!empty($data['hidden']) && $data['red_flags'] === []) {
             foreach ($data as $key => $value) {
                 if (!\in_array($key, ['avatar', 'registered', 'updated', 'deleted', 'hidden', 'name'], strict: true)) {
                     unset($data[$key]);
                 }
             }
         } else {
-            // Return empty if nothing was found
-            if ($data === []) {
-                return [];
-            }
-
             // Get username if character is linked to a user
             $data['username'] = !empty($data['user_id'])
                 ? Query::query('SELECT `username` FROM `uc__users` WHERE `user_id`=:user_id;', [':user_id' => $data['user_id']], return: 'value')
@@ -269,11 +273,6 @@ final class Character extends AbstractEntity
                     return: 'all',
                 ),
             );
-            // Get red flags
-            $data['red_flags'] = Query::query('SELECT * FROM `ffxiv__red_flags` WHERE `character_id`=:id;', [':id' => $this->id], return: 'row');
-            if ($data['red_flags'] !== []) {
-                unset($data['red_flags']['character_id']);
-            }
 
             // Clean up the data from unnecessary (technical) clutter
             unset($data['clan_id'], $data['nameday_id'], $data['achievement_id'], $data['category'], $data['subcategory'], $data['how_to'], $data['points'], $data['icon'], $data['item'], $data['item_icon'], $data['item_id'], $data['server_id']);

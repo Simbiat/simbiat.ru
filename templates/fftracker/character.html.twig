@@ -47,9 +47,10 @@
                 {% endif %}
                 {% if character.dates.hidden %}
                     <p class="warning">
-                        Requested <a href="/talks/threads/1657" target="_blank"><span>anonymity</span></a> on {{ timeTag(character.dates.hidden, 'd/m/Y') }}{% if character.red_flags|length > 0 %}, but red flags detected, so setting is ignored.{% endif %}.
+                        Requested <a href="/talks/threads/1657" target="_blank"><span>anonymity</span></a> on {{ timeTag(character.dates.hidden, 'd/m/Y') }}{% if character.red_flags|length > 0 %}, but red flags detected, so setting is ignored{% endif %}.
                     </p>
-                {% else %}
+                {% endif %}
+                {% if not character.dates.hidden or character.red_flags|length > 0 %}
                     <p>
                         <b>{{ character.name }}</b>{% if character.title.title %}, a.k.a
                         <i>"<a href="/fftracker/achievements/{{ character.title.id }}">
