@@ -133,6 +133,9 @@ dist
 #/.idea/webResources.xml
 #/.idea/
 
+# Composer authentication file
+auth.json
+
 #Some DDL files should be ignored due to sensetive data
 /build/DDL/000-create_users.sql
 /build/DDL/999-Z-Admin.sql

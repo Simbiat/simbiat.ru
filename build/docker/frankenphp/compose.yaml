@@ -26,9 +26,6 @@ services:
     #    condition: service_healthy
     environment:
       CROWDSEC_API_KEY: ${CROWDSEC_CADDY_KEY}
-    links:
-      - mariadb:mysql
-      - mariadb:database
     networks:
       - default
       - postfix
