@@ -114,8 +114,10 @@ H /example.env
 H /.gitattributes
 H /.gitignore
 H /.gitmodules
+H /.php-cs-fixer-dist.php
 H /.twig-cs-fixer.cache
 H /AGENTS.md
+H /auth.json
 H /bun.lock
 H /CLAUDE.md
 + /compose.yaml
@@ -126,6 +128,9 @@ H /compose.predeploy.yaml
 + /importmap.php
 H /LICENSE
 H /package.json
+H /phpcs.xml.dist
+H /phpstan.dist.neon
+H /phpunit.dist.xml
 H /README.md
 H /SECURITY.md
 + /symfony.lock

@@ -99,8 +99,9 @@
             }
         },
         "symfony": {
-            "allow-contrib": false,
-            "require": "8.*"
+            "allow-contrib": true,
+            "require": "8.*",
+            "docker": false
         }
     },
     "license": "AGPL-3.0-or-later",
@@ -241,7 +242,7 @@
         "symfony/stopwatch": "^8.1",
         "symfony/web-profiler-bundle": "^8.1.11",
         "symplify/phpstan-rules": "^14.19.3",
-        "vimeo/psalm": "^6.20.9",
+        "vimeo/psalm": "^6.20.10",
         "vincentlanglet/twig-cs-fixer": "^4.1.1"
     },
     "repositories": [
@@ -273,11 +274,11 @@
             "app:db:ddl": "symfony-cmd"
         },
         "cache:clear_dev": "bin/console cache:clear --env=dev",
-        "php-cs-fixer": "php-cs-fixer fix --dry-run --config=/app/config/quality/php-cs-fixer.php --using-cache=yes --cache-file=/app/data/temp/.php-cs-fixer.cache --verbose --allow-risky=yes --path-mode=intersection",
-        "phpcbf": "phpcbf --standard=/app/config/quality/phpcs.xml",
-        "phpcs": "phpcs --standard=/app/config/quality/phpcs.xml -s",
+        "php-cs-fixer": "php-cs-fixer fix --dry-run --config=/app/.php-cs-fixer.dist.php --using-cache=yes --cache-file=/app/data/temp/.php-cs-fixer.cache --verbose --allow-risky=yes --path-mode=intersection",
+        "phpcbf": "phpcbf --standard=/app/phpcs.xml.dist",
+        "phpcs": "phpcs --standard=/app/phpcs.xml.dist -s",
         "phpmd": "phpmd analyze --cache --cache-file=/app/data/temp/.phpmd.result-cache.php --cache-strategy=content --ruleset=/app/config/quality/phpmd.yaml --threads=1 --no-progress --jetbrains=simbiat.eu",
-        "phpstan": "phpstan analyse --configuration=/app/config/quality/phpstan.neon --memory-limit=2G",
+        "phpstan": "phpstan analyse --configuration=/app/phpstan.dist.neon --memory-limit=2G",
         "post-install-cmd": [
             "@auto-scripts"
         ],

@@ -2,12 +2,10 @@
 <!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="/vendor/phpunit/phpunit/phpunit.xsd"
-    bootstrap="/app/vendor/autoload.php"
+    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+    bootstrap="/app/tests/bootstrap.php"
     backupGlobals="true"
-    backupStaticAttributes="true"
     cacheDirectory="/tmp/phpunit"
-    cacheResult="true"
     colors="true"
     requireCoverageMetadata="true"
     requireSealedMockObjects="true"
@@ -15,14 +13,9 @@
     stopOnDefect="true"
     stopOnError="true"
     stopOnFailure="true"
-    stopOnWarning="false"
     stopOnRisky="true"
-    stopOnDeprecation="false"
-    stopOnNotice="false"
-    stopOnSkipped="false"
     stopOnIncomplete="true"
     failOnAllIssues="true"
-    failOnEmptyTestSuite="false"
     failOnDeprecation="true"
     failOnNotice="true"
     failOnWarning="true"
@@ -31,13 +24,10 @@
     failOnRisky="true"
     beStrictAboutChangesToGlobalState="true"
     beStrictAboutOutputDuringTests="true"
-    beStrictAboutTestsThatDoNotTestAnything="true"
     beStrictAboutCoverageMetadata="true"
-    executionOrder="depends,defects,duration"
     testdox="true"
     testdoxSummary="true"
     displayDetailsOnAllIssues="true"
-    displayDetailsOnSkippedTests="false"
 >
     <php>
         <ini name="display_errors" value="1"/>
@@ -56,7 +46,7 @@
             restrictWarnings="true"
     >
         <include>
-            <directory suffix=".php">src</directory>
+            <directory>src</directory>
         </include>
         <deprecationTrigger>
             <method>Doctrine\Deprecations\Deprecation::trigger</method>
@@ -65,7 +55,6 @@
         </deprecationTrigger>
     </source>
     <coverage
-        includeUncoveredFiles="true"
         pathCoverage="true"
         ignoreDeprecatedCodeUnits="true"
         disableCodeCoverageIgnore="true"
@@ -74,9 +63,9 @@
             <clover outputFile="/app/tests/coverage/clover.xml"/>
             <cobertura outputFile="/app/tests/coverage/cobertura.xml"/>
             <crap4j outputFile="/app/tests/coverage/crap4j.xml" threshold="50"/>
-            <html outputDirectory="/app/tests/coverage/html" lowUpperBound="50" highLowerBound="90"/>
+            <html outputDirectory="/app/tests/coverage/html"/>
             <php outputFile="/app/tests/coverage/coverage.php"/>
-            <text outputFile="/app/tests/coverage/coverage.txt" showUncoveredFiles="false" showOnlySummary="true"/>
+            <text outputFile="/app/tests/coverage/coverage.txt" showOnlySummary="true"/>
             <xml outputDirectory="/app/tests/coverage/xml"/>
         </report>
     </coverage>

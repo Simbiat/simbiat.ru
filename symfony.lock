@@ -14,7 +14,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "3.0",
-            "ref": "d39a3bd844edfe90c20ae520b804a3bf4f82b4ad"
+            "ref": "7d10295408f32426bffd6e99c75c2cb0a7b823f2"
         },
         "files": [
             "config/packages/doctrine.yaml",
@@ -48,7 +48,7 @@
         ]
     },
     "phpstan/phpstan": {
-        "version": "2.2",
+        "version": "2.3",
         "recipe": {
             "repo": "github.com/symfony/recipes-contrib",
             "branch": "main",
@@ -60,7 +60,7 @@
         ]
     },
     "phpunit/phpunit": {
-        "version": "13.3",
+        "version": "13.4",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -126,7 +126,7 @@
         ]
     },
     "symfony/flex": {
-        "version": "2.11",
+        "version": "2.12",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -156,12 +156,9 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "8.1",
-            "ref": "5295b2b1ef2170b272383b2b0ae0b66702883822"
+            "ref": "3eee55306efebbd99462341126bbd4cac7cd8ba7"
         },
         "files": [
-            ".editorconfig",
-            "AGENTS.md",
-            "CLAUDE.md",
             "config/packages/cache.yaml",
             "config/packages/framework.yaml",
             "config/preload.php",
@@ -169,7 +166,9 @@
             "config/services.yaml",
             "public/index.php",
             "src/Controller/.gitignore",
-            "src/Kernel.php"
+            "src/Kernel.php",
+            ".editorconfig",
+            "AGENTS.md"
         ]
     },
     "symfony/mailer": {
@@ -178,14 +177,14 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "4.3",
-            "ref": "09051cfde49476e3c12cd3a0e44289ace1c75a4f"
+            "ref": "710cae90ab3e5d3f4a747e9ce6ae33299d7ae83b"
         },
         "files": [
             "config/packages/mailer.yaml"
         ]
     },
     "symfony/maker-bundle": {
-        "version": "1.67",
+        "version": "1.68",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -223,7 +222,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "5.0",
-            "ref": "178877daf79d2dbd62129dd03612cb1a2cb407cc"
+            "ref": "b912054fd9639f5fad62493cc24439048c2fd045"
         },
         "files": [
             "config/packages/notifier.yaml"
@@ -260,7 +259,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "7.4",
-            "ref": "c42fee7802181cdd50f61b8622715829f5d2335c"
+            "ref": "02d47835088cd548c827e5d53b3c4b361bca3390"
         },
         "files": [
             "config/packages/security.yaml",
@@ -268,12 +267,12 @@
         ]
     },
     "symfony/stimulus-bundle": {
-        "version": "3.4",
+        "version": "3.7",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "3.3",
-            "ref": "30f7461c215766d446f3c990b2b18f08ff51386e"
+            "ref": "7ce779ee74ea8d8aae6afed73e8438af5a392b30"
         },
         "files": [
             "assets/controllers.json",
@@ -309,12 +308,12 @@
         ]
     },
     "symfony/ux-turbo": {
-        "version": "3.4",
+        "version": "3.7",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "2.20",
-            "ref": "287f7c6eb6e9b65e422d34c00795b360a787380b"
+            "ref": "eaff62fc37864d355804c778309a226ae539831f"
         },
         "files": [
             "config/packages/ux_turbo.yaml"
@@ -358,7 +357,7 @@
         ]
     },
     "twig/extra-bundle": {
-        "version": "v3.24.0"
+        "version": "v3.29.0"
     },
     "vincentlanglet/twig-cs-fixer": {
         "version": "4.1",
@@ -366,7 +365,7 @@
             "repo": "github.com/symfony/recipes-contrib",
             "branch": "main",
             "version": "3.0",
-            "ref": "d42582ae1bce86fd43491d6264c738b0867f8ffe"
+            "ref": "0a2d420aa6554f632804a3f21624e16314fe8588"
         }
     }
 }

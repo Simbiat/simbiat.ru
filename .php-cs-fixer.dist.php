@@ -9,6 +9,9 @@ use PhpCsFixer\Config\RuleCustomisationPolicyInterface;
 use PhpCsFixer\Finder;
 use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 
+/**
+ * Custom exclusions for rules
+ */
 final readonly class SkipSpecificFilesPolicy implements RuleCustomisationPolicyInterface
 {
     /**

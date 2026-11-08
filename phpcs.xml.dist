@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- TODO: Monitor discussion about PER ruleset https://github.com/PHPCSStandards/PHP_CodeSniffer/issues/29 -->
 <ruleset name="Application" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="../../vendor/squizlabs/php_codesniffer/phpcs.xsd">
+         xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
 
     <description>
         PHPCS configuration for Symfony application.
@@ -28,6 +28,7 @@
     <exclude-pattern>/app/public/*</exclude-pattern>
     <exclude-pattern>/app/var/*</exclude-pattern>
     <exclude-pattern>/app/vendor/*</exclude-pattern>
+    <exclude-pattern>/app/.php-cs-fixer.dist.php</exclude-pattern>
 
     <!-- Performance -->
     <arg name="cache" value="/tmp/phpcs.cache"/>
@@ -58,7 +59,7 @@
         <exclude name="Symfony.Formatting.BlankLineBeforeReturn"/>
     </rule>
     <rule ref="Symfony.Files.AlphanumericFilename">
-        <exclude-pattern>/app/config/quality/php-cs-fixer.php</exclude-pattern>
+        <exclude-pattern>/app/.php-cs-fixer.dist.php</exclude-pattern>
     </rule>
 
     <!-- PHP compatibility -->

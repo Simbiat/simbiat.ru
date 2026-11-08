@@ -100,7 +100,7 @@ final class Kernel extends BaseKernel
      *
      * @noinspection   PhpUnusedPrivateMethodInspection -- https://youtrack.jetbrains.com/issue/WI-85841
      */
-    private static function getAllowedEnvs(): array
+    private function getAllowedEnvs(): array
     {
         return ['prod', 'dev', 'test'];
     }

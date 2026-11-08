@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c95c1abd2224089e66105fae7416998f",
+    "content-hash": "d8a875803382efec7cfbb6ab6d908eec",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -7217,72 +7217,6 @@
             "published-time": "2026-09-30T10:23:43+00:00"
         },
         {
-            "name": "symfony/process",
-            "version": "v8.1.10",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/process.git",
-                "reference": "08aa69fa0998bb65a089f9e148a2c0f8b391398e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/08aa69fa0998bb65a089f9e148a2c0f8b391398e",
-                "reference": "08aa69fa0998bb65a089f9e148a2c0f8b391398e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.4.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Process\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Executes commands in sub-processes",
-            "homepage": "https://symfony.com",
-            "support": {
-                "source": "https://github.com/symfony/process/tree/v8.1.10"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://github.com/nicolas-grekas",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2026-10-25T14:40:25+00:00",
-            "published-time": "2026-10-28T18:25:20+00:00"
-        },
-        {
             "name": "symfony/property-access",
             "version": "v8.1.11",
             "source": {
@@ -10318,16 +10252,16 @@
         },
         {
             "name": "amphp/process",
-            "version": "v2.1.1",
+            "version": "v2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/process.git",
-                "reference": "6ee0d11112a9b1338b7dc270d51f254e872c90b5"
+                "reference": "acfd64f68df5fa7f2d674c93d1986b2bf5d02770"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/process/zipball/6ee0d11112a9b1338b7dc270d51f254e872c90b5",
-                "reference": "6ee0d11112a9b1338b7dc270d51f254e872c90b5",
+                "url": "https://api.github.com/repos/amphp/process/zipball/acfd64f68df5fa7f2d674c93d1986b2bf5d02770",
+                "reference": "acfd64f68df5fa7f2d674c93d1986b2bf5d02770",
                 "shasum": ""
             },
             "require": {
@@ -10374,7 +10308,7 @@
             "homepage": "https://amphp.org/process",
             "support": {
                 "issues": "https://github.com/amphp/process/issues",
-                "source": "https://github.com/amphp/process/tree/v2.1.1"
+                "source": "https://github.com/amphp/process/tree/v2.1.2"
             },
             "funding": [
                 {
@@ -10382,8 +10316,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-01T22:46:42+00:00",
-            "published-time": "2026-11-01T22:48:18+00:00"
+            "time": "2026-11-07T16:33:32+00:00",
+            "published-time": "2026-11-07T16:36:48+00:00"
         },
         {
             "name": "amphp/serialization",
@@ -14181,12 +14115,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "7252ec7fc650313ca2c1ecc1e556da38d93acd56"
+                "reference": "a09945ae024a4cb2be97d080558455b979e3f743"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/7252ec7fc650313ca2c1ecc1e556da38d93acd56",
-                "reference": "7252ec7fc650313ca2c1ecc1e556da38d93acd56",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/a09945ae024a4cb2be97d080558455b979e3f743",
+                "reference": "a09945ae024a4cb2be97d080558455b979e3f743",
                 "shasum": ""
             },
             "conflict": {
@@ -14831,6 +14765,7 @@
                 "pagarme/pagarme-php": "<3",
                 "pagekit/pagekit": "<=1.0.18",
                 "paragonie/ecc": "<2.0.1",
+                "paragonie/halite": ">=5,<5.1.5",
                 "paragonie/random_compat": "<2",
                 "paragonie/sodium_compat": "<1.24.1|>=2,<2.5.1",
                 "passbolt/passbolt_api": "<4.6.2",
@@ -15347,8 +15282,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-05T19:32:52+00:00",
-            "published-time": "2026-11-05T19:32:58+00:00"
+            "time": "2026-11-07T01:38:18+00:00",
+            "published-time": "2026-11-07T01:38:22+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -17402,6 +17337,72 @@
             "published-time": "2026-05-26T13:40:34+00:00"
         },
         {
+            "name": "symfony/process",
+            "version": "v8.1.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/process.git",
+                "reference": "08aa69fa0998bb65a089f9e148a2c0f8b391398e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/process/zipball/08aa69fa0998bb65a089f9e148a2c0f8b391398e",
+                "reference": "08aa69fa0998bb65a089f9e148a2c0f8b391398e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.4.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Process\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Executes commands in sub-processes",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/process/tree/v8.1.10"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-10-25T14:40:25+00:00",
+            "published-time": "2026-10-28T18:25:20+00:00"
+        },
+        {
             "name": "symfony/web-profiler-bundle",
             "version": "v8.1.11",
             "source": {
@@ -17576,16 +17577,16 @@
         },
         {
             "name": "vimeo/psalm",
-            "version": "6.20.9",
+            "version": "6.20.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vimeo/psalm.git",
-                "reference": "f67170ac3c3b931f5088681e21d6c8babc601c08"
+                "reference": "7fc81490f861c801061836a9010603d2393bf8da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vimeo/psalm/zipball/f67170ac3c3b931f5088681e21d6c8babc601c08",
-                "reference": "f67170ac3c3b931f5088681e21d6c8babc601c08",
+                "url": "https://api.github.com/repos/vimeo/psalm/zipball/7fc81490f861c801061836a9010603d2393bf8da",
+                "reference": "7fc81490f861c801061836a9010603d2393bf8da",
                 "shasum": ""
             },
             "require": {
@@ -17690,8 +17691,8 @@
                 "issues": "https://github.com/vimeo/psalm/issues",
                 "source": "https://github.com/vimeo/psalm"
             },
-            "time": "2026-11-04T18:28:08+00:00",
-            "published-time": "2026-11-05T00:42:43+00:00"
+            "time": "2026-11-07T16:49:18+00:00",
+            "published-time": "2026-11-07T17:27:01+00:00"
         },
         {
             "name": "vincentlanglet/twig-cs-fixer",

@@ -30,13 +30,13 @@ final class Maintain
         try {
             $result = new Argon()->calc();
             if (\count($result) === 0) {
-                $output->writeln('Failed to set Argon settings');
+                $output->writeln('Failed to calculate Argon settings');
 
                 return Command::FAILURE;
             }
 
             foreach ($result as $key => $value) {
-                $output->writeln("Argon setting {$key}: {$value}");
+                $output->writeln("Argon setting $key: $value");
             }
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable, cli: true);

@@ -104,5 +104,5 @@ return RectorConfig::configure()
                    )
                    ->withAttributesSets(symfony: true, doctrine: true, phpunit: true)
                    ->withTreatClassesAsFinal()
-                   ->withPHPStanConfigs(['/app/config/quality/phpstan.neon'])
+                   ->withPHPStanConfigs(['/app/phpstan.dist.neon'])
                    ->withSymfonyContainerPhp('/app/var/cache/dev/App_KernelDevDebugContainer.php');

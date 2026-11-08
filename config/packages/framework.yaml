@@ -1,0 +1,22 @@
+# TODO: Need to review possible settings, that could benefit from not using default values
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    secret: '%env(APP_SECRET)%'
+
+    # Note that the session will be started ONLY if you read or write from it.
+    session: true
+
+    #esi: true
+    #fragments: true
+
+    http_cache:
+        # Specifies whether the client can force a cache reload by including a Cache-Control "no-cache" directive in the request. Set it to true for compliance with RFC 2616.
+        allow_reload: true
+        # Specifies whether the client can force a cache revalidate by including a Cache-Control "max-age=0" directive in the request. Set it to true for compliance with RFC 2616.
+        allow_revalidate: true
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file
