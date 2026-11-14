@@ -233,6 +233,7 @@ touch "${DEPLOY_ARTIFACTS_DIR}/empty.ini"
 #docker compose -f ./compose.yaml -f ./compose.predeploy.yaml run --rm --no-deps \
 #    --entrypoint="" "$SVC_FRANKENPHP" sh
 #exit
+rm -rf "${LOCAL_PROJECT_ROOT}/data/temp/opcache/*"
 docker compose -f ./compose.yaml -f ./compose.predeploy.yaml run --rm --no-deps \
     --entrypoint="" "$SVC_FRANKENPHP" sh -c 'update-ca-certificates && composer install --no-dev --optimize-autoloader && ./bin/console dotenv:dump prod' \
     || fail "Build failed on DEV."
