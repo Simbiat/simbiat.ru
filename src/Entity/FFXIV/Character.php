@@ -13,6 +13,7 @@ use App\Service\Config;
 use App\Service\Errors;
 use App\Service\Images;
 use App\Service\Sanitization;
+use App\Service\Search\Threads;
 use Simbiat\Cron\TaskInstance;
 use Simbiat\Database\Query;
 use Simbiat\FFXIV\Lodestone;
@@ -43,6 +44,8 @@ final class Character extends AbstractEntity
     public array $grand_company = [];
 
     public array $groups = [];
+
+    public array $threads = [];
 
     public array $jobs = [];
 
@@ -259,10 +262,16 @@ final class Character extends AbstractEntity
             $data['friends'] = Query::query("SELECT 'character' AS `type`, `outer`.`friend` AS `id`, `ffxiv__character`.`name` AS `name`, `avatar` AS `icon`, `current`, EXISTS(SELECT `character_id` FROM `ffxiv__character_friends` WHERE `ffxiv__character_friends`.`character_id`=`outer`.`friend` AND `ffxiv__character_friends`.`friend`=`outer`.`character_id` AND `ffxiv__character_friends`.`current`=`outer`.`current`) AS `mutual`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`) AS `user_id`, NULL AS `rank_id` FROM `ffxiv__character_friends` AS `outer` LEFT JOIN `ffxiv__character` ON `outer`.`friend`=`ffxiv__character`.`character_id` WHERE `outer`.`character_id`=:id", [':id' => $this->id], return: 'all');
             // Get characters being followed by the character
             $data['following'] = Query::query("SELECT 'character' AS `type`, `outer`.`following` AS `id`, `ffxiv__character`.`name` AS `name`, `avatar` AS `icon`, `current`, EXISTS(SELECT `character_id` FROM `ffxiv__character_following` WHERE `ffxiv__character_following`.`character_id`=`outer`.`following` AND `ffxiv__character_following`.`following`=`outer`.`character_id` AND `ffxiv__character_following`.`current`=`outer`.`current`) AS `mutual`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`) AS `user_id`, NULL AS `rank_id` FROM `ffxiv__character_following` AS `outer` LEFT JOIN `ffxiv__character` ON `outer`.`following`=`ffxiv__character`.`character_id` WHERE `outer`.`character_id`=:id", [':id' => $this->id], return: 'all');
+            // Threads created for the character
+            //$data['threads'] = Query::query('SELECT `talks__threads`.`thread_id` as `id`, \'Support\' as `detailed_type`,  `talks__threads`.`name`, `created`, `published`, `pinned`, `closed`, `private`, `author`, `last_poster`, `last_post`, `posts` FROM `ffxiv__character_threads` RIGHT JOIN `talks__threads` ON `talks__threads`.`thread_id` = `ffxiv__character_threads`.`thread_id` WHERE `character_id`=:id;', [':id' => $this->id], return: 'all');
+            $data['threads'] = new Threads([':id' => $this->id], '`talks__threads`.`private`=0 AND `talks__threads`.`thread_id` IN (SELECT `thread_id` FROM `ffxiv__character_threads` WHERE `character_id`=:id)', '`last_post` DESC, `name` ASC')->listEntities();
+            foreach ($data['threads']['entities'] as &$thread) {
+                $thread['posts'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], strict: true) ? '' : ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)').';', [':thread_id' => [$thread['id'], 'int']], return: 'count');
+            }
             // Get affiliated groups' details
             $data['groups'] = AbstractEntity::cleanCrestResults(
                 Query::query(
-                    /* @lang SQL */
+                /* @lang SQL */
                     '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `current`, `ffxiv__freecompany_character`.`rank_id`, `ffxiv__freecompany_rank`.`rankname` AS `rank`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id)
                             UNION ALL
                             (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`ls_id` AS `id`, `ffxiv__linkshell`.`name` AS `name`, `current`, `ffxiv__linkshell_character`.`rank_id`, `ffxiv__linkshell_rank`.`rank` AS `rank`, NULL AS `crest_part_1`, NULL AS `crest_part_2`, NULL AS `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rank_id`=`ffxiv__linkshell_rank`.`ls_rank_id` WHERE `character_id`=:id)
@@ -376,6 +385,7 @@ final class Character extends AbstractEntity
         $this->achievement_points = $from_db['achievement_points'] ?? 0;
         $this->jobs = $from_db['jobs'] ?? [];
         $this->red_flags = $from_db['red_flags'] ?? [];
+        $this->threads = $from_db['threads']['entities'] ?? [];
     }
 
     /**
@@ -788,6 +798,8 @@ final class Character extends AbstractEntity
                 'DELETE FROM `ffxiv__character_servers` WHERE `character_id`=:character_id;',
                 // Remove from stalkers list
                 'DELETE FROM `ffxiv__red_flags` WHERE `character_id`=:character_id;',
+                // Remove links to threads
+                'DELETE FROM `ffxiv__character_threads` WHERE `character_id`=:character_id;',
                 // Remove linked character
                 'DELETE FROM `uc__user_to_ff_character` WHERE `character_id` = :character_id;',
                 // Nullify the avatars

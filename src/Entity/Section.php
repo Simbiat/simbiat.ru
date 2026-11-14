@@ -582,8 +582,7 @@ final class Section extends Entity
                 // If we have a blog or changelog - order by creation date, if we have a forum or support - by update date, if a knowledgebase - by name
                 $order_by = match ($data['detailed_type']) {
                     'Blog', 'Changelog' => '`published` DESC, `last_post` DESC, `name` ASC',
-                    'Forum' => '`last_post` DESC, `name` ASC',
-                    'Support' => '`talks__threads`.`closed` IS NOT NULL, `last_post` DESC, `name` ASC',
+                    'Forum', 'Support' => '`last_post` DESC, `name` ASC',
                     'Knowledgebase' => '`name` ASC',
                 };
                 // If the user is not an admin, also limit the selection to non-private threads or those created by the user
@@ -597,7 +596,7 @@ final class Section extends Entity
                     )
                     && $_SESSION['user_id'] === SystemUser::Unknown->value
                 ) {
-                    $where .= ' AND (`talks__threads`.`author`!=:anonymous OR (`talks__threads`.`author`=:anonymous AND `talks__threads`.`private`=0 AND `talks__threads`.`closed` IS NOT NULL))';
+                    $where .= ' AND (`talks__threads`.`author`!=:anonymous OR (`talks__threads`.`author`=:anonymous AND `talks__threads`.`private`=0))';
                     $bindings[':anonymous'] = [SystemUser::Unknown->value, 'int'];
                 }
 
@@ -639,7 +638,7 @@ final class Section extends Entity
                     )
                     && $_SESSION['user_id'] === SystemUser::Unknown->value
                 ) {
-                    $where .= '`t`.`author`!=:anonymous AND ';
+                    $where .= '(`t`.`author`!=:anonymous OR (`t`.`author`=:anonymous AND `t`.`private`=0)) AND ';
                     $bindings[':anonymous'] = [SystemUser::Unknown->value, 'int'];
                 }
 

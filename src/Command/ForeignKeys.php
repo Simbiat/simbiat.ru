@@ -44,17 +44,20 @@ final class ForeignKeys
             if (Config::$dbup) {
                 // TODO Actually write queries for this
                 // Logs
-                Query::query('DELETE FROM `sys__logs` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(LogType::class), 'in', 'int']]);
-                Query::query('UPDATE `sys__logs` SET `user_id`=:user_id WHERE `user_id` NOT IN (SELECT `user_id` FROM `uc__users`);', [':user_id' => SystemUser::Unknown->value]);
+                (void) Query::query('DELETE FROM `sys__logs` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(LogType::class), 'in', 'int']]);
+                (void) Query::query('UPDATE `sys__logs` SET `user_id`=:user_id WHERE `user_id` NOT IN (SELECT `user_id` FROM `uc__users`);', [':user_id' => SystemUser::Unknown->value]);
                 // Notification types
-                Query::query('DELETE FROM `sys__notifications` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(NotificationType::class), 'in', 'int']]);
+                (void) Query::query('DELETE FROM `sys__notifications` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(NotificationType::class), 'in', 'int']]);
                 // Unsupported section types
-                Query::query('DELETE FROM `talks__sections` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(TalkType::class), 'in', 'int']]);
+                (void) Query::query('DELETE FROM `talks__sections` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(TalkType::class), 'in', 'int']]);
                 // BIC restrictions
-                Query::query('DELETE FROM `bic__acc_rstr` WHERE `AccRstr` NOT IN (:types);', [':types' => [Converters::enumValues(AccRstrType::class), 'in', 'string']]);
-                Query::query('DELETE FROM `bic__bic_rstr` WHERE `Rstr` NOT IN (:types);', [':types' => [Converters::enumValues(RstrType::class), 'in', 'string']]);
+                (void) Query::query('DELETE FROM `bic__acc_rstr` WHERE `AccRstr` NOT IN (:types);', [':types' => [Converters::enumValues(AccRstrType::class), 'in', 'string']]);
+                (void) Query::query('DELETE FROM `bic__bic_rstr` WHERE `Rstr` NOT IN (:types);', [':types' => [Converters::enumValues(RstrType::class), 'in', 'string']]);
                 // Stalkers for non-existent characters
-                Query::query('DELETE FROM `ffxiv__stalkers` WHERE `character_id` NOT IN (SELECT `character_id` FROM `ffxiv__character`);');
+                (void) Query::query('DELETE FROM `ffxiv__red_flags` WHERE `character_id` NOT IN (SELECT `character_id` FROM `ffxiv__character`);');
+                // Character threads
+                (void) Query::query('DELETE FROM `ffxiv__character_threads` WHERE `character_id` NOT IN (SELECT `character_id` FROM `ffxiv__character`);');
+                (void) Query::query('DELETE FROM `ffxiv__character_threads` WHERE `thread_id` NOT IN (SELECT `thread_id` FROM `talks__threads`);');
             }
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable, cli: true);

@@ -17,6 +17,9 @@
             {% if character.achievements|length > 0 %}
                 <a class="tab_name" role="tab" id="tab_name_achievements" href="#tab_name_achievements" aria-controls="tab_content_achievements"><span>Achievements</span></a>
             {% endif %}
+            {% if character.threads|length > 0 %}
+                <a class="tab_name" role="tab" id="tab_name_threads" href="#tab_name_threads" aria-controls="tab_content_threads"><span>Threads</span></a>
+            {% endif %}
             {% if character.red_flags|length > 0 %}
                 <a class="tab_name danger" role="tab" id="tab_name_red_flags" href="#tab_name_red_flags" aria-controls="tab_content_red_flags"><span>Red Flags</span></a>
             {% endif %}
@@ -273,10 +276,30 @@
             </div>
         {% endif %}
     {% endif %}
+    {% if character.threads|length > 0 %}
+        <div class="tab_content" id="tab_content_threads" role="tabpanel" aria-labelledby="tab_name_threads">
+            <table id="threads_list">
+                <caption class="hidden">Threads</caption>
+                <thead>
+                    <tr>
+                        <th>Thread name</th>
+                        <th>Published</th>
+                        <th>Last post</th>
+                        <th>Posts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for thread in character.threads %}
+                        {{ include('talks/rows/thread.html.twig', {thread: thread, permissions: session_data.permissions}, with_context: false) }}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
     {% if character.red_flags|length > 0 %}
         <div class="tab_content" id="tab_content_red_flags" role="tabpanel" aria-labelledby="tab_name_red_flags">
             <p>
-                Below you can find "<span class="error">red flags</span>" that were identified for this character. While not conclusive, they may indicate the character being used or involved in malicious actions.This can include stalking through exposing of in-game information circumventing Lodestone limitations.
+                Below you can find "<span class="error">red flags</span>" that were identified for this character. While not conclusive, they may indicate the character being used or involved in malicious actions.This can include stalking through exposing of in-game information circumventing Lodestone limitations.{% if character.threads|length > 0 %} Check <a href="#tab_name_threads"><span>threads</span></a> related to the character in case there were discussions about these red flags. {% endif %}
             </p>
             {% if character.red_flags.echo_takedown %}
                 <h2>EchoVault Takedown</h2>
