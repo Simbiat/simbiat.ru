@@ -97,7 +97,7 @@ USER frankenphp
 FROM base AS dev
 
 # Extensions only for DEV
-RUN install-php-extensions xdebug pcov tokenizer
+RUN install-php-extensions xdebug tokenizer
 
 # unzip and git are requried for Composer
 RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install unzip git&&apt-get -y autoremove&&apt-get clean

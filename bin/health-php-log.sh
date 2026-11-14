@@ -16,7 +16,7 @@ trap cleanup EXIT
 
 if [[ -f "${ERROR_LOG}" ]]; then
     if [[ ! -f "$FLAG_FILE" ]]; then
-        head -n 100 "$ERROR_LOG" > "$LOG_EXCERPT"
+        head -n 100 "$ERROR_LOG" | head -c 50000 > "$LOG_EXCERPT"
         /etc/supercronic/bin/send-mail.sh "[Alert] Error log found" \
             "$(printf 'A PHP error log was found. It is recommended to check what failed and fix the errors.\n\nFirst 100 lines of the log:\n\n%s' \
                 "$(<"$LOG_EXCERPT")")" \

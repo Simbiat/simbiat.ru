@@ -17,7 +17,6 @@
       <option name="LOOK_ROOT_NS_UP" value="true" />
     </inspection_tool>
     <inspection_tool class="ClassOverridesFieldOfSuperClassInspection" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="CompactCanBeUsedInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="CompositionAndInheritanceInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="FORCE_FINAL_OR_ABSTRACT" value="true" />
     </inspection_tool>
@@ -470,6 +469,10 @@
       <option name="m_ignoreCatchBlocksWithComments" value="false" />
     </inspection_tool>
     <inspection_tool class="UnusedDefine" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnusedFunctionResultInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="REPORT_MIXED_TYPE" value="true" />
+      <option name="REPORT_FLUENT_INTERFACES" value="true" />
+    </inspection_tool>
     <inspection_tool class="UsingInclusionReturnValueInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="XHTMLIncompatabilitiesJS" enabled="true" level="WARNING" enabled_by_default="true" />
   </profile>

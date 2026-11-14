@@ -45,15 +45,6 @@ final readonly class SkipSpecificFilesPolicy implements RuleCustomisationPolicyI
                 '/app/packages/SandClock/SandClock.php',
                 '/app/packages/Cron/TaskInstance.php',
             ]),
-            'heredoc_to_nowdoc' => $skip_for_files([
-                '/app/packages/Sniffs/tests/SQL.php',
-            ]),
-            'no_alias_language_construct_call' => $skip_for_files([
-                '/app/packages/Sniffs/tests/Others.php',
-            ]),
-            'psr_autoloading' => $skip_for_files([
-                '/app/packages/Sniffs/tests/MultiByte.php',
-            ]),
         ];
     }
 }
@@ -166,7 +157,7 @@ return new Config()
         'fopen_flags' => ['b_mode' => true],
         // `true` is set by Symfony, but this conflicts with PHPStorm's logic, and there is no way to control it there
         'statement_indentation' => ['stick_comment_to_next_continuous_control_statement' => false],
-        'phpdoc_to_comment' => ['ignored_tags' => ['psalm-suppress']],
+        'phpdoc_to_comment' => ['allow_before_return_statement' => true, 'ignored_tags' => ['psalm-suppress']],
     ])
     ->setRuleCustomisationPolicy(new \SkipSpecificFilesPolicy())
     ->setFinder(

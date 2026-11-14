@@ -30,7 +30,6 @@
             <file name="/app/config/reference.php"/>
             <directory name="/app/node_modules"/>
             <directory name="/app/packages/DDCIcons/icons"/>
-            <directory name="/app/packages/Sniffs/tests"/>
             <directory name="/app/public"/>
             <directory name="/app/var"/>
             <directory name="/app/vendor"/>
@@ -49,11 +48,23 @@
         </PossiblyUndefinedGlobalVariable>
         <!-- Seems to be producing false-positives for some static methods, no clear pattern observed  -->
         <PossiblyUnusedMethod errorLevel="suppress"/>
-        <!-- Below rules produce frequent false-positives when skipping arguments or sometimes even without obvious explanation. Similar rules seem to be working fine on PHPStan level, though  -->
+        <!-- Duplicates PHPStan's `missingType.checkedException`, sometimes finds ghost exceptions and the autofix for this is inconsistent -->
+        <MissingThrowsDocblock errorLevel="suppress"/>
+        <!-- Duplicates PHPStan's `offsetAccess.notFound` -->
+        <PossiblyUndefinedIntArrayOffset errorLevel="suppress"/>
+        <!-- Duplicates PHPStan's `offsetAccess.notFound` -->
+        <InvalidArrayOffset errorLevel="suppress"/>
+        <!-- Duplicates SlevomatCodingStandard.Variables.UnusedVariable, has no control over unused array values -->
+        <UnusedForeachValue errorLevel="suppress"/>
+        <!-- Below rules duplicate PHPStan rules and produce frequent false-positives when skipping arguments or sometimes even without obvious explanation.  -->
         <PossiblyInvalidArgument errorLevel="suppress"/>
         <InvalidReturnType errorLevel="suppress"/>
         <InvalidReturnStatement errorLevel="suppress"/>
         <MixedReturnTypeCoercion errorLevel="suppress"/>
+        <MixedAssignment errorLevel="suppress"/>
+        <MixedArrayAccess errorLevel="suppress"/>
+        <InvalidArgument errorLevel="suppress"/>
+        <MixedArgument errorLevel="suppress"/>
     </issueHandlers>
     <fileExtensions>
         <extension name=".php"/>

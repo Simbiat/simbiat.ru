@@ -5,6 +5,7 @@ services:
       target: dev
     environment:
       APP_ENV: dev
+      PHP_CS_FIXER_FUTURE_MODE: 1
     volumes:
       #PHPStorm's integrations require `/opt` to be persistent
       - ./data/temp:/opt:rw

@@ -1,0 +1,24 @@
+{
+    "$schema": "/app/vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": [
+            "/app/packages",
+            "/app/src"
+        ]
+    },
+    "timeout": 10,
+    "logs": {
+        "html": "/app/var/log/tests/infection.html",
+        "text": "/app/var/log/tests/infection.log"
+    },
+    "bootstrap": "/app/tests/bootstrap.php",
+    "phpUnit": {
+        "configDir": "/app"
+    },
+    "phpStan": {
+        "configDir": "/app"
+    },
+    "mutators": {
+        "@default": true
+    }
+}

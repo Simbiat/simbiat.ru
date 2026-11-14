@@ -29,12 +29,17 @@ parameters:
         - /app/data
         - /app/node_modules
         - /app/packages/DDCIcons/icons
-        - /app/packages/Sniffs/tests
         - /app/public
         - /app/var
         - /app/vendor
     fileExtensions:
         - php
+    ignoreErrors:
+        # `inVoidCast` rules conflict EA, since they expect `(void)` only for methods with `#[\NoDiscard]`. Adding `(void)` to other methods is benign and helps to show intent.
+        -
+            identifier: function.inVoidCast
+        -
+            identifier: staticMethod.inVoidCast
     parallel:
         jobSize: 20
         maximumNumberOfProcesses: 8

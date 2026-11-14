@@ -124,7 +124,7 @@ node_modules
 dist
 .cache
 
-# PHPStorm settings, that were previously ignored
+# PhpStorm settings, that were previously ignored
 #/.idea/.gitignore
 #/.idea/htdocs.iml
 #/.idea/modules.xml
@@ -136,13 +136,16 @@ dist
 # Composer authentication file
 auth.json
 
-#Some DDL files should be ignored due to sensetive data
+# Some DDL files should be ignored due to sensitive data
 /build/DDL/000-create_users.sql
 /build/DDL/999-Z-Admin.sql
 /build/DDL/000-optimization_commands.txt
+# Some DDLs are handled by libraries, so exclude them to not duplicate
+/build/DDL/*cron__*
+/build/DDL/*maintainer__*
 # File to store SQL changes yet to be applied to PROD
 /build/toupdateonprod.sql
-#Some useful local commands for maintanence purposes
+#Some useful local commands for maintenance purposes
 /build/useful.cmd
 #Environment variables should not be included
 /.env

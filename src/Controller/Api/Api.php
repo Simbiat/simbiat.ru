@@ -244,12 +244,12 @@ abstract class Api
 }';
             }
 
-            Sorters::recursiveSort($result, key: true, desc: false, sort_flag: \SORT_NATURAL);
+            Sorters::recursiveSort($result, key: true, sort_flag: \SORT_NATURAL);
 
             return $result;
         }
 
-        Sorters::recursiveSort($data, key: true, desc: false, sort_flag: \SORT_NATURAL);
+        Sorters::recursiveSort($data, key: true, sort_flag: \SORT_NATURAL);
 
         return $data;
     }

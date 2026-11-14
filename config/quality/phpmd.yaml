@@ -31,6 +31,7 @@ rules:
             - ExcessiveMethodLength
             - NPathComplexity
             - ExcessiveClassComplexity
+            - TooManyFields
     -   ref: rulesets/controversial.xml
         exclude:
             - CamelCaseVariableName
@@ -45,3 +46,6 @@ rules:
             - ShortVariable
             - LongVariable
     -   ref: rulesets/unusedcode.xml
+        exclude:
+            # Duplicates SlevomatCodingStandard.Variables.UnusedVariable, has no control over unused array values
+            - UnusedLocalVariable

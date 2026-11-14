@@ -10,11 +10,7 @@
     requireCoverageMetadata="true"
     requireSealedMockObjects="true"
     processIsolation="true"
-    stopOnDefect="true"
-    stopOnError="true"
-    stopOnFailure="true"
-    stopOnRisky="true"
-    stopOnIncomplete="true"
+    requireCoverageContribution="true"
     failOnAllIssues="true"
     failOnDeprecation="true"
     failOnNotice="true"
@@ -36,8 +32,11 @@
         <server name="SHELL_VERBOSITY" value="-1"/>
     </php>
     <testsuites>
-        <testsuite name="Project Test Suite">
+        <testsuite name="Main">
             <directory>tests</directory>
+        </testsuite>
+        <testsuite name="Sniffs">
+            <directory>packages/Sniffs/tests</directory>
         </testsuite>
     </testsuites>
     <source ignoreSuppressionOfDeprecations="true"
@@ -46,33 +45,34 @@
             restrictWarnings="true"
     >
         <include>
+            <directory>packages</directory>
             <directory>src</directory>
         </include>
+        <exclude>
+            <directory>packages/*/tests</directory>
+        </exclude>
         <deprecationTrigger>
             <method>Doctrine\Deprecations\Deprecation::trigger</method>
             <method>Doctrine\Deprecations\Deprecation::delegateTriggerToBackend</method>
             <function>trigger_deprecation</function>
         </deprecationTrigger>
     </source>
+    <!-- After some deliberation it was decided to keep pathCoverage="false" (default) due to low benefit at the cost of high resources to bring it even close to 100% -->
     <coverage
-        pathCoverage="true"
         ignoreDeprecatedCodeUnits="true"
         disableCodeCoverageIgnore="true"
     >
         <report>
-            <clover outputFile="/app/tests/coverage/clover.xml"/>
-            <cobertura outputFile="/app/tests/coverage/cobertura.xml"/>
-            <crap4j outputFile="/app/tests/coverage/crap4j.xml" threshold="50"/>
-            <html outputDirectory="/app/tests/coverage/html"/>
-            <php outputFile="/app/tests/coverage/coverage.php"/>
-            <text outputFile="/app/tests/coverage/coverage.txt" showOnlySummary="true"/>
-            <xml outputDirectory="/app/tests/coverage/xml"/>
+            <html outputDirectory="/app/var/log/tests/coverage/html"/>
+            <!-- This can be useful for analysis by LLMs -->
+            <php outputFile="/app/var/log/tests/coverage/coverage.php"/>
+            <!-- Required for Infection -->
+            <xml outputDirectory="/app/var/log/tests/coverage/infection/coverage-xml"/>
         </report>
     </coverage>
     <logging>
-        <junit outputFile="/app/tests/logs/junit.xml"/>
-        <teamcity outputFile="/app/tests/logs/teamcity.txt"/>
-        <testdoxHtml outputFile="/app/tests/logs/testdox.html"/>
-        <testdoxText outputFile="/app/tests/logs/testdox.txt"/>
+        <testdoxHtml outputFile="/app/var/log/tests/phpunit.html"/>
+        <!-- Required for Infection -->
+        <junit outputFile="/app/var/log/tests/coverage/infection/junit.xml"/>
     </logging>
 </phpunit>

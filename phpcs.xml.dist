@@ -79,14 +79,10 @@
     <!-- Useful modern strictness -->
 
     <rule ref="Generic.PHP.DisallowShortOpenTag"/>
-    <rule ref="Generic.CodeAnalysis.EmptyStatement">
-        <exclude-pattern>/app/packages/Sniffs/tests</exclude-pattern>
-    </rule>
+    <rule ref="Generic.CodeAnalysis.EmptyStatement"/>
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
 
-    <rule ref="Squiz.PHP.CommentedOutCode">
-        <exclude-pattern>/app/packages/Sniffs/tests</exclude-pattern>
-    </rule>
+    <rule ref="Squiz.PHP.CommentedOutCode"/>
 
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
         <!-- Duplicates Symfony.Whitespace.DiscourageFitzinator.Invalid -->
@@ -122,6 +118,10 @@
         <exclude name="SlevomatCodingStandard.TypeHints.NullTypeHintOnLastPosition"/>
         <!-- Prevents alignment in constructor promotions -->
         <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHintSpacing"/>
+        <!-- Duplicates PHPStan's missingType.iterableValue -->
+        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification"/>
+        <!-- Duplicates PHPStan's missingType.iterableValue -->
+        <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification"/>
     </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
         <properties>
@@ -185,6 +185,8 @@
         <exclude name="SlevomatCodingStandard.Classes.ClassStructure"/>
         <!-- This can legitimately break things, if a constant is overridden by child classes. It can indicate potential issues, though, so excluding only from BF. -->
         <exclude phpcbf-only="true" name="SlevomatCodingStandard.Classes.DisallowLateStaticBindingForConstants"/>
+        <!-- Conflicts Generic.NamingConventions.TraitNameSuffix -->
+        <exclude name="SlevomatCodingStandard.Classes.SuperfluousTraitNaming"/>
     </rule>
     <rule ref="SlevomatCodingStandard.Classes.TraitUseSpacing">
         <properties>
@@ -255,6 +257,11 @@
 
     <!-- Variables -->
     <rule ref="SlevomatCodingStandard.Variables"/>
+    <rule ref="SlevomatCodingStandard.Variables.UnusedVariable">
+        <properties>
+            <property name="ignoreUnusedValuesWhenOnlyKeysAreUsedInForeach" value="true"/>
+        </properties>
+    </rule>
 
     <!-- Arrays -->
     <rule ref="SlevomatCodingStandard.Arrays"/>
@@ -342,6 +349,7 @@
                 <element key="packages/QARunner" value="Simbiat\QARunner"/>
                 <element key="packages/SandClock" value="Simbiat"/>
                 <element key="packages/Sniffs/Simbiat" value="Simbiat"/>
+                <element key="packages/Sniffs/tests" value="Simbiat\Sniffs\Tests"/>
                 <element key="packages/StringHelpers" value="Simbiat\StringHelpers"/>
             </property>
         </properties>
@@ -360,6 +368,11 @@
         <!-- Conflicts rules that require a PHPDoc -->
         <exclude name="SlevomatCodingStandard.Commenting.UselessInheritDocComment"/>
     </rule>
+    <rule ref="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration">
+        <properties>
+            <property name="allowDocCommentAboveReturn" value="true"/>
+        </properties>
+    </rule>
     <!-- This is mostly for the sake of standardization -->
     <rule ref="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment"/>
     <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing">
@@ -375,6 +388,8 @@
         <exclude name="SlevomatCodingStandard.PHP.RequireExplicitAssertion.RequiredExplicitAssertion"/>
         <!-- Duplicates Universal.Lists.DisallowLongListSyntax -->
         <exclude name="SlevomatCodingStandard.PHP.ShortList"/>
+        <!-- Reacts to some cases, where parentheses helps ensure the intended order. For example, `$task['message'] ?? ($task['task'].' starting')` -->
+        <exclude name="SlevomatCodingStandard.PHP.UselessParentheses"/>
     </rule>
     <rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces">
         <properties>
@@ -382,11 +397,6 @@
             <property name="ignoreSpacesInAnnotation" value="true"/>
             <!-- Allow alignment in constructor promotions -->
             <property name="ignoreSpacesInParameters" value="true"/>
-        </properties>
-    </rule>
-    <rule ref="SlevomatCodingStandard.PHP.UselessParentheses">
-        <properties>
-            <property name="enableCheckAroundNew" value="true"/>
         </properties>
     </rule>
 
@@ -441,9 +451,7 @@
 
     <!-- My own sniffs -->
     <rule ref="/app/packages/Sniffs/Simbiat/ruleset.xml"/>
-    <rule ref="Simbiat">
-        <exclude-pattern>/app/packages/Sniffs/tests/*</exclude-pattern>
-    </rule>
+    <rule ref="Simbiat"/>
     <rule ref="Simbiat.SQL.DateTimeFunctions">
         <properties>
             <property name="precision" value="6"/>

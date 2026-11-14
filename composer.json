@@ -7,7 +7,6 @@
         "ext-yaml is used as suggestion for matomo/device-detector",
         "ext-maxminddb is used to speed-up geoip2/geoip2",
         "ext-pcntl and ext-xdebug are used by PHPUnit",
-        "ext-pcov is recommended for line coverage in PHPUnit",
         "",
         "below suggestions should be ignored:",
         "league/uri suggests:",
@@ -42,7 +41,10 @@
         "ext-deepclone, since not using the library, as far as I know (not directly, at least). May be required in future for VarExporter",
         "",
         "psr/link suggests:",
-        "fig/link-util, since not using the library, as far as I know (not directly, at least)"
+        "fig/link-util, since not using the library, as far as I know (not directly, at least)",
+        "",
+        "phpunit/phpunit suggests:",
+        "ext-pcov, since covered by xdebug"
     ],
     "authors": [
         {
@@ -60,6 +62,11 @@
             "./config"
         ]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Simbiat\\Sniffs\\Tests\\": "./packages/Sniffs/tests"
+        }
+    },
     "config": {
         "sort-packages": true,
         "store-auths": true,
@@ -70,6 +77,7 @@
         "process-timeout": 900,
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
+            "infection/extension-installer": true,
             "php-http/discovery": true,
             "symfony/flex": true,
             "symfony/runtime": true
@@ -109,8 +117,8 @@
     "name": "simbiat/simbiat.ru",
     "prefer-stable": true,
     "require": {
-        "doctrine/dbal": "^4.5.0",
-        "doctrine/doctrine-bundle": "^3.3.4",
+        "doctrine/dbal": "^4.5.1",
+        "doctrine/doctrine-bundle": "^3.4.1",
         "doctrine/doctrine-migrations-bundle": "^4.0.1",
         "doctrine/orm": "^3.7.6",
         "ext-apcu": "*",
@@ -198,7 +206,7 @@
         "symfony/web-link": "^8.1",
         "symfony/yaml": "^8.1.11",
         "tinify/tinify": "^1.7.0",
-        "tinymce/tinymce": "^8.10.1",
+        "tinymce/tinymce": "^8.10.2",
         "twig/cssinliner-extra": "^3.26",
         "twig/extra-bundle": "^3.29",
         "twig/twig": "^3.29"
@@ -208,10 +216,12 @@
         "escapestudios/symfony2-coding-standard": "^3.18",
         "ext-igbinary": "*",
         "ext-pcntl": "*",
-        "ext-pcov": "*",
         "ext-tokenizer": "*",
         "ext-xdebug": "*",
-        "friendsofphp/php-cs-fixer": "^3.95.29",
+        "friendsofphp/php-cs-fixer": "^3.95.30",
+        "infection/infection": ">=0.35.10",
+        "jetbrains/phpstorm-attributes": "^1.3",
+        "jetbrains/phpstorm-stubs": "^2026.3",
         "pdepend/pdepend": "3.x-dev@dev",
         "phildaiguille/twig-a11y-rules": "^1.0.1",
         "phpcompatibility/php-compatibility": "^10@dev",
@@ -221,10 +231,10 @@
         "phpstan/phpdoc-parser": "^2.4.1",
         "phpstan/phpstan": "^2.3.5",
         "phpstan/phpstan-deprecation-rules": "^2.0.5",
-        "phpstan/phpstan-phpunit": "^2.1.1",
+        "phpstan/phpstan-phpunit": "^2.1.2",
         "phpstan/phpstan-strict-rules": "^2.1.1",
         "phpstan/phpstan-symfony": "^2.1.1",
-        "phpunit/phpunit": "^13.4.6",
+        "phpunit/phpunit": "^13.4.7",
         "psalm/plugin-phpunit": "^0",
         "psalm/plugin-symfony": "^5.3",
         "rector/rector": "^2.8.4",
@@ -242,7 +252,7 @@
         "symfony/stopwatch": "^8.1",
         "symfony/web-profiler-bundle": "^8.1.11",
         "symplify/phpstan-rules": "^14.19.3",
-        "vimeo/psalm": "^6.20.10",
+        "vimeo/psalm": "^6.20.11",
         "vincentlanglet/twig-cs-fixer": "^4.1.1"
     },
     "repositories": [
@@ -274,6 +284,7 @@
             "app:db:ddl": "symfony-cmd"
         },
         "cache:clear_dev": "bin/console cache:clear --env=dev",
+        "infection": "infection --configuration=/app/config/quality/infection.json5 --skip-initial-tests --only-covering-test-cases --coverage=/app/var/log/tests/coverage/infection",
         "php-cs-fixer": "php-cs-fixer fix --dry-run --config=/app/.php-cs-fixer.dist.php --using-cache=yes --cache-file=/app/data/temp/.php-cs-fixer.cache --verbose --allow-risky=yes --path-mode=intersection",
         "phpcbf": "phpcbf --standard=/app/phpcs.xml.dist",
         "phpcs": "phpcs --standard=/app/phpcs.xml.dist -s",
@@ -287,6 +298,7 @@
         ],
         "psalter": "psalter --config=/app/config/quality/psalm.xml",
         "psalm": "psalm --config=/app/config/quality/psalm.xml --show-info=true",
+        "qa-csv": "qa-runner check --format=csv --by-count /app/ > /app/var/log/qa.csv",
         "rector": "rector --config=/app/config/quality/rector.php --dry-run",
         "twig-cs": "twig-cs-fixer lint --config=/app/config/quality/twig-cs-fixer.php"
     },
