@@ -79,30 +79,45 @@ final class Thread extends Page
             return ['http_error' => 404, 'reason' => 'Thread does not exist', 'suggested_link' => '/talks/sections/'];
         }
 
-        // Check if private
-        if ($output_array['private']) {
+        // Check if private and not a ticket
+        if (
+            $output_array['type'] !== 'Support'
+            && $output_array['private']
+            && $output_array['author'] !== $_SESSION['user_id']
+            && !\in_array('view_private', $_SESSION['permissions'], strict: true)
+        ) {
+            return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
+        }
+
+        // Ticket are a bit more complex. Anonymous users are allowed access to them if they have a valid token regardless of whether the ticket is private
+        if ($output_array['type'] === 'Support') {
+            // Anonymous users  need a token to post in their tickets
+            $has_token = false;
             if (
                 $output_array['author'] === SystemUser::Unknown->value
                 && $output_array['author'] === $_SESSION['user_id']
+                && $output_array['access_token'] !== null
+                && $output_array['access_token'] !== ''
+                && $output_array['access_token'] === ($_GET['access_token'] ?? '')
             ) {
-                if ($output_array['type'] === 'Support') {
-                    if (
-                        $output_array['access_token'] === null
-                        || $output_array['access_token'] === ''
-                        || $output_array['access_token'] !== ($_GET['access_token'] ?? '')
-                    ) {
-                        // Return same error to limit potential of brute-forcing a token
-                        return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
-                    }
-
-                    // If token is valid - temporary give permission to allow posting
-                    $_SESSION['permissions'][] = 'can_post';
+                $has_token = true;
+                // Give permission to post
+                $_SESSION['permissions'][] = 'can_post';
+            }
+            if ($output_array['private']) {
+                if (
+                    (
+                        $_SESSION['user_id'] === SystemUser::Unknown->value
+                        && !$has_token
+                    )
+                    || (
+                        $_SESSION['user_id'] !== SystemUser::Unknown->value
+                        && $output_array['author'] !== $_SESSION['user_id']
+                        && !\in_array('view_private', $_SESSION['permissions'], strict: true)
+                    )
+                ) {
+                    return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
                 }
-            } elseif (
-                $output_array['author'] !== $_SESSION['user_id']
-                && !\in_array('view_private', $_SESSION['permissions'], strict: true)
-            ) {
-                return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
             }
         }
 
