@@ -56,6 +56,8 @@
         <InvalidArrayOffset errorLevel="suppress"/>
         <!-- Duplicates SlevomatCodingStandard.Variables.UnusedVariable, has no control over unused array values -->
         <UnusedForeachValue errorLevel="suppress"/>
+        <!-- Duplicates PHPStan's class.notFound, property.nonObject and potentially others -->
+        <UndefinedClass errorLevel="suppress"/>
         <!-- Below rules duplicate PHPStan rules and produce frequent false-positives when skipping arguments or sometimes even without obvious explanation.  -->
         <PossiblyInvalidArgument errorLevel="suppress"/>
         <InvalidReturnType errorLevel="suppress"/>
@@ -69,21 +71,17 @@
     <fileExtensions>
         <extension name=".php"/>
         <extension name=".twig"
-                   checker="../../vendor/psalm/plugin-symfony/src/Twig/TemplateFileAnalyzer.php"/>
+                   checker="../../vendor/psalm/plugin-symfony/src/Twig/TemplateFileAnalyzer.php"
+                   scanner="../../vendor/psalm/plugin-symfony/src/Twig/TemplateFileScanner.php"/>
     </fileExtensions>
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
         <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin">
-            <!-- #TODO: uncomment when APP_DEBUG issue is resolved
-                <containerXml>/app/var/cache/dev/App_KernelDevDebugContainer.xml</containerXml>
-            -->
+            <!-- If this is not setup, Psalm will search for templates directory inside directory of the config file -->
+            <twigRootPath>../../templates</twigRootPath>
+            <containerXml>/app/var/cache/dev/App_KernelDevDebugContainer.xml</containerXml>
         </pluginClass>
     </plugins>
-    <!-- #TODO: this is required for PHP configs, but it's not generated, possibly because of not using APP_DEBUG
-    <extraFiles>
-        <directory name="/app/var/cache/dev/Symfony/Config"/>
-    </extraFiles>
-    -->
     <stubs>
         <file name="/app/vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php"/>
     </stubs>
