@@ -4,6 +4,9 @@
     <p>Since you are logged in, you can create a thread <a href="/talks/sections/26"><span>here</span></a>.</p>
 {% endif %}
 <p>Alternatively, you can use the contact form. You also <strong>need</strong> to use the form if you want to appeal a ban. All tickets created through this form are created <em>private</em> by default, but after resolution/closure, if content does not have any personal or otherwise sensitive information it <em>may</em> be made public.</p>
+{% if session_data.user_id == 1 or session_data.banned %}
+    <p>Please, note that your current permissions will prevent uploading files. If any files need to be shared, upload to a 3rd-party service of your choice first, and then share respective link(s). If required the files will be attached to the created ticket as part of its resolution.</p>
+{% endif %}
 {% if reason == 'Failed to connect to database' %}
     <div class="tiny_align_center error">The contact form relies on a database, which is currently unavailable, so the form is not available. Please try again later.</div>
 {% else %}

@@ -232,14 +232,9 @@ final class Character extends AbstractEntity
         if ($data === []) {
             return [];
         }
-        // Get red flags
-        $data['red_flags'] = Query::query('SELECT * FROM `ffxiv__red_flags` WHERE `character_id`=:id;', [':id' => $this->id], return: 'row');
-        if ($data['red_flags'] !== []) {
-            unset($data['red_flags']['character_id']);
-        }
-        if (!empty($data['hidden']) && $data['red_flags'] === []) {
+        if (!empty($data['hidden'])) {
             foreach ($data as $key => $value) {
-                if (!\in_array($key, ['avatar', 'registered', 'updated', 'deleted', 'hidden', 'name'], strict: true)) {
+                if (!\in_array($key, ['registered', 'updated', 'deleted', 'hidden', 'name'], strict: true)) {
                     unset($data[$key]);
                 }
             }
@@ -262,12 +257,6 @@ final class Character extends AbstractEntity
             $data['friends'] = Query::query("SELECT 'character' AS `type`, `outer`.`friend` AS `id`, `ffxiv__character`.`name` AS `name`, `avatar` AS `icon`, `current`, EXISTS(SELECT `character_id` FROM `ffxiv__character_friends` WHERE `ffxiv__character_friends`.`character_id`=`outer`.`friend` AND `ffxiv__character_friends`.`friend`=`outer`.`character_id` AND `ffxiv__character_friends`.`current`=`outer`.`current`) AS `mutual`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`) AS `user_id`, NULL AS `rank_id` FROM `ffxiv__character_friends` AS `outer` LEFT JOIN `ffxiv__character` ON `outer`.`friend`=`ffxiv__character`.`character_id` WHERE `outer`.`character_id`=:id", [':id' => $this->id], return: 'all');
             // Get characters being followed by the character
             $data['following'] = Query::query("SELECT 'character' AS `type`, `outer`.`following` AS `id`, `ffxiv__character`.`name` AS `name`, `avatar` AS `icon`, `current`, EXISTS(SELECT `character_id` FROM `ffxiv__character_following` WHERE `ffxiv__character_following`.`character_id`=`outer`.`following` AND `ffxiv__character_following`.`following`=`outer`.`character_id` AND `ffxiv__character_following`.`current`=`outer`.`current`) AS `mutual`, (SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`) AS `user_id`, NULL AS `rank_id` FROM `ffxiv__character_following` AS `outer` LEFT JOIN `ffxiv__character` ON `outer`.`following`=`ffxiv__character`.`character_id` WHERE `outer`.`character_id`=:id", [':id' => $this->id], return: 'all');
-            // Threads created for the character
-            //$data['threads'] = Query::query('SELECT `talks__threads`.`thread_id` as `id`, \'Support\' as `detailed_type`,  `talks__threads`.`name`, `created`, `published`, `pinned`, `closed`, `private`, `author`, `last_poster`, `last_post`, `posts` FROM `ffxiv__character_threads` RIGHT JOIN `talks__threads` ON `talks__threads`.`thread_id` = `ffxiv__character_threads`.`thread_id` WHERE `character_id`=:id;', [':id' => $this->id], return: 'all');
-            $data['threads'] = new Threads([':id' => $this->id], '`talks__threads`.`private`=0 AND `talks__threads`.`thread_id` IN (SELECT `thread_id` FROM `ffxiv__character_threads` WHERE `character_id`=:id)', '`last_post` DESC, `name` ASC')->listEntities();
-            foreach ($data['threads']['entities'] as &$thread) {
-                $thread['posts'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], strict: true) ? '' : ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)').';', [':thread_id' => [$thread['id'], 'int']], return: 'count');
-            }
             // Get affiliated groups' details
             $data['groups'] = AbstractEntity::cleanCrestResults(
                 Query::query(
@@ -286,6 +275,16 @@ final class Character extends AbstractEntity
             // Clean up the data from unnecessary (technical) clutter
             unset($data['clan_id'], $data['nameday_id'], $data['achievement_id'], $data['category'], $data['subcategory'], $data['how_to'], $data['points'], $data['icon'], $data['item'], $data['item_icon'], $data['item_id'], $data['server_id']);
         }
+        // Get red flags
+        $data['red_flags'] = Query::query('SELECT * FROM `ffxiv__red_flags` WHERE `character_id`=:id;', [':id' => $this->id], return: 'row');
+        if ($data['red_flags'] !== []) {
+            unset($data['red_flags']['character_id']);
+        }
+        // Threads created for the character
+        $data['threads'] = new Threads([':id' => $this->id], '`talks__threads`.`private`=0 AND `talks__threads`.`thread_id` IN (SELECT `thread_id` FROM `ffxiv__character_threads` WHERE `character_id`=:id)', '`last_post` DESC, `name` ASC')->listEntities();
+        foreach ($data['threads']['entities'] as &$thread) {
+            $thread['posts'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(\in_array('view_scheduled', $_SESSION['permissions'], strict: true) ? '' : ' AND `talks__posts`.`published`<=CURRENT_TIMESTAMP(6)').';', [':thread_id' => [$thread['id'], 'int']], return: 'count');
+        }
 
         return $data;
     }
@@ -301,7 +300,7 @@ final class Character extends AbstractEntity
     protected function process(array $from_db): void
     {
         $this->name = $from_db['name'];
-        $this->avatar_id = $from_db['avatar'];
+        $this->avatar_id = $from_db['avatar'] ?? null;
         $this->dates = [
             'deleted' => (empty($from_db['deleted']) ? null : \strtotime($from_db['deleted'])),
             'hidden' => (empty($from_db['hidden']) ? null : \strtotime($from_db['hidden'])),
