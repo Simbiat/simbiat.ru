@@ -1,0 +1,100 @@
+[[guard.structural.rules]]
+on = "App\\Controller\\**"
+target = "class"
+must-be-named = "*Controller"
+must-be-final = true
+must-be-readonly = true
+only-public-methods = ['__construct', '__invoke']
+reason = "Controllers must be final and follow naming conventions."
+
+# --- Controllers -----------------------------------------------------------
+[[guard.structural.rules]]
+on = "App\\Controller\\**"
+target = "class"
+must-be-named = "*Controller"
+must-be-final = true
+must-be-readonly = true
+must-extend = '@nothing'
+only-public-methods = ['__construct', '__invoke']
+reason = "Controllers must be final and follow naming conventions."
+
+# Allow only the classic two public hooks if you use base-class controllers instead:
+[[guard.structural.rules]]
+on = 'App\Controller\**'
+target = 'class'
+must-extend = 'Symfony\Bundle\FrameworkBundle\Controller\AbstractController'
+must-use-attribute = 'Symfony\Component\Routing\Attribute\Route'
+
+# --- Entities ---------------------------------------------------------------
+[[guard.structural.rules]]
+on = 'App\Entity\'
+must-be = ['enum', 'class', 'trait']   # no loose functions/constants in the entity dir
+reason = 'Namespace reserved for mapped classes (and enums used by them).'
+
+# NOTE: deliberately no must-be-final / must-be-readonly on entities.
+# Doctrine proxies cannot extend final classes, and ORM 3 hydration +
+# lazily-loaded association proxies break with readonly properties on
+# the to-one owning side. Enforcing finality here will fight the ORM.
+
+# --- Repositories -------------------------------------------------------------
+[[guard.structural.rules]]
+on = 'App\Repository\'
+target = 'interface'
+must-be-named = '*RepositoryInterface'
+reason = 'Repository interfaces follow a standard naming convention.'
+
+[[guard.structural.rules]]
+on = 'App\Repository\'
+target = 'class'
+must-implement = 'App\Repository\RepositoryInterface'   # adjust to your actual base contract
+must-be-final = true
+not-on = 'App\Repository\AbstractRepository'
+reason = 'Concrete repositories are final and implement the repository contract.'
+
+# --- Console commands ---------------------------------------------------------
+[[guard.structural.rules]]
+on = 'App\Command\'
+target = 'class'
+must-be-named = '*Command'
+must-extend = 'Symfony\Component\Console\Command\Command'
+must-be-final = true
+reason = 'One command per class, named after its verb, always final.'
+
+# --- Messenger handlers -------------------------------------------------------
+[[guard.structural.rules]]
+on = 'App\MessageHandler\'
+target = 'class'
+must-be-named = '*Handler'
+must-be-final = true
+only-public-methods = ['__invoke']
+reason = 'Handlers are final invokables.'
+
+# --- Event subscribers ---------------------------------------------------------
+[[guard.structural.rules]]
+on = 'App\EventSubscriber\'
+target = 'class'
+must-be-named = '*Subscriber'
+must-implement = 'Symfony\Component\EventDispatcher\EventSubscriberInterface'
+reason = 'Subscribers implement the framework interface.'
+
+# --- Forms ---------------------------------------------------------------------
+[[guard.structural.rules]]
+on = 'App\Form\'
+target = 'class'
+must-be-named = '*Type'
+must-be-readonly = true   # PHP 8.2+ readonly forms work fine with Symfony 8
+reason = 'Form types are stateless readonly value objects.'
+
+# --- Enums ----------------------------------------------------------------------
+[[guard.structural.rules]]
+on = "App\\Enum\\**"
+must-be = ["enum"]
+reason = "This namespace is designated for enums only."
+
+# --- Value objects / models ---------------------------------------------------
+[[guard.structural.rules]]
+on = 'App\Model\'
+target = 'class'
+must-be-final = true
+must-be-readonly = true
+reason = 'Value objects and DTOs are immutable by definition.'

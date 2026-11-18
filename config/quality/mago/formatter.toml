@@ -1,0 +1,26 @@
+[formatter]
+preset = "default"
+preserve-breaking-member-access-chain = true
+preserve-breaking-member-access-chain-first-method-on-same-line = true
+preserve-breaking-argument-list = true
+preserve-breaking-array-like = true
+preserve-breaking-parameter-list = true
+preserve-breaking-attribute-list = true
+preserve-breaking-conditional-expression = true
+preserve-breaking-condition-expression = true
+preserve-redundant-logical-binary-expression-parentheses = true
+print-width = 120
+tab-width = 4
+use-tabs = false
+end-of-line = "lf"
+single-quote = true
+indent-heredoc = true
+trailing-comma = true
+remove-trailing-close-tag = true
+control-brace-style = "same-line"
+following-clause-on-newline = true
+closure-brace-style = "same-line"
+function-brace-style = "next-line"
+method-brace-style = "next-line"
+classlike-brace-style = "always-next-line"
+uppercase-literal-keyword = false

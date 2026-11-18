@@ -88,7 +88,7 @@
       <envs />
     </TaskOptions>
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="compose -f ./compose.yaml exec frankenphp qa-runner check --tool-type=php /app/$/FileRelativePath$" />
+      <option name="arguments" value="compose -f ./compose.yaml exec frankenphp qa-runner check --tool-type=php --ansi /app/$/FileRelativePath$" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="NEVER" />

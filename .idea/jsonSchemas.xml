@@ -3,6 +3,23 @@
   <component name="JsonSchemaMappingsProjectConfiguration">
     <state>
       <map>
+        <entry key="Mago.toml">
+          <value>
+            <SchemaInfo>
+              <option name="generatedName" value="New Schema" />
+              <option name="name" value="Mago.toml" />
+              <option name="relativePathToSchema" value="vendor/carthage-software/mago/schema.json" />
+              <option name="schemaVersion" value="JSON Schema 7" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="mago.toml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
         <entry key="bun.lock">
           <value>
             <SchemaInfo>
@@ -32,10 +49,10 @@
                     <option name="path" value="composer.json" />
                   </Item>
                   <Item>
-                    <option name="path" value="packages/Sniffs/composer.json" />
+                    <option name="path" value="packages/Argon/composer.json" />
                   </Item>
                   <Item>
-                    <option name="path" value="packages/Argon/composer.json" />
+                    <option name="path" value="packages/Sniffs/composer.json" />
                   </Item>
                 </list>
               </option>

@@ -1,0 +1,28 @@
+[twig.linter]
+enabled = true
+version = "3.30"
+minimum-fail-level = "note"
+
+[twig.linter.rules]
+no-nested-ternary = { enabled = true }
+prefer-include-function = { enabled = true }
+macro-argument-name = { enabled = true }
+macro-name = { enabled = true }
+named-argument-name = { enabled = true }
+variable-name = { enabled = true }
+end-block-name = { enabled = true }
+named-argument-separator = { enabled = true }
+single-quotes = { enabled = true }
+deprecated-attribute = { enabled = true }
+deprecated-spaceless = { enabled = true }
+duplicate-macro = { enabled = true }
+explicit-include-context = { enabled = true }
+no-include-ignore-missing = { enabled = true }
+constant-condition = { enabled = true }
+no-autoescape-false = { enabled = true }
+no-dump = { enabled = true }
+no-raw = { enabled = true }
+duplicate-block = { enabled = true }
+duplicate-parameter = { enabled = true }
+duplicate-argument = { enabled = true }
+duplicate-key = { enabled = true }

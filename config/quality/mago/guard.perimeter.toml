@@ -1,0 +1,95 @@
+[guard.perimeter]
+# Ordered innermost -> outermost. A dependency pointing further OUT is a violation.
+layering = [
+    'App\Entity',
+    'App\Repository',
+    'App\Model',
+    'App\Service',
+    'App\Form',
+    'App\EventSubscriber',
+    'App\MessageHandler',
+    'App\Security',
+    'App\Command',
+    'App\Controller',
+]
+layering-reason = 'Inner layers (entities, repositories) must never know about outer ones (forms, controllers).'
+
+# Vendor groups referenced from rules below with @layer:<name>.
+[guard.perimeter.layers]
+doctrine = ['Doctrine\**']
+symfony = ['Symfony\**']
+twig = ['Twig\**']
+vendor = ['GeoIp2\**', 'Matomo\DeviceDetector\**', 'Tinify\**']
+simbiat = ['Simbiat\**']
+
+# Root namespace: Kernel, wiring, etc. Needs the framework, little else.
+[[guard.perimeter.rules]]
+namespace = 'App\'
+permit = ['@native', '@self', '@layer:symfony']
+reason = 'Kernel and top-level wiring may use the framework.'
+
+# Entities are the most independent layer: only PHP, Doctrine mapping/validation.
+[[guard.perimeter.rules]]
+namespace = 'App\Entity\'
+permit = [
+    '@native',
+    '@self',
+    '@layer:doctrine',
+    'Symfony\Component\Validator\**',
+]
+reason = 'Entities may use Doctrine persistence metadata and validation constraints, nothing else.'
+
+# Repositories talk to the database; doctrine + inner layers (via layering).
+[[guard.perimeter.rules]]
+namespace = 'App\Repository\'
+permit = ['@native', '@self', '@layer:doctrine']
+reason = 'Persistence lives here and only here.'
+
+# Services compose everything, including your own simbiat/* packages.
+[[guard.perimeter.rules]]
+namespace = 'App\Service\'
+permit = ['@native', '@self', '@layer:doctrine', '@layer:symfony', '@layer:simbiat', '@layer:vendor']
+reason = 'Business logic may orchestrate anything except the HTTP layer.'
+
+# Commands/forms/subscribers/handlers: framework + doctrine, no direct vendor calls.
+[[guard.perimeter.rules]]
+namespace = 'App\Command\'
+permit = ['@native', '@self', '@layer:doctrine', '@layer:symfony']
+
+[[guard.perimeter.rules]]
+namespace = 'App\Form\'
+permit = ['@native', '@self', '@layer:symfony', 'Symfony\Component\Validator\**']
+
+[[guard.perimeter.rules]]
+namespace = 'App\EventSubscriber\'
+permit = ['@native', '@self', '@layer:symfony', '@layer:doctrine']
+
+[[guard.perimeter.rules]]
+namespace = 'App\MessageHandler\'
+permit = ['@native', '@self', '@layer:symfony', '@layer:doctrine']
+
+# Controllers: the outermost layer, may render templates too.
+[[guard.perimeter.rules]]
+namespace = 'App\Controller\'
+permit = ['@native', '@self', '@layer:symfony', '@layer:twig']
+reason = 'Controllers translate HTTP <-> services; no direct repository or ORM calls.'
+
+# Generated Doctrine migrations (you have doctrine-migrations-bundle): allow anything, class-like only.
+[[guard.perimeter.rules]]
+namespace = 'DoctrineMigrations\'
+permit = [{ path = '@all', kinds = ['class-like'] }]
+reason = 'Generated code; regenerated wholesale, so allow everything.'
+
+
+# Controllers must never leak into other layers.
+[[guard.perimeter.restrictions]]
+dependency = 'App\Controller\'
+allow-from = ['App\Controller']
+reason = 'Controllers are leaf nodes of the dependency graph.'
+
+# Keep the entity manager confined to repositories (and fixtures, if you have them).
+[[guard.perimeter.restrictions]]
+dependency = 'Doctrine\ORM\'
+allow-from = ['App\Repository', 'App\DataFixtures']
+kinds = ['class-like']
+reason = 'Direct ORM access is only allowed inside the persistence layer.'

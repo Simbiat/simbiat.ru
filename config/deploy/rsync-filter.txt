@@ -127,6 +127,7 @@ H /compose.predeploy.yaml
 + /composer.lock
 + /importmap.php
 H /LICENSE
+H /mago.toml
 H /package.json
 H /phpcs.xml.dist
 H /phpstan.dist.neon

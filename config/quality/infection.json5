@@ -6,7 +6,8 @@
             "/app/src"
         ]
     },
-    "timeout": 10,
+    "timeout": 120,
+    "timeoutsAsEscaped": true,
     "logs": {
         "html": "/app/var/log/tests/infection.html",
         "text": "/app/var/log/tests/infection.log"

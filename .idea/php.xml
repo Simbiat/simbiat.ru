@@ -272,6 +272,9 @@
       <path value="$PROJECT_DIR$/vendor/sanmai/pipeline" />
       <path value="$PROJECT_DIR$/vendor/sanmai/duoclock" />
       <path value="$PROJECT_DIR$/vendor/sanmai/di-container" />
+      <path value="$PROJECT_DIR$/vendor/psalm/plugin-mockery" />
+      <path value="$PROJECT_DIR$/vendor/psalm/plugin-laravel" />
+      <path value="$PROJECT_DIR$/vendor/carthage-software/mago" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

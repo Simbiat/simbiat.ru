@@ -1,0 +1,55 @@
+#:schema /app/vendor/carthage-software/schema.json
+# Welcome to Mago!
+# For full documentation, see https://mago.carthage.software/1.60.1/en/tools/overview/
+version = "1"
+php-version = "8.5"
+
+extends = [
+    "/app/config/quality/mago/analyzer.toml",
+    "/app/config/quality/mago/formatter.toml",
+    "/app/config/quality/mago/guard.perimeter.toml",
+    "/app/config/quality/mago/guard.structural.toml",
+    "/app/config/quality/mago/linter.toml",
+    "/app/config/quality/mago/twig.formatter.toml",
+    "/app/config/quality/mago/twig.linter.toml"
+]
+
+[source]
+workspace = "/app"
+paths = [
+    "/app/bin",
+    "/app/config",
+    "/app/packages",
+    "/app/packages/QARunner/bin/qa-runner",
+    "/app/src",
+    "/app/templates",
+    "/app/tests",
+    "/app/migrations",
+    "/app/importmap.php"
+]
+includes = ["/app/vendor"]
+excludes = [
+    "/app/assets",
+    "/app/bin/console",
+    "/app/bin/phpunit",
+    "/app/build",
+    "/app/config/bundles.php",
+    "/app/config/preload.php",
+    "/app/config/reference.php",
+    "/app/data",
+    "/app/node_modules",
+    "/app/packages/DDCIcons/icons",
+    "/app/public",
+    "/app/var",
+    "/app/vendor"
+]
+extensions = ["php"]
+
+[source.glob]
+literal-separator = true
+
+# TODO: review the setup after migration to Symfony is completed
+# Reference: https://mago.carthage.software/latest/en/tools/guard/configuration-reference/
+[guard]
+mode = "default"
+minimum-fail-level = "note"
